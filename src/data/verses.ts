@@ -20,6 +20,8 @@ export type Verse = {
   reference: string;
   text: string;
   places: VersePlace[];
+  passageId: string;
+  passageTitle: string;
 };
 
 export const verses: Verse[] = [
@@ -27,6 +29,8 @@ export const verses: Verse[] = [
     id: "john-2-13",
     reference: "John 2:13",
     text: "When it was almost time for the Jewish Passover, Jesus went up to Jerusalem.",
+    passageId: "jerusalem-passages",
+    passageTitle: "Jerusalem Passages",
     places: [
       {
         name: "Jerusalem",
@@ -54,9 +58,65 @@ export const verses: Verse[] = [
     ],
   },
   {
+    id: "luke-19-41",
+    reference: "Luke 19:41",
+    text: "As he approached Jerusalem and saw the city, he wept over it.",
+    passageId: "jerusalem-passages",
+    passageTitle: "Jerusalem Passages",
+    places: [
+      {
+        name: "Jerusalem",
+        era: "Second Temple / New Testament",
+        description: "Jerusalem was the religious and cultural center of Jewish life in the first century.",
+        ancientDescription:
+          "In ancient times, Jerusalem was home to the Temple and was central to pilgrimage, worship, and major feast observances.",
+        biblicalSignificance:
+          "Jerusalem is one of the most important cities in the Bible. It is associated with the Temple, major feast gatherings, the ministry of Jesus, and many pivotal events in both the Old and New Testaments.",
+        lat: 31.778,
+        lng: 35.235,
+        relatedVerses: [
+          {
+            reference: "John 2:13",
+            text: "When it was almost time for the Jewish Passover, Jesus went up to Jerusalem.",
+            targetVerseId: "john-2-13",
+          },
+        ],
+      },
+    ],
+  },
+  {
+    id: "psalm-122-6",
+    reference: "Psalm 122:6",
+    text: "Pray for the peace of Jerusalem: May those who love you be secure.",
+    passageId: "jerusalem-passages",
+    passageTitle: "Jerusalem Passages",
+    places: [
+      {
+        name: "Jerusalem",
+        era: "Monarchy to Second Temple",
+        description: "Jerusalem was the religious and cultural center of Jewish life in biblical history.",
+        ancientDescription:
+          "Jerusalem stood at the heart of worship, kingship, and temple life across major periods of Israel's history.",
+        biblicalSignificance:
+          "Jerusalem is central to covenant history, kingship, worship, prophecy, exile, return, and messianic expectation.",
+        lat: 31.778,
+        lng: 35.235,
+        relatedVerses: [
+          {
+            reference: "John 2:13",
+            text: "When it was almost time for the Jewish Passover, Jesus went up to Jerusalem.",
+            targetVerseId: "john-2-13",
+          },
+        ],
+      },
+    ],
+  },
+  {
     id: "luke-2-4",
     reference: "Luke 2:4",
     text: "So Joseph also went up from the town of Nazareth in Galilee to Judea, to Bethlehem the town of David.",
+    passageId: "birth-narrative",
+    passageTitle: "Birth Narrative",
     places: [
       {
         name: "Nazareth",
@@ -107,89 +167,11 @@ export const verses: Verse[] = [
     ],
   },
   {
-    id: "acts-9-3",
-    reference: "Acts 9:3",
-    text: "As he neared Damascus on his journey, suddenly a light from heaven flashed around him.",
-    places: [
-      {
-        name: "Damascus",
-        era: "Ancient Near East to Roman",
-        description: "Damascus is one of the oldest continuously inhabited cities in the world.",
-        ancientDescription:
-          "In the ancient world, Damascus was a major city linked to trade routes and regional power.",
-        biblicalSignificance:
-          "Damascus is especially important in the New Testament because of Saul's encounter with the risen Christ on the road to the city, a turning point in early Christian history.",
-        lat: 33.5138,
-        lng: 36.2765,
-        relatedVerses: [
-          {
-            reference: "Acts 9:6",
-            text: "Now get up and go into the city, and you will be told what you must do.",
-            targetVerseId: "acts-9-6",
-          },
-          {
-            reference: "2 Corinthians 11:32",
-            text: "In Damascus the governor under King Aretas had the city of the Damascenes guarded in order to arrest me.",
-            targetVerseId: "second-corinthians-11-32",
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: "luke-19-41",
-    reference: "Luke 19:41",
-    text: "As he approached Jerusalem and saw the city, he wept over it.",
-    places: [
-      {
-        name: "Jerusalem",
-        era: "Second Temple / New Testament",
-        description: "Jerusalem was the religious and cultural center of Jewish life in the first century.",
-        ancientDescription:
-          "In ancient times, Jerusalem was home to the Temple and was central to pilgrimage, worship, and major feast observances.",
-        biblicalSignificance:
-          "Jerusalem is one of the most important cities in the Bible. It is associated with the Temple, major feast gatherings, the ministry of Jesus, and many pivotal events in both the Old and New Testaments.",
-        lat: 31.778,
-        lng: 35.235,
-        relatedVerses: [
-          {
-            reference: "John 2:13",
-            text: "When it was almost time for the Jewish Passover, Jesus went up to Jerusalem.",
-            targetVerseId: "john-2-13",
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: "psalm-122-6",
-    reference: "Psalm 122:6",
-    text: "Pray for the peace of Jerusalem: May those who love you be secure.",
-    places: [
-      {
-        name: "Jerusalem",
-        era: "Monarchy to Second Temple",
-        description: "Jerusalem was the religious and cultural center of Jewish life in biblical history.",
-        ancientDescription:
-          "Jerusalem stood at the heart of worship, kingship, and temple life across major periods of Israel's history.",
-        biblicalSignificance:
-          "Jerusalem is central to covenant history, kingship, worship, prophecy, exile, return, and messianic expectation.",
-        lat: 31.778,
-        lng: 35.235,
-        relatedVerses: [
-          {
-            reference: "John 2:13",
-            text: "When it was almost time for the Jewish Passover, Jesus went up to Jerusalem.",
-            targetVerseId: "john-2-13",
-          },
-        ],
-      },
-    ],
-  },
-  {
     id: "luke-4-16",
     reference: "Luke 4:16",
     text: "He went to Nazareth, where he had been brought up, and on the Sabbath day he went into the synagogue, as was his custom.",
+    passageId: "birth-narrative",
+    passageTitle: "Birth Narrative",
     places: [
       {
         name: "Nazareth",
@@ -215,6 +197,8 @@ export const verses: Verse[] = [
     id: "matthew-2-23",
     reference: "Matthew 2:23",
     text: "And he went and lived in a town called Nazareth. So was fulfilled what was said through the prophets, that he would be called a Nazarene.",
+    passageId: "birth-narrative",
+    passageTitle: "Birth Narrative",
     places: [
       {
         name: "Nazareth",
@@ -240,6 +224,8 @@ export const verses: Verse[] = [
     id: "micah-5-2",
     reference: "Micah 5:2",
     text: "But you, Bethlehem Ephrathah... out of you will come for me one who will be ruler over Israel.",
+    passageId: "birth-narrative",
+    passageTitle: "Birth Narrative",
     places: [
       {
         name: "Bethlehem",
@@ -265,6 +251,8 @@ export const verses: Verse[] = [
     id: "matthew-2-1",
     reference: "Matthew 2:1",
     text: "After Jesus was born in Bethlehem in Judea, during the time of King Herod, Magi from the east came to Jerusalem.",
+    passageId: "birth-narrative",
+    passageTitle: "Birth Narrative",
     places: [
       {
         name: "Bethlehem",
@@ -305,9 +293,43 @@ export const verses: Verse[] = [
     ],
   },
   {
+    id: "acts-9-3",
+    reference: "Acts 9:3",
+    text: "As he neared Damascus on his journey, suddenly a light from heaven flashed around him.",
+    passageId: "damascus-road",
+    passageTitle: "Damascus Road",
+    places: [
+      {
+        name: "Damascus",
+        era: "Ancient Near East to Roman",
+        description: "Damascus is one of the oldest continuously inhabited cities in the world.",
+        ancientDescription:
+          "In the ancient world, Damascus was a major city linked to trade routes and regional power.",
+        biblicalSignificance:
+          "Damascus is especially important in the New Testament because of Saul's encounter with the risen Christ on the road to the city, a turning point in early Christian history.",
+        lat: 33.5138,
+        lng: 36.2765,
+        relatedVerses: [
+          {
+            reference: "Acts 9:6",
+            text: "Now get up and go into the city, and you will be told what you must do.",
+            targetVerseId: "acts-9-6",
+          },
+          {
+            reference: "2 Corinthians 11:32",
+            text: "In Damascus the governor under King Aretas had the city of the Damascenes guarded in order to arrest me.",
+            targetVerseId: "second-corinthians-11-32",
+          },
+        ],
+      },
+    ],
+  },
+  {
     id: "acts-9-6",
     reference: "Acts 9:6",
     text: "Now get up and go into the city, and you will be told what you must do.",
+    passageId: "damascus-road",
+    passageTitle: "Damascus Road",
     places: [
       {
         name: "Damascus",
@@ -333,6 +355,8 @@ export const verses: Verse[] = [
     id: "second-corinthians-11-32",
     reference: "2 Corinthians 11:32",
     text: "In Damascus the governor under King Aretas had the city of the Damascenes guarded in order to arrest me.",
+    passageId: "damascus-road",
+    passageTitle: "Damascus Road",
     places: [
       {
         name: "Damascus",
