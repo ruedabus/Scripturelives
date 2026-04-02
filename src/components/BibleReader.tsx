@@ -7,6 +7,7 @@ import dynamic from "next/dynamic";
 import SearchBar from "@/components/SearchBar";
 import useBookmarks from "@/components/useBookmarks";
 import usePlaceNotes from "@/components/usePlaceNotes";
+import exportStudySummary from "@/components/exportStudySummary";
 
 const PlaceMap = dynamic(() => import("@/components/PlaceMap"), {
   ssr: false,
@@ -21,7 +22,7 @@ type IndexedPlace = {
 
 type LeftPanelTab = "reader" | "journeys" | "places" | "bookmarks";
 
-function escapeRegExp(value: string): string {
+function escapeRegExp(value: string) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
@@ -45,7 +46,7 @@ export default function BibleReader() {
   const [draftNote, setDraftNote] = useState("");
 
   const { bookmarks, toggleBookmark, removeBookmark, isBookmarked } = useBookmarks();
-  const { getNote, saveNote, removeNote } = usePlaceNotes();
+  const { notes, getNote, saveNote, removeNote } = usePlaceNotes();
 
   useEffect(() => {
     if (selectedPlace) {
@@ -112,6 +113,15 @@ export default function BibleReader() {
   const bookmarkedPlaces = useMemo(() => {
     return placeIndex.filter((item) => bookmarks.includes(item.name));
   }, [placeIndex, bookmarks]);
+
+  const exportableBookmarkedPlaces = useMemo(() => {
+    return bookmarkedPlaces.map((item) => ({
+      name: item.name,
+      place: item.place,
+      sourceReference: item.sourceReference,
+      note: notes[item.name] ?? "",
+    }));
+  }, [bookmarkedPlaces, notes]);
 
   const uniquePlaceEras = useMemo(() => {
     return ["All eras", ...Array.from(new Set(placeIndex.map((item) => item.place.era))).sort()];
@@ -408,9 +418,19 @@ export default function BibleReader() {
 
             {leftPanelTab === "bookmarks" && (
               <div>
-                <div className="mb-4 flex items-center justify-between">
-                  <h2 className="text-xl font-semibold">Bookmarks</h2>
-                  <span className="text-sm text-stone-400">{bookmarkedPlaces.length} saved</span>
+                <div className="mb-4 flex items-center justify-between gap-3">
+                  <div>
+                    <h2 className="text-xl font-semibold">Bookmarks</h2>
+                    <span className="text-sm text-stone-400">{bookmarkedPlaces.length} saved</span>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => exportStudySummary(exportableBookmarkedPlaces)}
+                    className="rounded-lg border border-amber-500 bg-amber-500 px-3 py-2 text-sm font-medium text-stone-950 transition hover:opacity-90"
+                  >
+                    Export Notes
+                  </button>
                 </div>
 
                 {bookmarkedPlaces.length === 0 ? (
@@ -439,6 +459,15 @@ export default function BibleReader() {
                           </div>
 
                           <p className="mt-3 text-sm text-stone-300">{item.place.description}</p>
+
+                          <div className="mt-3 rounded-lg border border-stone-800 bg-stone-950 p-3">
+                            <div className="text-xs font-semibold uppercase tracking-wide text-stone-400">
+                              Saved Note
+                            </div>
+                            <div className="mt-1 text-sm text-stone-300">
+                              {notes[item.name] ? notes[item.name] : "No note saved yet."}
+                            </div>
+                          </div>
                         </button>
 
                         <div className="mt-4">
