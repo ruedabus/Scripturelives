@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { verses, Verse, VersePlace } from "@/data/verses";
 import { journeys, Journey } from "@/data/journeys";
 import dynamic from "next/dynamic";
+import SearchBar from "@/components/SearchBar";
 
 const PlaceMap = dynamic(() => import("@/components/PlaceMap"), {
   ssr: false,
@@ -56,6 +57,15 @@ export default function BibleReader() {
 
   const activeVersePlaces = selectedVerse?.places ?? [];
 
+  const handleSelectVerse = (verseId: string) => {
+    const verse = verses.find((v) => v.id === verseId);
+    if (!verse) return;
+
+    setActiveJourney(null);
+    setSelectedVerse(verse);
+    setSelectedPlace(verse.places[0] ?? null);
+  };
+
   return (
     <main className="min-h-screen bg-stone-950 text-stone-100">
       <div className="mx-auto max-w-6xl px-6 py-10">
@@ -67,7 +77,9 @@ export default function BibleReader() {
         <div className="mt-8 grid gap-6 lg:grid-cols-[2fr_1fr]">
           <section className="space-y-6 rounded-2xl border border-stone-800 bg-stone-900 p-6 shadow-lg">
             <div>
-              <h2 className="mb-4 text-xl font-semibold">Reader</h2>
+              <SearchBar onSelectVerse={handleSelectVerse} />
+
+              <h2 className="mb-4 mt-6 text-xl font-semibold">Reader</h2>
 
               <div className="space-y-6">
                 {renderedVerses.map((verse) => {
@@ -160,7 +172,7 @@ export default function BibleReader() {
             <section className="rounded-2xl border border-stone-800 bg-stone-900 p-6 shadow-lg">
               <div className="mb-4 flex items-center justify-between gap-3">
                 <h2 className="text-xl font-semibold">
-                  {activeJourney ? "Journey Details" : "Place Details"}
+                  {activeJourney ? "Journey Explorer" : "Place Explorer"}
                 </h2>
 
                 <div className="inline-flex rounded-xl border border-stone-700 bg-stone-950 p-1">
@@ -240,6 +252,35 @@ export default function BibleReader() {
                       Ancient Context
                     </h4>
                     <p className="mt-1 text-stone-200">{selectedPlace.ancientDescription}</p>
+                  </div>
+
+                  <div>
+                    <h4 className="text-sm font-semibold uppercase tracking-wide text-stone-400">
+                      Biblical Significance
+                    </h4>
+                    <p className="mt-1 text-stone-200">{selectedPlace.biblicalSignificance}</p>
+                  </div>
+
+                  <div>
+                    <h4 className="text-sm font-semibold uppercase tracking-wide text-stone-400">
+                      Related Verses
+                    </h4>
+
+                    <div className="mt-2 space-y-3">
+                      {selectedPlace.relatedVerses.map((verse) => (
+                        <button
+                          key={verse.reference}
+                          type="button"
+                          onClick={() => handleSelectVerse(verse.targetVerseId)}
+                          className="block w-full rounded-lg border border-stone-800 p-3 text-left transition hover:border-amber-500 hover:bg-stone-800"
+                        >
+                          <div className="text-sm font-semibold text-amber-400">
+                            {verse.reference}
+                          </div>
+                          <div className="mt-1 text-sm text-stone-300">{verse.text}</div>
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
               )}
