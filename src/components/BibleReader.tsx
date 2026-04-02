@@ -26,6 +26,7 @@ export default function BibleReader() {
   const [selectedVerse, setSelectedVerse] = useState<Verse | null>(verses[0] ?? null);
   const [mapMode, setMapMode] = useState<"modern" | "ancient">("modern");
   const [activeJourney, setActiveJourney] = useState<Journey | null>(null);
+  const [placeQuery, setPlaceQuery] = useState("");
 
   const renderedVerses = useMemo(() => {
     return verses.map((verse) => {
@@ -80,6 +81,18 @@ export default function BibleReader() {
 
     return Array.from(seen.values()).sort((a, b) => a.name.localeCompare(b.name));
   }, []);
+
+  const filteredPlaceIndex = useMemo(() => {
+    const normalizedQuery = placeQuery.trim().toLowerCase();
+
+    if (!normalizedQuery) {
+      return placeIndex;
+    }
+
+    return placeIndex.filter((item) =>
+      item.name.toLowerCase().includes(normalizedQuery)
+    );
+  }, [placeIndex, placeQuery]);
 
   const activeVersePlaces = selectedVerse?.places ?? [];
 
@@ -209,31 +222,49 @@ export default function BibleReader() {
           <section className="rounded-2xl border border-stone-800 bg-stone-900 p-6 shadow-lg">
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-xl font-semibold">Place Index</h2>
-              <span className="text-sm text-stone-400">{placeIndex.length} places</span>
+              <span className="text-sm text-stone-400">
+                {filteredPlaceIndex.length} of {placeIndex.length} places
+              </span>
             </div>
 
-            <div className="space-y-3">
-              {placeIndex.map((item) => {
-                const isActive = selectedPlace?.name === item.name && !activeJourney;
-
-                return (
-                  <button
-                    key={item.name}
-                    type="button"
-                    onClick={() => handleSelectPlaceFromIndex(item)}
-                    className={`w-full rounded-xl border p-4 text-left transition ${
-                      isActive ? "border-amber-500 bg-stone-800" : "border-stone-800"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between gap-3">
-                      <h3 className="font-semibold text-amber-400">{item.name}</h3>
-                      <span className="text-xs text-stone-400">{item.sourceReference}</span>
-                    </div>
-                    <p className="mt-2 text-sm text-stone-300">{item.place.description}</p>
-                  </button>
-                );
-              })}
+            <div className="mb-4">
+              <input
+                type="text"
+                value={placeQuery}
+                onChange={(event) => setPlaceQuery(event.target.value)}
+                placeholder="Search places in the index..."
+                className="w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-2 text-sm text-stone-100 outline-none placeholder:text-stone-500 focus:border-amber-500"
+              />
             </div>
+
+            {filteredPlaceIndex.length === 0 ? (
+              <div className="rounded-xl border border-dashed border-stone-700 p-4 text-sm text-stone-400">
+                No places found for "{placeQuery}".
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {filteredPlaceIndex.map((item) => {
+                  const isActive = selectedPlace?.name === item.name && !activeJourney;
+
+                  return (
+                    <button
+                      key={item.name}
+                      type="button"
+                      onClick={() => handleSelectPlaceFromIndex(item)}
+                      className={`w-full rounded-xl border p-4 text-left transition ${
+                        isActive ? "border-amber-500 bg-stone-800" : "border-stone-800"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between gap-3">
+                        <h3 className="font-semibold text-amber-400">{item.name}</h3>
+                        <span className="text-xs text-stone-400">{item.sourceReference}</span>
+                      </div>
+                      <p className="mt-2 text-sm text-stone-300">{item.place.description}</p>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
           </section>
 
           <aside className="space-y-6">
