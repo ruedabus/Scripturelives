@@ -44,10 +44,15 @@ export default function usePlaceNotes() {
     });
   };
 
+  const replaceNotes = (nextNotes: NotesMap) => {
+    setNotes(nextNotes);
+  };
+
   return {
     notes,
     getNote,
     saveNote,
     removeNote,
+    replaceNotes,
   };
 }

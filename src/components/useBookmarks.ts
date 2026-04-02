@@ -45,11 +45,16 @@ export default function useBookmarks() {
 
   const isBookmarked = (placeName: string) => bookmarks.includes(placeName);
 
+  const replaceBookmarks = (nextBookmarks: string[]) => {
+    setBookmarks(nextBookmarks);
+  };
+
   return {
     bookmarks,
     addBookmark,
     removeBookmark,
     toggleBookmark,
     isBookmarked,
+    replaceBookmarks,
   };
 }

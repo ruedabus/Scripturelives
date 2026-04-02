@@ -7,6 +7,7 @@ import dynamic from "next/dynamic";
 import SearchBar from "@/components/SearchBar";
 import useBookmarks from "@/components/useBookmarks";
 import usePlaceNotes from "@/components/usePlaceNotes";
+import useStudySessions from "@/components/useStudySessions";
 import exportStudySummary from "@/components/exportStudySummary";
 import getPlaceStudyPrompts, {
   StudyPrompt,
@@ -29,7 +30,14 @@ type PassageGroup = {
   verses: (Verse & { parts: (string | VersePlace)[] })[];
 };
 
-type LeftPanelTab = "reader" | "journeys" | "places" | "bookmarks" | "study_sheet";
+type LeftPanelTab =
+  | "reader"
+  | "journeys"
+  | "places"
+  | "bookmarks"
+  | "study_sheet"
+  | "sessions";
+
 type MapScope = "verse" | "passage";
 
 function escapeRegExp(value: string) {
@@ -60,6 +68,7 @@ export default function BibleReader() {
   });
   const [mapScope, setMapScope] = useState<MapScope>("verse");
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [sessionName, setSessionName] = useState("");
 
   const [aiPrompts, setAiPrompts] = useState<StudyPrompt[]>([]);
   const [activePromptIndex, setActivePromptIndex] = useState(0);
@@ -68,8 +77,16 @@ export default function BibleReader() {
 
   const verseRefs = useRef<Record<string, HTMLArticleElement | null>>({});
 
-  const { bookmarks, toggleBookmark, removeBookmark, isBookmarked } = useBookmarks();
-  const { notes, getNote, saveNote, removeNote } = usePlaceNotes();
+  const {
+    bookmarks,
+    toggleBookmark,
+    removeBookmark,
+    isBookmarked,
+    replaceBookmarks,
+  } = useBookmarks();
+
+  const { notes, getNote, saveNote, removeNote, replaceNotes } = usePlaceNotes();
+  const { sessions, saveSession, deleteSession } = useStudySessions();
 
   useEffect(() => {
     if (selectedPlace) {
@@ -332,6 +349,24 @@ export default function BibleReader() {
     setLeftPanelTab("reader");
   };
 
+  const handleLoadSession = (sessionId: string) => {
+    const session = sessions.find((item) => item.id === sessionId);
+    if (!session) return;
+
+    replaceBookmarks(session.bookmarks);
+    replaceNotes(session.notes);
+    setLeftPanelTab("bookmarks");
+  };
+
+  const handleSaveSession = () => {
+    const name = sessionName.trim();
+    if (!name) return;
+
+    saveSession(name, bookmarks, notes);
+    setSessionName("");
+    setLeftPanelTab("sessions");
+  };
+
   const togglePassage = (passageId: string) => {
     setOpenPassages((current) => ({
       ...current,
@@ -352,7 +387,7 @@ export default function BibleReader() {
         <div className="print:hidden">
           <h1 className="text-3xl font-bold">Scripture Alive</h1>
           <p className="mt-2 text-stone-300">
-            Explore scripture through passages, places, maps, journeys, linked verse discovery, bookmarks, notes, printable study sheets, image galleries, and AI-guided study prompts.
+            Explore scripture through passages, places, maps, journeys, linked verse discovery, bookmarks, notes, study sessions, printable study sheets, image galleries, and AI-guided study prompts.
           </p>
         </div>
 
@@ -370,6 +405,9 @@ export default function BibleReader() {
               </button>
               <button type="button" onClick={() => setLeftPanelTab("bookmarks")} className={tabButtonClass("bookmarks")}>
                 Bookmarks
+              </button>
+              <button type="button" onClick={() => setLeftPanelTab("sessions")} className={tabButtonClass("sessions")}>
+                Sessions
               </button>
               <button type="button" onClick={() => setLeftPanelTab("study_sheet")} className={tabButtonClass("study_sheet")}>
                 Study Sheet
@@ -664,6 +702,83 @@ export default function BibleReader() {
                           >
                             Remove bookmark
                           </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {leftPanelTab === "sessions" && (
+              <div className="print:hidden">
+                <div className="mb-4">
+                  <h2 className="text-xl font-semibold">Study Sessions</h2>
+                  <p className="mt-1 text-sm text-stone-400">
+                    Save your current bookmarks and notes as a named session.
+                  </p>
+                </div>
+
+                <div className="mb-6 rounded-xl border border-stone-800 bg-stone-950 p-4">
+                  <div className="flex flex-col gap-3 sm:flex-row">
+                    <input
+                      type="text"
+                      value={sessionName}
+                      onChange={(event) => setSessionName(event.target.value)}
+                      placeholder="Session name..."
+                      className="flex-1 rounded-xl border border-stone-700 bg-stone-900 px-4 py-2 text-sm text-stone-100 outline-none placeholder:text-stone-500 focus:border-amber-500"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleSaveSession}
+                      className="rounded-lg border border-amber-500 bg-amber-500 px-4 py-2 text-sm font-medium text-stone-950 transition hover:opacity-90"
+                    >
+                      Save Session
+                    </button>
+                  </div>
+                </div>
+
+                {sessions.length === 0 ? (
+                  <div className="rounded-xl border border-dashed border-stone-700 p-4 text-sm text-stone-400">
+                    No study sessions yet.
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {sessions.map((session) => (
+                      <div
+                        key={session.id}
+                        className="rounded-xl border border-stone-800 p-4"
+                      >
+                        <div className="flex items-start justify-between gap-4">
+                          <div>
+                            <h3 className="font-semibold text-amber-400">{session.name}</h3>
+                            <p className="mt-1 text-xs text-stone-400">
+                              {new Date(session.createdAt).toLocaleString()}
+                            </p>
+                            <p className="mt-2 text-sm text-stone-300">
+                              {session.bookmarks.length} bookmark
+                              {session.bookmarks.length === 1 ? "" : "s"} •{" "}
+                              {Object.keys(session.notes).length} note
+                              {Object.keys(session.notes).length === 1 ? "" : "s"}
+                            </p>
+                          </div>
+
+                          <div className="flex flex-wrap gap-2">
+                            <button
+                              type="button"
+                              onClick={() => handleLoadSession(session.id)}
+                              className="rounded-lg border border-stone-700 px-3 py-2 text-sm text-stone-200 transition hover:border-amber-500"
+                            >
+                              Load
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => deleteSession(session.id)}
+                              className="rounded-lg border border-stone-700 px-3 py-2 text-sm text-stone-200 transition hover:border-red-400 hover:text-red-300"
+                            >
+                              Delete
+                            </button>
+                          </div>
                         </div>
                       </div>
                     ))}
