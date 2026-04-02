@@ -6,6 +6,7 @@ export type RelatedVerse = {
 
 export type VersePlace = {
   name: string;
+  era: string;
   description: string;
   ancientDescription: string;
   biblicalSignificance: string;
@@ -29,6 +30,7 @@ export const verses: Verse[] = [
     places: [
       {
         name: "Jerusalem",
+        era: "Second Temple / New Testament",
         description: "Jerusalem was the religious and cultural center of Jewish life in the first century.",
         ancientDescription:
           "In ancient times, Jerusalem was home to the Temple and was central to pilgrimage, worship, and major feast observances.",
@@ -58,6 +60,7 @@ export const verses: Verse[] = [
     places: [
       {
         name: "Nazareth",
+        era: "Roman / New Testament",
         description: "Nazareth was a small village in Galilee associated with Jesus' early life.",
         ancientDescription:
           "Ancient Nazareth was a modest settlement in lower Galilee during the Roman period.",
@@ -80,6 +83,7 @@ export const verses: Verse[] = [
       },
       {
         name: "Bethlehem",
+        era: "Monarchy to Roman / Messianic Context",
         description: "Bethlehem is traditionally recognized as the birthplace of Jesus.",
         ancientDescription:
           "In ancient Judea, Bethlehem was a small town tied to the lineage of David.",
@@ -109,6 +113,7 @@ export const verses: Verse[] = [
     places: [
       {
         name: "Damascus",
+        era: "Ancient Near East to Roman",
         description: "Damascus is one of the oldest continuously inhabited cities in the world.",
         ancientDescription:
           "In the ancient world, Damascus was a major city linked to trade routes and regional power.",
@@ -138,6 +143,7 @@ export const verses: Verse[] = [
     places: [
       {
         name: "Jerusalem",
+        era: "Second Temple / New Testament",
         description: "Jerusalem was the religious and cultural center of Jewish life in the first century.",
         ancientDescription:
           "In ancient times, Jerusalem was home to the Temple and was central to pilgrimage, worship, and major feast observances.",
@@ -162,11 +168,12 @@ export const verses: Verse[] = [
     places: [
       {
         name: "Jerusalem",
-        description: "Jerusalem was the religious and cultural center of Jewish life in the first century.",
+        era: "Monarchy to Second Temple",
+        description: "Jerusalem was the religious and cultural center of Jewish life in biblical history.",
         ancientDescription:
-          "In ancient times, Jerusalem was home to the Temple and was central to pilgrimage, worship, and major feast observances.",
+          "Jerusalem stood at the heart of worship, kingship, and temple life across major periods of Israel's history.",
         biblicalSignificance:
-          "Jerusalem is one of the most important cities in the Bible. It is associated with the Temple, major feast gatherings, the ministry of Jesus, and many pivotal events in both the Old and New Testaments.",
+          "Jerusalem is central to covenant history, kingship, worship, prophecy, exile, return, and messianic expectation.",
         lat: 31.778,
         lng: 35.235,
         relatedVerses: [
@@ -186,6 +193,7 @@ export const verses: Verse[] = [
     places: [
       {
         name: "Nazareth",
+        era: "Roman / New Testament",
         description: "Nazareth was a small village in Galilee associated with Jesus' early life.",
         ancientDescription:
           "Ancient Nazareth was a modest settlement in lower Galilee during the Roman period.",
@@ -210,6 +218,7 @@ export const verses: Verse[] = [
     places: [
       {
         name: "Nazareth",
+        era: "Roman / New Testament",
         description: "Nazareth was a small village in Galilee associated with Jesus' early life.",
         ancientDescription:
           "Ancient Nazareth was a modest settlement in lower Galilee during the Roman period.",
@@ -234,11 +243,12 @@ export const verses: Verse[] = [
     places: [
       {
         name: "Bethlehem",
-        description: "Bethlehem is traditionally recognized as the birthplace of Jesus.",
+        era: "Monarchy / Prophetic",
+        description: "Bethlehem is the city of David and a place of deep prophetic significance.",
         ancientDescription:
-          "In ancient Judea, Bethlehem was a small town tied to the lineage of David.",
+          "In ancient Judah, Bethlehem was a small but symbolically important town tied to royal lineage and prophetic expectation.",
         biblicalSignificance:
-          "Bethlehem is significant as the city of David and the birthplace of Jesus, making it central to messianic expectation and gospel fulfillment.",
+          "Bethlehem is central to messianic prophecy because it is linked both to Davidic kingship and to the promised ruler to come.",
         lat: 31.7054,
         lng: 35.2024,
         relatedVerses: [
@@ -258,11 +268,12 @@ export const verses: Verse[] = [
     places: [
       {
         name: "Bethlehem",
+        era: "Roman / Birth Narrative",
         description: "Bethlehem is traditionally recognized as the birthplace of Jesus.",
         ancientDescription:
-          "In ancient Judea, Bethlehem was a small town tied to the lineage of David.",
+          "Under Roman rule, Bethlehem remained a small Judean town but carried immense symbolic weight because of its Davidic and messianic associations.",
         biblicalSignificance:
-          "Bethlehem is significant as the city of David and the birthplace of Jesus, making it central to messianic expectation and gospel fulfillment.",
+          "Bethlehem connects the Davidic promise and the birth of Jesus in a way that is foundational to the gospel narrative.",
         lat: 31.7054,
         lng: 35.2024,
         relatedVerses: [
@@ -275,11 +286,12 @@ export const verses: Verse[] = [
       },
       {
         name: "Jerusalem",
-        description: "Jerusalem was the religious and cultural center of Jewish life in the first century.",
+        era: "Second Temple / New Testament",
+        description: "Jerusalem was the religious and political center of Judea.",
         ancientDescription:
-          "In ancient times, Jerusalem was home to the Temple and was central to pilgrimage, worship, and major feast observances.",
+          "Jerusalem in this period was shaped by temple life, pilgrimage, Roman oversight, and intense messianic expectation.",
         biblicalSignificance:
-          "Jerusalem is one of the most important cities in the Bible. It is associated with the Temple, major feast gatherings, the ministry of Jesus, and many pivotal events in both the Old and New Testaments.",
+          "Jerusalem remains the focal point of worship, kingship, prophecy, and later the passion and resurrection narratives.",
         lat: 31.778,
         lng: 35.235,
         relatedVerses: [
@@ -299,11 +311,12 @@ export const verses: Verse[] = [
     places: [
       {
         name: "Damascus",
-        description: "Damascus is one of the oldest continuously inhabited cities in the world.",
+        era: "Roman / Early Church",
+        description: "Damascus remained a major urban center and became a key setting in Saul's conversion story.",
         ancientDescription:
-          "In the ancient world, Damascus was a major city linked to trade routes and regional power.",
+          "Its regional importance made it a major meeting point of peoples, trade, and imperial power.",
         biblicalSignificance:
-          "Damascus is especially important in the New Testament because of Saul's encounter with the risen Christ on the road to the city, a turning point in early Christian history.",
+          "Damascus is one of the great turning-point settings in the New Testament because it frames the conversion and commission of Saul, later Paul.",
         lat: 33.5138,
         lng: 36.2765,
         relatedVerses: [
@@ -323,11 +336,12 @@ export const verses: Verse[] = [
     places: [
       {
         name: "Damascus",
-        description: "Damascus is one of the oldest continuously inhabited cities in the world.",
+        era: "Roman / Early Church",
+        description: "Damascus was an important city in Paul's memory and ministry context.",
         ancientDescription:
-          "In the ancient world, Damascus was a major city linked to trade routes and regional power.",
+          "The city was strategically significant and politically watched, making it a fitting setting for both conflict and calling.",
         biblicalSignificance:
-          "Damascus is especially important in the New Testament because of Saul's encounter with the risen Christ on the road to the city, a turning point in early Christian history.",
+          "Damascus continues to appear as a marker of early Christian mission, opposition, and divine redirection.",
         lat: 33.5138,
         lng: 36.2765,
         relatedVerses: [

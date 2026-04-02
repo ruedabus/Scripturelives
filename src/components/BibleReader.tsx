@@ -21,6 +21,14 @@ function escapeRegExp(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
+function EraBadge({ label }: { label: string }) {
+  return (
+    <span className="inline-flex rounded-full border border-amber-700/40 bg-amber-950/40 px-2.5 py-1 text-xs text-amber-200">
+      {label}
+    </span>
+  );
+}
+
 export default function BibleReader() {
   const [selectedPlace, setSelectedPlace] = useState<VersePlace | null>(null);
   const [selectedVerse, setSelectedVerse] = useState<Verse | null>(verses[0] ?? null);
@@ -150,12 +158,15 @@ export default function BibleReader() {
                         }
                       }}
                     >
-                      <div className="mb-2 flex items-center justify-between">
+                      <div className="mb-2 flex items-center justify-between gap-3">
                         <div className="text-sm font-semibold uppercase tracking-wide text-amber-400">
                           {verse.reference}
                         </div>
-                        <div className="text-xs text-stone-400">
-                          {verse.places.length} place{verse.places.length === 1 ? "" : "s"}
+                        <div className="flex items-center gap-2">
+                          {verse.places[0] && <EraBadge label={verse.places[0].era} />}
+                          <div className="text-xs text-stone-400">
+                            {verse.places.length} place{verse.places.length === 1 ? "" : "s"}
+                          </div>
                         </div>
                       </div>
 
@@ -207,11 +218,16 @@ export default function BibleReader() {
                         isActive ? "border-amber-500 bg-stone-800" : "border-stone-800"
                       }`}
                     >
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center justify-between gap-3">
                         <h3 className="font-semibold text-amber-400">{journey.title}</h3>
                         <span className="text-xs text-stone-400">{journey.reference}</span>
                       </div>
-                      <p className="mt-2 text-sm text-stone-300">{journey.description}</p>
+
+                      <div className="mt-2">
+                        <EraBadge label={journey.era} />
+                      </div>
+
+                      <p className="mt-3 text-sm text-stone-300">{journey.description}</p>
                     </button>
                   );
                 })}
@@ -259,7 +275,12 @@ export default function BibleReader() {
                         <h3 className="font-semibold text-amber-400">{item.name}</h3>
                         <span className="text-xs text-stone-400">{item.sourceReference}</span>
                       </div>
-                      <p className="mt-2 text-sm text-stone-300">{item.place.description}</p>
+
+                      <div className="mt-2">
+                        <EraBadge label={item.place.era} />
+                      </div>
+
+                      <p className="mt-3 text-sm text-stone-300">{item.place.description}</p>
                     </button>
                   );
                 })}
@@ -301,6 +322,9 @@ export default function BibleReader() {
                   <div>
                     <h3 className="text-2xl font-bold text-amber-400">{activeJourney.title}</h3>
                     <p className="mt-2 text-sm text-stone-400">{activeJourney.reference}</p>
+                    <div className="mt-3">
+                      <EraBadge label={activeJourney.era} />
+                    </div>
                   </div>
 
                   <div>
@@ -337,6 +361,9 @@ export default function BibleReader() {
                     <p className="mt-2 text-sm text-stone-400">
                       {selectedVerse?.reference} • {selectedPlace.lat}, {selectedPlace.lng}
                     </p>
+                    <div className="mt-3">
+                      <EraBadge label={selectedPlace.era} />
+                    </div>
                   </div>
 
                   <div>

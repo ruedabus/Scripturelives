@@ -9,6 +9,7 @@ export type Journey = {
   id: string;
   title: string;
   reference: string;
+  era: string;
   description: string;
   stops: JourneyStop[];
 };
@@ -18,6 +19,7 @@ export const journeys: Journey[] = [
     id: "paul-damascus",
     title: "Paul's Road to Damascus",
     reference: "Acts 9",
+    era: "Roman / Early Church",
     description:
       "A sample journey showing Paul's approach toward Damascus at the time of his dramatic encounter.",
     stops: [
