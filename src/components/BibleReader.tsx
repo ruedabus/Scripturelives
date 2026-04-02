@@ -35,6 +35,8 @@ export default function BibleReader() {
   const [mapMode, setMapMode] = useState<"modern" | "ancient">("modern");
   const [activeJourney, setActiveJourney] = useState<Journey | null>(null);
   const [placeQuery, setPlaceQuery] = useState("");
+  const [placeEraFilter, setPlaceEraFilter] = useState("All eras");
+  const [journeyEraFilter, setJourneyEraFilter] = useState("All eras");
 
   const renderedVerses = useMemo(() => {
     return verses.map((verse) => {
@@ -90,17 +92,33 @@ export default function BibleReader() {
     return Array.from(seen.values()).sort((a, b) => a.name.localeCompare(b.name));
   }, []);
 
+  const uniquePlaceEras = useMemo(() => {
+    return ["All eras", ...Array.from(new Set(placeIndex.map((item) => item.place.era))).sort()];
+  }, [placeIndex]);
+
+  const uniqueJourneyEras = useMemo(() => {
+    return ["All eras", ...Array.from(new Set(journeys.map((journey) => journey.era))).sort()];
+  }, []);
+
   const filteredPlaceIndex = useMemo(() => {
     const normalizedQuery = placeQuery.trim().toLowerCase();
 
-    if (!normalizedQuery) {
-      return placeIndex;
+    return placeIndex.filter((item) => {
+      const matchesQuery = !normalizedQuery || item.name.toLowerCase().includes(normalizedQuery);
+      const matchesEra =
+        placeEraFilter === "All eras" || item.place.era === placeEraFilter;
+
+      return matchesQuery && matchesEra;
+    });
+  }, [placeIndex, placeQuery, placeEraFilter]);
+
+  const filteredJourneys = useMemo(() => {
+    if (journeyEraFilter === "All eras") {
+      return journeys;
     }
 
-    return placeIndex.filter((item) =>
-      item.name.toLowerCase().includes(normalizedQuery)
-    );
-  }, [placeIndex, placeQuery]);
+    return journeys.filter((journey) => journey.era === journeyEraFilter);
+  }, [journeyEraFilter]);
 
   const activeVersePlaces = selectedVerse?.places ?? [];
 
@@ -200,38 +218,58 @@ export default function BibleReader() {
             </div>
 
             <div>
-              <h2 className="mb-4 text-xl font-semibold">Journeys</h2>
+              <div className="mb-4 flex items-center justify-between gap-3">
+                <h2 className="text-xl font-semibold">Journeys</h2>
 
-              <div className="space-y-3">
-                {journeys.map((journey) => {
-                  const isActive = activeJourney?.id === journey.id;
-
-                  return (
-                    <button
-                      key={journey.id}
-                      type="button"
-                      onClick={() => {
-                        setActiveJourney(journey);
-                        setSelectedPlace(null);
-                      }}
-                      className={`w-full rounded-xl border p-4 text-left transition ${
-                        isActive ? "border-amber-500 bg-stone-800" : "border-stone-800"
-                      }`}
-                    >
-                      <div className="flex items-center justify-between gap-3">
-                        <h3 className="font-semibold text-amber-400">{journey.title}</h3>
-                        <span className="text-xs text-stone-400">{journey.reference}</span>
-                      </div>
-
-                      <div className="mt-2">
-                        <EraBadge label={journey.era} />
-                      </div>
-
-                      <p className="mt-3 text-sm text-stone-300">{journey.description}</p>
-                    </button>
-                  );
-                })}
+                <select
+                  value={journeyEraFilter}
+                  onChange={(event) => setJourneyEraFilter(event.target.value)}
+                  className="rounded-lg border border-stone-700 bg-stone-950 px-3 py-2 text-sm text-stone-100 outline-none focus:border-amber-500"
+                >
+                  {uniqueJourneyEras.map((era) => (
+                    <option key={era} value={era}>
+                      {era}
+                    </option>
+                  ))}
+                </select>
               </div>
+
+              {filteredJourneys.length === 0 ? (
+                <div className="rounded-xl border border-dashed border-stone-700 p-4 text-sm text-stone-400">
+                  No journeys found for the selected era.
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {filteredJourneys.map((journey) => {
+                    const isActive = activeJourney?.id === journey.id;
+
+                    return (
+                      <button
+                        key={journey.id}
+                        type="button"
+                        onClick={() => {
+                          setActiveJourney(journey);
+                          setSelectedPlace(null);
+                        }}
+                        className={`w-full rounded-xl border p-4 text-left transition ${
+                          isActive ? "border-amber-500 bg-stone-800" : "border-stone-800"
+                        }`}
+                      >
+                        <div className="flex items-center justify-between gap-3">
+                          <h3 className="font-semibold text-amber-400">{journey.title}</h3>
+                          <span className="text-xs text-stone-400">{journey.reference}</span>
+                        </div>
+
+                        <div className="mt-2">
+                          <EraBadge label={journey.era} />
+                        </div>
+
+                        <p className="mt-3 text-sm text-stone-300">{journey.description}</p>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </section>
 
@@ -243,7 +281,7 @@ export default function BibleReader() {
               </span>
             </div>
 
-            <div className="mb-4">
+            <div className="mb-4 space-y-3">
               <input
                 type="text"
                 value={placeQuery}
@@ -251,11 +289,23 @@ export default function BibleReader() {
                 placeholder="Search places in the index..."
                 className="w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-2 text-sm text-stone-100 outline-none placeholder:text-stone-500 focus:border-amber-500"
               />
+
+              <select
+                value={placeEraFilter}
+                onChange={(event) => setPlaceEraFilter(event.target.value)}
+                className="w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-2 text-sm text-stone-100 outline-none focus:border-amber-500"
+              >
+                {uniquePlaceEras.map((era) => (
+                  <option key={era} value={era}>
+                    {era}
+                  </option>
+                ))}
+              </select>
             </div>
 
             {filteredPlaceIndex.length === 0 ? (
               <div className="rounded-xl border border-dashed border-stone-700 p-4 text-sm text-stone-400">
-                No places found for "{placeQuery}".
+                No places found for the current filters.
               </div>
             ) : (
               <div className="space-y-3">
