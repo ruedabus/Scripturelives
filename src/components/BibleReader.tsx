@@ -56,6 +56,7 @@ export default function BibleReader() {
     return initialPassageId ? { [initialPassageId]: true } : {};
   });
   const [mapScope, setMapScope] = useState<MapScope>("verse");
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
 
   const verseRefs = useRef<Record<string, HTMLArticleElement | null>>({});
 
@@ -68,6 +69,10 @@ export default function BibleReader() {
     } else {
       setDraftNote("");
     }
+  }, [selectedPlace?.name]);
+
+  useEffect(() => {
+    setActiveImageIndex(0);
   }, [selectedPlace?.name]);
 
   useEffect(() => {
@@ -223,6 +228,8 @@ export default function BibleReader() {
 
   const versePlaces = selectedVerse?.places ?? [];
   const mapPlaces = mapScope === "passage" ? currentPassagePlaces : versePlaces;
+  const selectedPlaceImages = selectedPlace?.images ?? [];
+  const selectedImage = selectedPlaceImages[activeImageIndex] ?? null;
 
   const handleSelectVerse = (verseId: string) => {
     const verse = verses.find((v) => v.id === verseId);
@@ -267,7 +274,7 @@ export default function BibleReader() {
         <div className="print:hidden">
           <h1 className="text-3xl font-bold">Scripture Alive</h1>
           <p className="mt-2 text-stone-300">
-            Explore scripture through passages, places, maps, journeys, linked verse discovery, bookmarks, notes, and printable study sheets.
+            Explore scripture through passages, places, maps, journeys, linked verse discovery, bookmarks, notes, printable study sheets, and image galleries.
           </p>
         </div>
 
@@ -403,10 +410,280 @@ export default function BibleReader() {
               </div>
             )}
 
-            {leftPanelTab === "journeys" && <div className="print:hidden">{/* unchanged */}</div>}
-            {leftPanelTab === "places" && <div className="print:hidden">{/* unchanged */}</div>}
-            {leftPanelTab === "bookmarks" && <div className="print:hidden">{/* unchanged */}</div>}
-            {leftPanelTab === "study_sheet" && <div className="text-stone-100 print:text-black">{/* unchanged */}</div>}
+            {leftPanelTab === "journeys" && (
+              <div className="print:hidden">
+                <div className="mb-4 flex items-center justify-between gap-3">
+                  <h2 className="text-xl font-semibold">Journeys</h2>
+                  <select
+                    value={journeyEraFilter}
+                    onChange={(event) => setJourneyEraFilter(event.target.value)}
+                    className="rounded-lg border border-stone-700 bg-stone-950 px-3 py-2 text-sm text-stone-100 outline-none focus:border-amber-500"
+                  >
+                    {uniqueJourneyEras.map((era) => (
+                      <option key={era} value={era}>
+                        {era}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {filteredJourneys.length === 0 ? (
+                  <div className="rounded-xl border border-dashed border-stone-700 p-4 text-sm text-stone-400">
+                    No journeys found for the selected era.
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {filteredJourneys.map((journey) => {
+                      const isActive = activeJourney?.id === journey.id;
+
+                      return (
+                        <button
+                          key={journey.id}
+                          type="button"
+                          onClick={() => {
+                            setActiveJourney(journey);
+                            setSelectedPlace(null);
+                          }}
+                          className={`w-full rounded-xl border p-4 text-left transition ${
+                            isActive ? "border-amber-500 bg-stone-800" : "border-stone-800"
+                          }`}
+                        >
+                          <div className="flex items-center justify-between gap-3">
+                            <h3 className="font-semibold text-amber-400">{journey.title}</h3>
+                            <span className="text-xs text-stone-400">{journey.reference}</span>
+                          </div>
+                          <div className="mt-2">
+                            <EraBadge label={journey.era} />
+                          </div>
+                          <p className="mt-3 text-sm text-stone-300">{journey.description}</p>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {leftPanelTab === "places" && (
+              <div className="print:hidden">
+                <div className="mb-4 flex items-center justify-between">
+                  <h2 className="text-xl font-semibold">Place Index</h2>
+                  <span className="text-sm text-stone-400">
+                    {filteredPlaceIndex.length} of {placeIndex.length} places
+                  </span>
+                </div>
+
+                <div className="mb-4 space-y-3">
+                  <input
+                    type="text"
+                    value={placeQuery}
+                    onChange={(event) => setPlaceQuery(event.target.value)}
+                    placeholder="Search places in the index..."
+                    className="w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-2 text-sm text-stone-100 outline-none placeholder:text-stone-500 focus:border-amber-500"
+                  />
+
+                  <select
+                    value={placeEraFilter}
+                    onChange={(event) => setPlaceEraFilter(event.target.value)}
+                    className="w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-2 text-sm text-stone-100 outline-none focus:border-amber-500"
+                  >
+                    {uniquePlaceEras.map((era) => (
+                      <option key={era} value={era}>
+                        {era}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {filteredPlaceIndex.length === 0 ? (
+                  <div className="rounded-xl border border-dashed border-stone-700 p-4 text-sm text-stone-400">
+                    No places found for the current filters.
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {filteredPlaceIndex.map((item) => {
+                      const isActive = selectedPlace?.name === item.name && !activeJourney;
+
+                      return (
+                        <button
+                          key={item.name}
+                          type="button"
+                          onClick={() => handleSelectPlaceFromIndex(item)}
+                          className={`w-full rounded-xl border p-4 text-left transition ${
+                            isActive ? "border-amber-500 bg-stone-800" : "border-stone-800"
+                          }`}
+                        >
+                          <div className="flex items-center justify-between gap-3">
+                            <h3 className="font-semibold text-amber-400">{item.name}</h3>
+                            <span className="text-xs text-stone-400">{item.sourceReference}</span>
+                          </div>
+                          <div className="mt-2 flex items-center justify-between gap-3">
+                            <EraBadge label={item.place.era} />
+                            <span className="text-xs text-stone-400">
+                              {isBookmarked(item.name) ? "Saved" : "Not saved"}
+                            </span>
+                          </div>
+                          <p className="mt-3 text-sm text-stone-300">{item.place.description}</p>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {leftPanelTab === "bookmarks" && (
+              <div className="print:hidden">
+                <div className="mb-4 flex items-center justify-between gap-3">
+                  <div>
+                    <h2 className="text-xl font-semibold">Bookmarks</h2>
+                    <span className="text-sm text-stone-400">{bookmarkedPlaces.length} saved</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => exportStudySummary(exportableBookmarkedPlaces)}
+                    className="rounded-lg border border-amber-500 bg-amber-500 px-3 py-2 text-sm font-medium text-stone-950 transition hover:opacity-90"
+                  >
+                    Export Notes
+                  </button>
+                </div>
+
+                {bookmarkedPlaces.length === 0 ? (
+                  <div className="rounded-xl border border-dashed border-stone-700 p-4 text-sm text-stone-400">
+                    No saved places yet. Open a place in the explorer and save it.
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {bookmarkedPlaces.map((item) => (
+                      <div key={item.name} className="rounded-xl border border-stone-800 p-4">
+                        <button
+                          type="button"
+                          onClick={() => handleSelectPlaceFromIndex(item)}
+                          className="w-full text-left"
+                        >
+                          <div className="flex items-center justify-between gap-3">
+                            <h3 className="font-semibold text-amber-400">{item.name}</h3>
+                            <span className="text-xs text-stone-400">{item.sourceReference}</span>
+                          </div>
+                          <div className="mt-2">
+                            <EraBadge label={item.place.era} />
+                          </div>
+                          <p className="mt-3 text-sm text-stone-300">{item.place.description}</p>
+                          <div className="mt-3 rounded-lg border border-stone-800 bg-stone-950 p-3">
+                            <div className="text-xs font-semibold uppercase tracking-wide text-stone-400">
+                              Saved Note
+                            </div>
+                            <div className="mt-1 text-sm text-stone-300">
+                              {notes[item.name] ? notes[item.name] : "No note saved yet."}
+                            </div>
+                          </div>
+                        </button>
+                        <div className="mt-4">
+                          <button
+                            type="button"
+                            onClick={() => removeBookmark(item.name)}
+                            className="rounded-lg border border-stone-700 px-3 py-2 text-sm text-stone-200 transition hover:border-red-400 hover:text-red-300"
+                          >
+                            Remove bookmark
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {leftPanelTab === "study_sheet" && (
+              <div className="text-stone-100 print:text-black">
+                <div className="mb-6 flex items-start justify-between gap-4 print:hidden">
+                  <div>
+                    <h2 className="text-2xl font-semibold">Study Sheet</h2>
+                    <p className="mt-1 text-sm text-stone-400">
+                      Print this page or save it as a PDF from your browser.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => window.print()}
+                    className="rounded-lg border border-amber-500 bg-amber-500 px-4 py-2 text-sm font-medium text-stone-950 transition hover:opacity-90"
+                  >
+                    Print / Save PDF
+                  </button>
+                </div>
+
+                <div className="hidden print:block print:mb-8">
+                  <h1 className="text-3xl font-bold">Scripture Alive Study Sheet</h1>
+                  <p className="mt-2 text-sm">Generated {new Date().toLocaleString()}</p>
+                </div>
+
+                {bookmarkedPlaces.length === 0 ? (
+                  <div className="rounded-xl border border-dashed border-stone-700 p-6 text-sm text-stone-400 print:border-gray-300 print:text-black">
+                    No bookmarked places yet. Save a few places first, then return here to print a study sheet.
+                  </div>
+                ) : (
+                  <div className="space-y-6">
+                    {bookmarkedPlaces.map((item, index) => (
+                      <article
+                        key={item.name}
+                        className="rounded-2xl border border-stone-800 bg-stone-950 p-6 print:break-inside-avoid print:border-gray-300 print:bg-white"
+                      >
+                        <div className="flex items-start justify-between gap-4">
+                          <div>
+                            <div className="text-sm font-semibold uppercase tracking-wide text-amber-400 print:text-black">
+                              Place {index + 1}
+                            </div>
+                            <h3 className="mt-1 text-2xl font-bold text-amber-300 print:text-black">
+                              {item.name}
+                            </h3>
+                            <p className="mt-2 text-sm text-stone-400 print:text-black">
+                              Source Verse: {item.sourceReference}
+                            </p>
+                          </div>
+
+                          <div className="print:hidden">
+                            <EraBadge label={item.place.era} />
+                          </div>
+                          <div className="hidden print:block text-sm">Era: {item.place.era}</div>
+                        </div>
+
+                        <div className="mt-5 space-y-4">
+                          <div>
+                            <h4 className="text-sm font-semibold uppercase tracking-wide text-stone-400 print:text-black">
+                              Summary
+                            </h4>
+                            <p className="mt-1 text-stone-200 print:text-black">{item.place.description}</p>
+                          </div>
+
+                          <div>
+                            <h4 className="text-sm font-semibold uppercase tracking-wide text-stone-400 print:text-black">
+                              Ancient Context
+                            </h4>
+                            <p className="mt-1 text-stone-200 print:text-black">{item.place.ancientDescription}</p>
+                          </div>
+
+                          <div>
+                            <h4 className="text-sm font-semibold uppercase tracking-wide text-stone-400 print:text-black">
+                              Biblical Significance
+                            </h4>
+                            <p className="mt-1 text-stone-200 print:text-black">{item.place.biblicalSignificance}</p>
+                          </div>
+
+                          <div>
+                            <h4 className="text-sm font-semibold uppercase tracking-wide text-stone-400 print:text-black">
+                              Study Note
+                            </h4>
+                            <div className="mt-1 rounded-xl border border-stone-800 bg-stone-900 p-4 text-stone-200 print:border-gray-300 print:bg-white print:text-black">
+                              {notes[item.name] ? notes[item.name] : "No note saved yet."}
+                            </div>
+                          </div>
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
           </section>
 
           <aside className="space-y-6 print:hidden">
@@ -501,16 +778,47 @@ export default function BibleReader() {
                     </button>
                   </div>
 
-                  {selectedPlace.imageUrl && (
+                  {selectedImage && (
                     <div className="overflow-hidden rounded-2xl border border-stone-800 bg-stone-950">
                       <img
-                        src={selectedPlace.imageUrl}
+                        src={selectedImage.url}
                         alt={selectedPlace.name}
                         className="h-56 w-full object-cover"
                       />
-                      {selectedPlace.imageCaption && (
-                        <div className="border-t border-stone-800 px-4 py-3 text-sm text-stone-300">
-                          {selectedPlace.imageCaption}
+
+                      <div className="border-t border-stone-800 px-4 py-3 text-sm text-stone-300">
+                        {selectedImage.caption}
+                      </div>
+
+                      {selectedPlaceImages.length > 1 && (
+                        <div className="flex items-center justify-between border-t border-stone-800 px-4 py-3">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setActiveImageIndex((current) =>
+                                current === 0 ? selectedPlaceImages.length - 1 : current - 1
+                              )
+                            }
+                            className="rounded-lg border border-stone-700 px-3 py-2 text-sm text-stone-200 transition hover:border-amber-500"
+                          >
+                            Previous
+                          </button>
+
+                          <div className="text-sm text-stone-400">
+                            {activeImageIndex + 1} of {selectedPlaceImages.length}
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setActiveImageIndex((current) =>
+                                current === selectedPlaceImages.length - 1 ? 0 : current + 1
+                              )
+                            }
+                            className="rounded-lg border border-stone-700 px-3 py-2 text-sm text-stone-200 transition hover:border-amber-500"
+                          >
+                            Next
+                          </button>
                         </div>
                       )}
                     </div>
