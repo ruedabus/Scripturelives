@@ -10,6 +10,13 @@ const PlaceMap = dynamic(() => import("@/components/PlaceMap"), {
   ssr: false,
 });
 
+type IndexedPlace = {
+  name: string;
+  place: VersePlace;
+  sourceVerseId: string;
+  sourceReference: string;
+};
+
 function escapeRegExp(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
@@ -55,6 +62,25 @@ export default function BibleReader() {
     });
   }, []);
 
+  const placeIndex = useMemo<IndexedPlace[]>(() => {
+    const seen = new Map<string, IndexedPlace>();
+
+    for (const verse of verses) {
+      for (const place of verse.places) {
+        if (!seen.has(place.name)) {
+          seen.set(place.name, {
+            name: place.name,
+            place,
+            sourceVerseId: verse.id,
+            sourceReference: verse.reference,
+          });
+        }
+      }
+    }
+
+    return Array.from(seen.values()).sort((a, b) => a.name.localeCompare(b.name));
+  }, []);
+
   const activeVersePlaces = selectedVerse?.places ?? [];
 
   const handleSelectVerse = (verseId: string) => {
@@ -66,15 +92,27 @@ export default function BibleReader() {
     setSelectedPlace(verse.places[0] ?? null);
   };
 
+  const handleSelectPlaceFromIndex = (item: IndexedPlace) => {
+    const verse = verses.find((v) => v.id === item.sourceVerseId);
+    if (!verse) return;
+
+    const matchingPlace =
+      verse.places.find((place) => place.name === item.name) ?? verse.places[0] ?? null;
+
+    setActiveJourney(null);
+    setSelectedVerse(verse);
+    setSelectedPlace(matchingPlace);
+  };
+
   return (
     <main className="min-h-screen bg-stone-950 text-stone-100">
-      <div className="mx-auto max-w-6xl px-6 py-10">
+      <div className="mx-auto max-w-7xl px-6 py-10">
         <h1 className="text-3xl font-bold">Scripture Alive</h1>
         <p className="mt-2 text-stone-300">
-          Explore scripture through places, maps, and journeys.
+          Explore scripture through places, maps, journeys, and linked verse discovery.
         </p>
 
-        <div className="mt-8 grid gap-6 lg:grid-cols-[2fr_1fr]">
+        <div className="mt-8 grid gap-6 xl:grid-cols-[1.6fr_1fr_1fr]">
           <section className="space-y-6 rounded-2xl border border-stone-800 bg-stone-900 p-6 shadow-lg">
             <div>
               <SearchBar onSelectVerse={handleSelectVerse} />
@@ -168,6 +206,36 @@ export default function BibleReader() {
             </div>
           </section>
 
+          <section className="rounded-2xl border border-stone-800 bg-stone-900 p-6 shadow-lg">
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-xl font-semibold">Place Index</h2>
+              <span className="text-sm text-stone-400">{placeIndex.length} places</span>
+            </div>
+
+            <div className="space-y-3">
+              {placeIndex.map((item) => {
+                const isActive = selectedPlace?.name === item.name && !activeJourney;
+
+                return (
+                  <button
+                    key={item.name}
+                    type="button"
+                    onClick={() => handleSelectPlaceFromIndex(item)}
+                    className={`w-full rounded-xl border p-4 text-left transition ${
+                      isActive ? "border-amber-500 bg-stone-800" : "border-stone-800"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <h3 className="font-semibold text-amber-400">{item.name}</h3>
+                      <span className="text-xs text-stone-400">{item.sourceReference}</span>
+                    </div>
+                    <p className="mt-2 text-sm text-stone-300">{item.place.description}</p>
+                  </button>
+                );
+              })}
+            </div>
+          </section>
+
           <aside className="space-y-6">
             <section className="rounded-2xl border border-stone-800 bg-stone-900 p-6 shadow-lg">
               <div className="mb-4 flex items-center justify-between gap-3">
@@ -229,7 +297,7 @@ export default function BibleReader() {
                 </div>
               ) : !selectedPlace ? (
                 <p className="text-stone-300">
-                  Select a highlighted place or a journey to explore the map.
+                  Select a highlighted place, search result, place index entry, or journey.
                 </p>
               ) : (
                 <div className="space-y-4">
