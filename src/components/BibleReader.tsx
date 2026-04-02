@@ -8,7 +8,9 @@ import SearchBar from "@/components/SearchBar";
 import useBookmarks from "@/components/useBookmarks";
 import usePlaceNotes from "@/components/usePlaceNotes";
 import exportStudySummary from "@/components/exportStudySummary";
-import getPlaceStudyPrompts from "@/components/getPlaceStudyPrompts";
+import getPlaceStudyPrompts, {
+  StudyPrompt,
+} from "@/components/getPlaceStudyPrompts";
 
 const PlaceMap = dynamic(() => import("@/components/PlaceMap"), {
   ssr: false,
@@ -58,7 +60,11 @@ export default function BibleReader() {
   });
   const [mapScope, setMapScope] = useState<MapScope>("verse");
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+
+  const [aiPrompts, setAiPrompts] = useState<StudyPrompt[]>([]);
   const [activePromptIndex, setActivePromptIndex] = useState(0);
+  const [isLoadingPrompts, setIsLoadingPrompts] = useState(false);
+  const [promptError, setPromptError] = useState("");
 
   const verseRefs = useRef<Record<string, HTMLArticleElement | null>>({});
 
@@ -71,7 +77,7 @@ export default function BibleReader() {
     } else {
       setDraftNote("");
     }
-  }, [selectedPlace?.name, getNote]);
+  }, [selectedPlace?.name]);
 
   useEffect(() => {
     setActiveImageIndex(0);
@@ -234,12 +240,74 @@ export default function BibleReader() {
   const selectedPlaceImages = selectedPlace?.images ?? [];
   const selectedImage = selectedPlaceImages[activeImageIndex] ?? null;
 
-  const studyPrompts = useMemo(() => {
+  const fallbackPrompts = useMemo(() => {
     if (!selectedPlace) return [];
     return getPlaceStudyPrompts(selectedPlace, selectedVerse?.reference);
   }, [selectedPlace, selectedVerse?.reference]);
 
-  const activePrompt = studyPrompts[activePromptIndex] ?? null;
+  const effectivePrompts = aiPrompts.length > 0 ? aiPrompts : fallbackPrompts;
+  const activePrompt = effectivePrompts[activePromptIndex] ?? null;
+
+  useEffect(() => {
+    let isCancelled = false;
+
+    async function loadPrompts() {
+      if (!selectedPlace || !selectedVerse) {
+        setAiPrompts([]);
+        setPromptError("");
+        return;
+      }
+
+      setIsLoadingPrompts(true);
+      setPromptError("");
+      setAiPrompts([]);
+
+      try {
+        const response = await fetch("/api/study-prompts", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            placeName: selectedPlace.name,
+            era: selectedPlace.era,
+            description: selectedPlace.description,
+            ancientDescription: selectedPlace.ancientDescription,
+            biblicalSignificance: selectedPlace.biblicalSignificance,
+            verseReference: selectedVerse.reference,
+            verseText: selectedVerse.text,
+          }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data?.error || "Failed to generate prompts.");
+        }
+
+        if (!isCancelled) {
+          setAiPrompts(Array.isArray(data.prompts) ? data.prompts : []);
+        }
+      } catch (error) {
+        if (!isCancelled) {
+          const message =
+            error instanceof Error ? error.message : "Prompt generation failed.";
+          setPromptError(message);
+          setAiPrompts([]);
+        }
+      } finally {
+        if (!isCancelled) {
+          setIsLoadingPrompts(false);
+        }
+      }
+    }
+
+    loadPrompts();
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [selectedPlace?.name, selectedVerse?.id]);
 
   const handleSelectVerse = (verseId: string) => {
     const verse = verses.find((v) => v.id === verseId);
@@ -284,7 +352,7 @@ export default function BibleReader() {
         <div className="print:hidden">
           <h1 className="text-3xl font-bold">Scripture Alive</h1>
           <p className="mt-2 text-stone-300">
-            Explore scripture through passages, places, maps, journeys, linked verse discovery, bookmarks, notes, printable study sheets, image galleries, and guided study prompts.
+            Explore scripture through passages, places, maps, journeys, linked verse discovery, bookmarks, notes, printable study sheets, image galleries, and AI-guided study prompts.
           </p>
         </div>
 
@@ -834,38 +902,50 @@ export default function BibleReader() {
                     </div>
                   )}
 
-                  {activePrompt && (
-                    <div className="rounded-2xl border border-sky-800/40 bg-sky-950/20 p-4">
-                      <div className="mb-3 flex items-center justify-between gap-3">
-                        <div>
-                          <h4 className="text-sm font-semibold uppercase tracking-wide text-sky-300">
-                            Study Prompt
-                          </h4>
-                          <div className="mt-1 text-base font-semibold text-sky-100">
-                            {activePrompt.title}
-                          </div>
+                  <div className="rounded-2xl border border-sky-800/40 bg-sky-950/20 p-4">
+                    <div className="mb-3 flex items-center justify-between gap-3">
+                      <div>
+                        <h4 className="text-sm font-semibold uppercase tracking-wide text-sky-300">
+                          AI Study Prompt
+                        </h4>
+                        <div className="mt-1 text-base font-semibold text-sky-100">
+                          {isLoadingPrompts
+                            ? "Generating..."
+                            : activePrompt?.title ?? "Study Prompt"}
                         </div>
-
-                        {studyPrompts.length > 1 && (
-                          <button
-                            type="button"
-                            onClick={() =>
-                              setActivePromptIndex((current) =>
-                                current === studyPrompts.length - 1 ? 0 : current + 1
-                              )
-                            }
-                            className="rounded-lg border border-sky-700/50 px-3 py-2 text-sm text-sky-100 transition hover:border-sky-400"
-                          >
-                            Next Prompt
-                          </button>
-                        )}
                       </div>
 
-                      <p className="text-sm leading-7 text-sky-50">
-                        {activePrompt.prompt}
-                      </p>
+                      {effectivePrompts.length > 1 && !isLoadingPrompts && (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setActivePromptIndex((current) =>
+                              current === effectivePrompts.length - 1 ? 0 : current + 1
+                            )
+                          }
+                          className="rounded-lg border border-sky-700/50 px-3 py-2 text-sm text-sky-100 transition hover:border-sky-400"
+                        >
+                          Next Prompt
+                        </button>
+                      )}
                     </div>
-                  )}
+
+                    {isLoadingPrompts ? (
+                      <p className="text-sm leading-7 text-sky-50">
+                        Generating a fresh study prompt for {selectedPlace.name}...
+                      </p>
+                    ) : (
+                      <p className="text-sm leading-7 text-sky-50">
+                        {activePrompt?.prompt ?? "No prompt available."}
+                      </p>
+                    )}
+
+                    {promptError && (
+                      <div className="mt-3 rounded-lg border border-amber-700/40 bg-amber-950/30 px-3 py-2 text-xs text-amber-200">
+                        AI prompt generation fell back to local prompts. {promptError}
+                      </div>
+                    )}
+                  </div>
 
                   {mapScope === "passage" && currentPassagePlaces.length > 1 && (
                     <div className="rounded-xl border border-amber-700/30 bg-amber-950/20 p-3 text-sm text-amber-100">
