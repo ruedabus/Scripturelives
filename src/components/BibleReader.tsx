@@ -20,7 +20,7 @@ type IndexedPlace = {
   sourceReference: string;
 };
 
-type LeftPanelTab = "reader" | "journeys" | "places" | "bookmarks";
+type LeftPanelTab = "reader" | "journeys" | "places" | "bookmarks" | "study_sheet";
 
 function escapeRegExp(value: string) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -183,16 +183,18 @@ export default function BibleReader() {
     }`;
 
   return (
-    <main className="min-h-screen bg-stone-950 text-stone-100">
-      <div className="mx-auto max-w-7xl px-6 py-10">
-        <h1 className="text-3xl font-bold">Scripture Alive</h1>
-        <p className="mt-2 text-stone-300">
-          Explore scripture through places, maps, journeys, linked verse discovery, bookmarks, and notes.
-        </p>
+    <main className="min-h-screen bg-stone-950 text-stone-100 print:bg-white print:text-black">
+      <div className="mx-auto max-w-7xl px-6 py-10 print:max-w-none print:px-0 print:py-0">
+        <div className="print:hidden">
+          <h1 className="text-3xl font-bold">Scripture Alive</h1>
+          <p className="mt-2 text-stone-300">
+            Explore scripture through places, maps, journeys, linked verse discovery, bookmarks, notes, and printable study sheets.
+          </p>
+        </div>
 
-        <div className="mt-8 grid gap-6 xl:grid-cols-[1.5fr_1fr]">
-          <section className="rounded-2xl border border-stone-800 bg-stone-900 p-6 shadow-lg">
-            <div className="mb-6 flex flex-wrap gap-2 rounded-xl border border-stone-800 bg-stone-950 p-2">
+        <div className="mt-8 grid gap-6 xl:grid-cols-[1.5fr_1fr] print:mt-0 print:block">
+          <section className="rounded-2xl border border-stone-800 bg-stone-900 p-6 shadow-lg print:border-none print:bg-white print:p-0 print:shadow-none">
+            <div className="mb-6 flex flex-wrap gap-2 rounded-xl border border-stone-800 bg-stone-950 p-2 print:hidden">
               <button
                 type="button"
                 onClick={() => setLeftPanelTab("reader")}
@@ -221,10 +223,17 @@ export default function BibleReader() {
               >
                 Bookmarks
               </button>
+              <button
+                type="button"
+                onClick={() => setLeftPanelTab("study_sheet")}
+                className={tabButtonClass("study_sheet")}
+              >
+                Study Sheet
+              </button>
             </div>
 
             {leftPanelTab === "reader" && (
-              <div>
+              <div className="print:hidden">
                 <SearchBar onSelectVerse={handleSelectVerse} />
 
                 <h2 className="mb-4 mt-6 text-xl font-semibold">Reader</h2>
@@ -290,7 +299,7 @@ export default function BibleReader() {
             )}
 
             {leftPanelTab === "journeys" && (
-              <div>
+              <div className="print:hidden">
                 <div className="mb-4 flex items-center justify-between gap-3">
                   <h2 className="text-xl font-semibold">Journeys</h2>
 
@@ -347,7 +356,7 @@ export default function BibleReader() {
             )}
 
             {leftPanelTab === "places" && (
-              <div>
+              <div className="print:hidden">
                 <div className="mb-4 flex items-center justify-between">
                   <h2 className="text-xl font-semibold">Place Index</h2>
                   <span className="text-sm text-stone-400">
@@ -417,7 +426,7 @@ export default function BibleReader() {
             )}
 
             {leftPanelTab === "bookmarks" && (
-              <div>
+              <div className="print:hidden">
                 <div className="mb-4 flex items-center justify-between gap-3">
                   <div>
                     <h2 className="text-xl font-semibold">Bookmarks</h2>
@@ -485,9 +494,111 @@ export default function BibleReader() {
                 )}
               </div>
             )}
+
+            {leftPanelTab === "study_sheet" && (
+              <div className="text-stone-100 print:text-black">
+                <div className="mb-6 flex items-start justify-between gap-4 print:hidden">
+                  <div>
+                    <h2 className="text-2xl font-semibold">Study Sheet</h2>
+                    <p className="mt-1 text-sm text-stone-400">
+                      Print this page or save it as a PDF from your browser.
+                    </p>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => window.print()}
+                    className="rounded-lg border border-amber-500 bg-amber-500 px-4 py-2 text-sm font-medium text-stone-950 transition hover:opacity-90"
+                  >
+                    Print / Save PDF
+                  </button>
+                </div>
+
+                <div className="hidden print:block print:mb-8">
+                  <h1 className="text-3xl font-bold">Scripture Alive Study Sheet</h1>
+                  <p className="mt-2 text-sm">
+                    Generated {new Date().toLocaleString()}
+                  </p>
+                </div>
+
+                {bookmarkedPlaces.length === 0 ? (
+                  <div className="rounded-xl border border-dashed border-stone-700 p-6 text-sm text-stone-400 print:border-gray-300 print:text-black">
+                    No bookmarked places yet. Save a few places first, then return here to print a study sheet.
+                  </div>
+                ) : (
+                  <div className="space-y-6">
+                    {bookmarkedPlaces.map((item, index) => (
+                      <article
+                        key={item.name}
+                        className="rounded-2xl border border-stone-800 bg-stone-950 p-6 print:break-inside-avoid print:border-gray-300 print:bg-white"
+                      >
+                        <div className="flex items-start justify-between gap-4">
+                          <div>
+                            <div className="text-sm font-semibold uppercase tracking-wide text-amber-400 print:text-black">
+                              Place {index + 1}
+                            </div>
+                            <h3 className="mt-1 text-2xl font-bold text-amber-300 print:text-black">
+                              {item.name}
+                            </h3>
+                            <p className="mt-2 text-sm text-stone-400 print:text-black">
+                              Source Verse: {item.sourceReference}
+                            </p>
+                          </div>
+
+                          <div className="print:hidden">
+                            <EraBadge label={item.place.era} />
+                          </div>
+                          <div className="hidden print:block text-sm">
+                            Era: {item.place.era}
+                          </div>
+                        </div>
+
+                        <div className="mt-5 space-y-4">
+                          <div>
+                            <h4 className="text-sm font-semibold uppercase tracking-wide text-stone-400 print:text-black">
+                              Summary
+                            </h4>
+                            <p className="mt-1 text-stone-200 print:text-black">
+                              {item.place.description}
+                            </p>
+                          </div>
+
+                          <div>
+                            <h4 className="text-sm font-semibold uppercase tracking-wide text-stone-400 print:text-black">
+                              Ancient Context
+                            </h4>
+                            <p className="mt-1 text-stone-200 print:text-black">
+                              {item.place.ancientDescription}
+                            </p>
+                          </div>
+
+                          <div>
+                            <h4 className="text-sm font-semibold uppercase tracking-wide text-stone-400 print:text-black">
+                              Biblical Significance
+                            </h4>
+                            <p className="mt-1 text-stone-200 print:text-black">
+                              {item.place.biblicalSignificance}
+                            </p>
+                          </div>
+
+                          <div>
+                            <h4 className="text-sm font-semibold uppercase tracking-wide text-stone-400 print:text-black">
+                              Study Note
+                            </h4>
+                            <div className="mt-1 rounded-xl border border-stone-800 bg-stone-900 p-4 text-stone-200 print:border-gray-300 print:bg-white print:text-black">
+                              {notes[item.name] ? notes[item.name] : "No note saved yet."}
+                            </div>
+                          </div>
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
           </section>
 
-          <aside className="space-y-6">
+          <aside className="space-y-6 print:hidden">
             <section className="rounded-2xl border border-stone-800 bg-stone-900 p-6 shadow-lg">
               <div className="mb-4 flex items-center justify-between gap-3">
                 <h2 className="text-xl font-semibold">
