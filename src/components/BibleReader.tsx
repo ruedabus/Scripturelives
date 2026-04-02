@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { verses, Verse, VersePlace } from "@/data/verses";
 import { journeys, Journey } from "@/data/journeys";
 import dynamic from "next/dynamic";
@@ -45,6 +45,8 @@ export default function BibleReader() {
   const [leftPanelTab, setLeftPanelTab] = useState<LeftPanelTab>("reader");
   const [draftNote, setDraftNote] = useState("");
 
+  const verseRefs = useRef<Record<string, HTMLArticleElement | null>>({});
+
   const { bookmarks, toggleBookmark, removeBookmark, isBookmarked } = useBookmarks();
   const { notes, getNote, saveNote, removeNote } = usePlaceNotes();
 
@@ -55,6 +57,18 @@ export default function BibleReader() {
       setDraftNote("");
     }
   }, [selectedPlace?.name]);
+
+  useEffect(() => {
+    if (!selectedVerse || leftPanelTab !== "reader") return;
+
+    const target = verseRefs.current[selectedVerse.id];
+    if (!target) return;
+
+    target.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+    });
+  }, [selectedVerse?.id, leftPanelTab]);
 
   const renderedVerses = useMemo(() => {
     return verses.map((verse) => {
@@ -173,6 +187,7 @@ export default function BibleReader() {
     setActiveJourney(null);
     setSelectedVerse(verse);
     setSelectedPlace(matchingPlace);
+    setLeftPanelTab("reader");
   };
 
   const tabButtonClass = (tab: LeftPanelTab) =>
@@ -233,7 +248,7 @@ export default function BibleReader() {
             </div>
 
             {leftPanelTab === "reader" && (
-              <div className="print:hidden">
+              <div>
                 <SearchBar onSelectVerse={handleSelectVerse} />
 
                 <h2 className="mb-4 mt-6 text-xl font-semibold">Reader</h2>
@@ -245,8 +260,13 @@ export default function BibleReader() {
                     return (
                       <article
                         key={verse.id}
+                        ref={(el) => {
+                          verseRefs.current[verse.id] = el;
+                        }}
                         className={`rounded-xl border p-4 transition ${
-                          verseIsSelected ? "border-amber-500 bg-stone-800" : "border-stone-800"
+                          verseIsSelected
+                            ? "border-amber-500 bg-stone-800 shadow-[0_0_0_1px_rgba(245,158,11,0.25)]"
+                            : "border-stone-800"
                         }`}
                         onClick={() => {
                           setActiveJourney(null);
@@ -274,6 +294,9 @@ export default function BibleReader() {
                               return <span key={`${verse.id}-text-${index}`}>{part}</span>;
                             }
 
+                            const isSelectedPlace =
+                              verseIsSelected && selectedPlace?.name === part.name;
+
                             return (
                               <button
                                 key={`${verse.id}-place-${part.name}-${index}`}
@@ -284,7 +307,11 @@ export default function BibleReader() {
                                   setSelectedVerse(verse);
                                   setSelectedPlace(part);
                                 }}
-                                className="rounded px-1 font-semibold text-sky-300 underline decoration-sky-500 underline-offset-4 hover:text-sky-200"
+                                className={`rounded px-1 font-semibold underline underline-offset-4 transition ${
+                                  isSelectedPlace
+                                    ? "bg-amber-500 text-stone-950 decoration-amber-300"
+                                    : "text-sky-300 decoration-sky-500 hover:text-sky-200"
+                                }`}
                               >
                                 {part.name}
                               </button>
