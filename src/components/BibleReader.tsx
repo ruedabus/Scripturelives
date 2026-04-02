@@ -27,6 +27,7 @@ type PassageGroup = {
 };
 
 type LeftPanelTab = "reader" | "journeys" | "places" | "bookmarks" | "study_sheet";
+type MapScope = "verse" | "passage";
 
 function escapeRegExp(value: string) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -54,6 +55,7 @@ export default function BibleReader() {
     const initialPassageId = verses[0]?.passageId;
     return initialPassageId ? { [initialPassageId]: true } : {};
   });
+  const [mapScope, setMapScope] = useState<MapScope>("verse");
 
   const verseRefs = useRef<Record<string, HTMLArticleElement | null>>({});
 
@@ -142,6 +144,23 @@ export default function BibleReader() {
     return Array.from(groups.values());
   }, [renderedVerses]);
 
+  const currentPassagePlaces = useMemo(() => {
+    if (!selectedVerse) return [];
+
+    const passageVerses = verses.filter((verse) => verse.passageId === selectedVerse.passageId);
+    const seen = new Map<string, VersePlace>();
+
+    for (const verse of passageVerses) {
+      for (const place of verse.places) {
+        if (!seen.has(place.name)) {
+          seen.set(place.name, place);
+        }
+      }
+    }
+
+    return Array.from(seen.values());
+  }, [selectedVerse]);
+
   const placeIndex = useMemo<IndexedPlace[]>(() => {
     const seen = new Map<string, IndexedPlace>();
 
@@ -202,7 +221,8 @@ export default function BibleReader() {
     return journeys.filter((journey) => journey.era === journeyEraFilter);
   }, [journeyEraFilter]);
 
-  const activeVersePlaces = selectedVerse?.places ?? [];
+  const versePlaces = selectedVerse?.places ?? [];
+  const mapPlaces = mapScope === "passage" ? currentPassagePlaces : versePlaces;
 
   const handleSelectVerse = (verseId: string) => {
     const verse = verses.find((v) => v.id === verseId);
@@ -667,26 +687,49 @@ export default function BibleReader() {
                   {activeJourney ? "Journey Explorer" : "Place Explorer"}
                 </h2>
 
-                <div className="inline-flex rounded-xl border border-stone-700 bg-stone-950 p-1">
-                  <button
-                    type="button"
-                    onClick={() => setMapMode("modern")}
-                    className={`rounded-lg px-3 py-1 text-sm ${
-                      mapMode === "modern" ? "bg-amber-500 text-stone-950" : "text-stone-300"
-                    }`}
-                  >
-                    Modern
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setMapMode("ancient")}
-                    className={`rounded-lg px-3 py-1 text-sm ${
-                      mapMode === "ancient" ? "bg-amber-500 text-stone-950" : "text-stone-300"
-                    }`}
-                  >
-                    Ancient View
-                  </button>
-                </div>
+                {!activeJourney && selectedVerse && (
+                  <div className="inline-flex rounded-xl border border-stone-700 bg-stone-950 p-1">
+                    <button
+                      type="button"
+                      onClick={() => setMapScope("verse")}
+                      className={`rounded-lg px-3 py-1 text-sm ${
+                        mapScope === "verse" ? "bg-amber-500 text-stone-950" : "text-stone-300"
+                      }`}
+                    >
+                      Verse Places
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setMapScope("passage")}
+                      className={`rounded-lg px-3 py-1 text-sm ${
+                        mapScope === "passage" ? "bg-amber-500 text-stone-950" : "text-stone-300"
+                      }`}
+                    >
+                      Passage Places
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              <div className="mb-4 inline-flex rounded-xl border border-stone-700 bg-stone-950 p-1">
+                <button
+                  type="button"
+                  onClick={() => setMapMode("modern")}
+                  className={`rounded-lg px-3 py-1 text-sm ${
+                    mapMode === "modern" ? "bg-amber-500 text-stone-950" : "text-stone-300"
+                  }`}
+                >
+                  Modern
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMapMode("ancient")}
+                  className={`rounded-lg px-3 py-1 text-sm ${
+                    mapMode === "ancient" ? "bg-amber-500 text-stone-950" : "text-stone-300"
+                  }`}
+                >
+                  Ancient View
+                </button>
               </div>
 
               {activeJourney ? (
@@ -751,6 +794,12 @@ export default function BibleReader() {
                       {isBookmarked(selectedPlace.name) ? "Saved" : "Save place"}
                     </button>
                   </div>
+
+                  {mapScope === "passage" && currentPassagePlaces.length > 1 && (
+                    <div className="rounded-xl border border-amber-700/30 bg-amber-950/20 p-3 text-sm text-amber-100">
+                      Showing all places in the passage: {selectedVerse?.passageTitle}
+                    </div>
+                  )}
 
                   <div>
                     <h4 className="text-sm font-semibold uppercase tracking-wide text-stone-400">
@@ -840,13 +889,17 @@ export default function BibleReader() {
               <div className="mb-4 flex items-center justify-between">
                 <h2 className="text-xl font-semibold">Map</h2>
                 <span className="text-sm text-stone-400">
-                  {activeJourney ? activeJourney.reference : selectedVerse?.reference ?? "No selection"}
+                  {activeJourney
+                    ? activeJourney.reference
+                    : mapScope === "passage"
+                    ? selectedVerse?.passageTitle ?? "No selection"
+                    : selectedVerse?.reference ?? "No selection"}
                 </span>
               </div>
 
               <PlaceMap
                 selectedPlace={selectedPlace}
-                versePlaces={activeVersePlaces}
+                versePlaces={mapPlaces}
                 mapMode={mapMode}
                 activeJourney={activeJourney}
               />
@@ -862,9 +915,9 @@ export default function BibleReader() {
                     </span>
                   ))}
                 </div>
-              ) : activeVersePlaces.length > 0 ? (
+              ) : mapPlaces.length > 0 ? (
                 <div className="mt-4 flex flex-wrap gap-2">
-                  {activeVersePlaces.map((place) => {
+                  {mapPlaces.map((place) => {
                     const isActive = selectedPlace?.name === place.name;
 
                     return (
