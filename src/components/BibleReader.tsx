@@ -8,6 +8,7 @@ import SearchBar from "@/components/SearchBar";
 import useBookmarks from "@/components/useBookmarks";
 import usePlaceNotes from "@/components/usePlaceNotes";
 import exportStudySummary from "@/components/exportStudySummary";
+import getPlaceStudyPrompts from "@/components/getPlaceStudyPrompts";
 
 const PlaceMap = dynamic(() => import("@/components/PlaceMap"), {
   ssr: false,
@@ -57,6 +58,7 @@ export default function BibleReader() {
   });
   const [mapScope, setMapScope] = useState<MapScope>("verse");
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [activePromptIndex, setActivePromptIndex] = useState(0);
 
   const verseRefs = useRef<Record<string, HTMLArticleElement | null>>({});
 
@@ -69,10 +71,11 @@ export default function BibleReader() {
     } else {
       setDraftNote("");
     }
-  }, [selectedPlace?.name]);
+  }, [selectedPlace?.name, getNote]);
 
   useEffect(() => {
     setActiveImageIndex(0);
+    setActivePromptIndex(0);
   }, [selectedPlace?.name]);
 
   useEffect(() => {
@@ -231,6 +234,13 @@ export default function BibleReader() {
   const selectedPlaceImages = selectedPlace?.images ?? [];
   const selectedImage = selectedPlaceImages[activeImageIndex] ?? null;
 
+  const studyPrompts = useMemo(() => {
+    if (!selectedPlace) return [];
+    return getPlaceStudyPrompts(selectedPlace, selectedVerse?.reference);
+  }, [selectedPlace, selectedVerse?.reference]);
+
+  const activePrompt = studyPrompts[activePromptIndex] ?? null;
+
   const handleSelectVerse = (verseId: string) => {
     const verse = verses.find((v) => v.id === verseId);
     if (!verse) return;
@@ -274,7 +284,7 @@ export default function BibleReader() {
         <div className="print:hidden">
           <h1 className="text-3xl font-bold">Scripture Alive</h1>
           <p className="mt-2 text-stone-300">
-            Explore scripture through passages, places, maps, journeys, linked verse discovery, bookmarks, notes, printable study sheets, and image galleries.
+            Explore scripture through passages, places, maps, journeys, linked verse discovery, bookmarks, notes, printable study sheets, image galleries, and guided study prompts.
           </p>
         </div>
 
@@ -821,6 +831,39 @@ export default function BibleReader() {
                           </button>
                         </div>
                       )}
+                    </div>
+                  )}
+
+                  {activePrompt && (
+                    <div className="rounded-2xl border border-sky-800/40 bg-sky-950/20 p-4">
+                      <div className="mb-3 flex items-center justify-between gap-3">
+                        <div>
+                          <h4 className="text-sm font-semibold uppercase tracking-wide text-sky-300">
+                            Study Prompt
+                          </h4>
+                          <div className="mt-1 text-base font-semibold text-sky-100">
+                            {activePrompt.title}
+                          </div>
+                        </div>
+
+                        {studyPrompts.length > 1 && (
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setActivePromptIndex((current) =>
+                                current === studyPrompts.length - 1 ? 0 : current + 1
+                              )
+                            }
+                            className="rounded-lg border border-sky-700/50 px-3 py-2 text-sm text-sky-100 transition hover:border-sky-400"
+                          >
+                            Next Prompt
+                          </button>
+                        )}
+                      </div>
+
+                      <p className="text-sm leading-7 text-sky-50">
+                        {activePrompt.prompt}
+                      </p>
                     </div>
                   )}
 
