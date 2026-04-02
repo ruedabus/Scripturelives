@@ -17,6 +17,8 @@ type IndexedPlace = {
   sourceReference: string;
 };
 
+type LeftPanelTab = "reader" | "journeys" | "places";
+
 function escapeRegExp(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
@@ -37,6 +39,7 @@ export default function BibleReader() {
   const [placeQuery, setPlaceQuery] = useState("");
   const [placeEraFilter, setPlaceEraFilter] = useState("All eras");
   const [journeyEraFilter, setJourneyEraFilter] = useState("All eras");
+  const [leftPanelTab, setLeftPanelTab] = useState<LeftPanelTab>("reader");
 
   const renderedVerses = useMemo(() => {
     return verses.map((verse) => {
@@ -129,6 +132,7 @@ export default function BibleReader() {
     setActiveJourney(null);
     setSelectedVerse(verse);
     setSelectedPlace(verse.places[0] ?? null);
+    setLeftPanelTab("reader");
   };
 
   const handleSelectPlaceFromIndex = (item: IndexedPlace) => {
@@ -141,7 +145,15 @@ export default function BibleReader() {
     setActiveJourney(null);
     setSelectedVerse(verse);
     setSelectedPlace(matchingPlace);
+    setLeftPanelTab("places");
   };
+
+  const tabButtonClass = (tab: LeftPanelTab) =>
+    `rounded-lg px-4 py-2 text-sm font-medium transition ${
+      leftPanelTab === tab
+        ? "bg-amber-500 text-stone-950"
+        : "text-stone-300 hover:bg-stone-800"
+    }`;
 
   return (
     <main className="min-h-screen bg-stone-950 text-stone-100">
@@ -151,189 +163,219 @@ export default function BibleReader() {
           Explore scripture through places, maps, journeys, and linked verse discovery.
         </p>
 
-        <div className="mt-8 grid gap-6 xl:grid-cols-[1.6fr_1fr_1fr]">
-          <section className="space-y-6 rounded-2xl border border-stone-800 bg-stone-900 p-6 shadow-lg">
-            <div>
-              <SearchBar onSelectVerse={handleSelectVerse} />
-
-              <h2 className="mb-4 mt-6 text-xl font-semibold">Reader</h2>
-
-              <div className="space-y-6">
-                {renderedVerses.map((verse) => {
-                  const verseIsSelected = selectedVerse?.id === verse.id;
-
-                  return (
-                    <article
-                      key={verse.id}
-                      className={`rounded-xl border p-4 transition ${
-                        verseIsSelected ? "border-amber-500 bg-stone-800" : "border-stone-800"
-                      }`}
-                      onClick={() => {
-                        setActiveJourney(null);
-                        setSelectedVerse(verse);
-                        if (!verse.places.some((p) => p.name === selectedPlace?.name)) {
-                          setSelectedPlace(verse.places[0] ?? null);
-                        }
-                      }}
-                    >
-                      <div className="mb-2 flex items-center justify-between gap-3">
-                        <div className="text-sm font-semibold uppercase tracking-wide text-amber-400">
-                          {verse.reference}
-                        </div>
-                        <div className="flex items-center gap-2">
-                          {verse.places[0] && <EraBadge label={verse.places[0].era} />}
-                          <div className="text-xs text-stone-400">
-                            {verse.places.length} place{verse.places.length === 1 ? "" : "s"}
-                          </div>
-                        </div>
-                      </div>
-
-                      <p className="text-lg leading-8">
-                        {verse.parts.map((part, index) => {
-                          if (typeof part === "string") {
-                            return <span key={`${verse.id}-text-${index}`}>{part}</span>;
-                          }
-
-                          return (
-                            <button
-                              key={`${verse.id}-place-${part.name}-${index}`}
-                              type="button"
-                              onClick={(event) => {
-                                event.stopPropagation();
-                                setActiveJourney(null);
-                                setSelectedVerse(verse);
-                                setSelectedPlace(part);
-                              }}
-                              className="rounded px-1 font-semibold text-sky-300 underline decoration-sky-500 underline-offset-4 hover:text-sky-200"
-                            >
-                              {part.name}
-                            </button>
-                          );
-                        })}
-                      </p>
-                    </article>
-                  );
-                })}
-              </div>
+        <div className="mt-8 grid gap-6 xl:grid-cols-[1.5fr_1fr]">
+          <section className="rounded-2xl border border-stone-800 bg-stone-900 p-6 shadow-lg">
+            <div className="mb-6 flex flex-wrap gap-2 rounded-xl border border-stone-800 bg-stone-950 p-2">
+              <button
+                type="button"
+                onClick={() => setLeftPanelTab("reader")}
+                className={tabButtonClass("reader")}
+              >
+                Reader
+              </button>
+              <button
+                type="button"
+                onClick={() => setLeftPanelTab("journeys")}
+                className={tabButtonClass("journeys")}
+              >
+                Journeys
+              </button>
+              <button
+                type="button"
+                onClick={() => setLeftPanelTab("places")}
+                className={tabButtonClass("places")}
+              >
+                Places
+              </button>
             </div>
 
-            <div>
-              <div className="mb-4 flex items-center justify-between gap-3">
-                <h2 className="text-xl font-semibold">Journeys</h2>
+            {leftPanelTab === "reader" && (
+              <div>
+                <SearchBar onSelectVerse={handleSelectVerse} />
 
-                <select
-                  value={journeyEraFilter}
-                  onChange={(event) => setJourneyEraFilter(event.target.value)}
-                  className="rounded-lg border border-stone-700 bg-stone-950 px-3 py-2 text-sm text-stone-100 outline-none focus:border-amber-500"
-                >
-                  {uniqueJourneyEras.map((era) => (
-                    <option key={era} value={era}>
-                      {era}
-                    </option>
-                  ))}
-                </select>
-              </div>
+                <h2 className="mb-4 mt-6 text-xl font-semibold">Reader</h2>
 
-              {filteredJourneys.length === 0 ? (
-                <div className="rounded-xl border border-dashed border-stone-700 p-4 text-sm text-stone-400">
-                  No journeys found for the selected era.
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {filteredJourneys.map((journey) => {
-                    const isActive = activeJourney?.id === journey.id;
+                <div className="space-y-6">
+                  {renderedVerses.map((verse) => {
+                    const verseIsSelected = selectedVerse?.id === verse.id;
 
                     return (
-                      <button
-                        key={journey.id}
-                        type="button"
-                        onClick={() => {
-                          setActiveJourney(journey);
-                          setSelectedPlace(null);
-                        }}
-                        className={`w-full rounded-xl border p-4 text-left transition ${
-                          isActive ? "border-amber-500 bg-stone-800" : "border-stone-800"
+                      <article
+                        key={verse.id}
+                        className={`rounded-xl border p-4 transition ${
+                          verseIsSelected ? "border-amber-500 bg-stone-800" : "border-stone-800"
                         }`}
+                        onClick={() => {
+                          setActiveJourney(null);
+                          setSelectedVerse(verse);
+                          if (!verse.places.some((p) => p.name === selectedPlace?.name)) {
+                            setSelectedPlace(verse.places[0] ?? null);
+                          }
+                        }}
                       >
-                        <div className="flex items-center justify-between gap-3">
-                          <h3 className="font-semibold text-amber-400">{journey.title}</h3>
-                          <span className="text-xs text-stone-400">{journey.reference}</span>
+                        <div className="mb-2 flex items-center justify-between gap-3">
+                          <div className="text-sm font-semibold uppercase tracking-wide text-amber-400">
+                            {verse.reference}
+                          </div>
+                          <div className="flex items-center gap-2">
+                            {verse.places[0] && <EraBadge label={verse.places[0].era} />}
+                            <div className="text-xs text-stone-400">
+                              {verse.places.length} place{verse.places.length === 1 ? "" : "s"}
+                            </div>
+                          </div>
                         </div>
 
-                        <div className="mt-2">
-                          <EraBadge label={journey.era} />
-                        </div>
+                        <p className="text-lg leading-8">
+                          {verse.parts.map((part, index) => {
+                            if (typeof part === "string") {
+                              return <span key={`${verse.id}-text-${index}`}>{part}</span>;
+                            }
 
-                        <p className="mt-3 text-sm text-stone-300">{journey.description}</p>
-                      </button>
+                            return (
+                              <button
+                                key={`${verse.id}-place-${part.name}-${index}`}
+                                type="button"
+                                onClick={(event) => {
+                                  event.stopPropagation();
+                                  setActiveJourney(null);
+                                  setSelectedVerse(verse);
+                                  setSelectedPlace(part);
+                                }}
+                                className="rounded px-1 font-semibold text-sky-300 underline decoration-sky-500 underline-offset-4 hover:text-sky-200"
+                              >
+                                {part.name}
+                              </button>
+                            );
+                          })}
+                        </p>
+                      </article>
                     );
                   })}
                 </div>
-              )}
-            </div>
-          </section>
-
-          <section className="rounded-2xl border border-stone-800 bg-stone-900 p-6 shadow-lg">
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-xl font-semibold">Place Index</h2>
-              <span className="text-sm text-stone-400">
-                {filteredPlaceIndex.length} of {placeIndex.length} places
-              </span>
-            </div>
-
-            <div className="mb-4 space-y-3">
-              <input
-                type="text"
-                value={placeQuery}
-                onChange={(event) => setPlaceQuery(event.target.value)}
-                placeholder="Search places in the index..."
-                className="w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-2 text-sm text-stone-100 outline-none placeholder:text-stone-500 focus:border-amber-500"
-              />
-
-              <select
-                value={placeEraFilter}
-                onChange={(event) => setPlaceEraFilter(event.target.value)}
-                className="w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-2 text-sm text-stone-100 outline-none focus:border-amber-500"
-              >
-                {uniquePlaceEras.map((era) => (
-                  <option key={era} value={era}>
-                    {era}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {filteredPlaceIndex.length === 0 ? (
-              <div className="rounded-xl border border-dashed border-stone-700 p-4 text-sm text-stone-400">
-                No places found for the current filters.
               </div>
-            ) : (
-              <div className="space-y-3">
-                {filteredPlaceIndex.map((item) => {
-                  const isActive = selectedPlace?.name === item.name && !activeJourney;
+            )}
 
-                  return (
-                    <button
-                      key={item.name}
-                      type="button"
-                      onClick={() => handleSelectPlaceFromIndex(item)}
-                      className={`w-full rounded-xl border p-4 text-left transition ${
-                        isActive ? "border-amber-500 bg-stone-800" : "border-stone-800"
-                      }`}
-                    >
-                      <div className="flex items-center justify-between gap-3">
-                        <h3 className="font-semibold text-amber-400">{item.name}</h3>
-                        <span className="text-xs text-stone-400">{item.sourceReference}</span>
-                      </div>
+            {leftPanelTab === "journeys" && (
+              <div>
+                <div className="mb-4 flex items-center justify-between gap-3">
+                  <h2 className="text-xl font-semibold">Journeys</h2>
 
-                      <div className="mt-2">
-                        <EraBadge label={item.place.era} />
-                      </div>
+                  <select
+                    value={journeyEraFilter}
+                    onChange={(event) => setJourneyEraFilter(event.target.value)}
+                    className="rounded-lg border border-stone-700 bg-stone-950 px-3 py-2 text-sm text-stone-100 outline-none focus:border-amber-500"
+                  >
+                    {uniqueJourneyEras.map((era) => (
+                      <option key={era} value={era}>
+                        {era}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-                      <p className="mt-3 text-sm text-stone-300">{item.place.description}</p>
-                    </button>
-                  );
-                })}
+                {filteredJourneys.length === 0 ? (
+                  <div className="rounded-xl border border-dashed border-stone-700 p-4 text-sm text-stone-400">
+                    No journeys found for the selected era.
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {filteredJourneys.map((journey) => {
+                      const isActive = activeJourney?.id === journey.id;
+
+                      return (
+                        <button
+                          key={journey.id}
+                          type="button"
+                          onClick={() => {
+                            setActiveJourney(journey);
+                            setSelectedPlace(null);
+                          }}
+                          className={`w-full rounded-xl border p-4 text-left transition ${
+                            isActive ? "border-amber-500 bg-stone-800" : "border-stone-800"
+                          }`}
+                        >
+                          <div className="flex items-center justify-between gap-3">
+                            <h3 className="font-semibold text-amber-400">{journey.title}</h3>
+                            <span className="text-xs text-stone-400">{journey.reference}</span>
+                          </div>
+
+                          <div className="mt-2">
+                            <EraBadge label={journey.era} />
+                          </div>
+
+                          <p className="mt-3 text-sm text-stone-300">{journey.description}</p>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {leftPanelTab === "places" && (
+              <div>
+                <div className="mb-4 flex items-center justify-between">
+                  <h2 className="text-xl font-semibold">Place Index</h2>
+                  <span className="text-sm text-stone-400">
+                    {filteredPlaceIndex.length} of {placeIndex.length} places
+                  </span>
+                </div>
+
+                <div className="mb-4 space-y-3">
+                  <input
+                    type="text"
+                    value={placeQuery}
+                    onChange={(event) => setPlaceQuery(event.target.value)}
+                    placeholder="Search places in the index..."
+                    className="w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-2 text-sm text-stone-100 outline-none placeholder:text-stone-500 focus:border-amber-500"
+                  />
+
+                  <select
+                    value={placeEraFilter}
+                    onChange={(event) => setPlaceEraFilter(event.target.value)}
+                    className="w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-2 text-sm text-stone-100 outline-none focus:border-amber-500"
+                  >
+                    {uniquePlaceEras.map((era) => (
+                      <option key={era} value={era}>
+                        {era}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {filteredPlaceIndex.length === 0 ? (
+                  <div className="rounded-xl border border-dashed border-stone-700 p-4 text-sm text-stone-400">
+                    No places found for the current filters.
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {filteredPlaceIndex.map((item) => {
+                      const isActive = selectedPlace?.name === item.name && !activeJourney;
+
+                      return (
+                        <button
+                          key={item.name}
+                          type="button"
+                          onClick={() => handleSelectPlaceFromIndex(item)}
+                          className={`w-full rounded-xl border p-4 text-left transition ${
+                            isActive ? "border-amber-500 bg-stone-800" : "border-stone-800"
+                          }`}
+                        >
+                          <div className="flex items-center justify-between gap-3">
+                            <h3 className="font-semibold text-amber-400">{item.name}</h3>
+                            <span className="text-xs text-stone-400">{item.sourceReference}</span>
+                          </div>
+
+                          <div className="mt-2">
+                            <EraBadge label={item.place.era} />
+                          </div>
+
+                          <p className="mt-3 text-sm text-stone-300">{item.place.description}</p>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             )}
           </section>
