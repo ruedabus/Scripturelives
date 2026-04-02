@@ -50,6 +50,10 @@ export default function BibleReader() {
   const [journeyEraFilter, setJourneyEraFilter] = useState("All eras");
   const [leftPanelTab, setLeftPanelTab] = useState<LeftPanelTab>("reader");
   const [draftNote, setDraftNote] = useState("");
+  const [openPassages, setOpenPassages] = useState<Record<string, boolean>>(() => {
+    const initialPassageId = verses[0]?.passageId;
+    return initialPassageId ? { [initialPassageId]: true } : {};
+  });
 
   const verseRefs = useRef<Record<string, HTMLArticleElement | null>>({});
 
@@ -63,6 +67,15 @@ export default function BibleReader() {
       setDraftNote("");
     }
   }, [selectedPlace?.name]);
+
+  useEffect(() => {
+    if (!selectedVerse) return;
+
+    setOpenPassages((current) => ({
+      ...current,
+      [selectedVerse.passageId]: true,
+    }));
+  }, [selectedVerse?.passageId]);
 
   useEffect(() => {
     if (!selectedVerse || leftPanelTab !== "reader") return;
@@ -214,6 +227,13 @@ export default function BibleReader() {
     setLeftPanelTab("reader");
   };
 
+  const togglePassage = (passageId: string) => {
+    setOpenPassages((current) => ({
+      ...current,
+      [passageId]: !current[passageId],
+    }));
+  };
+
   const tabButtonClass = (tab: LeftPanelTab) =>
     `rounded-lg px-4 py-2 text-sm font-medium transition ${
       leftPanelTab === tab
@@ -257,87 +277,109 @@ export default function BibleReader() {
 
                 <h2 className="mb-4 mt-6 text-xl font-semibold">Reader</h2>
 
-                <div className="space-y-8">
-                  {passageGroups.map((group) => (
-                    <section key={group.passageId} className="rounded-2xl border border-stone-800 bg-stone-950/40 p-5">
-                      <div className="mb-5 border-b border-stone-800 pb-3">
-                        <h3 className="text-2xl font-semibold text-amber-400">{group.passageTitle}</h3>
-                        <p className="mt-1 text-sm text-stone-400">
-                          {group.verses.length} verse{group.verses.length === 1 ? "" : "s"}
-                        </p>
-                      </div>
+                <div className="space-y-6">
+                  {passageGroups.map((group) => {
+                    const isOpen = !!openPassages[group.passageId];
+                    const hasSelectedVerse = group.verses.some((verse) => verse.id === selectedVerse?.id);
 
-                      <div className="space-y-4">
-                        {group.verses.map((verse) => {
-                          const verseIsSelected = selectedVerse?.id === verse.id;
+                    return (
+                      <section
+                        key={group.passageId}
+                        className={`rounded-2xl border p-4 transition ${
+                          hasSelectedVerse ? "border-amber-500 bg-stone-950/50" : "border-stone-800 bg-stone-950/30"
+                        }`}
+                      >
+                        <button
+                          type="button"
+                          onClick={() => togglePassage(group.passageId)}
+                          className="flex w-full items-center justify-between gap-4 text-left"
+                        >
+                          <div>
+                            <h3 className="text-2xl font-semibold text-amber-400">{group.passageTitle}</h3>
+                            <p className="mt-1 text-sm text-stone-400">
+                              {group.verses.length} verse{group.verses.length === 1 ? "" : "s"}
+                            </p>
+                          </div>
 
-                          return (
-                            <article
-                              key={verse.id}
-                              ref={(el) => {
-                                verseRefs.current[verse.id] = el;
-                              }}
-                              className={`rounded-xl border p-4 transition ${
-                                verseIsSelected
-                                  ? "border-amber-500 bg-stone-800 shadow-[0_0_0_1px_rgba(245,158,11,0.25)]"
-                                  : "border-stone-800"
-                              }`}
-                              onClick={() => {
-                                setActiveJourney(null);
-                                setSelectedVerse(verse);
-                                if (!verse.places.some((p) => p.name === selectedPlace?.name)) {
-                                  setSelectedPlace(verse.places[0] ?? null);
-                                }
-                              }}
-                            >
-                              <div className="mb-2 flex items-center justify-between gap-3">
-                                <div className="text-sm font-semibold uppercase tracking-wide text-amber-400">
-                                  {verse.reference}
-                                </div>
-                                <div className="flex items-center gap-2">
-                                  {verse.places[0] && <EraBadge label={verse.places[0].era} />}
-                                  <div className="text-xs text-stone-400">
-                                    {verse.places.length} place{verse.places.length === 1 ? "" : "s"}
+                          <div className="rounded-lg border border-stone-700 px-3 py-2 text-sm text-stone-300">
+                            {isOpen ? "Collapse" : "Expand"}
+                          </div>
+                        </button>
+
+                        {isOpen && (
+                          <div className="mt-5 space-y-4">
+                            {group.verses.map((verse) => {
+                              const verseIsSelected = selectedVerse?.id === verse.id;
+
+                              return (
+                                <article
+                                  key={verse.id}
+                                  ref={(el) => {
+                                    verseRefs.current[verse.id] = el;
+                                  }}
+                                  className={`rounded-xl border p-4 transition ${
+                                    verseIsSelected
+                                      ? "border-amber-500 bg-stone-800 shadow-[0_0_0_1px_rgba(245,158,11,0.25)]"
+                                      : "border-stone-800"
+                                  }`}
+                                  onClick={() => {
+                                    setActiveJourney(null);
+                                    setSelectedVerse(verse);
+                                    if (!verse.places.some((p) => p.name === selectedPlace?.name)) {
+                                      setSelectedPlace(verse.places[0] ?? null);
+                                    }
+                                  }}
+                                >
+                                  <div className="mb-2 flex items-center justify-between gap-3">
+                                    <div className="text-sm font-semibold uppercase tracking-wide text-amber-400">
+                                      {verse.reference}
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                      {verse.places[0] && <EraBadge label={verse.places[0].era} />}
+                                      <div className="text-xs text-stone-400">
+                                        {verse.places.length} place{verse.places.length === 1 ? "" : "s"}
+                                      </div>
+                                    </div>
                                   </div>
-                                </div>
-                              </div>
 
-                              <p className="text-lg leading-8">
-                                {verse.parts.map((part, index) => {
-                                  if (typeof part === "string") {
-                                    return <span key={`${verse.id}-text-${index}`}>{part}</span>;
-                                  }
+                                  <p className="text-lg leading-8">
+                                    {verse.parts.map((part, index) => {
+                                      if (typeof part === "string") {
+                                        return <span key={`${verse.id}-text-${index}`}>{part}</span>;
+                                      }
 
-                                  const isSelectedPlace =
-                                    verseIsSelected && selectedPlace?.name === part.name;
+                                      const isSelectedPlace =
+                                        verseIsSelected && selectedPlace?.name === part.name;
 
-                                  return (
-                                    <button
-                                      key={`${verse.id}-place-${part.name}-${index}`}
-                                      type="button"
-                                      onClick={(event) => {
-                                        event.stopPropagation();
-                                        setActiveJourney(null);
-                                        setSelectedVerse(verse);
-                                        setSelectedPlace(part);
-                                      }}
-                                      className={`rounded px-1 font-semibold underline underline-offset-4 transition ${
-                                        isSelectedPlace
-                                          ? "bg-amber-500 text-stone-950 decoration-amber-300"
-                                          : "text-sky-300 decoration-sky-500 hover:text-sky-200"
-                                      }`}
-                                    >
-                                      {part.name}
-                                    </button>
-                                  );
-                                })}
-                              </p>
-                            </article>
-                          );
-                        })}
-                      </div>
-                    </section>
-                  ))}
+                                      return (
+                                        <button
+                                          key={`${verse.id}-place-${part.name}-${index}`}
+                                          type="button"
+                                          onClick={(event) => {
+                                            event.stopPropagation();
+                                            setActiveJourney(null);
+                                            setSelectedVerse(verse);
+                                            setSelectedPlace(part);
+                                          }}
+                                          className={`rounded px-1 font-semibold underline underline-offset-4 transition ${
+                                            isSelectedPlace
+                                              ? "bg-amber-500 text-stone-950 decoration-amber-300"
+                                              : "text-sky-300 decoration-sky-500 hover:text-sky-200"
+                                          }`}
+                                        >
+                                          {part.name}
+                                        </button>
+                                      );
+                                    })}
+                                  </p>
+                                </article>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </section>
+                    );
+                  })}
                 </div>
               </div>
             )}
