@@ -5,6 +5,7 @@ import { verses, Verse, VersePlace } from "@/data/verses";
 import { journeys, Journey } from "@/data/journeys";
 import dynamic from "next/dynamic";
 import SearchBar from "@/components/SearchBar";
+import useBookmarks from "@/components/useBookmarks";
 
 const PlaceMap = dynamic(() => import("@/components/PlaceMap"), {
   ssr: false,
@@ -17,7 +18,7 @@ type IndexedPlace = {
   sourceReference: string;
 };
 
-type LeftPanelTab = "reader" | "journeys" | "places";
+type LeftPanelTab = "reader" | "journeys" | "places" | "bookmarks";
 
 function escapeRegExp(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -40,6 +41,8 @@ export default function BibleReader() {
   const [placeEraFilter, setPlaceEraFilter] = useState("All eras");
   const [journeyEraFilter, setJourneyEraFilter] = useState("All eras");
   const [leftPanelTab, setLeftPanelTab] = useState<LeftPanelTab>("reader");
+
+  const { bookmarks, toggleBookmark, removeBookmark, isBookmarked } = useBookmarks();
 
   const renderedVerses = useMemo(() => {
     return verses.map((verse) => {
@@ -95,6 +98,10 @@ export default function BibleReader() {
     return Array.from(seen.values()).sort((a, b) => a.name.localeCompare(b.name));
   }, []);
 
+  const bookmarkedPlaces = useMemo(() => {
+    return placeIndex.filter((item) => bookmarks.includes(item.name));
+  }, [placeIndex, bookmarks]);
+
   const uniquePlaceEras = useMemo(() => {
     return ["All eras", ...Array.from(new Set(placeIndex.map((item) => item.place.era))).sort()];
   }, [placeIndex]);
@@ -145,7 +152,6 @@ export default function BibleReader() {
     setActiveJourney(null);
     setSelectedVerse(verse);
     setSelectedPlace(matchingPlace);
-    setLeftPanelTab("places");
   };
 
   const tabButtonClass = (tab: LeftPanelTab) =>
@@ -186,6 +192,13 @@ export default function BibleReader() {
                 className={tabButtonClass("places")}
               >
                 Places
+              </button>
+              <button
+                type="button"
+                onClick={() => setLeftPanelTab("bookmarks")}
+                className={tabButtonClass("bookmarks")}
+              >
+                Bookmarks
               </button>
             </div>
 
@@ -366,14 +379,68 @@ export default function BibleReader() {
                             <span className="text-xs text-stone-400">{item.sourceReference}</span>
                           </div>
 
-                          <div className="mt-2">
+                          <div className="mt-2 flex items-center justify-between gap-3">
                             <EraBadge label={item.place.era} />
+                            <span className="text-xs text-stone-400">
+                              {isBookmarked(item.name) ? "Saved" : "Not saved"}
+                            </span>
                           </div>
 
                           <p className="mt-3 text-sm text-stone-300">{item.place.description}</p>
                         </button>
                       );
                     })}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {leftPanelTab === "bookmarks" && (
+              <div>
+                <div className="mb-4 flex items-center justify-between">
+                  <h2 className="text-xl font-semibold">Bookmarks</h2>
+                  <span className="text-sm text-stone-400">{bookmarkedPlaces.length} saved</span>
+                </div>
+
+                {bookmarkedPlaces.length === 0 ? (
+                  <div className="rounded-xl border border-dashed border-stone-700 p-4 text-sm text-stone-400">
+                    No saved places yet. Open a place in the explorer and save it.
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {bookmarkedPlaces.map((item) => (
+                      <div
+                        key={item.name}
+                        className="rounded-xl border border-stone-800 p-4"
+                      >
+                        <button
+                          type="button"
+                          onClick={() => handleSelectPlaceFromIndex(item)}
+                          className="w-full text-left"
+                        >
+                          <div className="flex items-center justify-between gap-3">
+                            <h3 className="font-semibold text-amber-400">{item.name}</h3>
+                            <span className="text-xs text-stone-400">{item.sourceReference}</span>
+                          </div>
+
+                          <div className="mt-2">
+                            <EraBadge label={item.place.era} />
+                          </div>
+
+                          <p className="mt-3 text-sm text-stone-300">{item.place.description}</p>
+                        </button>
+
+                        <div className="mt-4">
+                          <button
+                            type="button"
+                            onClick={() => removeBookmark(item.name)}
+                            className="rounded-lg border border-stone-700 px-3 py-2 text-sm text-stone-200 transition hover:border-red-400 hover:text-red-300"
+                          >
+                            Remove bookmark
+                          </button>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>
@@ -448,14 +515,28 @@ export default function BibleReader() {
                 </p>
               ) : (
                 <div className="space-y-4">
-                  <div>
-                    <h3 className="text-2xl font-bold text-amber-400">{selectedPlace.name}</h3>
-                    <p className="mt-2 text-sm text-stone-400">
-                      {selectedVerse?.reference} • {selectedPlace.lat}, {selectedPlace.lng}
-                    </p>
-                    <div className="mt-3">
-                      <EraBadge label={selectedPlace.era} />
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <h3 className="text-2xl font-bold text-amber-400">{selectedPlace.name}</h3>
+                      <p className="mt-2 text-sm text-stone-400">
+                        {selectedVerse?.reference} • {selectedPlace.lat}, {selectedPlace.lng}
+                      </p>
+                      <div className="mt-3">
+                        <EraBadge label={selectedPlace.era} />
+                      </div>
                     </div>
+
+                    <button
+                      type="button"
+                      onClick={() => toggleBookmark(selectedPlace.name)}
+                      className={`rounded-lg border px-3 py-2 text-sm transition ${
+                        isBookmarked(selectedPlace.name)
+                          ? "border-amber-500 bg-amber-500 text-stone-950"
+                          : "border-stone-700 text-stone-200 hover:border-amber-500"
+                      }`}
+                    >
+                      {isBookmarked(selectedPlace.name) ? "Saved" : "Save place"}
+                    </button>
                   </div>
 
                   <div>
