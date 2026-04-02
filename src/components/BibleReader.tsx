@@ -1,11 +1,12 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { verses, Verse, VersePlace } from "@/data/verses";
 import { journeys, Journey } from "@/data/journeys";
 import dynamic from "next/dynamic";
 import SearchBar from "@/components/SearchBar";
 import useBookmarks from "@/components/useBookmarks";
+import usePlaceNotes from "@/components/usePlaceNotes";
 
 const PlaceMap = dynamic(() => import("@/components/PlaceMap"), {
   ssr: false,
@@ -41,8 +42,18 @@ export default function BibleReader() {
   const [placeEraFilter, setPlaceEraFilter] = useState("All eras");
   const [journeyEraFilter, setJourneyEraFilter] = useState("All eras");
   const [leftPanelTab, setLeftPanelTab] = useState<LeftPanelTab>("reader");
+  const [draftNote, setDraftNote] = useState("");
 
   const { bookmarks, toggleBookmark, removeBookmark, isBookmarked } = useBookmarks();
+  const { getNote, saveNote, removeNote } = usePlaceNotes();
+
+  useEffect(() => {
+    if (selectedPlace) {
+      setDraftNote(getNote(selectedPlace.name));
+    } else {
+      setDraftNote("");
+    }
+  }, [selectedPlace?.name]);
 
   const renderedVerses = useMemo(() => {
     return verses.map((verse) => {
@@ -166,7 +177,7 @@ export default function BibleReader() {
       <div className="mx-auto max-w-7xl px-6 py-10">
         <h1 className="text-3xl font-bold">Scripture Alive</h1>
         <p className="mt-2 text-stone-300">
-          Explore scripture through places, maps, journeys, and linked verse discovery.
+          Explore scripture through places, maps, journeys, linked verse discovery, bookmarks, and notes.
         </p>
 
         <div className="mt-8 grid gap-6 xl:grid-cols-[1.5fr_1fr]">
@@ -558,6 +569,44 @@ export default function BibleReader() {
                       Biblical Significance
                     </h4>
                     <p className="mt-1 text-stone-200">{selectedPlace.biblicalSignificance}</p>
+                  </div>
+
+                  <div>
+                    <h4 className="text-sm font-semibold uppercase tracking-wide text-stone-400">
+                      Study Notes
+                    </h4>
+
+                    <textarea
+                      value={draftNote}
+                      onChange={(event) => setDraftNote(event.target.value)}
+                      placeholder="Write your study notes for this place..."
+                      className="mt-2 min-h-[120px] w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-stone-100 outline-none placeholder:text-stone-500 focus:border-amber-500"
+                    />
+
+                    <div className="mt-3 flex flex-wrap gap-3">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (!selectedPlace) return;
+                          saveNote(selectedPlace.name, draftNote);
+                        }}
+                        className="rounded-lg border border-amber-500 bg-amber-500 px-4 py-2 text-sm font-medium text-stone-950 transition hover:opacity-90"
+                      >
+                        Save note
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (!selectedPlace) return;
+                          setDraftNote("");
+                          removeNote(selectedPlace.name);
+                        }}
+                        className="rounded-lg border border-stone-700 px-4 py-2 text-sm text-stone-200 transition hover:border-red-400 hover:text-red-300"
+                      >
+                        Clear note
+                      </button>
+                    </div>
                   </div>
 
                   <div>
