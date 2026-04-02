@@ -12,6 +12,8 @@ export type VersePlace = {
   biblicalSignificance: string;
   lat: number;
   lng: number;
+  imageUrl?: string;
+  imageCaption?: string;
   relatedVerses: RelatedVerse[];
 };
 
@@ -42,6 +44,8 @@ export const verses: Verse[] = [
           "Jerusalem is one of the most important cities in the Bible. It is associated with the Temple, major feast gatherings, the ministry of Jesus, and many pivotal events in both the Old and New Testaments.",
         lat: 31.778,
         lng: 35.235,
+        imageUrl: "/places/jerusalem.jpg",
+        imageCaption: "Suggested placeholder image for Jerusalem. Replace with your preferred historical or archaeological visual.",
         relatedVerses: [
           {
             reference: "Luke 19:41",
@@ -74,6 +78,8 @@ export const verses: Verse[] = [
           "Jerusalem is one of the most important cities in the Bible. It is associated with the Temple, major feast gatherings, the ministry of Jesus, and many pivotal events in both the Old and New Testaments.",
         lat: 31.778,
         lng: 35.235,
+        imageUrl: "/places/jerusalem.jpg",
+        imageCaption: "Suggested placeholder image for Jerusalem. Replace with your preferred historical or archaeological visual.",
         relatedVerses: [
           {
             reference: "John 2:13",
@@ -101,6 +107,8 @@ export const verses: Verse[] = [
           "Jerusalem is central to covenant history, kingship, worship, prophecy, exile, return, and messianic expectation.",
         lat: 31.778,
         lng: 35.235,
+        imageUrl: "/places/jerusalem.jpg",
+        imageCaption: "Suggested placeholder image for Jerusalem. Replace with your preferred historical or archaeological visual.",
         relatedVerses: [
           {
             reference: "John 2:13",
@@ -128,6 +136,8 @@ export const verses: Verse[] = [
           "Nazareth is closely tied to the childhood and early life of Jesus. It became part of his public identity, including the title 'Jesus of Nazareth.'",
         lat: 32.6996,
         lng: 35.3035,
+        imageUrl: "/places/nazareth.jpg",
+        imageCaption: "Suggested placeholder image for Nazareth.",
         relatedVerses: [
           {
             reference: "Luke 4:16",
@@ -151,6 +161,8 @@ export const verses: Verse[] = [
           "Bethlehem is significant as the city of David and the birthplace of Jesus, making it central to messianic expectation and gospel fulfillment.",
         lat: 31.7054,
         lng: 35.2024,
+        imageUrl: "/places/bethlehem.jpg",
+        imageCaption: "Suggested placeholder image for Bethlehem.",
         relatedVerses: [
           {
             reference: "Micah 5:2",
@@ -183,6 +195,8 @@ export const verses: Verse[] = [
           "Nazareth is closely tied to the childhood and early life of Jesus. It became part of his public identity, including the title 'Jesus of Nazareth.'",
         lat: 32.6996,
         lng: 35.3035,
+        imageUrl: "/places/nazareth.jpg",
+        imageCaption: "Suggested placeholder image for Nazareth.",
         relatedVerses: [
           {
             reference: "Luke 2:4",
@@ -210,6 +224,8 @@ export const verses: Verse[] = [
           "Nazareth is closely tied to the childhood and early life of Jesus. It became part of his public identity, including the title 'Jesus of Nazareth.'",
         lat: 32.6996,
         lng: 35.3035,
+        imageUrl: "/places/nazareth.jpg",
+        imageCaption: "Suggested placeholder image for Nazareth.",
         relatedVerses: [
           {
             reference: "Luke 2:4",
@@ -237,6 +253,8 @@ export const verses: Verse[] = [
           "Bethlehem is central to messianic prophecy because it is linked both to Davidic kingship and to the promised ruler to come.",
         lat: 31.7054,
         lng: 35.2024,
+        imageUrl: "/places/bethlehem.jpg",
+        imageCaption: "Suggested placeholder image for Bethlehem.",
         relatedVerses: [
           {
             reference: "Luke 2:4",
@@ -264,6 +282,8 @@ export const verses: Verse[] = [
           "Bethlehem connects the Davidic promise and the birth of Jesus in a way that is foundational to the gospel narrative.",
         lat: 31.7054,
         lng: 35.2024,
+        imageUrl: "/places/bethlehem.jpg",
+        imageCaption: "Suggested placeholder image for Bethlehem.",
         relatedVerses: [
           {
             reference: "Luke 2:4",
@@ -282,6 +302,8 @@ export const verses: Verse[] = [
           "Jerusalem remains the focal point of worship, kingship, prophecy, and later the passion and resurrection narratives.",
         lat: 31.778,
         lng: 35.235,
+        imageUrl: "/places/jerusalem.jpg",
+        imageCaption: "Suggested placeholder image for Jerusalem.",
         relatedVerses: [
           {
             reference: "John 2:13",
@@ -309,6 +331,8 @@ export const verses: Verse[] = [
           "Damascus is especially important in the New Testament because of Saul's encounter with the risen Christ on the road to the city, a turning point in early Christian history.",
         lat: 33.5138,
         lng: 36.2765,
+        imageUrl: "/places/damascus.jpg",
+        imageCaption: "Suggested placeholder image for Damascus.",
         relatedVerses: [
           {
             reference: "Acts 9:6",
@@ -341,6 +365,8 @@ export const verses: Verse[] = [
           "Damascus is one of the great turning-point settings in the New Testament because it frames the conversion and commission of Saul, later Paul.",
         lat: 33.5138,
         lng: 36.2765,
+        imageUrl: "/places/damascus.jpg",
+        imageCaption: "Suggested placeholder image for Damascus.",
         relatedVerses: [
           {
             reference: "Acts 9:3",
@@ -368,6 +394,8 @@ export const verses: Verse[] = [
           "Damascus continues to appear as a marker of early Christian mission, opposition, and divine redirection.",
         lat: 33.5138,
         lng: 36.2765,
+        imageUrl: "/places/damascus.jpg",
+        imageCaption: "Suggested placeholder image for Damascus.",
         relatedVerses: [
           {
             reference: "Acts 9:3",
