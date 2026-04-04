@@ -360,7 +360,7 @@ export default function BibleReader() {
     era: p.era,
     ancientDescription: p.description,
     biblicalSignificance: "",
-    relatedVerses: [] as string[],
+    relatedVerses: [] as import("@/data/verses").RelatedVerse[],
   })), [atlasFilteredItems]);
 
   const versePlaces = selectedVerse?.places ?? [];
@@ -1447,7 +1447,7 @@ export default function BibleReader() {
                           <button
                             key={p.name}
                             type="button"
-                            onClick={() => setSelectedPlace({ name: p.name, lat: p.lat, lng: p.lng, description: p.description, era: p.era, ancientDescription: p.description, biblicalSignificance: "", relatedVerses: [] })}
+                            onClick={() => setSelectedPlace({ name: p.name, lat: p.lat, lng: p.lng, description: p.description, era: p.era, ancientDescription: p.description, biblicalSignificance: "", relatedVerses: [] as import("@/data/verses").RelatedVerse[] })}
                             className={`w-full text-left px-3 py-2.5 border-b border-gray-100 text-sm transition ${
                               selectedPlace?.name === p.name
                                 ? "bg-amber-50 text-amber-800 font-medium"
