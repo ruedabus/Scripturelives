@@ -69,7 +69,7 @@ export async function POST(req: NextRequest) {
 
   const filename = `scripture-lives-study-${new Date().toISOString().slice(0, 10)}.docx`;
 
-  return new NextResponse(docxBytes, {
+  return new NextResponse(new Uint8Array(docxBytes), {
     status: 200,
     headers: {
       "Content-Type":
