@@ -1444,7 +1444,7 @@ export default function BibleReader() {
                           <button
                             key={p.name}
                             type="button"
-                            onClick={() => setSelectedPlace({ name: p.name, lat: p.lat, lng: p.lng, description: p.description, era: p.era })}
+                            onClick={() => setSelectedPlace({ name: p.name, lat: p.lat, lng: p.lng, description: p.description, era: p.era, ancientDescription: p.description, biblicalSignificance: "", relatedVerses: [] })}
                             className={`w-full text-left px-3 py-2.5 border-b border-gray-100 text-sm transition ${
                               selectedPlace?.name === p.name
                                 ? "bg-amber-50 text-amber-800 font-medium"
