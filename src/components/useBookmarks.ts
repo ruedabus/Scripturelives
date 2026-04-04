@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-const STORAGE_KEY = "scripture-alive-bookmarks";
+const STORAGE_KEY = "scripture-lives-bookmarks";
 
 export default function useBookmarks() {
   const [bookmarks, setBookmarks] = useState<string[]>([]);

@@ -1,17 +1,23 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { verses, Verse, VersePlace } from "@/data/verses";
-import { journeys, Journey } from "@/data/journeys";
+import { journeys, Journey, ALL_JOURNEY_ERAS, JOURNEY_ERA_DOT, JOURNEY_ERA_BADGE, type JourneyEra } from "@/data/journeys";
 import dynamic from "next/dynamic";
 import SearchBar from "@/components/SearchBar";
 import useBookmarks from "@/components/useBookmarks";
 import usePlaceNotes from "@/components/usePlaceNotes";
 import useStudySessions from "@/components/useStudySessions";
-import exportStudySummary from "@/components/exportStudySummary";
+import { exportStudyPdf } from "@/components/exportStudyPdf";
 import getPlaceStudyPrompts, {
   StudyPrompt,
 } from "@/components/getPlaceStudyPrompts";
+import FullBibleReader from "@/components/FullBibleReader";
+import VisualReferencePanel from "@/components/VisualReferencePanel";
+import LexiconPanel from "@/components/LexiconPanel";
+import BiblicalTimeline from "@/components/BiblicalTimeline";
+import CommentaryPanel from "@/components/CommentaryPanel";
+import PassagePresenter from "@/components/PassagePresenter";
 
 const PlaceMap = dynamic(() => import("@/components/PlaceMap"), {
   ssr: false,
@@ -24,21 +30,69 @@ type IndexedPlace = {
   sourceReference: string;
 };
 
-type PassageGroup = {
-  passageId: string;
-  passageTitle: string;
-  verses: (Verse & { parts: (string | VersePlace)[] })[];
-};
-
 type LeftPanelTab =
+  | "home"
   | "reader"
-  | "journeys"
-  | "places"
+  | "bible"
+  | "timeline"
+  | "commentary"
+  | "dictionary"
+  | "ancient_world"
+  | "atlas"
+  | "study_prompts"
   | "bookmarks"
   | "study_sheet"
   | "sessions";
 
-type MapScope = "verse" | "passage";
+// ── Bible book lists ──────────────────────────────────────────────────────
+const OT_SECTIONS = [
+  { label: "The Law",        books: ["Genesis","Exodus","Leviticus","Numbers","Deuteronomy"] },
+  { label: "History",        books: ["Joshua","Judges","Ruth","1 Samuel","2 Samuel","1 Kings","2 Kings","1 Chronicles","2 Chronicles","Ezra","Nehemiah","Esther"] },
+  { label: "Poetry & Wisdom",books: ["Job","Psalms","Proverbs","Ecclesiastes","Song of Solomon"] },
+  { label: "Major Prophets", books: ["Isaiah","Jeremiah","Lamentations","Ezekiel","Daniel"] },
+  { label: "Minor Prophets", books: ["Hosea","Joel","Amos","Obadiah","Jonah","Micah","Nahum","Habakkuk","Zephaniah","Haggai","Zechariah","Malachi"] },
+];
+
+const NT_SECTIONS = [
+  { label: "Gospels",         books: ["Matthew","Mark","Luke","John"] },
+  { label: "History",         books: ["Acts"] },
+  { label: "Paul's Letters",  books: ["Romans","1 Corinthians","2 Corinthians","Galatians","Ephesians","Philippians","Colossians","1 Thessalonians","2 Thessalonians","1 Timothy","2 Timothy","Titus","Philemon"] },
+  { label: "General Letters", books: ["Hebrews","James","1 Peter","2 Peter","1 John","2 John","3 John","Jude"] },
+  { label: "Prophecy",        books: ["Revelation"] },
+];
+
+const DAILY_VERSES = [
+  { reference: "John 3:16",         text: "For God so loved the world that he gave his one and only Son, that whoever believes in him shall not perish but have eternal life.",                                  book: "John",         chapter: 3 },
+  { reference: "Psalm 23:1-3",      text: "The LORD is my shepherd; I shall not want. He maketh me to lie down in green pastures: he leadeth me beside the still waters. He restoreth my soul.",              book: "Psalms",       chapter: 23 },
+  { reference: "Romans 8:28",       text: "And we know that all things work together for good to them that love God, to them who are the called according to his purpose.",                                    book: "Romans",       chapter: 8 },
+  { reference: "Jeremiah 29:11",    text: "For I know the plans I have for you, declares the LORD, plans to prosper you and not to harm you, plans to give you hope and a future.",                           book: "Jeremiah",     chapter: 29 },
+  { reference: "Philippians 4:13",  text: "I can do all things through Christ which strengtheneth me.",                                                                                                       book: "Philippians",  chapter: 4 },
+  { reference: "Proverbs 3:5-6",    text: "Trust in the LORD with all thine heart; and lean not unto thine own understanding. In all thy ways acknowledge him, and he shall direct thy paths.",               book: "Proverbs",     chapter: 3 },
+  { reference: "Isaiah 40:31",      text: "But they that wait upon the LORD shall renew their strength; they shall mount up with wings as eagles; they shall run, and not be weary; and they shall walk, and not faint.", book: "Isaiah", chapter: 40 },
+  { reference: "Matthew 6:33",      text: "But seek ye first the kingdom of God, and his righteousness; and all these things shall be added unto you.",                                                       book: "Matthew",      chapter: 6 },
+  { reference: "Psalm 119:105",     text: "Thy word is a lamp unto my feet, and a light unto my path.",                                                                                                       book: "Psalms",       chapter: 119 },
+  { reference: "2 Timothy 3:16-17", text: "All scripture is given by inspiration of God, and is profitable for doctrine, for reproof, for correction, for instruction in righteousness.",                    book: "2 Timothy",    chapter: 3 },
+  { reference: "Hebrews 11:1",      text: "Now faith is the substance of things hoped for, the evidence of things not seen.",                                                                                 book: "Hebrews",      chapter: 11 },
+  { reference: "Joshua 1:9",        text: "Have not I commanded thee? Be strong and courageous. Be not afraid, neither be thou dismayed: for the LORD thy God is with thee whithersoever thou goest.",       book: "Joshua",       chapter: 1 },
+  { reference: "Matthew 11:28",     text: "Come unto me, all ye that labour and are heavy laden, and I will give you rest.",                                                                                  book: "Matthew",      chapter: 11 },
+  { reference: "Psalm 46:1",        text: "God is our refuge and strength, a very present help in trouble.",                                                                                                  book: "Psalms",       chapter: 46 },
+  { reference: "John 14:6",         text: "Jesus saith unto him, I am the way, the truth, and the life: no man cometh unto the Father, but by me.",                                                          book: "John",         chapter: 14 },
+  { reference: "Ephesians 2:8-9",   text: "For by grace are ye saved through faith; and that not of yourselves: it is the gift of God: Not of works, lest any man should boast.",                           book: "Ephesians",    chapter: 2 },
+  { reference: "Isaiah 55:11",      text: "So shall my word be that goeth forth out of my mouth: it shall not return unto me void, but it shall accomplish that which I please.",                            book: "Isaiah",       chapter: 55 },
+  { reference: "Micah 6:8",         text: "He hath shewed thee, O man, what is good; and what doth the LORD require of thee, but to do justly, and to love mercy, and to walk humbly with thy God?",       book: "Micah",        chapter: 6 },
+  { reference: "1 John 4:8",        text: "He that loveth not knoweth not God; for God is love.",                                                                                                            book: "1 John",       chapter: 4 },
+  { reference: "Revelation 21:4",   text: "And God shall wipe away all tears from their eyes; and there shall be no more death, neither sorrow, nor crying, neither shall there be any more pain.",          book: "Revelation",   chapter: 21 },
+  { reference: "Lamentations 3:22-23", text: "It is of the LORD's mercies that we are not consumed, because his compassions fail not. They are new every morning: great is thy faithfulness.",              book: "Lamentations", chapter: 3 },
+  { reference: "Galatians 5:22-23", text: "But the fruit of the Spirit is love, joy, peace, longsuffering, gentleness, goodness, faith, meekness, temperance: against such there is no law.",              book: "Galatians",    chapter: 5 },
+  { reference: "Genesis 1:1",       text: "In the beginning God created the heaven and the earth.",                                                                                                          book: "Genesis",      chapter: 1 },
+  { reference: "Acts 1:8",          text: "But ye shall receive power, after that the Holy Ghost is come upon you: and ye shall be witnesses unto me both in Jerusalem, and in all Judaea, and in Samaria, and unto the uttermost part of the earth.", book: "Acts", chapter: 1 },
+  { reference: "Colossians 3:23",   text: "And whatsoever ye do, do it heartily, as to the Lord, and not unto men.",                                                                                        book: "Colossians",   chapter: 3 },
+  { reference: "Psalm 27:1",        text: "The LORD is my light and my salvation; whom shall I fear? the LORD is the strength of my life; of whom shall I be afraid?",                                      book: "Psalms",       chapter: 27 },
+  { reference: "Romans 3:23",       text: "For all have sinned, and come short of the glory of God.",                                                                                                        book: "Romans",       chapter: 3 },
+  { reference: "James 1:2-4",       text: "Count it all joy, my brethren, when ye fall into divers temptations; Knowing this, that the trying of your faith worketh patience.",                             book: "James",        chapter: 1 },
+  { reference: "John 10:10",        text: "The thief cometh not, but for to steal, and to kill, and to destroy: I am come that they might have life, and that they might have it more abundantly.",         book: "John",         chapter: 10 },
+  { reference: "Deuteronomy 31:6",  text: "Be strong and of a good courage, fear not, nor be afraid of them: for the LORD thy God, he it is that doth go with thee; he will not fail thee, nor forsake thee.", book: "Deuteronomy", chapter: 31 },
+];
 
 function escapeRegExp(value: string) {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -46,7 +100,7 @@ function escapeRegExp(value: string) {
 
 function EraBadge({ label }: { label: string }) {
   return (
-    <span className="inline-flex rounded-full border border-amber-700/40 bg-amber-950/40 px-2.5 py-1 text-xs text-amber-200">
+    <span className="inline-flex rounded-full border border-amber-200 bg-amber-50 px-2.5 py-1 text-xs text-amber-600">
       {label}
     </span>
   );
@@ -59,23 +113,47 @@ export default function BibleReader() {
   const [activeJourney, setActiveJourney] = useState<Journey | null>(null);
   const [placeQuery, setPlaceQuery] = useState("");
   const [placeEraFilter, setPlaceEraFilter] = useState("All eras");
-  const [journeyEraFilter, setJourneyEraFilter] = useState("All eras");
-  const [leftPanelTab, setLeftPanelTab] = useState<LeftPanelTab>("reader");
+  const [journeyEraFilter, setJourneyEraFilter] = useState<JourneyEra | "All eras">("All eras");
+  const [ancientWorldView, setAncientWorldView] = useState<"journeys" | "places">("journeys");
+  const [activeJourneyStop, setActiveJourneyStop] = useState<number | null>(null);
+  const [leftPanelTab, setLeftPanelTab] = useState<LeftPanelTab>("home");
+  const [homeQuery, setHomeQuery] = useState("");
+
+  // Dictionary state
+  const [dictQuery, setDictQuery] = useState("");
+  const [dictResult, setDictResult] = useState<{ found: boolean; term?: string; body?: string; sourceUrl?: string; source?: string } | null>(null);
+  const [dictLoading, setDictLoading] = useState(false);
+  const [dictError, setDictError] = useState("");
+
+  // Atlas state
+  const [atlasEraFilter, setAtlasEraFilter] = useState("All eras");
+  const [atlasSearch, setAtlasSearch] = useState("");
   const [draftNote, setDraftNote] = useState("");
-  const [openPassages, setOpenPassages] = useState<Record<string, boolean>>(() => {
-    const initialPassageId = verses[0]?.passageId;
-    return initialPassageId ? { [initialPassageId]: true } : {};
-  });
-  const [mapScope, setMapScope] = useState<MapScope>("verse");
+
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [sessionName, setSessionName] = useState("");
+  const [fullBibleNav, setFullBibleNav] = useState<{
+    version: "KJV" | "ASV" | "WEB";
+    book: string;
+    chapter: number;
+  } | null>(null);
+  // Track what the Full Bible reader is currently showing (for Commentary sync)
+  const [activeFullBibleRef, setActiveFullBibleRef] = useState<{ book: string; chapter: number }>({
+    book: "Genesis", chapter: 1,
+  });
+  const [visualQuery, setVisualQuery] = useState<string | null>(null);
+  const [lexiconWord, setLexiconWord] = useState<{ word: string; book: string } | null>(null);
+  const [presenterRef, setPresenterRef] = useState<{ book: string; chapter: number; verse?: number; reference: string; text: string } | null>(null);
+
+  const [isExportingDocx, setIsExportingDocx] = useState(false);
+  const [exportError, setExportError] = useState("");
 
   const [aiPrompts, setAiPrompts] = useState<StudyPrompt[]>([]);
   const [activePromptIndex, setActivePromptIndex] = useState(0);
   const [isLoadingPrompts, setIsLoadingPrompts] = useState(false);
   const [promptError, setPromptError] = useState("");
 
-  const verseRefs = useRef<Record<string, HTMLArticleElement | null>>({});
+  const verseRefs = useRef<Record<string, HTMLElement | null>>({});
 
   const {
     bookmarks,
@@ -101,14 +179,6 @@ export default function BibleReader() {
     setActivePromptIndex(0);
   }, [selectedPlace?.name]);
 
-  useEffect(() => {
-    if (!selectedVerse) return;
-
-    setOpenPassages((current) => ({
-      ...current,
-      [selectedVerse.passageId]: true,
-    }));
-  }, [selectedVerse?.passageId]);
 
   useEffect(() => {
     if (!selectedVerse || leftPanelTab !== "reader") return;
@@ -124,7 +194,7 @@ export default function BibleReader() {
 
   const renderedVerses = useMemo(() => {
     return verses.map((verse) => {
-      let parts: (string | VersePlace)[] = [verse.text];
+      let parts: (string | VersePlace)[] = [verse.translations.KJV];
 
       for (const place of verse.places) {
         const nextParts: (string | VersePlace)[] = [];
@@ -157,40 +227,6 @@ export default function BibleReader() {
     });
   }, []);
 
-  const passageGroups = useMemo<PassageGroup[]>(() => {
-    const groups = new Map<string, PassageGroup>();
-
-    for (const verse of renderedVerses) {
-      if (!groups.has(verse.passageId)) {
-        groups.set(verse.passageId, {
-          passageId: verse.passageId,
-          passageTitle: verse.passageTitle,
-          verses: [],
-        });
-      }
-
-      groups.get(verse.passageId)!.verses.push(verse);
-    }
-
-    return Array.from(groups.values());
-  }, [renderedVerses]);
-
-  const currentPassagePlaces = useMemo(() => {
-    if (!selectedVerse) return [];
-
-    const passageVerses = verses.filter((verse) => verse.passageId === selectedVerse.passageId);
-    const seen = new Map<string, VersePlace>();
-
-    for (const verse of passageVerses) {
-      for (const place of verse.places) {
-        if (!seen.has(place.name)) {
-          seen.set(place.name, place);
-        }
-      }
-    }
-
-    return Array.from(seen.values());
-  }, [selectedVerse]);
 
   const placeIndex = useMemo<IndexedPlace[]>(() => {
     const seen = new Map<string, IndexedPlace>();
@@ -224,13 +260,48 @@ export default function BibleReader() {
     }));
   }, [bookmarkedPlaces, notes]);
 
+  // ── Export handlers ───────────────────────────────────────────
+  async function exportAsDocx() {
+    setIsExportingDocx(true);
+    setExportError("");
+    try {
+      const res = await fetch("/api/export", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          format: "docx",
+          bookmarks: exportableBookmarkedPlaces,
+          notes,
+          sessions,
+        }),
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ error: "Unknown error" }));
+        throw new Error((err as { error?: string }).error ?? "Export failed");
+      }
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `scripture-lives-study-${new Date().toISOString().slice(0, 10)}.docx`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      setExportError(err instanceof Error ? err.message : "Export failed");
+    } finally {
+      setIsExportingDocx(false);
+    }
+  }
+
+  function exportAsPdf() {
+    exportStudyPdf(exportableBookmarkedPlaces, sessions);
+  }
+
   const uniquePlaceEras = useMemo(() => {
     return ["All eras", ...Array.from(new Set(placeIndex.map((item) => item.place.era))).sort()];
   }, [placeIndex]);
-
-  const uniqueJourneyEras = useMemo(() => {
-    return ["All eras", ...Array.from(new Set(journeys.map((journey) => journey.era))).sort()];
-  }, []);
 
   const filteredPlaceIndex = useMemo(() => {
     const normalizedQuery = placeQuery.trim().toLowerCase();
@@ -245,22 +316,46 @@ export default function BibleReader() {
   }, [placeIndex, placeQuery, placeEraFilter]);
 
   const filteredJourneys = useMemo(() => {
-    if (journeyEraFilter === "All eras") {
-      return journeys;
-    }
-
-    return journeys.filter((journey) => journey.era === journeyEraFilter);
+    if (journeyEraFilter === "All eras") return journeys;
+    return journeys.filter((j) => j.era === journeyEraFilter);
   }, [journeyEraFilter]);
 
+  // ── Atlas tab — stable filtered lists (avoids new-array-every-render in MapBehavior dep) ──
+  const atlasUniqueEras = useMemo(() => {
+    return ["All eras", ...Array.from(new Set(placeIndex.map(ip => ip.place.era))).sort()];
+  }, [placeIndex]);
+
+  const atlasFilteredItems = useMemo(() => {
+    return placeIndex.filter(ip => {
+      const matchesEra  = atlasEraFilter === "All eras" || ip.place.era === atlasEraFilter;
+      const matchesSrch = !atlasSearch.trim() || ip.name.toLowerCase().includes(atlasSearch.toLowerCase());
+      return matchesEra && matchesSrch;
+    });
+  }, [placeIndex, atlasEraFilter, atlasSearch]);
+
+  // Stable VersePlace[] array — only changes when filter changes, so MapBehavior won't loop
+  const atlasVersePlaces = useMemo(() => atlasFilteredItems.map(ip => ip.place), [atlasFilteredItems]);
+
   const versePlaces = selectedVerse?.places ?? [];
-  const mapPlaces = mapScope === "passage" ? currentPassagePlaces : versePlaces;
+  const mapPlaces = versePlaces;
   const selectedPlaceImages = selectedPlace?.images ?? [];
   const selectedImage = selectedPlaceImages[activeImageIndex] ?? null;
 
+  // presenterRef (Reader tab) always wins for study context; selectedVerse is fallback
+  const studyRef = presenterRef?.reference ?? selectedVerse?.reference ?? null;
+
   const fallbackPrompts = useMemo(() => {
-    if (!selectedPlace) return [];
-    return getPlaceStudyPrompts(selectedPlace, selectedVerse?.reference);
-  }, [selectedPlace, selectedVerse?.reference]);
+    if (selectedPlace) return getPlaceStudyPrompts(selectedPlace, presenterRef?.reference ?? selectedVerse?.reference);
+    const ref = presenterRef?.reference ?? selectedVerse?.reference;
+    if (!ref) return [];
+    return [
+      { id: "observation",    title: "Observation",          prompt: `Read ${ref} carefully. What stands out? Who is speaking, who is the audience, and what is the main action or declaration?` },
+      { id: "context",        title: "Historical Context",   prompt: `What was happening in Israel's history when ${ref} was written? How does the political, cultural, or religious context shape its meaning?` },
+      { id: "theological",    title: "Theological Truth",    prompt: `What does ${ref} reveal about God's character, His purposes, or His relationship with humanity? What truth is being communicated?` },
+      { id: "personal",       title: "Personal Application", prompt: `What does ${ref} mean for your life today? Is there a promise to claim, a warning to heed, a command to obey, or an example to follow?` },
+      { id: "discussion",     title: "Group Discussion",     prompt: `If you were leading a Bible study on ${ref}, what 2–3 questions would help your group understand and apply its message?` },
+    ];
+  }, [selectedPlace, presenterRef?.reference, selectedVerse?.reference, selectedVerse?.id]);
 
   const effectivePrompts = aiPrompts.length > 0 ? aiPrompts : fallbackPrompts;
   const activePrompt = effectivePrompts[activePromptIndex] ?? null;
@@ -269,7 +364,9 @@ export default function BibleReader() {
     let isCancelled = false;
 
     async function loadPrompts() {
-      if (!selectedPlace || !selectedVerse) {
+      const activeRef = presenterRef?.reference ?? selectedVerse?.reference;
+      const activeText = presenterRef?.text ?? selectedVerse?.translations?.KJV;
+      if (!activeRef || !activeText) {
         setAiPrompts([]);
         setPromptError("");
         return;
@@ -286,13 +383,13 @@ export default function BibleReader() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            placeName: selectedPlace.name,
-            era: selectedPlace.era,
-            description: selectedPlace.description,
-            ancientDescription: selectedPlace.ancientDescription,
-            biblicalSignificance: selectedPlace.biblicalSignificance,
-            verseReference: selectedVerse.reference,
-            verseText: selectedVerse.text,
+            placeName: selectedPlace?.name ?? null,
+            era: selectedPlace?.era ?? null,
+            description: selectedPlace?.description ?? null,
+            ancientDescription: selectedPlace?.ancientDescription ?? null,
+            biblicalSignificance: selectedPlace?.biblicalSignificance ?? null,
+            verseReference: presenterRef?.reference ?? selectedVerse?.reference,
+            verseText: presenterRef?.text ?? selectedVerse?.translations?.KJV,
           }),
         });
 
@@ -324,7 +421,21 @@ export default function BibleReader() {
     return () => {
       isCancelled = true;
     };
-  }, [selectedPlace?.name, selectedVerse?.id]);
+  }, [selectedPlace?.name, presenterRef?.reference, selectedVerse?.id]);
+
+  // Reset to first prompt when context changes
+  useEffect(() => {
+    setActivePromptIndex(0);
+  }, [selectedPlace?.name, presenterRef?.reference, selectedVerse?.id]);
+
+  const handleSelectBibleVerse = (
+    version: "KJV" | "ASV" | "WEB",
+    book: string,
+    chapter: number
+  ) => {
+    setFullBibleNav({ version, book, chapter });
+    setLeftPanelTab("bible");
+  };
 
   const handleSelectVerse = (verseId: string) => {
     const verse = verses.find((v) => v.id === verseId);
@@ -346,7 +457,6 @@ export default function BibleReader() {
     setActiveJourney(null);
     setSelectedVerse(verse);
     setSelectedPlace(matchingPlace);
-    setLeftPanelTab("reader");
   };
 
   const handleLoadSession = (sessionId: string) => {
@@ -367,283 +477,863 @@ export default function BibleReader() {
     setLeftPanelTab("sessions");
   };
 
-  const togglePassage = (passageId: string) => {
-    setOpenPassages((current) => ({
-      ...current,
-      [passageId]: !current[passageId],
-    }));
-  };
+  // ── Dictionary lookup ─────────────────────────────────────────────────────────
+  async function lookupDictionary(term: string) {
+    if (!term.trim()) return;
+    setDictLoading(true);
+    setDictError("");
+    setDictResult(null);
+    try {
+      const res = await fetch(`/api/dictionary?term=${encodeURIComponent(term.trim())}`);
+      const data = await res.json();
+      setDictResult(data);
+    } catch {
+      setDictError("Could not reach the dictionary. Please try again.");
+    } finally {
+      setDictLoading(false);
+    }
+  }
 
+  // ── Stable PassagePresenter callbacks (useCallback prevents infinite loop) ──
+  const handlePresenterWordClick = useCallback((word: string, book: string) => {
+    setLexiconWord({ word, book });
+    setVisualQuery(null);
+  }, []);
+
+  const handlePresenterVisualSearch = useCallback((term: string) => {
+    setVisualQuery(term);
+    setLexiconWord(null);
+  }, []);
+
+  const handlePresenterNavigateFullBible = useCallback((book: string, chapter: number) => {
+    setFullBibleNav({ version: "KJV", book, chapter });
+    setLeftPanelTab("bible");
+  }, []);
+
+  const handlePresenterVerseChange = useCallback(
+    (ref: { book: string; chapter: number; verse?: number; reference: string; text: string }) => {
+      setPresenterRef(ref);
+    },
+    []
+  );
+
+  // Verse of the Day — rotates daily
+  const verseOfDay = useMemo(() => {
+    const today = new Date();
+    const dayOfYear = Math.floor(
+      (today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / 86_400_000
+    );
+    return DAILY_VERSES[dayOfYear % DAILY_VERSES.length];
+  }, []);
+
+  // Sidebar nav button (desktop)
+  const sideNavBtn = (tab: LeftPanelTab, icon: string, label: string) => (
+    <button
+      key={tab}
+      type="button"
+      onClick={() => setLeftPanelTab(tab)}
+      className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition ${
+        leftPanelTab === tab
+          ? "bg-amber-500 text-stone-900"
+          : "text-stone-400 hover:bg-stone-800 hover:text-white"
+      }`}
+    >
+      <span className="shrink-0 text-base">{icon}</span>
+      <span>{label}</span>
+    </button>
+  );
+
+  // Tab button (mobile)
   const tabButtonClass = (tab: LeftPanelTab) =>
-    `rounded-lg px-4 py-2 text-sm font-medium transition ${
+    `rounded-lg px-3 py-1.5 text-xs font-medium transition whitespace-nowrap ${
       leftPanelTab === tab
-        ? "bg-amber-500 text-stone-950"
-        : "text-stone-300 hover:bg-stone-800"
+        ? "bg-amber-500 text-gray-900"
+        : "text-gray-600 hover:bg-gray-100"
     }`;
 
   return (
-    <main className="min-h-screen bg-stone-950 text-stone-100 print:bg-white print:text-black">
-      <div className="mx-auto max-w-7xl px-6 py-10 print:max-w-none print:px-0 print:py-0">
-        <div className="print:hidden">
-          <h1 className="text-3xl font-bold">Scripture Alive</h1>
-          <p className="mt-2 text-stone-300">
-            Explore scripture through passages, places, maps, journeys, linked verse discovery, bookmarks, notes, study sessions, printable study sheets, image galleries, and AI-guided study prompts.
-          </p>
-        </div>
+    <main className="min-h-screen bg-white text-gray-900 print:bg-white print:text-black">
+      <div className="xl:flex xl:min-h-screen print:block">
 
-        <div className="mt-8 grid gap-6 xl:grid-cols-[1.5fr_1fr] print:mt-0 print:block">
-          <section className="rounded-2xl border border-stone-800 bg-stone-900 p-6 shadow-lg print:border-none print:bg-white print:p-0 print:shadow-none">
-            <div className="mb-6 flex flex-wrap gap-2 rounded-xl border border-stone-800 bg-stone-950 p-2 print:hidden">
-              <button type="button" onClick={() => setLeftPanelTab("reader")} className={tabButtonClass("reader")}>
-                Reader
-              </button>
-              <button type="button" onClick={() => setLeftPanelTab("journeys")} className={tabButtonClass("journeys")}>
-                Journeys
-              </button>
-              <button type="button" onClick={() => setLeftPanelTab("places")} className={tabButtonClass("places")}>
-                Places
-              </button>
-              <button type="button" onClick={() => setLeftPanelTab("bookmarks")} className={tabButtonClass("bookmarks")}>
-                Bookmarks
-              </button>
-              <button type="button" onClick={() => setLeftPanelTab("sessions")} className={tabButtonClass("sessions")}>
-                Sessions
-              </button>
-              <button type="button" onClick={() => setLeftPanelTab("study_sheet")} className={tabButtonClass("study_sheet")}>
-                Study Sheet
-              </button>
+        {/* ── LEFT SIDEBAR (desktop) ───────────────────────────────────────── */}
+        <nav className="hidden xl:flex flex-col w-56 shrink-0 bg-stone-900 text-white sticky top-0 h-screen overflow-y-auto print:hidden">
+          {/* Logo */}
+          <div className="px-5 py-6 border-b border-stone-800">
+            <div className="flex items-center gap-2.5">
+              <span className="text-xl text-amber-400">✝</span>
+              <div>
+                <p className="text-sm font-bold text-amber-300 leading-tight">Scripture Lives</p>
+                <p className="text-xs text-stone-500 mt-0.5">Bible Study Platform</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Nav sections */}
+          <div className="flex-1 py-5 px-3 space-y-6 overflow-y-auto">
+            <div>
+              <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-widest text-stone-500">Read</p>
+              {sideNavBtn("home",          "🏠", "Home")}
+              {sideNavBtn("reader",        "📖", "Passage Reader")}
+              {sideNavBtn("bible",         "📚", "Full Bible")}
+            </div>
+            <div>
+              <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-widest text-stone-500">Study</p>
+              {sideNavBtn("timeline",      "⏳", "Timeline")}
+              {sideNavBtn("commentary",    "💬", "Commentary")}
+              {sideNavBtn("dictionary",    "📖", "Dictionary")}
+              {sideNavBtn("study_prompts", "✏️", "Study Prompts")}
+            </div>
+            <div>
+              <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-widest text-stone-500">Explore</p>
+              {sideNavBtn("ancient_world", "🗺", "Ancient Journeys")}
+              {sideNavBtn("atlas",         "🌍", "Bible Atlas")}
+            </div>
+            <div>
+              <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-widest text-stone-500">My Library</p>
+              {sideNavBtn("bookmarks",     "🔖", "Bookmarks")}
+              {sideNavBtn("sessions",      "📋", "Sessions")}
+              {sideNavBtn("study_sheet",   "📄", "Study Sheet")}
+            </div>
+          </div>
+        </nav>
+
+        {/* ── CENTER + RIGHT ───────────────────────────────────────────────── */}
+        <div className="flex-1 xl:grid xl:grid-cols-[1fr_400px] min-h-screen print:block">
+
+          {/* CENTER — main content */}
+          <section className="bg-gray-50 p-4 xl:p-6 min-h-screen print:border-none print:bg-white print:p-0 print:shadow-none">
+
+            {/* Mobile tab bar */}
+            <div className="xl:hidden mb-4 flex flex-wrap gap-1.5 rounded-xl border border-gray-200 bg-white p-2 print:hidden">
+              <button type="button" onClick={() => setLeftPanelTab("home")}          className={tabButtonClass("home")}>🏠 Home</button>
+              <button type="button" onClick={() => setLeftPanelTab("reader")}        className={tabButtonClass("reader")}>📖 Reader</button>
+              <button type="button" onClick={() => setLeftPanelTab("bible")}         className={tabButtonClass("bible")}>📚 Full Bible</button>
+              <button type="button" onClick={() => setLeftPanelTab("timeline")}      className={tabButtonClass("timeline")}>⏳ Timeline</button>
+              <button type="button" onClick={() => setLeftPanelTab("commentary")}    className={tabButtonClass("commentary")}>💬 Commentary</button>
+              <button type="button" onClick={() => setLeftPanelTab("dictionary")}    className={tabButtonClass("dictionary")}>📖 Dictionary</button>
+              <button type="button" onClick={() => setLeftPanelTab("ancient_world")} className={tabButtonClass("ancient_world")}>🗺 Journeys</button>
+              <button type="button" onClick={() => setLeftPanelTab("atlas")}         className={tabButtonClass("atlas")}>🌍 Atlas</button>
+              <button type="button" onClick={() => setLeftPanelTab("study_prompts")} className={tabButtonClass("study_prompts")}>✏️ Study Prompts</button>
+              <button type="button" onClick={() => setLeftPanelTab("bookmarks")}     className={tabButtonClass("bookmarks")}>🔖 Bookmarks</button>
+              <button type="button" onClick={() => setLeftPanelTab("sessions")}      className={tabButtonClass("sessions")}>📋 Sessions</button>
+              <button type="button" onClick={() => setLeftPanelTab("study_sheet")}   className={tabButtonClass("study_sheet")}>📄 Study Sheet</button>
             </div>
 
-            {leftPanelTab === "reader" && (
-              <div>
-                <SearchBar onSelectVerse={handleSelectVerse} />
-                <h2 className="mb-4 mt-6 text-xl font-semibold">Reader</h2>
+            {/* ── HOME TAB ─────────────────────────────────────────────────── */}
+            {leftPanelTab === "home" && (
+              <div className="space-y-8 print:hidden">
 
-                <div className="space-y-6">
-                  {passageGroups.map((group) => {
-                    const isOpen = !!openPassages[group.passageId];
-                    const hasSelectedVerse = group.verses.some((verse) => verse.id === selectedVerse?.id);
+                {/* Hero search */}
+                <div className="rounded-2xl bg-gradient-to-br from-stone-900 to-stone-800 px-7 py-9">
+                  <h1 className="text-2xl font-bold text-amber-400">Scripture Lives</h1>
+                  <p className="mt-1 text-sm text-stone-400">Explore, study, and present the living Word of God</p>
+                  <div className="mt-5 flex gap-2">
+                    <input
+                      type="text"
+                      value={homeQuery}
+                      onChange={(e) => setHomeQuery(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && homeQuery.trim()) {
+                          setLeftPanelTab("reader");
+                        }
+                      }}
+                      placeholder="Search a verse, passage, or keyword…"
+                      className="flex-1 rounded-xl border-0 bg-stone-700 px-4 py-3 text-sm text-white placeholder:text-stone-400 outline-none focus:ring-2 focus:ring-amber-400"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => { if (homeQuery.trim()) setLeftPanelTab("reader"); }}
+                      className="rounded-xl bg-amber-500 px-5 py-3 text-sm font-semibold text-stone-900 hover:bg-amber-400 transition"
+                    >
+                      Search
+                    </button>
+                  </div>
+                </div>
 
-                    return (
-                      <section
-                        key={group.passageId}
-                        className={`rounded-2xl border p-4 transition ${
-                          hasSelectedVerse ? "border-amber-500 bg-stone-950/50" : "border-stone-800 bg-stone-950/30"
-                        }`}
-                      >
-                        <button
-                          type="button"
-                          onClick={() => togglePassage(group.passageId)}
-                          className="flex w-full items-center justify-between gap-4 text-left"
-                        >
-                          <div>
-                            <h3 className="text-2xl font-semibold text-amber-400">{group.passageTitle}</h3>
-                            <p className="mt-1 text-sm text-stone-400">
-                              {group.verses.length} verse{group.verses.length === 1 ? "" : "s"}
-                            </p>
+                {/* Verse of the Day */}
+                <div className="rounded-2xl border border-amber-200 bg-amber-50 px-6 py-5">
+                  <div className="flex items-center justify-between gap-4 mb-3">
+                    <p className="text-xs font-bold uppercase tracking-widest text-amber-600">✦ Verse of the Day</p>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setFullBibleNav({ version: "KJV", book: verseOfDay.book, chapter: verseOfDay.chapter });
+                        setLeftPanelTab("bible");
+                      }}
+                      className="text-xs text-amber-600 hover:text-amber-800 transition"
+                    >
+                      Read chapter →
+                    </button>
+                  </div>
+                  <p className="text-base font-semibold text-amber-800 italic leading-7">"{verseOfDay.text}"</p>
+                  <p className="mt-2 text-sm font-medium text-amber-600">— {verseOfDay.reference} (KJV)</p>
+                </div>
+
+                {/* Quick-access feature cards */}
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                  {([
+                    { tab: "reader"       as LeftPanelTab, icon: "📖", label: "Passage Reader",  desc: "Search & present verses"       },
+                    { tab: "ancient_world"as LeftPanelTab, icon: "🗺", label: "Ancient World",   desc: "Journeys & sacred places"      },
+                    { tab: "study_prompts"as LeftPanelTab, icon: "✏️", label: "Study Prompts",   desc: "Reflection & discussion"       },
+                    { tab: "timeline"     as LeftPanelTab, icon: "⏳", label: "Timeline",         desc: "Biblical history eras"         },
+                  ]).map(card => (
+                    <button
+                      key={card.tab}
+                      type="button"
+                      onClick={() => setLeftPanelTab(card.tab)}
+                      className="rounded-2xl border border-gray-200 bg-white p-4 text-left transition hover:border-amber-300 hover:shadow-sm"
+                    >
+                      <span className="text-2xl">{card.icon}</span>
+                      <p className="mt-2 text-sm font-semibold text-gray-800">{card.label}</p>
+                      <p className="mt-0.5 text-xs text-gray-500">{card.desc}</p>
+                    </button>
+                  ))}
+                </div>
+
+                {/* OT / NT Book Grid */}
+                <div className="grid gap-8 lg:grid-cols-2">
+
+                  {/* Old Testament */}
+                  <div>
+                    <div className="mb-4 flex items-center gap-3">
+                      <div className="h-0.5 w-5 bg-amber-500 rounded-full" />
+                      <h2 className="text-xs font-bold uppercase tracking-widest text-gray-600">Old Testament</h2>
+                      <div className="h-px flex-1 bg-gray-200" />
+                    </div>
+                    <div className="space-y-4">
+                      {OT_SECTIONS.map(section => (
+                        <div key={section.label}>
+                          <p className="mb-2 text-[10px] font-bold uppercase tracking-widest text-amber-600">{section.label}</p>
+                          <div className="flex flex-wrap gap-1.5">
+                            {section.books.map(book => (
+                              <button
+                                key={book}
+                                type="button"
+                                onClick={() => {
+                                  setFullBibleNav({ version: "KJV", book, chapter: 1 });
+                                  setLeftPanelTab("bible");
+                                }}
+                                className="rounded-lg border border-gray-200 bg-white px-2.5 py-1.5 text-xs font-medium text-gray-700 transition hover:border-amber-400 hover:bg-amber-50 hover:text-amber-700"
+                              >
+                                {book}
+                              </button>
+                            ))}
                           </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
 
-                          <div className="rounded-lg border border-stone-700 px-3 py-2 text-sm text-stone-300">
-                            {isOpen ? "Collapse" : "Expand"}
+                  {/* New Testament */}
+                  <div>
+                    <div className="mb-4 flex items-center gap-3">
+                      <div className="h-0.5 w-5 bg-blue-500 rounded-full" />
+                      <h2 className="text-xs font-bold uppercase tracking-widest text-gray-600">New Testament</h2>
+                      <div className="h-px flex-1 bg-gray-200" />
+                    </div>
+                    <div className="space-y-4">
+                      {NT_SECTIONS.map(section => (
+                        <div key={section.label}>
+                          <p className="mb-2 text-[10px] font-bold uppercase tracking-widest text-blue-600">{section.label}</p>
+                          <div className="flex flex-wrap gap-1.5">
+                            {section.books.map(book => (
+                              <button
+                                key={book}
+                                type="button"
+                                onClick={() => {
+                                  setFullBibleNav({ version: "KJV", book, chapter: 1 });
+                                  setLeftPanelTab("bible");
+                                }}
+                                className="rounded-lg border border-gray-200 bg-white px-2.5 py-1.5 text-xs font-medium text-gray-700 transition hover:border-blue-400 hover:bg-blue-50 hover:text-blue-700"
+                              >
+                                {book}
+                              </button>
+                            ))}
                           </div>
-                        </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
 
-                        {isOpen && (
-                          <div className="mt-5 space-y-4">
-                            {group.verses.map((verse) => {
-                              const verseIsSelected = selectedVerse?.id === verse.id;
-
-                              return (
-                                <article
-                                  key={verse.id}
-                                  ref={(el) => {
-                                    verseRefs.current[verse.id] = el;
-                                  }}
-                                  className={`rounded-xl border p-4 transition ${
-                                    verseIsSelected
-                                      ? "border-amber-500 bg-stone-800 shadow-[0_0_0_1px_rgba(245,158,11,0.25)]"
-                                      : "border-stone-800"
-                                  }`}
-                                  onClick={() => {
-                                    setActiveJourney(null);
-                                    setSelectedVerse(verse);
-                                    if (!verse.places.some((p) => p.name === selectedPlace?.name)) {
-                                      setSelectedPlace(verse.places[0] ?? null);
-                                    }
-                                  }}
-                                >
-                                  <div className="mb-2 flex items-center justify-between gap-3">
-                                    <div className="text-sm font-semibold uppercase tracking-wide text-amber-400">
-                                      {verse.reference}
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                      {verse.places[0] && <EraBadge label={verse.places[0].era} />}
-                                      <div className="text-xs text-stone-400">
-                                        {verse.places.length} place{verse.places.length === 1 ? "" : "s"}
-                                      </div>
-                                    </div>
-                                  </div>
-
-                                  <p className="text-lg leading-8">
-                                    {verse.parts.map((part, index) => {
-                                      if (typeof part === "string") {
-                                        return <span key={`${verse.id}-text-${index}`}>{part}</span>;
-                                      }
-
-                                      const isSelectedPlace =
-                                        verseIsSelected && selectedPlace?.name === part.name;
-
-                                      return (
-                                        <button
-                                          key={`${verse.id}-place-${part.name}-${index}`}
-                                          type="button"
-                                          onClick={(event) => {
-                                            event.stopPropagation();
-                                            setActiveJourney(null);
-                                            setSelectedVerse(verse);
-                                            setSelectedPlace(part);
-                                          }}
-                                          className={`rounded px-1 font-semibold underline underline-offset-4 transition ${
-                                            isSelectedPlace
-                                              ? "bg-amber-500 text-stone-950 decoration-amber-300"
-                                              : "text-sky-300 decoration-sky-500 hover:text-sky-200"
-                                          }`}
-                                        >
-                                          {part.name}
-                                        </button>
-                                      );
-                                    })}
-                                  </p>
-                                </article>
-                              );
-                            })}
-                          </div>
-                        )}
-                      </section>
-                    );
-                  })}
                 </div>
               </div>
             )}
 
-            {leftPanelTab === "journeys" && (
-              <div className="print:hidden">
-                <div className="mb-4 flex items-center justify-between gap-3">
-                  <h2 className="text-xl font-semibold">Journeys</h2>
-                  <select
-                    value={journeyEraFilter}
-                    onChange={(event) => setJourneyEraFilter(event.target.value)}
-                    className="rounded-lg border border-stone-700 bg-stone-950 px-3 py-2 text-sm text-stone-100 outline-none focus:border-amber-500"
-                  >
-                    {uniqueJourneyEras.map((era) => (
-                      <option key={era} value={era}>
-                        {era}
-                      </option>
-                    ))}
-                  </select>
+            {leftPanelTab === "reader" && (
+              <PassagePresenter
+                onWordClick={handlePresenterWordClick}
+                onVisualSearch={handlePresenterVisualSearch}
+                onNavigateFullBible={handlePresenterNavigateFullBible}
+                onVerseChange={handlePresenterVerseChange}
+              />
+            )}
+
+            {leftPanelTab === "bible" && (
+              <div>
+                <h2 className="mb-4 text-xl font-semibold">Full Bible</h2>
+                <FullBibleReader
+                  navTarget={fullBibleNav}
+                  onNavConsumed={() => setFullBibleNav(null)}
+                  onChapterChange={(book, chapter) =>
+                    setActiveFullBibleRef({ book, chapter })
+                  }
+                  onVisualSearch={(term) => {
+                    setVisualQuery(term);
+                    setLexiconWord(null);
+                  }}
+                  onWordClick={(word, book) => {
+                    setLexiconWord({ word, book });
+                    setVisualQuery(null);
+                  }}
+                />
+              </div>
+            )}
+
+            {leftPanelTab === "timeline" && (
+              <BiblicalTimeline
+                onNavigate={(book, chapter) => {
+                  setFullBibleNav({ version: "KJV", book, chapter });
+                  setLeftPanelTab("bible");
+                }}
+              />
+            )}
+
+            {leftPanelTab === "commentary" && (
+              <CommentaryPanel
+                book={activeFullBibleRef.book}
+                chapter={activeFullBibleRef.chapter}
+              />
+            )}
+
+            {leftPanelTab === "ancient_world" && (
+              <div className="print:hidden space-y-4">
+                {/* Header */}
+                <div className="border-b border-gray-200 pb-3">
+                  <h2 className="text-lg font-semibold text-amber-700">Ancient World</h2>
+                  <p className="text-xs text-gray-400 mt-0.5">
+                    Biblical journeys, sacred places, and the geography of scripture
+                  </p>
                 </div>
 
-                {filteredJourneys.length === 0 ? (
-                  <div className="rounded-xl border border-dashed border-stone-700 p-4 text-sm text-stone-400">
-                    No journeys found for the selected era.
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    {filteredJourneys.map((journey) => {
-                      const isActive = activeJourney?.id === journey.id;
+                {/* View toggle: Journeys / Places */}
+                <div className="flex rounded-xl border border-gray-200 bg-gray-50 p-1 gap-1">
+                  <button
+                    type="button"
+                    onClick={() => setAncientWorldView("journeys")}
+                    className={`flex-1 rounded-lg px-3 py-2 text-sm font-medium transition ${
+                      ancientWorldView === "journeys" ? "bg-amber-500 text-white" : "text-gray-600 hover:bg-gray-100"
+                    }`}
+                  >
+                    🗺 Ancient Journeys
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setAncientWorldView("places")}
+                    className={`flex-1 rounded-lg px-3 py-2 text-sm font-medium transition ${
+                      ancientWorldView === "places" ? "bg-amber-500 text-white" : "text-gray-600 hover:bg-gray-100"
+                    }`}
+                  >
+                    📍 Sacred Places
+                  </button>
+                </div>
 
-                      return (
+                {/* ── JOURNEYS VIEW ── */}
+                {ancientWorldView === "journeys" && (
+                  <div className="space-y-3">
+                    {/* Era filter chips */}
+                    <div className="flex flex-wrap gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => setJourneyEraFilter("All eras")}
+                        className={`rounded-full border px-3 py-1 text-xs font-medium transition ${
+                          journeyEraFilter === "All eras"
+                            ? "bg-gray-800 text-white border-gray-800"
+                            : "border-gray-300 text-gray-500 hover:border-gray-400"
+                        }`}
+                      >
+                        All eras
+                      </button>
+                      {ALL_JOURNEY_ERAS.map((era) => (
                         <button
-                          key={journey.id}
+                          key={era}
                           type="button"
-                          onClick={() => {
-                            setActiveJourney(journey);
-                            setSelectedPlace(null);
-                          }}
-                          className={`w-full rounded-xl border p-4 text-left transition ${
-                            isActive ? "border-amber-500 bg-stone-800" : "border-stone-800"
+                          onClick={() => setJourneyEraFilter(era)}
+                          className={`rounded-full border px-3 py-1 text-xs font-medium transition flex items-center gap-1.5 ${
+                            journeyEraFilter === era
+                              ? JOURNEY_ERA_BADGE[era]
+                              : "border-gray-200 text-gray-400 hover:border-gray-300"
                           }`}
                         >
-                          <div className="flex items-center justify-between gap-3">
-                            <h3 className="font-semibold text-amber-400">{journey.title}</h3>
-                            <span className="text-xs text-stone-400">{journey.reference}</span>
-                          </div>
-                          <div className="mt-2">
-                            <EraBadge label={journey.era} />
-                          </div>
-                          <p className="mt-3 text-sm text-stone-300">{journey.description}</p>
+                          <span className={`w-1.5 h-1.5 rounded-full ${JOURNEY_ERA_DOT[era]}`} />
+                          {era}
                         </button>
-                      );
-                    })}
+                      ))}
+                    </div>
+
+                    {/* Journey cards */}
+                    {filteredJourneys.length === 0 ? (
+                      <div className="rounded-xl border border-dashed border-gray-200 p-6 text-center text-sm text-gray-400">
+                        No journeys in this era.
+                      </div>
+                    ) : (
+                      <div className="space-y-2">
+                        {filteredJourneys.map((journey) => {
+                          const isActive = activeJourney?.id === journey.id;
+                          const dotClass = JOURNEY_ERA_DOT[journey.era];
+                          return (
+                            <button
+                              key={journey.id}
+                              type="button"
+                              onClick={() => {
+                                setActiveJourney(journey);
+                                setActiveJourneyStop(null);
+                                setSelectedPlace(null);
+                                setVisualQuery(journey.theme);
+                                setLexiconWord(null);
+                              }}
+                              className={`w-full rounded-xl border p-4 text-left transition ${
+                                isActive
+                                  ? "border-amber-400 bg-amber-50 shadow-sm"
+                                  : "border-gray-200 bg-white hover:border-amber-200 hover:bg-amber-50/30"
+                              }`}
+                            >
+                              <div className="flex items-start gap-3">
+                                <span className="text-xl shrink-0 mt-0.5">{journey.icon}</span>
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center gap-2 flex-wrap">
+                                    <h3 className="font-semibold text-amber-700 text-sm">{journey.title}</h3>
+                                    <span className="ml-auto text-xs text-gray-400 shrink-0">{journey.reference}</span>
+                                  </div>
+                                  <div className="mt-1.5 flex items-center gap-2">
+                                    <span className={`w-2 h-2 rounded-full shrink-0 ${dotClass}`} />
+                                    <span className="text-xs text-gray-500">{journey.era}</span>
+                                    <span className="text-xs text-gray-300">·</span>
+                                    <span className="text-xs text-gray-400">{journey.stops.length} stops</span>
+                                  </div>
+                                  <p className="mt-2 text-xs text-gray-500 line-clamp-2 leading-relaxed">
+                                    {journey.description}
+                                  </p>
+                                </div>
+                              </div>
+
+                              {/* Stop list when active */}
+                              {isActive && (
+                                <div className="mt-3 pt-3 border-t border-amber-200 space-y-1">
+                                  {journey.stops.map((stop, idx) => (
+                                    <button
+                                      key={stop.name}
+                                      type="button"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setActiveJourneyStop(idx);
+                                        setVisualQuery(stop.visualTerm ?? stop.name);
+                                        setLexiconWord(null);
+                                        if (stop.book && stop.chapter) {
+                                          setFullBibleNav({ version: "KJV", book: stop.book, chapter: stop.chapter });
+                                        }
+                                      }}
+                                      className={`w-full text-left rounded-lg px-3 py-2 text-xs transition ${
+                                        activeJourneyStop === idx
+                                          ? "bg-amber-500 text-white"
+                                          : "hover:bg-amber-100 text-gray-700"
+                                      }`}
+                                    >
+                                      <div className="flex items-center gap-2">
+                                        <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${
+                                          activeJourneyStop === idx ? "bg-white/30 text-white" : "bg-amber-100 text-amber-700"
+                                        }`}>
+                                          {idx + 1}
+                                        </span>
+                                        <span className="font-medium">{stop.name}</span>
+                                        {stop.reference && (
+                                          <span className={`ml-auto shrink-0 ${activeJourneyStop === idx ? "text-white/70" : "text-gray-400"}`}>
+                                            {stop.reference}
+                                          </span>
+                                        )}
+                                      </div>
+                                      {activeJourneyStop === idx && (
+                                        <p className="mt-1.5 text-white/90 leading-relaxed pl-7">
+                                          {stop.description}
+                                        </p>
+                                      )}
+                                    </button>
+                                  ))}
+                                </div>
+                              )}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* ── PLACES VIEW ── */}
+                {ancientWorldView === "places" && (
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-gray-400">{filteredPlaceIndex.length} of {placeIndex.length} places</span>
+                    </div>
+
+                    <input
+                      type="text"
+                      value={placeQuery}
+                      onChange={(event) => setPlaceQuery(event.target.value)}
+                      placeholder="Search sacred places…"
+                      className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 outline-none placeholder:text-gray-400 focus:border-amber-400"
+                    />
+
+                    <select
+                      value={placeEraFilter}
+                      onChange={(event) => setPlaceEraFilter(event.target.value)}
+                      className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2 text-sm text-gray-900 outline-none focus:border-amber-400"
+                    >
+                      {uniquePlaceEras.map((era) => (
+                        <option key={era} value={era}>{era}</option>
+                      ))}
+                    </select>
+
+                    {filteredPlaceIndex.length === 0 ? (
+                      <div className="rounded-xl border border-dashed border-gray-200 p-6 text-center text-sm text-gray-400">
+                        No places found.
+                      </div>
+                    ) : (
+                      <div className="space-y-2">
+                        {filteredPlaceIndex.map((item) => {
+                          const isActive = selectedPlace?.name === item.name && !activeJourney;
+                          return (
+                            <button
+                              key={item.name}
+                              type="button"
+                              onClick={() => {
+                                handleSelectPlaceFromIndex(item);
+                                setVisualQuery(item.name);
+                                setLexiconWord(null);
+                              }}
+                              className={`w-full rounded-xl border p-4 text-left transition ${
+                                isActive ? "border-amber-400 bg-amber-50" : "border-gray-200 bg-white hover:border-amber-200"
+                              }`}
+                            >
+                              <div className="flex items-center justify-between gap-3">
+                                <h3 className="font-semibold text-amber-700 text-sm">📍 {item.name}</h3>
+                                <span className="text-xs text-gray-400 shrink-0">{item.sourceReference}</span>
+                              </div>
+                              <div className="mt-1.5">
+                                <EraBadge label={item.place.era} />
+                              </div>
+                              <p className="mt-2 text-xs text-gray-500 line-clamp-2 leading-relaxed">{item.place.description}</p>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
             )}
 
-            {leftPanelTab === "places" && (
-              <div className="print:hidden">
-                <div className="mb-4 flex items-center justify-between">
-                  <h2 className="text-xl font-semibold">Place Index</h2>
-                  <span className="text-sm text-stone-400">
-                    {filteredPlaceIndex.length} of {placeIndex.length} places
-                  </span>
+            {/* ── DICTIONARY TAB ──────────────────────────────────────────── */}
+            {leftPanelTab === "dictionary" && (
+              <div className="space-y-5">
+                {/* Header */}
+                <div className="border-b border-gray-200 pb-3">
+                  <h2 className="text-lg font-semibold text-amber-700">📖 Bible Dictionary</h2>
+                  <p className="text-xs text-gray-400 mt-0.5">Easton's Bible Dictionary (1897) — Public Domain</p>
                 </div>
 
-                <div className="mb-4 space-y-3">
+                {/* Search */}
+                <form
+                  onSubmit={(e) => { e.preventDefault(); lookupDictionary(dictQuery); }}
+                  className="flex gap-2"
+                >
                   <input
                     type="text"
-                    value={placeQuery}
-                    onChange={(event) => setPlaceQuery(event.target.value)}
-                    placeholder="Search places in the index..."
-                    className="w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-2 text-sm text-stone-100 outline-none placeholder:text-stone-500 focus:border-amber-500"
+                    value={dictQuery}
+                    onChange={(e) => setDictQuery(e.target.value)}
+                    placeholder="Search a term, name, or place… (e.g. Aaron, Bethlehem, Atonement)"
+                    className="flex-1 rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 outline-none placeholder:text-gray-400 focus:border-amber-400"
                   />
-
-                  <select
-                    value={placeEraFilter}
-                    onChange={(event) => setPlaceEraFilter(event.target.value)}
-                    className="w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-2 text-sm text-stone-100 outline-none focus:border-amber-500"
+                  <button
+                    type="submit"
+                    disabled={dictLoading || !dictQuery.trim()}
+                    className="rounded-xl bg-amber-500 px-4 py-2.5 text-sm font-semibold text-stone-900 hover:bg-amber-400 transition disabled:opacity-50"
                   >
-                    {uniquePlaceEras.map((era) => (
-                      <option key={era} value={era}>
-                        {era}
-                      </option>
-                    ))}
-                  </select>
+                    {dictLoading ? "…" : "Look up"}
+                  </button>
+                </form>
+
+                {/* Quick suggestions */}
+                {!dictResult && !dictLoading && (
+                  <div>
+                    <p className="text-xs text-gray-400 mb-2">Common searches:</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {["Aaron","Bethlehem","Covenant","Atonement","Baptism","Messiah","Passover","Prophet","Resurrection","Sabbath","Temple","Zion"].map(t => (
+                        <button
+                          key={t}
+                          type="button"
+                          onClick={() => { setDictQuery(t); lookupDictionary(t); }}
+                          className="rounded-full border border-gray-200 bg-white px-2.5 py-1 text-xs text-gray-600 hover:border-amber-400 hover:text-amber-700 transition"
+                        >
+                          {t}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Loading */}
+                {dictLoading && (
+                  <div className="rounded-xl border border-amber-100 bg-amber-50 px-5 py-6 text-center">
+                    <p className="text-sm text-amber-600 animate-pulse">Looking up "{dictQuery}" in Easton's…</p>
+                  </div>
+                )}
+
+                {/* Error */}
+                {dictError && (
+                  <p className="text-xs text-red-500">{dictError}</p>
+                )}
+
+                {/* Not found */}
+                {dictResult && !dictResult.found && (
+                  <div className="rounded-xl border border-dashed border-gray-200 bg-gray-50 px-5 py-6 text-center">
+                    <p className="text-sm text-gray-600">No entry found for "<strong>{dictResult.term ?? dictQuery}</strong>" in Easton's Dictionary.</p>
+                    <p className="text-xs text-gray-400 mt-2">Try a different spelling, or search for a related term.</p>
+                  </div>
+                )}
+
+                {/* Result */}
+                {dictResult?.found && dictResult.body && (
+                  <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5 space-y-4">
+                    <div className="flex items-start justify-between gap-4">
+                      <h3 className="text-xl font-bold text-amber-800">{dictResult.term}</h3>
+                      <a
+                        href={dictResult.sourceUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="shrink-0 text-xs text-amber-600 hover:text-amber-800 transition"
+                      >
+                        Full source →
+                      </a>
+                    </div>
+                    <div className="prose prose-sm max-w-none">
+                      {dictResult.body.split("\n\n").map((para, i) => (
+                        <p key={i} className="text-sm text-gray-700 leading-7">{para.trim()}</p>
+                      ))}
+                    </div>
+                    <p className="text-xs text-gray-400 border-t border-amber-200 pt-3">{dictResult.source}</p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* ── ATLAS TAB ───────────────────────────────────────────────── */}
+            {leftPanelTab === "atlas" && (
+              <div className="space-y-4">
+                {/* Header row */}
+                <div className="flex items-end justify-between border-b border-gray-200 pb-3">
+                  <div>
+                    <h2 className="text-lg font-semibold text-amber-700">🌍 Bible Atlas</h2>
+                    <p className="text-xs text-gray-400 mt-0.5">
+                      {atlasFilteredItems.length} of {placeIndex.length} biblical locations
+                    </p>
+                  </div>
+                  {/* Map style toggle */}
+                  <div className="inline-flex rounded-xl border border-gray-300 bg-white p-1">
+                    <button type="button" onClick={() => setMapMode("modern")}  className={`rounded-lg px-3 py-1.5 text-xs font-medium transition ${mapMode === "modern"  ? "bg-amber-500 text-white" : "text-gray-600 hover:text-gray-900"}`}>Modern</button>
+                    <button type="button" onClick={() => setMapMode("ancient")} className={`rounded-lg px-3 py-1.5 text-xs font-medium transition ${mapMode === "ancient" ? "bg-amber-500 text-white" : "text-gray-600 hover:text-gray-900"}`}>Ancient</button>
+                  </div>
                 </div>
 
-                {filteredPlaceIndex.length === 0 ? (
-                  <div className="rounded-xl border border-dashed border-stone-700 p-4 text-sm text-stone-400">
-                    No places found for the current filters.
+                {/* Search + Era chips */}
+                <div className="space-y-2">
+                  <input
+                    type="text"
+                    value={atlasSearch}
+                    onChange={(e) => setAtlasSearch(e.target.value)}
+                    placeholder="Search places… (e.g. Jerusalem, Bethlehem)"
+                    className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2 text-sm outline-none placeholder:text-gray-400 focus:border-amber-400 focus:ring-2 focus:ring-amber-100"
+                  />
+                  <div className="flex flex-wrap gap-1.5">
+                    {atlasUniqueEras.map(era => (
+                      <button
+                        key={era}
+                        type="button"
+                        onClick={() => setAtlasEraFilter(era)}
+                        className={`rounded-full border px-3 py-1 text-xs font-medium transition ${
+                          atlasEraFilter === era
+                            ? "bg-amber-500 text-white border-amber-500 shadow-sm"
+                            : "border-gray-200 text-gray-500 hover:border-amber-300 hover:text-amber-700"
+                        }`}
+                      >
+                        {era}
+                      </button>
+                    ))}
                   </div>
-                ) : (
-                  <div className="space-y-3">
-                    {filteredPlaceIndex.map((item) => {
-                      const isActive = selectedPlace?.name === item.name && !activeJourney;
+                </div>
 
-                      return (
+                {/* Two-panel: place list + map */}
+                <div className="flex gap-3" style={{ height: "500px" }}>
+                  {/* Place list */}
+                  <div className="w-52 shrink-0 flex flex-col rounded-xl border border-gray-200 bg-white overflow-hidden">
+                    <div className="bg-stone-50 border-b border-gray-200 px-3 py-2">
+                      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Locations</p>
+                    </div>
+                    <div className="flex-1 overflow-y-auto">
+                      {atlasFilteredItems.map(ip => (
                         <button
-                          key={item.name}
+                          key={ip.name}
                           type="button"
-                          onClick={() => handleSelectPlaceFromIndex(item)}
-                          className={`w-full rounded-xl border p-4 text-left transition ${
-                            isActive ? "border-amber-500 bg-stone-800" : "border-stone-800"
+                          onClick={() => {
+                            setSelectedPlace(ip.place);
+                            const verse = verses.find(v => v.places.some(p => p.name === ip.name));
+                            if (verse) setSelectedVerse(verse);
+                          }}
+                          className={`w-full text-left px-3 py-2.5 border-b border-gray-100 text-sm transition ${
+                            selectedPlace?.name === ip.name
+                              ? "bg-amber-50 text-amber-800 font-medium"
+                              : "text-gray-700 hover:bg-gray-50"
                           }`}
                         >
-                          <div className="flex items-center justify-between gap-3">
-                            <h3 className="font-semibold text-amber-400">{item.name}</h3>
-                            <span className="text-xs text-stone-400">{item.sourceReference}</span>
-                          </div>
-                          <div className="mt-2 flex items-center justify-between gap-3">
-                            <EraBadge label={item.place.era} />
-                            <span className="text-xs text-stone-400">
-                              {isBookmarked(item.name) ? "Saved" : "Not saved"}
+                          <div className="flex items-center gap-2">
+                            <span className="text-base leading-none">
+                              {selectedPlace?.name === ip.name ? "📍" : "·"}
                             </span>
+                            <span>{ip.name}</span>
                           </div>
-                          <p className="mt-3 text-sm text-stone-300">{item.place.description}</p>
+                          <p className="mt-0.5 ml-6 text-[10px] text-gray-400 truncate">{ip.place.era}</p>
                         </button>
+                      ))}
+                      {atlasFilteredItems.length === 0 && (
+                        <p className="px-4 py-6 text-xs text-center text-gray-400">No places match your filters.</p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Map panel */}
+                  <div className="flex-1 flex flex-col gap-2 min-w-0">
+                    <div className="flex-1 rounded-xl overflow-hidden border border-gray-200">
+                      <PlaceMap
+                        selectedPlace={selectedPlace}
+                        versePlaces={atlasVersePlaces}
+                        mapMode={mapMode}
+                        activeJourney={null}
+                        fillHeight
+                        onPlaceClick={(place) => {
+                          setSelectedPlace(place);
+                          const verse = verses.find(v => v.places.some(p => p.name === place.name));
+                          if (verse) setSelectedVerse(verse);
+                        }}
+                      />
+                    </div>
+
+                    {/* Selected place card */}
+                    {selectedPlace ? (
+                      <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 flex items-start justify-between gap-3 shrink-0">
+                        <div className="min-w-0">
+                          <p className="text-sm font-semibold text-amber-800">📍 {selectedPlace.name}</p>
+                          <p className="text-xs text-amber-700 mt-0.5">{selectedPlace.era}</p>
+                          {selectedPlace.description && (
+                            <p className="text-xs text-gray-600 mt-1 leading-relaxed line-clamp-2">{selectedPlace.description}</p>
+                          )}
+                        </div>
+                        <button type="button" onClick={() => setSelectedPlace(null)} className="text-gray-400 hover:text-gray-600 text-lg leading-none shrink-0">✕</button>
+                      </div>
+                    ) : (
+                      <div className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 shrink-0">
+                        <p className="text-xs text-gray-400 text-center">Click a pin or a location name to explore</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {leftPanelTab === "study_prompts" && (
+              <div className="space-y-5">
+                {/* Header */}
+                <div className="border-b border-gray-200 pb-3">
+                  <h2 className="text-lg font-semibold text-amber-700">Study Prompts</h2>
+                  <p className="text-xs text-gray-400 mt-0.5">
+                    Reflection and discussion questions tied to your selected verse or place
+                  </p>
+                </div>
+
+                {/* Context banner */}
+                {studyRef || selectedPlace ? (
+                  <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 flex items-start gap-3">
+                    <span className="text-amber-500 text-lg shrink-0">📖</span>
+                    <div className="min-w-0">
+                      {studyRef && (
+                        <p className="text-sm font-semibold text-amber-700">{studyRef}</p>
+                      )}
+                      {selectedPlace && (
+                        <p className="text-xs text-amber-600 mt-0.5">{selectedPlace.name} · {selectedPlace.era}</p>
+                      )}
+                      {isLoadingPrompts && (
+                        <p className="text-xs text-amber-500 mt-1 italic">Generating prompts…</p>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="rounded-xl border border-dashed border-gray-200 bg-gray-50 px-4 py-5 text-center">
+                    <p className="text-sm text-gray-500">Select a verse or place to generate study prompts</p>
+                    <p className="text-xs text-gray-400 mt-1">Search a verse in the Reader tab, or pick a place from Ancient World</p>
+                  </div>
+                )}
+
+                {/* Prompt cards */}
+                {effectivePrompts.length > 0 && (
+                  <div className="space-y-3">
+                    {effectivePrompts.map((prompt, idx) => {
+                      const isActive = activePromptIndex === idx;
+                      const icons = ["🏺", "📖", "✝", "🪞", "🎓"];
+                      return (
+                        <div
+                          key={prompt.id}
+                          className={`rounded-2xl border transition overflow-hidden ${
+                            isActive ? "border-amber-400 shadow-sm" : "border-gray-200"
+                          }`}
+                        >
+                          {/* Card header — always visible */}
+                          <button
+                            type="button"
+                            onClick={() => setActivePromptIndex(isActive ? -1 : idx)}
+                            className={`w-full flex items-center gap-3 px-4 py-3 text-left transition ${
+                              isActive ? "bg-amber-50" : "bg-white hover:bg-gray-50"
+                            }`}
+                          >
+                            <span className="text-lg shrink-0">{icons[idx] ?? "💡"}</span>
+                            <span className={`text-sm font-semibold flex-1 ${isActive ? "text-amber-700" : "text-gray-800"}`}>
+                              {prompt.title}
+                            </span>
+                            <span className={`text-xs shrink-0 ${isActive ? "text-amber-500" : "text-gray-400"}`}>
+                              {isActive ? "▲" : "▼"}
+                            </span>
+                          </button>
+
+                          {/* Expanded prompt text */}
+                          {isActive && (
+                            <div className="px-4 pb-4 pt-1 bg-amber-50 border-t border-amber-100">
+                              <p className="text-sm text-gray-700 leading-7">{prompt.prompt}</p>
+                              <button
+                                type="button"
+                                onClick={() => navigator.clipboard.writeText(prompt.prompt)}
+                                className="mt-3 flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs text-gray-600 hover:border-amber-400 hover:text-amber-700 transition"
+                              >
+                                📋 Copy prompt
+                              </button>
+                            </div>
+                          )}
+                        </div>
                       );
                     })}
                   </div>
+                )}
+
+                {promptError && (
+                  <p className="text-xs text-gray-400 italic">
+                    Using built-in prompts. {promptError}
+                  </p>
                 )}
               </div>
             )}
@@ -653,43 +1343,60 @@ export default function BibleReader() {
                 <div className="mb-4 flex items-center justify-between gap-3">
                   <div>
                     <h2 className="text-xl font-semibold">Bookmarks</h2>
-                    <span className="text-sm text-stone-400">{bookmarkedPlaces.length} saved</span>
+                    <span className="text-sm text-gray-500">{bookmarkedPlaces.length} saved</span>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => exportStudySummary(exportableBookmarkedPlaces)}
-                    className="rounded-lg border border-amber-500 bg-amber-500 px-3 py-2 text-sm font-medium text-stone-950 transition hover:opacity-90"
-                  >
-                    Export Notes
-                  </button>
+                  <div className="flex flex-col items-end gap-1">
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={exportAsPdf}
+                        title="Open a print-ready page — use Ctrl+P / ⌘P to Save as PDF"
+                        className="rounded-lg border border-amber-600 px-3 py-2 text-sm font-medium text-amber-700 transition hover:bg-amber-50"
+                      >
+                        📄 PDF
+                      </button>
+                      <button
+                        type="button"
+                        onClick={exportAsDocx}
+                        disabled={isExportingDocx}
+                        title="Download a formatted Word document"
+                        className="rounded-lg border border-amber-500 bg-amber-500 px-3 py-2 text-sm font-medium text-gray-900 transition hover:opacity-90 disabled:opacity-50"
+                      >
+                        {isExportingDocx ? "Exporting…" : "📝 Word"}
+                      </button>
+                    </div>
+                    {exportError && (
+                      <span className="text-xs text-red-600">{exportError}</span>
+                    )}
+                  </div>
                 </div>
 
                 {bookmarkedPlaces.length === 0 ? (
-                  <div className="rounded-xl border border-dashed border-stone-700 p-4 text-sm text-stone-400">
+                  <div className="rounded-xl border border-dashed border-gray-300 p-4 text-sm text-gray-500">
                     No saved places yet. Open a place in the explorer and save it.
                   </div>
                 ) : (
                   <div className="space-y-3">
                     {bookmarkedPlaces.map((item) => (
-                      <div key={item.name} className="rounded-xl border border-stone-800 p-4">
+                      <div key={item.name} className="rounded-xl border border-gray-200 p-4">
                         <button
                           type="button"
                           onClick={() => handleSelectPlaceFromIndex(item)}
                           className="w-full text-left"
                         >
                           <div className="flex items-center justify-between gap-3">
-                            <h3 className="font-semibold text-amber-400">{item.name}</h3>
-                            <span className="text-xs text-stone-400">{item.sourceReference}</span>
+                            <h3 className="font-semibold text-amber-700">{item.name}</h3>
+                            <span className="text-xs text-gray-500">{item.sourceReference}</span>
                           </div>
                           <div className="mt-2">
                             <EraBadge label={item.place.era} />
                           </div>
-                          <p className="mt-3 text-sm text-stone-300">{item.place.description}</p>
-                          <div className="mt-3 rounded-lg border border-stone-800 bg-stone-950 p-3">
-                            <div className="text-xs font-semibold uppercase tracking-wide text-stone-400">
+                          <p className="mt-3 text-sm text-gray-600">{item.place.description}</p>
+                          <div className="mt-3 rounded-lg border border-gray-200 bg-white p-3">
+                            <div className="text-xs font-semibold uppercase tracking-wide text-gray-500">
                               Saved Note
                             </div>
-                            <div className="mt-1 text-sm text-stone-300">
+                            <div className="mt-1 text-sm text-gray-600">
                               {notes[item.name] ? notes[item.name] : "No note saved yet."}
                             </div>
                           </div>
@@ -698,7 +1405,7 @@ export default function BibleReader() {
                           <button
                             type="button"
                             onClick={() => removeBookmark(item.name)}
-                            className="rounded-lg border border-stone-700 px-3 py-2 text-sm text-stone-200 transition hover:border-red-400 hover:text-red-300"
+                            className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 transition hover:border-red-400 hover:text-red-500"
                           >
                             Remove bookmark
                           </button>
@@ -714,24 +1421,24 @@ export default function BibleReader() {
               <div className="print:hidden">
                 <div className="mb-4">
                   <h2 className="text-xl font-semibold">Study Sessions</h2>
-                  <p className="mt-1 text-sm text-stone-400">
+                  <p className="mt-1 text-sm text-gray-500">
                     Save your current bookmarks and notes as a named session.
                   </p>
                 </div>
 
-                <div className="mb-6 rounded-xl border border-stone-800 bg-stone-950 p-4">
+                <div className="mb-6 rounded-xl border border-gray-200 bg-white p-4">
                   <div className="flex flex-col gap-3 sm:flex-row">
                     <input
                       type="text"
                       value={sessionName}
                       onChange={(event) => setSessionName(event.target.value)}
                       placeholder="Session name..."
-                      className="flex-1 rounded-xl border border-stone-700 bg-stone-900 px-4 py-2 text-sm text-stone-100 outline-none placeholder:text-stone-500 focus:border-amber-500"
+                      className="flex-1 rounded-xl border border-gray-300 bg-gray-50 px-4 py-2 text-sm text-gray-900 outline-none placeholder:text-gray-400 focus:border-amber-500"
                     />
                     <button
                       type="button"
                       onClick={handleSaveSession}
-                      className="rounded-lg border border-amber-500 bg-amber-500 px-4 py-2 text-sm font-medium text-stone-950 transition hover:opacity-90"
+                      className="rounded-lg border border-amber-500 bg-amber-500 px-4 py-2 text-sm font-medium text-gray-900 transition hover:opacity-90"
                     >
                       Save Session
                     </button>
@@ -739,7 +1446,7 @@ export default function BibleReader() {
                 </div>
 
                 {sessions.length === 0 ? (
-                  <div className="rounded-xl border border-dashed border-stone-700 p-4 text-sm text-stone-400">
+                  <div className="rounded-xl border border-dashed border-gray-300 p-4 text-sm text-gray-500">
                     No study sessions yet.
                   </div>
                 ) : (
@@ -747,15 +1454,15 @@ export default function BibleReader() {
                     {sessions.map((session) => (
                       <div
                         key={session.id}
-                        className="rounded-xl border border-stone-800 p-4"
+                        className="rounded-xl border border-gray-200 p-4"
                       >
                         <div className="flex items-start justify-between gap-4">
                           <div>
-                            <h3 className="font-semibold text-amber-400">{session.name}</h3>
-                            <p className="mt-1 text-xs text-stone-400">
+                            <h3 className="font-semibold text-amber-700">{session.name}</h3>
+                            <p className="mt-1 text-xs text-gray-500">
                               {new Date(session.createdAt).toLocaleString()}
                             </p>
-                            <p className="mt-2 text-sm text-stone-300">
+                            <p className="mt-2 text-sm text-gray-600">
                               {session.bookmarks.length} bookmark
                               {session.bookmarks.length === 1 ? "" : "s"} •{" "}
                               {Object.keys(session.notes).length} note
@@ -767,14 +1474,14 @@ export default function BibleReader() {
                             <button
                               type="button"
                               onClick={() => handleLoadSession(session.id)}
-                              className="rounded-lg border border-stone-700 px-3 py-2 text-sm text-stone-200 transition hover:border-amber-500"
+                              className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 transition hover:border-amber-500"
                             >
                               Load
                             </button>
                             <button
                               type="button"
                               onClick={() => deleteSession(session.id)}
-                              className="rounded-lg border border-stone-700 px-3 py-2 text-sm text-stone-200 transition hover:border-red-400 hover:text-red-300"
+                              className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 transition hover:border-red-400 hover:text-red-500"
                             >
                               Delete
                             </button>
@@ -788,30 +1495,30 @@ export default function BibleReader() {
             )}
 
             {leftPanelTab === "study_sheet" && (
-              <div className="text-stone-100 print:text-black">
+              <div className="text-gray-900 print:text-black">
                 <div className="mb-6 flex items-start justify-between gap-4 print:hidden">
                   <div>
                     <h2 className="text-2xl font-semibold">Study Sheet</h2>
-                    <p className="mt-1 text-sm text-stone-400">
+                    <p className="mt-1 text-sm text-gray-500">
                       Print this page or save it as a PDF from your browser.
                     </p>
                   </div>
                   <button
                     type="button"
                     onClick={() => window.print()}
-                    className="rounded-lg border border-amber-500 bg-amber-500 px-4 py-2 text-sm font-medium text-stone-950 transition hover:opacity-90"
+                    className="rounded-lg border border-amber-500 bg-amber-500 px-4 py-2 text-sm font-medium text-gray-900 transition hover:opacity-90"
                   >
                     Print / Save PDF
                   </button>
                 </div>
 
                 <div className="hidden print:block print:mb-8">
-                  <h1 className="text-3xl font-bold">Scripture Alive Study Sheet</h1>
+                  <h1 className="text-3xl font-bold">Scripture Lives Study Sheet</h1>
                   <p className="mt-2 text-sm">Generated {new Date().toLocaleString()}</p>
                 </div>
 
                 {bookmarkedPlaces.length === 0 ? (
-                  <div className="rounded-xl border border-dashed border-stone-700 p-6 text-sm text-stone-400 print:border-gray-300 print:text-black">
+                  <div className="rounded-xl border border-dashed border-gray-300 p-6 text-sm text-gray-500 print:border-gray-300 print:text-black">
                     No bookmarked places yet. Save a few places first, then return here to print a study sheet.
                   </div>
                 ) : (
@@ -819,17 +1526,17 @@ export default function BibleReader() {
                     {bookmarkedPlaces.map((item, index) => (
                       <article
                         key={item.name}
-                        className="rounded-2xl border border-stone-800 bg-stone-950 p-6 print:break-inside-avoid print:border-gray-300 print:bg-white"
+                        className="rounded-2xl border border-gray-200 bg-white p-6 print:break-inside-avoid print:border-gray-300 print:bg-white"
                       >
                         <div className="flex items-start justify-between gap-4">
                           <div>
-                            <div className="text-sm font-semibold uppercase tracking-wide text-amber-400 print:text-black">
+                            <div className="text-sm font-semibold uppercase tracking-wide text-amber-700 print:text-black">
                               Place {index + 1}
                             </div>
-                            <h3 className="mt-1 text-2xl font-bold text-amber-300 print:text-black">
+                            <h3 className="mt-1 text-2xl font-bold text-amber-600 print:text-black">
                               {item.name}
                             </h3>
-                            <p className="mt-2 text-sm text-stone-400 print:text-black">
+                            <p className="mt-2 text-sm text-gray-500 print:text-black">
                               Source Verse: {item.sourceReference}
                             </p>
                           </div>
@@ -842,31 +1549,31 @@ export default function BibleReader() {
 
                         <div className="mt-5 space-y-4">
                           <div>
-                            <h4 className="text-sm font-semibold uppercase tracking-wide text-stone-400 print:text-black">
+                            <h4 className="text-sm font-semibold uppercase tracking-wide text-gray-500 print:text-black">
                               Summary
                             </h4>
-                            <p className="mt-1 text-stone-200 print:text-black">{item.place.description}</p>
+                            <p className="mt-1 text-gray-800 print:text-black">{item.place.description}</p>
                           </div>
 
                           <div>
-                            <h4 className="text-sm font-semibold uppercase tracking-wide text-stone-400 print:text-black">
+                            <h4 className="text-sm font-semibold uppercase tracking-wide text-gray-500 print:text-black">
                               Ancient Context
                             </h4>
-                            <p className="mt-1 text-stone-200 print:text-black">{item.place.ancientDescription}</p>
+                            <p className="mt-1 text-gray-800 print:text-black">{item.place.ancientDescription}</p>
                           </div>
 
                           <div>
-                            <h4 className="text-sm font-semibold uppercase tracking-wide text-stone-400 print:text-black">
+                            <h4 className="text-sm font-semibold uppercase tracking-wide text-gray-500 print:text-black">
                               Biblical Significance
                             </h4>
-                            <p className="mt-1 text-stone-200 print:text-black">{item.place.biblicalSignificance}</p>
+                            <p className="mt-1 text-gray-800 print:text-black">{item.place.biblicalSignificance}</p>
                           </div>
 
                           <div>
-                            <h4 className="text-sm font-semibold uppercase tracking-wide text-stone-400 print:text-black">
+                            <h4 className="text-sm font-semibold uppercase tracking-wide text-gray-500 print:text-black">
                               Study Note
                             </h4>
-                            <div className="mt-1 rounded-xl border border-stone-800 bg-stone-900 p-4 text-stone-200 print:border-gray-300 print:bg-white print:text-black">
+                            <div className="mt-1 rounded-xl border border-gray-200 bg-gray-50 p-4 text-gray-800 print:border-gray-300 print:bg-white print:text-black">
                               {notes[item.name] ? notes[item.name] : "No note saved yet."}
                             </div>
                           </div>
@@ -879,43 +1586,40 @@ export default function BibleReader() {
             )}
           </section>
 
-          <aside className="space-y-6 print:hidden">
-            <section className="rounded-2xl border border-stone-800 bg-stone-900 p-6 shadow-lg">
+          {/* RIGHT PANEL */}
+          <aside className="bg-white border-l border-gray-200 p-5 space-y-6 print:hidden">
+            {/* Lexicon Panel — Word Study */}
+            {lexiconWord && (
+              <LexiconPanel
+                mode="word"
+                clickedWord={lexiconWord.word}
+                book={lexiconWord.book}
+                onClear={() => setLexiconWord(null)}
+              />
+            )}
+
+            {/* Visual Reference Panel */}
+            {visualQuery && (
+              <VisualReferencePanel
+                query={visualQuery}
+                onClear={() => setVisualQuery(null)}
+              />
+            )}
+
+            <section className="rounded-2xl border border-gray-200 bg-gray-50 p-6 shadow-lg">
               <div className="mb-4 flex items-center justify-between gap-3">
                 <h2 className="text-xl font-semibold">
-                  {activeJourney ? "Journey Explorer" : "Place Explorer"}
+                  {activeJourney ? `${activeJourney.icon} ${activeJourney.title}` : "Place Explorer"}
                 </h2>
 
-                {!activeJourney && selectedVerse && (
-                  <div className="inline-flex rounded-xl border border-stone-700 bg-stone-950 p-1">
-                    <button
-                      type="button"
-                      onClick={() => setMapScope("verse")}
-                      className={`rounded-lg px-3 py-1 text-sm ${
-                        mapScope === "verse" ? "bg-amber-500 text-stone-950" : "text-stone-300"
-                      }`}
-                    >
-                      Verse Places
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setMapScope("passage")}
-                      className={`rounded-lg px-3 py-1 text-sm ${
-                        mapScope === "passage" ? "bg-amber-500 text-stone-950" : "text-stone-300"
-                      }`}
-                    >
-                      Passage Places
-                    </button>
-                  </div>
-                )}
               </div>
 
-              <div className="mb-4 inline-flex rounded-xl border border-stone-700 bg-stone-950 p-1">
+              <div className="mb-4 inline-flex rounded-xl border border-gray-300 bg-white p-1">
                 <button
                   type="button"
                   onClick={() => setMapMode("modern")}
                   className={`rounded-lg px-3 py-1 text-sm ${
-                    mapMode === "modern" ? "bg-amber-500 text-stone-950" : "text-stone-300"
+                    mapMode === "modern" ? "bg-amber-500 text-gray-900" : "text-gray-600"
                   }`}
                 >
                   Modern
@@ -924,7 +1628,7 @@ export default function BibleReader() {
                   type="button"
                   onClick={() => setMapMode("ancient")}
                   className={`rounded-lg px-3 py-1 text-sm ${
-                    mapMode === "ancient" ? "bg-amber-500 text-stone-950" : "text-stone-300"
+                    mapMode === "ancient" ? "bg-amber-500 text-gray-900" : "text-gray-600"
                   }`}
                 >
                   Ancient View
@@ -932,25 +1636,48 @@ export default function BibleReader() {
               </div>
 
               {activeJourney ? (
-                <div className="space-y-4">
-                  <div>
-                    <h3 className="text-2xl font-bold text-amber-400">{activeJourney.title}</h3>
-                    <p className="mt-2 text-sm text-stone-400">{activeJourney.reference}</p>
-                    <div className="mt-3">
-                      <EraBadge label={activeJourney.era} />
-                    </div>
+                <div className="space-y-3">
+                  <p className="text-sm text-gray-600 leading-relaxed">{activeJourney.description}</p>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className={`inline-flex rounded-full border px-2.5 py-1 text-xs font-medium ${JOURNEY_ERA_BADGE[activeJourney.era]}`}>
+                      <span className={`w-2 h-2 rounded-full mr-1.5 self-center ${JOURNEY_ERA_DOT[activeJourney.era]}`} />
+                      {activeJourney.era}
+                    </span>
+                    <span className="text-xs text-gray-400">{activeJourney.stops.length} stops</span>
+                    <button
+                      type="button"
+                      onClick={() => setActiveJourney(null)}
+                      className="ml-auto text-xs text-gray-400 hover:text-gray-600 transition"
+                    >
+                      Clear journey
+                    </button>
                   </div>
+                  {activeJourneyStop != null && activeJourney.stops[activeJourneyStop] && (
+                    <div className="rounded-xl border border-amber-200 bg-amber-50 p-3 space-y-1">
+                      <p className="text-xs font-semibold text-amber-700">
+                        Stop {activeJourneyStop + 1}: {activeJourney.stops[activeJourneyStop].name}
+                      </p>
+                      {activeJourney.stops[activeJourneyStop].reference && (
+                        <p className="text-xs text-amber-600 font-medium">
+                          📖 {activeJourney.stops[activeJourneyStop].reference}
+                        </p>
+                      )}
+                      <p className="text-xs text-gray-600 leading-relaxed">
+                        {activeJourney.stops[activeJourneyStop].description}
+                      </p>
+                    </div>
+                  )}
                 </div>
               ) : !selectedPlace ? (
-                <p className="text-stone-300">
-                  Select a highlighted place, search result, place index entry, or journey.
+                <p className="text-sm text-gray-500">
+                  Select a journey from the Ancient World tab, or tap a place on the map.
                 </p>
               ) : (
                 <div className="space-y-4">
                   <div className="flex items-start justify-between gap-4">
                     <div>
-                      <h3 className="text-2xl font-bold text-amber-400">{selectedPlace.name}</h3>
-                      <p className="mt-2 text-sm text-stone-400">
+                      <h3 className="text-2xl font-bold text-amber-700">{selectedPlace.name}</h3>
+                      <p className="mt-2 text-sm text-gray-500">
                         {selectedVerse?.reference} • {selectedPlace.lat}, {selectedPlace.lng}
                       </p>
                       <div className="mt-3">
@@ -963,8 +1690,8 @@ export default function BibleReader() {
                       onClick={() => toggleBookmark(selectedPlace.name)}
                       className={`rounded-lg border px-3 py-2 text-sm transition ${
                         isBookmarked(selectedPlace.name)
-                          ? "border-amber-500 bg-amber-500 text-stone-950"
-                          : "border-stone-700 text-stone-200 hover:border-amber-500"
+                          ? "border-amber-500 bg-amber-500 text-gray-900"
+                          : "border-gray-300 text-gray-800 hover:border-amber-500"
                       }`}
                     >
                       {isBookmarked(selectedPlace.name) ? "Saved" : "Save place"}
@@ -972,19 +1699,19 @@ export default function BibleReader() {
                   </div>
 
                   {selectedImage && (
-                    <div className="overflow-hidden rounded-2xl border border-stone-800 bg-stone-950">
+                    <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
                       <img
                         src={selectedImage.url}
                         alt={selectedPlace.name}
                         className="h-56 w-full object-cover"
                       />
 
-                      <div className="border-t border-stone-800 px-4 py-3 text-sm text-stone-300">
+                      <div className="border-t border-gray-200 px-4 py-3 text-sm text-gray-600">
                         {selectedImage.caption}
                       </div>
 
                       {selectedPlaceImages.length > 1 && (
-                        <div className="flex items-center justify-between border-t border-stone-800 px-4 py-3">
+                        <div className="flex items-center justify-between border-t border-gray-200 px-4 py-3">
                           <button
                             type="button"
                             onClick={() =>
@@ -992,12 +1719,12 @@ export default function BibleReader() {
                                 current === 0 ? selectedPlaceImages.length - 1 : current - 1
                               )
                             }
-                            className="rounded-lg border border-stone-700 px-3 py-2 text-sm text-stone-200 transition hover:border-amber-500"
+                            className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 transition hover:border-amber-500"
                           >
                             Previous
                           </button>
 
-                          <div className="text-sm text-stone-400">
+                          <div className="text-sm text-gray-500">
                             {activeImageIndex + 1} of {selectedPlaceImages.length}
                           </div>
 
@@ -1008,7 +1735,7 @@ export default function BibleReader() {
                                 current === selectedPlaceImages.length - 1 ? 0 : current + 1
                               )
                             }
-                            className="rounded-lg border border-stone-700 px-3 py-2 text-sm text-stone-200 transition hover:border-amber-500"
+                            className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-800 transition hover:border-amber-500"
                           >
                             Next
                           </button>
@@ -1017,80 +1744,29 @@ export default function BibleReader() {
                     </div>
                   )}
 
-                  <div className="rounded-2xl border border-sky-800/40 bg-sky-950/20 p-4">
-                    <div className="mb-3 flex items-center justify-between gap-3">
-                      <div>
-                        <h4 className="text-sm font-semibold uppercase tracking-wide text-sky-300">
-                          AI Study Prompt
-                        </h4>
-                        <div className="mt-1 text-base font-semibold text-sky-100">
-                          {isLoadingPrompts
-                            ? "Generating..."
-                            : activePrompt?.title ?? "Study Prompt"}
-                        </div>
-                      </div>
-
-                      {effectivePrompts.length > 1 && !isLoadingPrompts && (
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setActivePromptIndex((current) =>
-                              current === effectivePrompts.length - 1 ? 0 : current + 1
-                            )
-                          }
-                          className="rounded-lg border border-sky-700/50 px-3 py-2 text-sm text-sky-100 transition hover:border-sky-400"
-                        >
-                          Next Prompt
-                        </button>
-                      )}
-                    </div>
-
-                    {isLoadingPrompts ? (
-                      <p className="text-sm leading-7 text-sky-50">
-                        Generating a fresh study prompt for {selectedPlace.name}...
-                      </p>
-                    ) : (
-                      <p className="text-sm leading-7 text-sky-50">
-                        {activePrompt?.prompt ?? "No prompt available."}
-                      </p>
-                    )}
-
-                    {promptError && (
-                      <div className="mt-3 rounded-lg border border-amber-700/40 bg-amber-950/30 px-3 py-2 text-xs text-amber-200">
-                        AI prompt generation fell back to local prompts. {promptError}
-                      </div>
-                    )}
-                  </div>
-
-                  {mapScope === "passage" && currentPassagePlaces.length > 1 && (
-                    <div className="rounded-xl border border-amber-700/30 bg-amber-950/20 p-3 text-sm text-amber-100">
-                      Showing all places in the passage: {selectedVerse?.passageTitle}
-                    </div>
-                  )}
-
                   <div>
-                    <h4 className="text-sm font-semibold uppercase tracking-wide text-stone-400">
+                    <h4 className="text-sm font-semibold uppercase tracking-wide text-gray-500">
                       Quick Summary
                     </h4>
-                    <p className="mt-1 text-stone-200">{selectedPlace.description}</p>
+                    <p className="mt-1 text-gray-800">{selectedPlace.description}</p>
                   </div>
 
                   <div>
-                    <h4 className="text-sm font-semibold uppercase tracking-wide text-stone-400">
+                    <h4 className="text-sm font-semibold uppercase tracking-wide text-gray-500">
                       Ancient Context
                     </h4>
-                    <p className="mt-1 text-stone-200">{selectedPlace.ancientDescription}</p>
+                    <p className="mt-1 text-gray-800">{selectedPlace.ancientDescription}</p>
                   </div>
 
                   <div>
-                    <h4 className="text-sm font-semibold uppercase tracking-wide text-stone-400">
+                    <h4 className="text-sm font-semibold uppercase tracking-wide text-gray-500">
                       Biblical Significance
                     </h4>
-                    <p className="mt-1 text-stone-200">{selectedPlace.biblicalSignificance}</p>
+                    <p className="mt-1 text-gray-800">{selectedPlace.biblicalSignificance}</p>
                   </div>
 
                   <div>
-                    <h4 className="text-sm font-semibold uppercase tracking-wide text-stone-400">
+                    <h4 className="text-sm font-semibold uppercase tracking-wide text-gray-500">
                       Study Notes
                     </h4>
 
@@ -1098,7 +1774,7 @@ export default function BibleReader() {
                       value={draftNote}
                       onChange={(event) => setDraftNote(event.target.value)}
                       placeholder="Write your study notes for this place..."
-                      className="mt-2 min-h-[120px] w-full rounded-xl border border-stone-700 bg-stone-950 px-4 py-3 text-sm text-stone-100 outline-none placeholder:text-stone-500 focus:border-amber-500"
+                      className="mt-2 min-h-[120px] w-full rounded-xl border border-gray-300 bg-white px-4 py-3 text-sm text-gray-900 outline-none placeholder:text-gray-400 focus:border-amber-500"
                     />
 
                     <div className="mt-3 flex flex-wrap gap-3">
@@ -1108,7 +1784,7 @@ export default function BibleReader() {
                           if (!selectedPlace) return;
                           saveNote(selectedPlace.name, draftNote);
                         }}
-                        className="rounded-lg border border-amber-500 bg-amber-500 px-4 py-2 text-sm font-medium text-stone-950 transition hover:opacity-90"
+                        className="rounded-lg border border-amber-500 bg-amber-500 px-4 py-2 text-sm font-medium text-gray-900 transition hover:opacity-90"
                       >
                         Save note
                       </button>
@@ -1120,7 +1796,7 @@ export default function BibleReader() {
                           setDraftNote("");
                           removeNote(selectedPlace.name);
                         }}
-                        className="rounded-lg border border-stone-700 px-4 py-2 text-sm text-stone-200 transition hover:border-red-400 hover:text-red-300"
+                        className="rounded-lg border border-gray-300 px-4 py-2 text-sm text-gray-800 transition hover:border-red-400 hover:text-red-500"
                       >
                         Clear note
                       </button>
@@ -1128,7 +1804,7 @@ export default function BibleReader() {
                   </div>
 
                   <div>
-                    <h4 className="text-sm font-semibold uppercase tracking-wide text-stone-400">
+                    <h4 className="text-sm font-semibold uppercase tracking-wide text-gray-500">
                       Related Verses
                     </h4>
 
@@ -1138,12 +1814,12 @@ export default function BibleReader() {
                           key={verse.reference}
                           type="button"
                           onClick={() => handleSelectVerse(verse.targetVerseId)}
-                          className="block w-full rounded-lg border border-stone-800 p-3 text-left transition hover:border-amber-500 hover:bg-stone-800"
+                          className="block w-full rounded-lg border border-gray-200 p-3 text-left transition hover:border-amber-500 hover:bg-gray-100"
                         >
-                          <div className="text-sm font-semibold text-amber-400">
+                          <div className="text-sm font-semibold text-amber-700">
                             {verse.reference}
                           </div>
-                          <div className="mt-1 text-sm text-stone-300">{verse.text}</div>
+                          <div className="mt-1 text-sm text-gray-600">{verse.text}</div>
                         </button>
                       ))}
                     </div>
@@ -1152,14 +1828,12 @@ export default function BibleReader() {
               )}
             </section>
 
-            <section className="rounded-2xl border border-stone-800 bg-stone-900 p-4 shadow-lg">
+            <section className="rounded-2xl border border-gray-200 bg-gray-50 p-4 shadow-lg">
               <div className="mb-4 flex items-center justify-between">
                 <h2 className="text-xl font-semibold">Map</h2>
-                <span className="text-sm text-stone-400">
+                <span className="text-sm text-gray-500">
                   {activeJourney
                     ? activeJourney.reference
-                    : mapScope === "passage"
-                    ? selectedVerse?.passageTitle ?? "No selection"
                     : selectedVerse?.reference ?? "No selection"}
                 </span>
               </div>
@@ -1174,12 +1848,24 @@ export default function BibleReader() {
               {activeJourney ? (
                 <div className="mt-4 flex flex-wrap gap-2">
                   {activeJourney.stops.map((stop, index) => (
-                    <span
+                    <button
                       key={stop.name}
-                      className="rounded-full border border-stone-700 px-3 py-1 text-sm text-stone-200"
+                      type="button"
+                      onClick={() => {
+                        setActiveJourneyStop(index);
+                        setVisualQuery(stop.visualTerm ?? stop.name);
+                        if (stop.book && stop.chapter) {
+                          setFullBibleNav({ version: "KJV", book: stop.book, chapter: stop.chapter });
+                        }
+                      }}
+                      className={`rounded-full border px-3 py-1 text-sm transition ${
+                        activeJourneyStop === index
+                          ? "bg-amber-500 text-white border-amber-500"
+                          : "border-gray-300 text-gray-700 hover:border-amber-400 hover:text-amber-700"
+                      }`}
                     >
                       {index + 1}. {stop.name}
-                    </span>
+                    </button>
                   ))}
                 </div>
               ) : mapPlaces.length > 0 ? (
@@ -1194,8 +1880,8 @@ export default function BibleReader() {
                         onClick={() => setSelectedPlace(place)}
                         className={`rounded-full border px-3 py-1 text-sm ${
                           isActive
-                            ? "border-amber-500 bg-amber-500 text-stone-950"
-                            : "border-stone-700 text-stone-200"
+                            ? "border-amber-500 bg-amber-500 text-gray-900"
+                            : "border-gray-300 text-gray-800"
                         }`}
                       >
                         {place.name}
@@ -1206,8 +1892,8 @@ export default function BibleReader() {
               ) : null}
             </section>
           </aside>
-        </div>
-      </div>
+        </div>{/* end center+right grid */}
+      </div>{/* end xl:flex */}
     </main>
   );
 }

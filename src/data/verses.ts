@@ -1,3 +1,5 @@
+export type BibleVersion = "KJV" | "WEB" | "ASV";
+
 export type RelatedVerse = {
   reference: string;
   text: string;
@@ -21,10 +23,12 @@ export type VersePlace = {
   relatedVerses: RelatedVerse[];
 };
 
+export type VerseTranslations = Record<BibleVersion, string>;
+
 export type Verse = {
   id: string;
   reference: string;
-  text: string;
+  translations: VerseTranslations;
   places: VersePlace[];
   passageId: string;
   passageTitle: string;
@@ -34,7 +38,11 @@ export const verses: Verse[] = [
   {
     id: "john-2-13",
     reference: "John 2:13",
-    text: "When it was almost time for the Jewish Passover, Jesus went up to Jerusalem.",
+    translations: {
+      KJV: "And the Jews' passover was at hand, and Jesus went up to Jerusalem,",
+      WEB: "The Passover of the Jews was at hand, and Jesus went up to Jerusalem.",
+      ASV: "And the passover of the Jews was at hand, and Jesus went up to Jerusalem.",
+    },
     passageId: "jerusalem-passages",
     passageTitle: "Jerusalem Passages",
     places: [
@@ -76,7 +84,11 @@ export const verses: Verse[] = [
   {
     id: "luke-19-41",
     reference: "Luke 19:41",
-    text: "As he approached Jerusalem and saw the city, he wept over it.",
+    translations: {
+      KJV: "And when he was come near, he beheld the city, and wept over it,",
+      WEB: "When he came near, he saw the city and wept over it,",
+      ASV: "And when he drew nigh, he saw the city and wept over it,",
+    },
     passageId: "jerusalem-passages",
     passageTitle: "Jerusalem Passages",
     places: [
@@ -103,7 +115,7 @@ export const verses: Verse[] = [
         relatedVerses: [
           {
             reference: "John 2:13",
-            text: "When it was almost time for the Jewish Passover, Jesus went up to Jerusalem.",
+            text: "And the Jews' passover was at hand, and Jesus went up to Jerusalem,",
             targetVerseId: "john-2-13",
           },
         ],
@@ -113,7 +125,11 @@ export const verses: Verse[] = [
   {
     id: "psalm-122-6",
     reference: "Psalm 122:6",
-    text: "Pray for the peace of Jerusalem: May those who love you be secure.",
+    translations: {
+      KJV: "Pray for the peace of Jerusalem: they shall prosper that love thee.",
+      WEB: "Pray for the peace of Jerusalem. Those who love you will prosper.",
+      ASV: "Pray for the peace of Jerusalem: They shall prosper that love thee.",
+    },
     passageId: "jerusalem-passages",
     passageTitle: "Jerusalem Passages",
     places: [
@@ -140,7 +156,7 @@ export const verses: Verse[] = [
         relatedVerses: [
           {
             reference: "John 2:13",
-            text: "When it was almost time for the Jewish Passover, Jesus went up to Jerusalem.",
+            text: "And the Jews' passover was at hand, and Jesus went up to Jerusalem,",
             targetVerseId: "john-2-13",
           },
         ],
@@ -150,7 +166,11 @@ export const verses: Verse[] = [
   {
     id: "luke-2-4",
     reference: "Luke 2:4",
-    text: "So Joseph also went up from the town of Nazareth in Galilee to Judea, to Bethlehem the town of David.",
+    translations: {
+      KJV: "And Joseph also went up from Galilee, out of the city of Nazareth, into Judaea, unto the city of David, which is called Bethlehem.",
+      WEB: "Joseph also went up from Galilee, out of the city of Nazareth, into Judea, to David's city, which is called Bethlehem.",
+      ASV: "And Joseph also went up from Galilee, out of the city of Nazareth, into Judaea, to the city of David, which is called Bethlehem.",
+    },
     passageId: "birth-narrative",
     passageTitle: "Birth Narrative",
     places: [
@@ -177,12 +197,12 @@ export const verses: Verse[] = [
         relatedVerses: [
           {
             reference: "Luke 4:16",
-            text: "He went to Nazareth, where he had been brought up, and on the Sabbath day he went into the synagogue, as was his custom.",
+            text: "And he came to Nazareth, where he had been brought up.",
             targetVerseId: "luke-4-16",
           },
           {
             reference: "Matthew 2:23",
-            text: "And he went and lived in a town called Nazareth. So was fulfilled what was said through the prophets, that he would be called a Nazarene.",
+            text: "And he came and dwelt in a city called Nazareth.",
             targetVerseId: "matthew-2-23",
           },
         ],
@@ -210,12 +230,12 @@ export const verses: Verse[] = [
         relatedVerses: [
           {
             reference: "Micah 5:2",
-            text: "But you, Bethlehem Ephrathah... out of you will come for me one who will be ruler over Israel.",
+            text: "But thou, Bethlehem Ephrathah... out of thee shall one come forth unto me.",
             targetVerseId: "micah-5-2",
           },
           {
             reference: "Matthew 2:1",
-            text: "After Jesus was born in Bethlehem in Judea, during the time of King Herod, Magi from the east came to Jerusalem.",
+            text: "Now when Jesus was born in Bethlehem of Judaea.",
             targetVerseId: "matthew-2-1",
           },
         ],
@@ -225,7 +245,11 @@ export const verses: Verse[] = [
   {
     id: "luke-4-16",
     reference: "Luke 4:16",
-    text: "He went to Nazareth, where he had been brought up, and on the Sabbath day he went into the synagogue, as was his custom.",
+    translations: {
+      KJV: "And he came to Nazareth, where he had been brought up.",
+      WEB: "He came to Nazareth, where he had been brought up.",
+      ASV: "And he came to Nazareth, where he had been brought up.",
+    },
     passageId: "birth-narrative",
     passageTitle: "Birth Narrative",
     places: [
@@ -252,7 +276,7 @@ export const verses: Verse[] = [
         relatedVerses: [
           {
             reference: "Luke 2:4",
-            text: "So Joseph also went up from the town of Nazareth in Galilee to Judea, to Bethlehem the town of David.",
+            text: "And Joseph also went up from Galilee, out of the city of Nazareth...",
             targetVerseId: "luke-2-4",
           },
         ],
@@ -262,7 +286,11 @@ export const verses: Verse[] = [
   {
     id: "matthew-2-23",
     reference: "Matthew 2:23",
-    text: "And he went and lived in a town called Nazareth. So was fulfilled what was said through the prophets, that he would be called a Nazarene.",
+    translations: {
+      KJV: "And he came and dwelt in a city called Nazareth.",
+      WEB: "He came and lived in a city called Nazareth.",
+      ASV: "And came and dwelt in a city called Nazareth.",
+    },
     passageId: "birth-narrative",
     passageTitle: "Birth Narrative",
     places: [
@@ -289,7 +317,7 @@ export const verses: Verse[] = [
         relatedVerses: [
           {
             reference: "Luke 2:4",
-            text: "So Joseph also went up from the town of Nazareth in Galilee to Judea, to Bethlehem the town of David.",
+            text: "And Joseph also went up from Galilee, out of the city of Nazareth...",
             targetVerseId: "luke-2-4",
           },
         ],
@@ -299,7 +327,11 @@ export const verses: Verse[] = [
   {
     id: "micah-5-2",
     reference: "Micah 5:2",
-    text: "But you, Bethlehem Ephrathah... out of you will come for me one who will be ruler over Israel.",
+    translations: {
+      KJV: "But thou, Bethlehem Ephratah... out of thee shall he come forth unto me that is to be ruler in Israel.",
+      WEB: "But you, Bethlehem Ephrathah... out of you one will come out to me that is to be ruler in Israel.",
+      ASV: "But thou, Bethlehem Ephrathah... out of thee shall one come forth unto me that is to be ruler in Israel.",
+    },
     passageId: "birth-narrative",
     passageTitle: "Birth Narrative",
     places: [
@@ -326,7 +358,7 @@ export const verses: Verse[] = [
         relatedVerses: [
           {
             reference: "Luke 2:4",
-            text: "So Joseph also went up from the town of Nazareth in Galilee to Judea, to Bethlehem the town of David.",
+            text: "And Joseph also went up from Galilee... unto the city of David, which is called Bethlehem.",
             targetVerseId: "luke-2-4",
           },
         ],
@@ -336,7 +368,11 @@ export const verses: Verse[] = [
   {
     id: "matthew-2-1",
     reference: "Matthew 2:1",
-    text: "After Jesus was born in Bethlehem in Judea, during the time of King Herod, Magi from the east came to Jerusalem.",
+    translations: {
+      KJV: "Now when Jesus was born in Bethlehem of Judaea in the days of Herod the king, behold, there came wise men.",
+      WEB: "Now when Jesus was born in Bethlehem of Judea in the days of King Herod, behold, wise men came.",
+      ASV: "Now when Jesus was born in Bethlehem of Judaea in the days of Herod the king, behold, Wise-men came.",
+    },
     passageId: "birth-narrative",
     passageTitle: "Birth Narrative",
     places: [
@@ -363,7 +399,7 @@ export const verses: Verse[] = [
         relatedVerses: [
           {
             reference: "Luke 2:4",
-            text: "So Joseph also went up from the town of Nazareth in Galilee to Judea, to Bethlehem the town of David.",
+            text: "And Joseph also went up from Galilee... unto Bethlehem.",
             targetVerseId: "luke-2-4",
           },
         ],
@@ -391,7 +427,7 @@ export const verses: Verse[] = [
         relatedVerses: [
           {
             reference: "John 2:13",
-            text: "When it was almost time for the Jewish Passover, Jesus went up to Jerusalem.",
+            text: "And the Jews' passover was at hand, and Jesus went up to Jerusalem,",
             targetVerseId: "john-2-13",
           },
         ],
@@ -401,7 +437,11 @@ export const verses: Verse[] = [
   {
     id: "acts-9-3",
     reference: "Acts 9:3",
-    text: "As he neared Damascus on his journey, suddenly a light from heaven flashed around him.",
+    translations: {
+      KJV: "And as he journeyed, he came near Damascus: and suddenly there shined round about him a light from heaven:",
+      WEB: "As he traveled, he got close to Damascus, and suddenly a light from the sky shone around him.",
+      ASV: "And as he journeyed, it came to pass that he drew nigh unto Damascus: and suddenly there shone round about him a light out of heaven:",
+    },
     passageId: "damascus-road",
     passageTitle: "Damascus Road",
     places: [
@@ -428,12 +468,12 @@ export const verses: Verse[] = [
         relatedVerses: [
           {
             reference: "Acts 9:6",
-            text: "Now get up and go into the city, and you will be told what you must do.",
+            text: "Arise, and go into the city, and it shall be told thee what thou must do.",
             targetVerseId: "acts-9-6",
           },
           {
             reference: "2 Corinthians 11:32",
-            text: "In Damascus the governor under King Aretas had the city of the Damascenes guarded in order to arrest me.",
+            text: "In Damascus the governor under Aretas the king kept the city...",
             targetVerseId: "second-corinthians-11-32",
           },
         ],
@@ -443,7 +483,11 @@ export const verses: Verse[] = [
   {
     id: "acts-9-6",
     reference: "Acts 9:6",
-    text: "Now get up and go into the city, and you will be told what you must do.",
+    translations: {
+      KJV: "Arise, and go into the city, and it shall be told thee what thou must do.",
+      WEB: "But rise up and enter into the city, and you will be told what you must do.",
+      ASV: "But rise, and enter into the city, and it shall be told thee what thou must do.",
+    },
     passageId: "damascus-road",
     passageTitle: "Damascus Road",
     places: [
@@ -470,7 +514,7 @@ export const verses: Verse[] = [
         relatedVerses: [
           {
             reference: "Acts 9:3",
-            text: "As he neared Damascus on his journey, suddenly a light from heaven flashed around him.",
+            text: "And as he journeyed, he came near Damascus...",
             targetVerseId: "acts-9-3",
           },
         ],
@@ -480,7 +524,11 @@ export const verses: Verse[] = [
   {
     id: "second-corinthians-11-32",
     reference: "2 Corinthians 11:32",
-    text: "In Damascus the governor under King Aretas had the city of the Damascenes guarded in order to arrest me.",
+    translations: {
+      KJV: "In Damascus the governor under Aretas the king kept the city of the Damascenes with a garrison, desirous to apprehend me:",
+      WEB: "In Damascus the governor under Aretas the king guarded the city of the Damascenes desiring to arrest me.",
+      ASV: "In Damascus the governor under Aretas the king guarded the city of the Damascenes in order to take me:",
+    },
     passageId: "damascus-road",
     passageTitle: "Damascus Road",
     places: [
@@ -507,7 +555,7 @@ export const verses: Verse[] = [
         relatedVerses: [
           {
             reference: "Acts 9:3",
-            text: "As he neared Damascus on his journey, suddenly a light from heaven flashed around him.",
+            text: "And as he journeyed, he came near Damascus...",
             targetVerseId: "acts-9-3",
           },
         ],

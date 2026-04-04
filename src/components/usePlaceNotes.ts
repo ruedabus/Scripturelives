@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-const STORAGE_KEY = "scripture-alive-place-notes";
+const STORAGE_KEY = "scripture-lives-place-notes";
 
 type NotesMap = Record<string, string>;
 

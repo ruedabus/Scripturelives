@@ -23,6 +23,8 @@ type PlaceMapProps = {
   versePlaces: VersePlace[];
   mapMode: "modern" | "ancient";
   activeJourney: Journey | null;
+  onPlaceClick?: (place: VersePlace) => void;
+  fillHeight?: boolean;
 };
 
 export default function PlaceMap({
@@ -30,13 +32,16 @@ export default function PlaceMap({
   versePlaces,
   mapMode,
   activeJourney,
+  onPlaceClick,
+  fillHeight = false,
 }: PlaceMapProps) {
   const defaultCenter: [number, number] = [31.778, 35.235];
 
+  const heightClass = fillHeight ? "h-full" : "h-[380px]";
   const mapClassName =
     mapMode === "ancient"
-      ? "h-[380px] w-full sepia-[0.55] saturate-[0.8] contrast-[0.95] brightness-[0.95]"
-      : "h-[380px] w-full";
+      ? `${heightClass} w-full sepia-[0.55] saturate-[0.8] contrast-[0.95] brightness-[0.95]`
+      : `${heightClass} w-full`;
 
   const overlayBounds = useMemo(
     () =>
@@ -60,7 +65,7 @@ export default function PlaceMap({
       : defaultCenter;
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-stone-800">
+    <div className={`overflow-hidden rounded-xl border border-gray-200 ${fillHeight ? "h-full" : ""}`}>
       <MapContainer center={center} zoom={6} scrollWheelZoom={true} className={mapClassName}>
         <TileLayer
           attribution="&copy; OpenStreetMap & CARTO"
@@ -138,7 +143,11 @@ export default function PlaceMap({
               const isSelected = selectedPlace?.name === place.name;
 
               return (
-                <Marker key={`${place.name}-${place.lat}-${place.lng}`} position={[place.lat, place.lng]}>
+                <Marker
+                  key={`${place.name}-${place.lat}-${place.lng}`}
+                  position={[place.lat, place.lng]}
+                  eventHandlers={{ click: () => onPlaceClick?.(place) }}
+                >
                   <Popup>
                     <div>
                       <strong>{place.name}</strong>
@@ -149,7 +158,7 @@ export default function PlaceMap({
 
                   {isSelected && (
                     <Tooltip permanent direction="top" offset={[0, -18]}>
-                      Selected
+                      {place.name}
                     </Tooltip>
                   )}
                 </Marker>

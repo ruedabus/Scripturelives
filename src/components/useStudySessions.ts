@@ -10,7 +10,7 @@ export type StudySession = {
   notes: Record<string, string>;
 };
 
-const STORAGE_KEY = "scripture-alive-study-sessions";
+const STORAGE_KEY = "scripture-lives-study-sessions";
 
 export default function useStudySessions() {
   const [sessions, setSessions] = useState<StudySession[]>([]);

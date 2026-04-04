@@ -10,7 +10,7 @@ type ExportPlace = {
 export default function exportStudySummary(places: ExportPlace[]) {
   const lines: string[] = [];
 
-  lines.push("Scripture Alive - Study Summary");
+  lines.push("Scripture Lives - Study Summary");
   lines.push(`Exported: ${new Date().toLocaleString()}`);
   lines.push("");
 
@@ -33,7 +33,7 @@ export default function exportStudySummary(places: ExportPlace[]) {
 
   const link = document.createElement("a");
   link.href = url;
-  link.download = "scripture-alive-study-summary.txt";
+  link.download = "scripture-lives-study-summary.txt";
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);

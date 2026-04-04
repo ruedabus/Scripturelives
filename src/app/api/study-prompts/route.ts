@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
     }
 
     const prompt = `
-You are helping build a Bible study app called Scripture Alive.
+You are helping build a Bible study app called Scripture Lives.
 
 Generate exactly 4 thoughtful study prompts in JSON format for a selected biblical place.
 
