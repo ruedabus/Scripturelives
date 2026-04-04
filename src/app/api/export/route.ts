@@ -69,13 +69,19 @@ export async function POST(req: NextRequest) {
 
   const filename = `scripture-lives-study-${new Date().toISOString().slice(0, 10)}.docx`;
 
-  return new NextResponse(new Uint8Array(docxBytes), {
+  // Convert Buffer → ArrayBuffer (universally valid BodyInit across all TS versions)
+  const arrayBuffer = docxBytes.buffer.slice(
+    docxBytes.byteOffset,
+    docxBytes.byteOffset + docxBytes.byteLength
+  ) as ArrayBuffer;
+
+  return new NextResponse(arrayBuffer, {
     status: 200,
     headers: {
       "Content-Type":
         "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       "Content-Disposition": `attachment; filename="${filename}"`,
-      "Content-Length": docxBytes.length.toString(),
+      "Content-Length": docxBytes.byteLength.toString(),
     },
   });
 }
