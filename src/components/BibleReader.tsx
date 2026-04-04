@@ -358,6 +358,9 @@ export default function BibleReader() {
     lng: p.lng,
     description: p.description,
     era: p.era,
+    ancientDescription: p.description,
+    biblicalSignificance: "",
+    relatedVerses: [] as string[],
   })), [atlasFilteredItems]);
 
   const versePlaces = selectedVerse?.places ?? [];
