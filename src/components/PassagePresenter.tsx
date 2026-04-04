@@ -28,6 +28,8 @@ type Props = {
   onVisualSearch: (term: string) => void;
   onNavigateFullBible: (book: string, chapter: number) => void;
   onVerseChange?: (ref: { book: string; chapter: number; verse?: number; reference: string; text: string }) => void;
+  /** Pre-populate the search box when navigating from the home-page search */
+  initialQuery?: string;
 };
 
 // ---------------------------------------------------------------------------
@@ -200,9 +202,10 @@ export default function PassagePresenter({
   onVisualSearch,
   onNavigateFullBible,
   onVerseChange,
+  initialQuery = "",
 }: Props) {
   // ── Search ────────────────────────────────────────────────────────────────
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(initialQuery);
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -226,6 +229,11 @@ export default function PassagePresenter({
   // ── Reading Plan ──────────────────────────────────────────────────────────
   const { plan, addEntry, removeEntry, updateNote, isInPlan } = useReadingPlan();
   const [activePlanId, setActivePlanId] = useState<string | null>(null);
+
+  // Sync initialQuery if parent pushes a new value (home-page search re-navigate)
+  useEffect(() => {
+    if (initialQuery) setQuery(initialQuery);
+  }, [initialQuery]);
 
   // ── Search effect ─────────────────────────────────────────────────────────
   useEffect(() => {

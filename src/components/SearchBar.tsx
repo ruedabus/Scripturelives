@@ -18,6 +18,8 @@ type Props = {
   onSelectVerse: (verseId: string) => void;
   onSelectBibleVerse: (version: BibleVersion, book: string, chapter: number) => void;
   onVisualSearch?: (term: string) => void;
+  /** Pre-populate the search box (e.g. from the home-page search bar) */
+  initialQuery?: string;
 };
 
 const VERSION_COLORS: Record<BibleVersion, string> = {
@@ -26,8 +28,13 @@ const VERSION_COLORS: Record<BibleVersion, string> = {
   WEB: "text-emerald-400",
 };
 
-export default function SearchBar({ onSelectVerse, onSelectBibleVerse, onVisualSearch }: Props) {
-  const [query, setQuery] = useState("");
+export default function SearchBar({ onSelectVerse, onSelectBibleVerse, onVisualSearch, initialQuery = "" }: Props) {
+  const [query, setQuery] = useState(initialQuery);
+
+  // Sync if the parent pushes a new initialQuery (e.g. home-page search navigates to reader)
+  useEffect(() => {
+    if (initialQuery) setQuery(initialQuery);
+  }, [initialQuery]);
   const [bibleResults, setBibleResults] = useState<BibleSearchResult[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);

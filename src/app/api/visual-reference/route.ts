@@ -50,24 +50,110 @@ const DISAMBIGUATION_HINTS: Record<string, string> = {
   "last supper": "Last_Supper",
   pentecost: "Pentecost",
   "holy spirit": "Holy_Spirit_in_Christianity",
-  // People
+  // People — always use the fully-disambiguated Wikipedia slug so we never
+  // land on a disambiguation page or an unrelated article.
   moses: "Moses",
   abraham: "Abraham",
+  isaac: "Isaac",
+  jacob: "Jacob_(patriarch)",
   david: "David",
   solomon: "Solomon",
   elijah: "Elijah",
-  daniel: "Daniel",
+  elisha: "Elisha",
+  isaiah: "Isaiah",
+  jeremiah: "Jeremiah",
+  ezekiel: "Ezekiel",
+  daniel: "Daniel_(biblical_figure)",   // "Daniel" alone → disambiguation page
+  hosea: "Hosea",
+  amos: "Amos_(prophet)",
+  obadiah: "Obadiah_(prophet)",
+  jonah: "Jonah",
+  micah: "Micah_(prophet)",
+  nahum: "Nahum",
+  habakkuk: "Habakkuk",
+  zephaniah: "Zephaniah_(prophet)",
+  haggai: "Haggai",
+  zechariah: "Zechariah_(Hebrew_prophet)",  // not the priest
+  malachi: "Malachi",
   noah: "Noah",
   joseph: "Joseph_(Genesis)",
+  benjamin: "Benjamin_(tribal_patriarch)",
+  levi: "Levi_(son_of_Jacob)",
+  ruth: "Ruth_(biblical_figure)",
+  esther: "Esther",
+  deborah: "Deborah",
+  samson: "Samson",
+  gideon: "Gideon",
+  jephthah: "Jephthah",
+  saul: "Saul",
+  "king saul": "Saul",
+  jonathan: "Jonathan_(son_of_Saul)",
+  absalom: "Absalom",
+  bathsheba: "Bathsheba",
+  joshua: "Joshua",
+  caleb: "Caleb_(biblical_figure)",
+  ezra: "Ezra",
+  nehemiah: "Nehemiah",
   "john the baptist": "John_the_Baptist",
+  john: "John_the_Apostle",
+  "john the apostle": "John_the_Apostle",
+  james: "James,_son_of_Zebedee",
+  "james the apostle": "James,_son_of_Zebedee",
+  matthew: "Matthew_the_Apostle",
+  mark: "Mark_the_Evangelist",
+  luke: "Luke_the_Evangelist",
+  thomas: "Thomas_the_Apostle",
+  philip: "Philip_the_Apostle",
+  andrew: "Andrew_the_Apostle",
+  bartholomew: "Bartholomew_the_Apostle",
+  judas: "Judas_Iscariot",
+  stephen: "Saint_Stephen",
+  barnabas: "Barnabas",
+  silas: "Silas",
+  timothy: "Timothy_(New_Testament)",
+  titus: "Titus_(disciple)",
   mary: "Mary,_mother_of_Jesus",
   paul: "Paul_the_Apostle",
   peter: "Saint_Peter",
+  "simon peter": "Saint_Peter",
   "mary magdalene": "Mary_Magdalene",
   herod: "Herod_the_Great",
+  "herod the great": "Herod_the_Great",
+  "herod antipas": "Herod_Antipas",
   nebuchadnezzar: "Nebuchadnezzar_II",
   cyrus: "Cyrus_the_Great",
+  darius: "Darius_the_Mede",
   pilate: "Pontius_Pilate",
+  "pontius pilate": "Pontius_Pilate",
+  caiaphas: "Caiaphas",
+  annas: "Annas",
+  nicodemus: "Nicodemus",
+  lazarus: "Lazarus_of_Bethany",
+  zacchaeus: "Zacchaeus",
+  // Places (explicit overrides for common short searches)
+  jerusalem: "Jerusalem",
+  bethlehem: "Bethlehem",
+  nazareth: "Nazareth",
+  jericho: "Jericho",
+  egypt: "Ancient_Egypt",
+  babylon: "Babylon",
+  nineveh: "Nineveh",
+  rome: "Ancient_Rome",
+  athens: "Athens",
+  ephesus: "Ephesus",
+  corinth: "Corinth",
+  // Events / objects
+  exodus: "The_Exodus",
+  "day of atonement": "Yom_Kippur",
+  "feast of tabernacles": "Sukkot",
+  "feast of weeks": "Shavuot",
+  "day of pentecost": "Pentecost",
+  "sermon on the mount": "Sermon_on_the_Mount",
+  "lord's prayer": "Lord's_Prayer",
+  "beatitudes": "Beatitudes",
+  "prodigal son": "Parable_of_the_Prodigal_Son",
+  "good samaritan": "Parable_of_the_Good_Samaritan",
+  "bread of life": "Bread_of_Life_discourse",
 };
 
 async function fetchWikipediaSummary(title: string): Promise<VisualReference | null> {
@@ -118,10 +204,15 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ result: null });
   }
 
-  // Check disambiguation hints first
-  const hintKey = Object.keys(DISAMBIGUATION_HINTS).find(
-    (k) => q === k || q.includes(k) || k.includes(q)
+  // Check disambiguation hints first.
+  // Sort longest keys first so specific phrases ("solomon's temple") win over
+  // shorter substrings ("solomon", "temple") when both would match.
+  // We intentionally omit `k.includes(q)` to avoid false positives like
+  // "solomon" matching the "temple of solomon" key.
+  const sortedHintKeys = Object.keys(DISAMBIGUATION_HINTS).sort(
+    (a, b) => b.length - a.length
   );
+  const hintKey = sortedHintKeys.find((k) => q === k || q.includes(k));
   const preferredTitle = hintKey ? DISAMBIGUATION_HINTS[hintKey] : null;
 
   // Try preferred title first

@@ -13,6 +13,8 @@ import getPlaceStudyPrompts, {
   StudyPrompt,
 } from "@/components/getPlaceStudyPrompts";
 import FullBibleReader from "@/components/FullBibleReader";
+import { ATLAS_PLACES, ATLAS_BOOKS, type AtlasPlace } from "@/data/atlasPlaces";
+import { getTodaysDevotional } from "@/data/devotionals";
 import VisualReferencePanel from "@/components/VisualReferencePanel";
 import LexiconPanel from "@/components/LexiconPanel";
 import BiblicalTimeline from "@/components/BiblicalTimeline";
@@ -32,6 +34,7 @@ type IndexedPlace = {
 
 type LeftPanelTab =
   | "home"
+  | "devotional"
   | "reader"
   | "bible"
   | "timeline"
@@ -106,6 +109,22 @@ function EraBadge({ label }: { label: string }) {
   );
 }
 
+// ── Share helper ────────────────────────────────────────────────────────────
+function shareVerse(reference: string, text: string) {
+  const shareText = `"${text}" — ${reference} (KJV)`;
+  const shareUrl  = typeof window !== "undefined" ? window.location.href : "https://scripture-lives.com";
+
+  // Use native Web Share API when available (mobile / Edge / Chrome)
+  if (typeof navigator !== "undefined" && navigator.share) {
+    navigator.share({ title: reference, text: shareText, url: shareUrl }).catch(() => {});
+    return;
+  }
+
+  // Desktop fallback — open Facebook Share dialog in a popup
+  const fbUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}&quote=${encodeURIComponent(shareText)}`;
+  window.open(fbUrl, "fb-share", "width=600,height=500,resizable=yes,scrollbars=yes");
+}
+
 export default function BibleReader() {
   const [selectedPlace, setSelectedPlace] = useState<VersePlace | null>(null);
   const [selectedVerse, setSelectedVerse] = useState<Verse | null>(verses[0] ?? null);
@@ -126,8 +145,9 @@ export default function BibleReader() {
   const [dictError, setDictError] = useState("");
 
   // Atlas state
-  const [atlasEraFilter, setAtlasEraFilter] = useState("All eras");
   const [atlasSearch, setAtlasSearch] = useState("");
+  const [atlasLetterFilter, setAtlasLetterFilter] = useState("");
+  const [atlasBookFilter, setAtlasBookFilter] = useState("");
   const [draftNote, setDraftNote] = useState("");
 
   const [activeImageIndex, setActiveImageIndex] = useState(0);
@@ -320,21 +340,25 @@ export default function BibleReader() {
     return journeys.filter((j) => j.era === journeyEraFilter);
   }, [journeyEraFilter]);
 
-  // ── Atlas tab — stable filtered lists (avoids new-array-every-render in MapBehavior dep) ──
-  const atlasUniqueEras = useMemo(() => {
-    return ["All eras", ...Array.from(new Set(placeIndex.map(ip => ip.place.era))).sort()];
-  }, [placeIndex]);
-
-  const atlasFilteredItems = useMemo(() => {
-    return placeIndex.filter(ip => {
-      const matchesEra  = atlasEraFilter === "All eras" || ip.place.era === atlasEraFilter;
-      const matchesSrch = !atlasSearch.trim() || ip.name.toLowerCase().includes(atlasSearch.toLowerCase());
-      return matchesEra && matchesSrch;
+  // ── Atlas tab — uses standalone ATLAS_PLACES dataset (100+ places) ──
+  const atlasFilteredItems = useMemo((): AtlasPlace[] => {
+    return ATLAS_PLACES.filter(p => {
+      const q = atlasSearch.trim().toLowerCase();
+      const matchesSearch = !q || p.name.toLowerCase().includes(q) || p.description.toLowerCase().includes(q);
+      const matchesLetter = !atlasLetterFilter || p.name.toUpperCase().startsWith(atlasLetterFilter);
+      const matchesBook   = !atlasBookFilter || p.books.includes(atlasBookFilter);
+      return matchesSearch && matchesLetter && matchesBook;
     });
-  }, [placeIndex, atlasEraFilter, atlasSearch]);
+  }, [atlasSearch, atlasLetterFilter, atlasBookFilter]);
 
-  // Stable VersePlace[] array — only changes when filter changes, so MapBehavior won't loop
-  const atlasVersePlaces = useMemo(() => atlasFilteredItems.map(ip => ip.place), [atlasFilteredItems]);
+  // Stable VersePlace-compatible array for the map (only changes when filter changes)
+  const atlasVersePlaces = useMemo(() => atlasFilteredItems.map(p => ({
+    name: p.name,
+    lat: p.lat,
+    lng: p.lng,
+    description: p.description,
+    era: p.era,
+  })), [atlasFilteredItems]);
 
   const versePlaces = selectedVerse?.places ?? [];
   const mapPlaces = versePlaces;
@@ -526,6 +550,21 @@ export default function BibleReader() {
     return DAILY_VERSES[dayOfYear % DAILY_VERSES.length];
   }, []);
 
+  // Today's devotional — rotates daily
+  const devotional = useMemo(() => getTodaysDevotional(), []);
+
+  // Dog-ear — read last-read position from localStorage for the home page banner.
+  // Must use useState + useEffect (not useMemo) so the server and client both
+  // render null on first pass, then the client updates after hydration.
+  const [lastRead, setLastRead] = useState<{ book: string; chapter: number; verse?: number } | null>(null);
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem("scripture-lives-last-read");
+      if (!raw) return;
+      setLastRead(JSON.parse(raw) as { book: string; chapter: number; verse?: number });
+    } catch { /* ignore */ }
+  }, []);
+
   // Sidebar nav button (desktop)
   const sideNavBtn = (tab: LeftPanelTab, icon: string, label: string) => (
     <button
@@ -558,9 +597,15 @@ export default function BibleReader() {
         {/* ── LEFT SIDEBAR (desktop) ───────────────────────────────────────── */}
         <nav className="hidden xl:flex flex-col w-56 shrink-0 bg-stone-900 text-white sticky top-0 h-screen overflow-y-auto print:hidden">
           {/* Logo */}
-          <div className="px-5 py-6 border-b border-stone-800">
+          <div className="px-4 py-5 border-b border-stone-800">
             <div className="flex items-center gap-2.5">
-              <span className="text-xl text-amber-400">✝</span>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/Hand-painted cross_logo.png"
+                alt="Scripture Lives"
+                className="h-14 w-14 rounded-lg object-contain shrink-0"
+                onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
+              />
               <div>
                 <p className="text-sm font-bold text-amber-300 leading-tight">Scripture Lives</p>
                 <p className="text-xs text-stone-500 mt-0.5">Bible Study Platform</p>
@@ -573,6 +618,7 @@ export default function BibleReader() {
             <div>
               <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-widest text-stone-500">Read</p>
               {sideNavBtn("home",          "🏠", "Home")}
+              {sideNavBtn("devotional",    "🕊️", "Daily Devotional")}
               {sideNavBtn("reader",        "📖", "Passage Reader")}
               {sideNavBtn("bible",         "📚", "Full Bible")}
             </div>
@@ -595,6 +641,19 @@ export default function BibleReader() {
               {sideNavBtn("study_sheet",   "📄", "Study Sheet")}
             </div>
           </div>
+
+          {/* Sidebar footer links */}
+          <div className="shrink-0 border-t border-stone-800 px-4 py-4 space-y-1">
+            <a href="/donate" className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-xs text-amber-400 hover:bg-stone-800 transition">
+              🙏 Support Scripture Lives
+            </a>
+            <a href="/about" className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-xs text-stone-400 hover:bg-stone-800 hover:text-stone-200 transition">
+              About Us
+            </a>
+            <a href="/terms" className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-xs text-stone-400 hover:bg-stone-800 hover:text-stone-200 transition">
+              Terms &amp; Conditions
+            </a>
+          </div>
         </nav>
 
         {/* ── CENTER + RIGHT ───────────────────────────────────────────────── */}
@@ -606,6 +665,7 @@ export default function BibleReader() {
             {/* Mobile tab bar */}
             <div className="xl:hidden mb-4 flex flex-wrap gap-1.5 rounded-xl border border-gray-200 bg-white p-2 print:hidden">
               <button type="button" onClick={() => setLeftPanelTab("home")}          className={tabButtonClass("home")}>🏠 Home</button>
+              <button type="button" onClick={() => setLeftPanelTab("devotional")}   className={tabButtonClass("devotional")}>🕊️ Devotional</button>
               <button type="button" onClick={() => setLeftPanelTab("reader")}        className={tabButtonClass("reader")}>📖 Reader</button>
               <button type="button" onClick={() => setLeftPanelTab("bible")}         className={tabButtonClass("bible")}>📚 Full Bible</button>
               <button type="button" onClick={() => setLeftPanelTab("timeline")}      className={tabButtonClass("timeline")}>⏳ Timeline</button>
@@ -625,8 +685,19 @@ export default function BibleReader() {
 
                 {/* Hero search */}
                 <div className="rounded-2xl bg-gradient-to-br from-stone-900 to-stone-800 px-7 py-9">
-                  <h1 className="text-2xl font-bold text-amber-400">Scripture Lives</h1>
-                  <p className="mt-1 text-sm text-stone-400">Explore, study, and present the living Word of God</p>
+                  <div className="flex items-center gap-4 mb-2">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src="/Hand-painted cross_logo.png"
+                      alt="Scripture Lives"
+                      className="h-20 w-20 rounded-xl object-contain shrink-0"
+                      onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
+                    />
+                    <div>
+                      <h1 className="text-2xl font-bold text-amber-400">Scripture Lives</h1>
+                      <p className="text-sm text-stone-400">Explore, study, and present the living Word of God</p>
+                    </div>
+                  </div>
                   <div className="mt-5 flex gap-2">
                     <input
                       type="text"
@@ -635,6 +706,7 @@ export default function BibleReader() {
                       onKeyDown={(e) => {
                         if (e.key === "Enter" && homeQuery.trim()) {
                           setLeftPanelTab("reader");
+                          // homeQuery is cleared after PassagePresenter mounts with it
                         }
                       }}
                       placeholder="Search a verse, passage, or keyword…"
@@ -650,23 +722,94 @@ export default function BibleReader() {
                   </div>
                 </div>
 
+                {/* Dog-ear — Continue Reading banner */}
+                {lastRead && (
+                  <div className="rounded-2xl border border-blue-200 bg-blue-50 px-5 py-4 flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <span className="text-2xl shrink-0">🔖</span>
+                      <div className="min-w-0">
+                        <p className="text-xs font-bold uppercase tracking-widest text-blue-600">Continue Reading</p>
+                        <p className="text-sm font-semibold text-blue-800 mt-0.5">
+                          {lastRead.book} — Chapter {lastRead.chapter}
+                          {lastRead.verse ? `, verse ${lastRead.verse}` : ""}
+                        </p>
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setLeftPanelTab("reader");
+                      }}
+                      className="shrink-0 rounded-xl bg-blue-600 px-4 py-2 text-xs font-semibold text-white hover:bg-blue-700 transition"
+                    >
+                      Resume →
+                    </button>
+                  </div>
+                )}
+
                 {/* Verse of the Day */}
                 <div className="rounded-2xl border border-amber-200 bg-amber-50 px-6 py-5">
                   <div className="flex items-center justify-between gap-4 mb-3">
                     <p className="text-xs font-bold uppercase tracking-widest text-amber-600">✦ Verse of the Day</p>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setFullBibleNav({ version: "KJV", book: verseOfDay.book, chapter: verseOfDay.chapter });
-                        setLeftPanelTab("bible");
-                      }}
-                      className="text-xs text-amber-600 hover:text-amber-800 transition"
-                    >
-                      Read chapter →
-                    </button>
+                    <div className="flex items-center gap-3">
+                      <button
+                        type="button"
+                        onClick={() => shareVerse(verseOfDay.reference, verseOfDay.text)}
+                        title="Share on Facebook"
+                        className="flex items-center gap-1.5 rounded-lg bg-[#1877F2] px-3 py-1 text-xs font-semibold text-white hover:bg-[#1464d3] transition"
+                      >
+                        <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.887v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
+                        Share
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setFullBibleNav({ version: "KJV", book: verseOfDay.book, chapter: verseOfDay.chapter });
+                          setLeftPanelTab("bible");
+                        }}
+                        className="text-xs text-amber-600 hover:text-amber-800 transition"
+                      >
+                        Read chapter →
+                      </button>
+                    </div>
                   </div>
                   <p className="text-base font-semibold text-amber-800 italic leading-7">"{verseOfDay.text}"</p>
                   <p className="mt-2 text-sm font-medium text-amber-600">— {verseOfDay.reference} (KJV)</p>
+                </div>
+
+                {/* Daily Devotional preview card */}
+                <div className="rounded-2xl border border-indigo-200 bg-gradient-to-br from-indigo-50 to-purple-50 px-6 py-5">
+                  <div className="flex items-center justify-between gap-3 mb-3">
+                    <div className="flex items-center gap-2">
+                      <span className="text-lg">{devotional.icon}</span>
+                      <p className="text-xs font-bold uppercase tracking-widest text-indigo-600">Daily Devotional</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const text = `${devotional.icon} ${devotional.title}\n\n"${devotional.verse}" — ${devotional.reference}\n\n${devotional.reflection}\n\n🙏 ${devotional.prayer}`;
+                          shareVerse(devotional.reference, text);
+                        }}
+                        title="Share this devotional on Facebook"
+                        className="flex items-center gap-1.5 rounded-lg bg-[#1877F2] px-3 py-1 text-xs font-semibold text-white hover:bg-[#1464d3] transition"
+                      >
+                        <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.887v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
+                        Share
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setLeftPanelTab("devotional")}
+                        className="text-xs text-indigo-600 hover:text-indigo-800 transition"
+                      >
+                        Read full →
+                      </button>
+                    </div>
+                  </div>
+                  <p className="text-sm font-bold text-indigo-800 mb-1">{devotional.title}</p>
+                  <p className="text-sm font-semibold text-indigo-700 italic mb-2">"{devotional.verse}"</p>
+                  <p className="text-xs text-indigo-500 font-medium mb-3">— {devotional.reference}</p>
+                  <p className="text-sm text-indigo-900 leading-relaxed line-clamp-3">{devotional.reflection}</p>
                 </div>
 
                 {/* Quick-access feature cards */}
@@ -759,12 +902,95 @@ export default function BibleReader() {
               </div>
             )}
 
+            {/* ── Daily Devotional tab ───────────────────────────────────── */}
+            {leftPanelTab === "devotional" && (
+              <div className="space-y-6">
+                {/* Header */}
+                <div className="rounded-2xl bg-gradient-to-br from-indigo-900 to-purple-900 px-7 py-8 text-white">
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <p className="text-xs font-bold uppercase tracking-widest text-indigo-300 mb-1">
+                        {new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
+                      </p>
+                      <h2 className="text-2xl font-bold text-white leading-snug">
+                        {devotional.icon} {devotional.title}
+                      </h2>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const text = `${devotional.icon} ${devotional.title}\n\n"${devotional.verse}" — ${devotional.reference}\n\n${devotional.reflection}\n\n🙏 ${devotional.prayer}`;
+                        shareVerse(devotional.reference, text);
+                      }}
+                      className="shrink-0 flex items-center gap-2 rounded-xl bg-[#1877F2] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#1464d3] transition"
+                    >
+                      <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.887v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
+                      Share to Facebook
+                    </button>
+                  </div>
+                </div>
+
+                {/* Scripture */}
+                <div className="rounded-2xl border border-indigo-200 bg-indigo-50 px-6 py-5">
+                  <p className="text-xs font-bold uppercase tracking-widest text-indigo-500 mb-3">Today&apos;s Scripture</p>
+                  <blockquote className="text-lg font-semibold text-indigo-900 italic leading-8 border-l-4 border-indigo-400 pl-4">
+                    &ldquo;{devotional.verse}&rdquo;
+                  </blockquote>
+                  <div className="mt-3 flex items-center justify-between">
+                    <p className="text-sm font-medium text-indigo-600">— {devotional.reference} (KJV)</p>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setFullBibleNav({ version: "KJV", book: devotional.book, chapter: devotional.chapter });
+                        setLeftPanelTab("bible");
+                      }}
+                      className="text-xs text-indigo-500 hover:text-indigo-800 transition"
+                    >
+                      Read full chapter →
+                    </button>
+                  </div>
+                </div>
+
+                {/* Reflection */}
+                <div className="rounded-2xl border border-gray-200 bg-white px-6 py-5">
+                  <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3">Reflection</p>
+                  <p className="text-base text-gray-800 leading-8">{devotional.reflection}</p>
+                </div>
+
+                {/* Prayer */}
+                <div className="rounded-2xl border border-purple-200 bg-purple-50 px-6 py-5">
+                  <p className="text-xs font-bold uppercase tracking-widest text-purple-500 mb-3">🙏 Today&apos;s Prayer</p>
+                  <p className="text-base font-medium text-purple-900 italic leading-7">{devotional.prayer}</p>
+                </div>
+
+                {/* Share CTA */}
+                <div className="rounded-2xl border border-[#1877F2]/30 bg-[#1877F2]/5 px-6 py-5 flex items-center justify-between gap-4">
+                  <div>
+                    <p className="text-sm font-semibold text-gray-800">Share today&apos;s devotional</p>
+                    <p className="text-xs text-gray-500 mt-0.5">Encourage someone on Facebook with today&apos;s message</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const text = `${devotional.icon} ${devotional.title}\n\n"${devotional.verse}" — ${devotional.reference}\n\n${devotional.reflection}\n\n🙏 ${devotional.prayer}`;
+                      shareVerse(devotional.reference, text);
+                    }}
+                    className="shrink-0 flex items-center gap-2 rounded-xl bg-[#1877F2] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#1464d3] transition"
+                  >
+                    <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.887v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
+                    Share to Facebook
+                  </button>
+                </div>
+              </div>
+            )}
+
             {leftPanelTab === "reader" && (
               <PassagePresenter
                 onWordClick={handlePresenterWordClick}
                 onVisualSearch={handlePresenterVisualSearch}
                 onNavigateFullBible={handlePresenterNavigateFullBible}
                 onVerseChange={handlePresenterVerseChange}
+                initialQuery={homeQuery}
               />
             )}
 
@@ -1127,126 +1353,150 @@ export default function BibleReader() {
             )}
 
             {/* ── ATLAS TAB ───────────────────────────────────────────────── */}
-            {leftPanelTab === "atlas" && (
-              <div className="space-y-4">
-                {/* Header row */}
-                <div className="flex items-end justify-between border-b border-gray-200 pb-3">
-                  <div>
+            {leftPanelTab === "atlas" && (() => {
+              const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+              return (
+                <div className="space-y-4">
+                  {/* Header */}
+                  <div className="border-b border-gray-200 pb-3">
                     <h2 className="text-lg font-semibold text-amber-700">🌍 Bible Atlas</h2>
                     <p className="text-xs text-gray-400 mt-0.5">
-                      {atlasFilteredItems.length} of {placeIndex.length} biblical locations
+                      Search by name, Bible book, or starting letter — {ATLAS_PLACES.length} biblical locations
                     </p>
                   </div>
-                  {/* Map style toggle */}
-                  <div className="inline-flex rounded-xl border border-gray-300 bg-white p-1">
-                    <button type="button" onClick={() => setMapMode("modern")}  className={`rounded-lg px-3 py-1.5 text-xs font-medium transition ${mapMode === "modern"  ? "bg-amber-500 text-white" : "text-gray-600 hover:text-gray-900"}`}>Modern</button>
-                    <button type="button" onClick={() => setMapMode("ancient")} className={`rounded-lg px-3 py-1.5 text-xs font-medium transition ${mapMode === "ancient" ? "bg-amber-500 text-white" : "text-gray-600 hover:text-gray-900"}`}>Ancient</button>
-                  </div>
-                </div>
 
-                {/* Search + Era chips */}
-                <div className="space-y-2">
-                  <input
-                    type="text"
-                    value={atlasSearch}
-                    onChange={(e) => setAtlasSearch(e.target.value)}
-                    placeholder="Search places… (e.g. Jerusalem, Bethlehem)"
-                    className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2 text-sm outline-none placeholder:text-gray-400 focus:border-amber-400 focus:ring-2 focus:ring-amber-100"
-                  />
-                  <div className="flex flex-wrap gap-1.5">
-                    {atlasUniqueEras.map(era => (
-                      <button
-                        key={era}
-                        type="button"
-                        onClick={() => setAtlasEraFilter(era)}
-                        className={`rounded-full border px-3 py-1 text-xs font-medium transition ${
-                          atlasEraFilter === era
-                            ? "bg-amber-500 text-white border-amber-500 shadow-sm"
-                            : "border-gray-200 text-gray-500 hover:border-amber-300 hover:text-amber-700"
-                        }`}
-                      >
-                        {era}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Two-panel: place list + map */}
-                <div className="flex gap-3" style={{ height: "500px" }}>
-                  {/* Place list */}
-                  <div className="w-52 shrink-0 flex flex-col rounded-xl border border-gray-200 bg-white overflow-hidden">
-                    <div className="bg-stone-50 border-b border-gray-200 px-3 py-2">
-                      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Locations</p>
+                  {/* Search controls */}
+                  <div className="rounded-xl bg-gray-50 border border-gray-200 p-3 space-y-3">
+                    {/* Text search */}
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={atlasSearch}
+                        onChange={(e) => { setAtlasSearch(e.target.value); setAtlasLetterFilter(""); setAtlasBookFilter(""); }}
+                        placeholder="Atlas search… (e.g. Babylon, Sinai, Corinth)"
+                        className="flex-1 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm outline-none placeholder:text-gray-400 focus:border-amber-400"
+                      />
+                      {atlasSearch && (
+                        <button type="button" onClick={() => setAtlasSearch("")} className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-xs text-gray-500 hover:bg-gray-100">Clear</button>
+                      )}
                     </div>
-                    <div className="flex-1 overflow-y-auto">
-                      {atlasFilteredItems.map(ip => (
-                        <button
-                          key={ip.name}
-                          type="button"
-                          onClick={() => {
-                            setSelectedPlace(ip.place);
-                            const verse = verses.find(v => v.places.some(p => p.name === ip.name));
-                            if (verse) setSelectedVerse(verse);
-                          }}
-                          className={`w-full text-left px-3 py-2.5 border-b border-gray-100 text-sm transition ${
-                            selectedPlace?.name === ip.name
-                              ? "bg-amber-50 text-amber-800 font-medium"
-                              : "text-gray-700 hover:bg-gray-50"
-                          }`}
-                        >
-                          <div className="flex items-center gap-2">
-                            <span className="text-base leading-none">
-                              {selectedPlace?.name === ip.name ? "📍" : "·"}
-                            </span>
-                            <span>{ip.name}</span>
+
+                    {/* Bible book selector */}
+                    <div className="flex gap-2 items-center">
+                      <label className="text-xs font-medium text-gray-500 shrink-0">By book:</label>
+                      <select
+                        value={atlasBookFilter}
+                        onChange={(e) => { setAtlasBookFilter(e.target.value); setAtlasSearch(""); setAtlasLetterFilter(""); }}
+                        className="flex-1 rounded-lg border border-gray-300 bg-white px-2 py-1.5 text-sm outline-none focus:border-amber-400"
+                      >
+                        <option value="">Select a Bible book…</option>
+                        {ATLAS_BOOKS.map(book => (
+                          <option key={book} value={book}>{book}</option>
+                        ))}
+                      </select>
+                      {atlasBookFilter && (
+                        <button type="button" onClick={() => setAtlasBookFilter("")} className="text-xs text-gray-400 hover:text-gray-600">✕</button>
+                      )}
+                    </div>
+
+                    {/* A–Z letter browser */}
+                    <div>
+                      <p className="text-xs font-medium text-gray-500 mb-1.5">By letter:</p>
+                      <div className="flex flex-wrap gap-1">
+                        {letters.map(l => (
+                          <button
+                            key={l}
+                            type="button"
+                            onClick={() => { setAtlasLetterFilter(atlasLetterFilter === l ? "" : l); setAtlasSearch(""); setAtlasBookFilter(""); }}
+                            className={`w-7 h-7 rounded text-xs font-semibold transition ${
+                              atlasLetterFilter === l
+                                ? "bg-amber-500 text-white"
+                                : "bg-white border border-gray-300 text-blue-600 hover:bg-blue-50"
+                            }`}
+                          >
+                            {l}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Map mode toggle */}
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs text-gray-500">
+                      Showing <span className="font-semibold text-gray-700">{atlasFilteredItems.length}</span> location{atlasFilteredItems.length !== 1 ? "s" : ""}
+                    </p>
+                    <div className="inline-flex rounded-xl border border-gray-300 bg-white p-1">
+                      <button type="button" onClick={() => setMapMode("modern")}  className={`rounded-lg px-3 py-1 text-xs font-medium transition ${mapMode === "modern"  ? "bg-amber-500 text-white" : "text-gray-600 hover:text-gray-900"}`}>Modern</button>
+                      <button type="button" onClick={() => setMapMode("ancient")} className={`rounded-lg px-3 py-1 text-xs font-medium transition ${mapMode === "ancient" ? "bg-amber-500 text-white" : "text-gray-600 hover:text-gray-900"}`}>Ancient</button>
+                    </div>
+                  </div>
+
+                  {/* Two-panel: list + map */}
+                  <div className="flex gap-3" style={{ height: "460px" }}>
+                    {/* Place list */}
+                    <div className="w-52 shrink-0 flex flex-col rounded-xl border border-gray-200 bg-white overflow-hidden">
+                      <div className="bg-stone-50 border-b border-gray-200 px-3 py-2">
+                        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Locations</p>
+                      </div>
+                      <div className="flex-1 overflow-y-auto">
+                        {atlasFilteredItems.map(p => (
+                          <button
+                            key={p.name}
+                            type="button"
+                            onClick={() => setSelectedPlace({ name: p.name, lat: p.lat, lng: p.lng, description: p.description, era: p.era })}
+                            className={`w-full text-left px-3 py-2.5 border-b border-gray-100 text-sm transition ${
+                              selectedPlace?.name === p.name
+                                ? "bg-amber-50 text-amber-800 font-medium"
+                                : "text-gray-700 hover:bg-gray-50"
+                            }`}
+                          >
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm leading-none">{selectedPlace?.name === p.name ? "📍" : "·"}</span>
+                              <span>{p.name}</span>
+                            </div>
+                            <p className="mt-0.5 ml-5 text-[10px] text-gray-400 truncate">{p.era}</p>
+                          </button>
+                        ))}
+                        {atlasFilteredItems.length === 0 && (
+                          <p className="px-4 py-8 text-xs text-center text-gray-400">No places found.<br/>Try a different search or letter.</p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Map */}
+                    <div className="flex-1 flex flex-col gap-2 min-w-0">
+                      <div className="flex-1 rounded-xl overflow-hidden border border-gray-200">
+                        <PlaceMap
+                          selectedPlace={selectedPlace}
+                          versePlaces={atlasVersePlaces}
+                          mapMode={mapMode}
+                          activeJourney={null}
+                          fillHeight
+                          onPlaceClick={(place) => setSelectedPlace(place)}
+                        />
+                      </div>
+                      {selectedPlace ? (
+                        <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 flex items-start justify-between gap-3 shrink-0">
+                          <div className="min-w-0">
+                            <p className="text-sm font-semibold text-amber-800">📍 {selectedPlace.name}</p>
+                            <p className="text-xs text-amber-600 mt-0.5">{selectedPlace.era}</p>
+                            {selectedPlace.description && (
+                              <p className="text-xs text-gray-600 mt-1 leading-relaxed line-clamp-2">{selectedPlace.description}</p>
+                            )}
                           </div>
-                          <p className="mt-0.5 ml-6 text-[10px] text-gray-400 truncate">{ip.place.era}</p>
-                        </button>
-                      ))}
-                      {atlasFilteredItems.length === 0 && (
-                        <p className="px-4 py-6 text-xs text-center text-gray-400">No places match your filters.</p>
+                          <button type="button" onClick={() => setSelectedPlace(null)} className="text-gray-400 hover:text-gray-600 text-lg leading-none shrink-0">✕</button>
+                        </div>
+                      ) : (
+                        <div className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 shrink-0 text-center">
+                          <p className="text-xs text-gray-400">Click a location name or map pin to explore</p>
+                        </div>
                       )}
                     </div>
                   </div>
-
-                  {/* Map panel */}
-                  <div className="flex-1 flex flex-col gap-2 min-w-0">
-                    <div className="flex-1 rounded-xl overflow-hidden border border-gray-200">
-                      <PlaceMap
-                        selectedPlace={selectedPlace}
-                        versePlaces={atlasVersePlaces}
-                        mapMode={mapMode}
-                        activeJourney={null}
-                        fillHeight
-                        onPlaceClick={(place) => {
-                          setSelectedPlace(place);
-                          const verse = verses.find(v => v.places.some(p => p.name === place.name));
-                          if (verse) setSelectedVerse(verse);
-                        }}
-                      />
-                    </div>
-
-                    {/* Selected place card */}
-                    {selectedPlace ? (
-                      <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 flex items-start justify-between gap-3 shrink-0">
-                        <div className="min-w-0">
-                          <p className="text-sm font-semibold text-amber-800">📍 {selectedPlace.name}</p>
-                          <p className="text-xs text-amber-700 mt-0.5">{selectedPlace.era}</p>
-                          {selectedPlace.description && (
-                            <p className="text-xs text-gray-600 mt-1 leading-relaxed line-clamp-2">{selectedPlace.description}</p>
-                          )}
-                        </div>
-                        <button type="button" onClick={() => setSelectedPlace(null)} className="text-gray-400 hover:text-gray-600 text-lg leading-none shrink-0">✕</button>
-                      </div>
-                    ) : (
-                      <div className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 shrink-0">
-                        <p className="text-xs text-gray-400 text-center">Click a pin or a location name to explore</p>
-                      </div>
-                    )}
-                  </div>
                 </div>
-              </div>
-            )}
+              );
+            })()}
 
             {leftPanelTab === "study_prompts" && (
               <div className="space-y-5">
@@ -1588,6 +1838,32 @@ export default function BibleReader() {
 
           {/* RIGHT PANEL */}
           <aside className="bg-white border-l border-gray-200 p-5 space-y-6 print:hidden">
+
+            {/* Share current verse */}
+            {(presenterRef || selectedVerse) && (() => {
+              const ref  = presenterRef?.reference ?? selectedVerse?.reference ?? "";
+              const text = presenterRef?.text       ?? selectedVerse?.translations?.KJV ?? "";
+              if (!ref || !text) return null;
+              return (
+                <div className="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">Current Verse</p>
+                    <p className="text-xs font-semibold text-amber-700 truncate">{ref}</p>
+                    <p className="text-xs text-gray-500 mt-0.5 line-clamp-2 italic">"{text}"</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => shareVerse(ref, text)}
+                    title="Share this verse on Facebook"
+                    className="shrink-0 flex items-center gap-1.5 rounded-lg bg-[#1877F2] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#1464d3] transition mt-0.5"
+                  >
+                    <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.887v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
+                    Share
+                  </button>
+                </div>
+              );
+            })()}
+
             {/* Lexicon Panel — Word Study */}
             {lexiconWord && (
               <LexiconPanel
