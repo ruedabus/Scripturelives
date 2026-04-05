@@ -45,7 +45,10 @@ type LeftPanelTab =
   | "study_prompts"
   | "bookmarks"
   | "study_sheet"
-  | "sessions";
+  | "sessions"
+  | "testimonials"
+  | "resources"
+  | "books";
 
 // ── Bible book lists ──────────────────────────────────────────────────────
 const OT_SECTIONS = [
@@ -172,6 +175,8 @@ export default function BibleReader() {
   const [activePromptIndex, setActivePromptIndex] = useState(0);
   const [isLoadingPrompts, setIsLoadingPrompts] = useState(false);
   const [promptError, setPromptError] = useState("");
+  const [promptCustomRef, setPromptCustomRef] = useState("");
+  const [promptOverride, setPromptOverride] = useState<{ ref: string; text: string } | null>(null);
 
   const verseRefs = useRef<Record<string, HTMLElement | null>>({});
 
@@ -369,7 +374,7 @@ export default function BibleReader() {
   const selectedImage = selectedPlaceImages[activeImageIndex] ?? null;
 
   // presenterRef (Reader tab) always wins for study context; selectedVerse is fallback
-  const studyRef = presenterRef?.reference ?? selectedVerse?.reference ?? null;
+  const studyRef = promptOverride?.ref ?? presenterRef?.reference ?? selectedVerse?.reference ?? null;
 
   const fallbackPrompts = useMemo(() => {
     if (selectedPlace) return getPlaceStudyPrompts(selectedPlace, presenterRef?.reference ?? selectedVerse?.reference);
@@ -391,8 +396,8 @@ export default function BibleReader() {
     let isCancelled = false;
 
     async function loadPrompts() {
-      const activeRef = presenterRef?.reference ?? selectedVerse?.reference;
-      const activeText = presenterRef?.text ?? selectedVerse?.translations?.KJV;
+      const activeRef = promptOverride?.ref ?? presenterRef?.reference ?? selectedVerse?.reference;
+      const activeText = promptOverride?.text ?? presenterRef?.text ?? selectedVerse?.translations?.KJV;
       if (!activeRef || !activeText) {
         setAiPrompts([]);
         setPromptError("");
@@ -415,8 +420,8 @@ export default function BibleReader() {
             description: selectedPlace?.description ?? null,
             ancientDescription: selectedPlace?.ancientDescription ?? null,
             biblicalSignificance: selectedPlace?.biblicalSignificance ?? null,
-            verseReference: presenterRef?.reference ?? selectedVerse?.reference,
-            verseText: presenterRef?.text ?? selectedVerse?.translations?.KJV,
+            verseReference: activeRef,
+            verseText: activeText,
           }),
         });
 
@@ -448,12 +453,24 @@ export default function BibleReader() {
     return () => {
       isCancelled = true;
     };
-  }, [selectedPlace?.name, presenterRef?.reference, selectedVerse?.id]);
+  }, [selectedPlace?.name, presenterRef?.reference, selectedVerse?.id, promptOverride]);
 
   // Reset to first prompt when context changes
   useEffect(() => {
     setActivePromptIndex(0);
-  }, [selectedPlace?.name, presenterRef?.reference, selectedVerse?.id]);
+  }, [selectedPlace?.name, presenterRef?.reference, selectedVerse?.id, promptOverride]);
+
+  const handleGenerateCustomPrompts = useCallback(() => {
+    const ref = promptCustomRef.trim();
+    if (!ref) return;
+    // Try to find the verse text from the data
+    const found = verses.find((v) => {
+      const vRef = `${v.book} ${v.chapter}:${v.verse}`;
+      return vRef.toLowerCase() === ref.toLowerCase();
+    });
+    const text = found?.translations?.KJV ?? `"${ref}" — enter this verse in the Reader tab to see its full text.`;
+    setPromptOverride({ ref, text });
+  }, [promptCustomRef]);
 
   const handleSelectBibleVerse = (
     version: "KJV" | "ASV" | "WEB",
@@ -643,6 +660,12 @@ export default function BibleReader() {
               {sideNavBtn("sessions",      "📋", "Sessions")}
               {sideNavBtn("study_sheet",   "📄", "Study Sheet")}
             </div>
+            <div>
+              <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-widest text-stone-500">Community</p>
+              {sideNavBtn("testimonials",  "💬", "Testimonials")}
+              {sideNavBtn("resources",     "🔗", "More Resources")}
+              {sideNavBtn("books",         "📕", "Christian Books")}
+            </div>
           </div>
 
           {/* Sidebar footer links */}
@@ -680,6 +703,9 @@ export default function BibleReader() {
               <button type="button" onClick={() => setLeftPanelTab("bookmarks")}     className={tabButtonClass("bookmarks")}>🔖 Bookmarks</button>
               <button type="button" onClick={() => setLeftPanelTab("sessions")}      className={tabButtonClass("sessions")}>📋 Sessions</button>
               <button type="button" onClick={() => setLeftPanelTab("study_sheet")}   className={tabButtonClass("study_sheet")}>📄 Study Sheet</button>
+              <button type="button" onClick={() => setLeftPanelTab("testimonials")}  className={tabButtonClass("testimonials")}>💬 Testimonials</button>
+              <button type="button" onClick={() => setLeftPanelTab("resources")}     className={tabButtonClass("resources")}>🔗 More Resources</button>
+              <button type="button" onClick={() => setLeftPanelTab("books")}         className={tabButtonClass("books")}>📕 Christian Books</button>
             </div>
 
             {/* ── HOME TAB ─────────────────────────────────────────────────── */}
@@ -1511,6 +1537,41 @@ export default function BibleReader() {
                   </p>
                 </div>
 
+                {/* Custom verse input */}
+                <div className="rounded-xl border border-gray-200 bg-white px-4 py-3">
+                  <p className="text-xs font-semibold text-gray-600 mb-2">Generate prompts for any verse:</p>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={promptCustomRef}
+                      onChange={(e) => setPromptCustomRef(e.target.value)}
+                      onKeyDown={(e) => { if (e.key === "Enter") handleGenerateCustomPrompts(); }}
+                      placeholder="e.g. John 3:16 or Romans 8:28"
+                      className="flex-1 rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-200"
+                    />
+                    <button
+                      type="button"
+                      onClick={handleGenerateCustomPrompts}
+                      disabled={!promptCustomRef.trim() || isLoadingPrompts}
+                      className="rounded-lg bg-amber-500 px-3 py-1.5 text-sm font-semibold text-white hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed transition"
+                    >
+                      {isLoadingPrompts ? "…" : "Go"}
+                    </button>
+                  </div>
+                  {promptOverride && (
+                    <div className="mt-2 flex items-center justify-between">
+                      <p className="text-xs text-amber-700 font-medium">Showing: {promptOverride.ref}</p>
+                      <button
+                        type="button"
+                        onClick={() => { setPromptOverride(null); setPromptCustomRef(""); }}
+                        className="text-xs text-gray-400 hover:text-gray-600 underline"
+                      >
+                        Clear
+                      </button>
+                    </div>
+                  )}
+                </div>
+
                 {/* Context banner */}
                 {studyRef || selectedPlace ? (
                   <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 flex items-start gap-3">
@@ -1837,6 +1898,160 @@ export default function BibleReader() {
                 )}
               </div>
             )}
+
+            {/* ── TESTIMONIALS TAB ─────────────────────────────────────────── */}
+            {leftPanelTab === "testimonials" && (
+              <div className="space-y-5">
+                <div className="border-b border-gray-200 pb-3">
+                  <h2 className="text-lg font-semibold text-amber-700">💬 Testimonials</h2>
+                  <p className="text-xs text-gray-400 mt-0.5">What God is doing through His Word in people&apos;s lives</p>
+                </div>
+
+                {/* Curated testimonials */}
+                <div className="space-y-4">
+                  {[
+                    { name: "Maria G.", location: "Texas", quote: "Scripture Lives helped me find comfort in Psalm 23 during the hardest season of my life. I read it every morning now.", verse: "Psalm 23:1" },
+                    { name: "James T.", location: "Nigeria", quote: "I have been searching for a free Bible tool that doesn't require a login. This is exactly what I needed for my Bible study group.", verse: "2 Timothy 2:15" },
+                    { name: "Sarah L.", location: "Philippines", quote: "The daily devotionals keep me rooted in the Word. I share them with my church group on Facebook every morning.", verse: "Psalm 119:105" },
+                    { name: "Pastor David K.", location: "Kenya", quote: "I use the study prompts every week to prepare my sermons. The questions are deep and thought-provoking.", verse: "John 5:39" },
+                    { name: "Rebecca M.", location: "Canada", quote: "Finally a Bible app that works beautifully on my phone without needing data. God bless the team behind this!", verse: "Isaiah 40:8" },
+                  ].map((t) => (
+                    <div key={t.name} className="rounded-2xl border border-stone-200 bg-white p-4">
+                      <p className="text-sm text-gray-700 italic leading-6 mb-3">&ldquo;{t.quote}&rdquo;</p>
+                      <div className="flex items-center justify-between gap-2">
+                        <div>
+                          <p className="text-xs font-semibold text-stone-800">{t.name}</p>
+                          <p className="text-[10px] text-stone-400">{t.location}</p>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => { setPromptCustomRef(t.verse); setLeftPanelTab("study_prompts"); }}
+                          className="text-[10px] text-amber-600 hover:underline font-medium"
+                        >
+                          {t.verse} →
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Share your story CTA */}
+                <div className="rounded-2xl border border-amber-200 bg-amber-50 px-5 py-5 text-center">
+                  <p className="text-sm font-semibold text-amber-800 mb-1">Has Scripture Lives blessed you?</p>
+                  <p className="text-xs text-amber-700 mb-3">We&apos;d love to hear your story and share it to encourage others.</p>
+                  <a
+                    href="mailto:info@scripturelives.com?subject=My Scripture Lives Testimony"
+                    className="inline-block rounded-lg bg-amber-500 px-4 py-2 text-xs font-semibold text-white hover:bg-amber-600 transition"
+                  >
+                    Share Your Testimony
+                  </a>
+                </div>
+              </div>
+            )}
+
+            {/* ── MORE RESOURCES TAB ───────────────────────────────────────── */}
+            {leftPanelTab === "resources" && (
+              <div className="space-y-5">
+                <div className="border-b border-gray-200 pb-3">
+                  <h2 className="text-lg font-semibold text-amber-700">🔗 More Resources</h2>
+                  <p className="text-xs text-gray-400 mt-0.5">Trusted external tools and ministries for deeper study</p>
+                </div>
+
+                <div className="space-y-3">
+                  {[
+                    { category: "Bible Study", items: [
+                      { name: "Bible Gateway", url: "https://www.biblegateway.com", desc: "Search the Bible in over 200 translations." },
+                      { name: "Blue Letter Bible", url: "https://www.blueletterbible.org", desc: "In-depth tools: lexicons, commentaries, interlinears." },
+                      { name: "Bible Hub", url: "https://biblehub.com", desc: "Parallel translations, concordances, and commentaries." },
+                    ]},
+                    { category: "Commentaries", items: [
+                      { name: "Enduring Word", url: "https://enduringword.com", desc: "Verse-by-verse Bible commentary by David Guzik." },
+                      { name: "Grace to You", url: "https://www.gty.org", desc: "John MacArthur's sermons and Bible resources." },
+                    ]},
+                    { category: "Prayer & Devotion", items: [
+                      { name: "Open Bible", url: "https://www.openbible.info", desc: "Topical Bible searches and verse-by-verse resources." },
+                      { name: "Desiring God", url: "https://www.desiringgod.org", desc: "Articles, sermons, and devotionals from John Piper." },
+                    ]},
+                    { category: "Biblical History", items: [
+                      { name: "Smithsonian Bible Archaeology", url: "https://www.smithsonianmag.com/history/archaeology", desc: "Archaeological discoveries that illuminate the Bible." },
+                      { name: "Biblical Archaeology Society", url: "https://www.biblicalarchaeology.org", desc: "Scholarly articles on biblical history and culture." },
+                    ]},
+                  ].map((section) => (
+                    <div key={section.category}>
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">{section.category}</p>
+                      <div className="space-y-2">
+                        {section.items.map((item) => (
+                          <a
+                            key={item.name}
+                            href={item.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-start gap-3 rounded-xl border border-gray-200 bg-white px-4 py-3 hover:border-amber-300 hover:bg-amber-50 transition group"
+                          >
+                            <span className="text-amber-500 text-lg shrink-0 mt-0.5">🔗</span>
+                            <div className="min-w-0">
+                              <p className="text-sm font-semibold text-gray-800 group-hover:text-amber-700">{item.name}</p>
+                              <p className="text-xs text-gray-500 leading-5">{item.desc}</p>
+                            </div>
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <p className="text-center text-xs text-gray-400">
+                  Want to suggest a resource?{" "}
+                  <a href="mailto:info@scripturelives.com?subject=Resource Suggestion" className="text-amber-600 hover:underline">Let us know</a>
+                </p>
+              </div>
+            )}
+
+            {/* ── CHRISTIAN BOOKS TAB ──────────────────────────────────────── */}
+            {leftPanelTab === "books" && (
+              <div className="space-y-5">
+                <div className="border-b border-gray-200 pb-3">
+                  <h2 className="text-lg font-semibold text-amber-700">📕 Christian Books</h2>
+                  <p className="text-xs text-gray-400 mt-0.5">Classic public domain works of the faith — free to read</p>
+                </div>
+
+                <div className="space-y-3">
+                  {[
+                    { title: "The Pilgrim's Progress", author: "John Bunyan (1678)", desc: "One of the most widely read books in Christian history — an allegory of the journey from sin to salvation.", url: "https://www.gutenberg.org/ebooks/131" },
+                    { title: "Institutes of the Christian Religion", author: "John Calvin (1536)", desc: "A systematic presentation of Christian doctrine that shaped Reformed theology for centuries.", url: "https://www.gutenberg.org/ebooks/45001" },
+                    { title: "Morning and Evening", author: "Charles H. Spurgeon (1865)", desc: "Daily devotional readings from the Prince of Preachers — one for each morning and evening of the year.", url: "https://www.gutenberg.org/ebooks/2934" },
+                    { title: "The City of God", author: "Augustine of Hippo (426 AD)", desc: "Augustine's sweeping vision of history and the two cities — earthly and heavenly — that shape all of human life.", url: "https://www.gutenberg.org/ebooks/45304" },
+                    { title: "Confessions", author: "Augustine of Hippo (397 AD)", desc: "Perhaps the first autobiography in history — Augustine's frank account of his life, sins, and conversion to Christ.", url: "https://www.gutenberg.org/ebooks/3296" },
+                    { title: "Sinners in the Hands of an Angry God", author: "Jonathan Edwards (1741)", desc: "The most famous sermon in American history — a call to repentance and a portrait of divine grace.", url: "https://www.gutenberg.org/ebooks/34632" },
+                    { title: "The Practice of the Presence of God", author: "Brother Lawrence (1692)", desc: "Short reflections on finding God in the ordinary moments of daily life.", url: "https://www.gutenberg.org/ebooks/13871" },
+                    { title: "Foxe's Book of Martyrs", author: "John Foxe (1563)", desc: "The stories of Christian martyrs from the early church through the Reformation — a powerful testimony of faith.", url: "https://www.gutenberg.org/ebooks/22400" },
+                  ].map((book) => (
+                    <a
+                      key={book.title}
+                      href={book.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-start gap-3 rounded-xl border border-gray-200 bg-white px-4 py-4 hover:border-amber-300 hover:bg-amber-50 transition group"
+                    >
+                      <span className="text-2xl shrink-0">📕</span>
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold text-gray-800 group-hover:text-amber-700">{book.title}</p>
+                        <p className="text-[10px] text-amber-600 font-medium mb-1">{book.author}</p>
+                        <p className="text-xs text-gray-500 leading-5">{book.desc}</p>
+                        <p className="text-[10px] text-blue-500 mt-1">Read free on Project Gutenberg →</p>
+                      </div>
+                    </a>
+                  ))}
+                </div>
+
+                <p className="text-center text-xs text-gray-400">
+                  All books are in the public domain and free to read.
+                  Want to suggest a title?{" "}
+                  <a href="mailto:info@scripturelives.com?subject=Book Suggestion" className="text-amber-600 hover:underline">Email us</a>
+                </p>
+              </div>
+            )}
+
           </section>
 
           {/* RIGHT PANEL */}

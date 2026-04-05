@@ -104,6 +104,16 @@ export default function DonatePage() {
           <p className="mt-3 text-amber-600 font-semibold">— The Scripture Lives Team</p>
         </section>
 
+        {/* Contact */}
+        <section className="text-center border-t border-stone-200 pt-8">
+          <p className="text-stone-500 text-sm">
+            Questions about your donation? Contact us at{" "}
+            <a href="mailto:info@scripturelives.com" className="text-amber-600 hover:underline font-medium">
+              info@scripturelives.com
+            </a>
+          </p>
+        </section>
+
       </main>
 
       <footer className="border-t border-stone-200 bg-white py-8 text-center text-sm text-stone-400">

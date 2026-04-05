@@ -123,6 +123,22 @@ export default function AboutPage() {
           </Link>
         </section>
 
+        {/* Contact */}
+        <section className="text-center">
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <span className="text-3xl">✉️</span>
+            <h2 className="text-2xl font-bold text-stone-900">Contact Us</h2>
+          </div>
+          <p className="text-stone-600 leading-8">
+            Have a question, a testimonial, or just want to say hello? We&apos;d love to hear from you.
+            Reach out to us at{" "}
+            <a href="mailto:info@scripturelives.com" className="text-amber-600 font-semibold hover:underline">
+              info@scripturelives.com
+            </a>{" "}
+            and we will do our best to respond promptly.
+          </p>
+        </section>
+
       </main>
 
       <footer className="border-t border-stone-200 bg-white py-8 text-center text-sm text-stone-400">

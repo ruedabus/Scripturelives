@@ -100,7 +100,11 @@ export default function TermsPage() {
           <section>
             <h2 className="text-xl font-semibold text-stone-800 mb-3">11. Contact</h2>
             <p>
-              If you have questions about these Terms and Conditions, please reach out through the Scripture Lives website. We are committed to transparency and will respond to any reasonable inquiry in good faith.
+              If you have questions about these Terms and Conditions, please reach out to us at{" "}
+              <a href="mailto:info@scripturelives.com" className="text-amber-600 hover:underline">
+                info@scripturelives.com
+              </a>
+              . We are committed to transparency and will respond to any reasonable inquiry in good faith.
             </p>
           </section>
 
