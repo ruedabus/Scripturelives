@@ -790,41 +790,53 @@ export default function BibleReader() {
               <div className="space-y-8 print:hidden">
 
                 {/* Hero search */}
-                <div className="rounded-2xl bg-gradient-to-br from-stone-900 to-stone-800 px-7 py-9">
-                  <div className="flex items-center gap-4 mb-2">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src="/Hand-painted cross_logo.png"
-                      alt="Scripture Lives"
-                      className="h-20 w-20 rounded-xl object-contain shrink-0"
-                      onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
-                    />
-                    <div>
-                      <h1 className="text-2xl font-bold text-amber-400">Scripture Lives</h1>
-                      <p className="text-sm text-stone-400">Explore, study, and present the living Word of God</p>
+                <div className="relative rounded-2xl bg-gradient-to-br from-stone-950 to-stone-800 px-7 py-9 overflow-hidden">
+                  {/* Bible image — layered behind content, top-right */}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="/bible-hero.jpg"
+                    alt=""
+                    aria-hidden="true"
+                    className="absolute -right-6 -top-4 h-48 w-64 object-cover object-left opacity-25 pointer-events-none select-none"
+                    style={{ maskImage: "linear-gradient(to left, black 0%, transparent 100%)", WebkitMaskImage: "linear-gradient(to left, black 0%, transparent 100%)" }}
+                    onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
+                  />
+                  {/* Content */}
+                  <div className="relative z-10">
+                    <div className="flex items-center gap-4 mb-2">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src="/Hand-painted cross_logo.png"
+                        alt="Scripture Lives"
+                        className="h-20 w-20 rounded-xl object-contain shrink-0"
+                        onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
+                      />
+                      <div>
+                        <h1 className="text-2xl font-bold text-amber-400">Scripture Lives</h1>
+                        <p className="text-sm text-stone-400">Explore, study, and present the living Word of God</p>
+                      </div>
                     </div>
-                  </div>
-                  <div className="mt-5 flex gap-2">
-                    <input
-                      type="text"
-                      value={homeQuery}
-                      onChange={(e) => setHomeQuery(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" && homeQuery.trim()) {
-                          setLeftPanelTab("reader");
-                          // homeQuery is cleared after PassagePresenter mounts with it
-                        }
-                      }}
-                      placeholder="Search a verse, passage, or keyword…"
-                      className="flex-1 rounded-xl border-0 bg-stone-700 px-4 py-3 text-sm text-white placeholder:text-stone-400 outline-none focus:ring-2 focus:ring-amber-400"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => { if (homeQuery.trim()) setLeftPanelTab("reader"); }}
-                      className="rounded-xl bg-amber-500 px-5 py-3 text-sm font-semibold text-stone-900 hover:bg-amber-400 transition"
-                    >
-                      Search
-                    </button>
+                    <div className="mt-5 flex gap-2">
+                      <input
+                        type="text"
+                        value={homeQuery}
+                        onChange={(e) => setHomeQuery(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" && homeQuery.trim()) {
+                            setLeftPanelTab("reader");
+                          }
+                        }}
+                        placeholder="Search a verse, passage, or keyword…"
+                        className="flex-1 rounded-xl border-0 bg-stone-700/80 px-4 py-3 text-sm text-white placeholder:text-stone-400 outline-none focus:ring-2 focus:ring-amber-400"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => { if (homeQuery.trim()) setLeftPanelTab("reader"); }}
+                        className="rounded-xl bg-amber-500 px-5 py-3 text-sm font-semibold text-stone-900 hover:bg-amber-400 transition"
+                      >
+                        Search
+                      </button>
+                    </div>
                   </div>
                 </div>
 

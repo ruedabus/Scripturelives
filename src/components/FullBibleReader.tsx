@@ -27,6 +27,15 @@ const VERSION_LABELS: Record<BibleVersion, string> = {
   WEB: "World English Bible",
 };
 
+const OT_BOOKS = new Set([
+  "Genesis","Exodus","Leviticus","Numbers","Deuteronomy","Joshua","Judges","Ruth",
+  "1 Samuel","2 Samuel","1 Kings","2 Kings","1 Chronicles","2 Chronicles","Ezra",
+  "Nehemiah","Esther","Job","Psalms","Psalm","Proverbs","Ecclesiastes",
+  "Song of Solomon","Isaiah","Jeremiah","Lamentations","Ezekiel","Daniel","Hosea",
+  "Joel","Amos","Obadiah","Jonah","Micah","Nahum","Habakkuk","Zephaniah",
+  "Haggai","Zechariah","Malachi",
+]);
+
 // ---------------------------------------------------------------------------
 // Biblical terms that are visually interesting — for "Visual Mode"
 // ---------------------------------------------------------------------------
@@ -184,6 +193,7 @@ export default function FullBibleReader({
   const [verses, setVerses] = useState<BibleVerse[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showPicker, setShowPicker] = useState(true);
 
   // Stable refs for callbacks — prevents infinite loops when parents pass
   // inline arrow functions that get a new reference on every render.
@@ -242,6 +252,7 @@ export default function FullBibleReader({
     setVersion(navTarget.version);
     setSelectedBook(navTarget.book);
     setSelectedChapter(navTarget.chapter);
+    setShowPicker(false);
     onNavConsumedRef.current?.();
   }, [navTarget]);
 
@@ -249,6 +260,7 @@ export default function FullBibleReader({
   const handleBookChange = (book: string) => {
     setSelectedBook(book);
     setSelectedChapter(1);
+    setShowPicker(false);
   };
 
   const handlePrevChapter = () => {
@@ -265,206 +277,221 @@ export default function FullBibleReader({
 
   const isWordStudyMode = readingMode === "wordstudy" && version === "KJV";
 
-  return (
-    <div className="space-y-4">
-      {/* Version selector */}
-      <div className="flex flex-wrap gap-2">
-        {VERSIONS.map((v) => (
-          <button
-            key={v}
-            type="button"
-            onClick={() => setVersion(v)}
-            title={VERSION_LABELS[v]}
-            className={`rounded-lg px-3 py-1.5 text-sm font-medium transition ${
-              version === v
-                ? "bg-amber-500 text-gray-900"
-                : "border border-gray-300 text-gray-600 hover:bg-gray-100"
-            }`}
-          >
-            {v}
-          </button>
-        ))}
-      </div>
+  const otBooks = books.filter((b) => OT_BOOKS.has(b.name));
+  const ntBooks = books.filter((b) => !OT_BOOKS.has(b.name));
 
-      {/* Book + Chapter selectors */}
-      <div className="flex flex-wrap items-center gap-3">
-        <select
-          value={selectedBook}
-          onChange={(e) => handleBookChange(e.target.value)}
-          className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-1 focus:ring-amber-400"
+  // ── BOOK PICKER (hero view) ─────────────────────────────────────────────
+  if (showPicker) {
+    return (
+      <div className="rounded-2xl overflow-hidden">
+        {/* Hero background */}
+        <div
+          className="relative min-h-[520px] flex flex-col"
+          style={{
+            backgroundImage: "url('/bible-hero.jpg')",
+            backgroundSize: "cover",
+            backgroundPosition: "center top",
+          }}
         >
-          {books.map((b) => (
-            <option key={b.name} value={b.name}>
-              {b.name}
-            </option>
-          ))}
-        </select>
+          {/* Dark overlay */}
+          <div className="absolute inset-0 bg-gradient-to-b from-stone-950/85 via-stone-950/75 to-stone-950/90" />
 
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={handlePrevChapter}
-            disabled={selectedChapter <= 1}
-            className="rounded-lg border border-gray-300 px-2.5 py-1.5 text-sm text-gray-600 hover:bg-gray-100 disabled:opacity-30"
-          >
-            ‹
-          </button>
-          <select
-            value={selectedChapter}
-            onChange={(e) => setSelectedChapter(Number(e.target.value))}
-            className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-1 focus:ring-amber-400"
-          >
-            {Array.from({ length: totalChapters }, (_, i) => i + 1).map((ch) => (
-              <option key={ch} value={ch}>
-                Chapter {ch}
-              </option>
-            ))}
-          </select>
-          <button
-            type="button"
-            onClick={handleNextChapter}
-            disabled={selectedChapter >= totalChapters}
-            className="rounded-lg border border-gray-300 px-2.5 py-1.5 text-sm text-gray-600 hover:bg-gray-100 disabled:opacity-30"
-          >
-            ›
-          </button>
-        </div>
-      </div>
-
-      {/* Reading mode toggle */}
-      <div className="flex items-center gap-1 rounded-lg border border-gray-300 bg-gray-100 p-1 w-fit">
-        <button
-          type="button"
-          onClick={() => handleModeToggle("visual")}
-          title="Tap highlighted terms to see visual references"
-          className={`rounded-md px-3 py-1.5 text-xs font-medium transition ${
-            readingMode === "visual"
-              ? "bg-amber-500 text-gray-900"
-              : "text-gray-500 hover:text-gray-800"
-          }`}
-        >
-          🖼 Visual Mode
-        </button>
-        <button
-          type="button"
-          onClick={() => handleModeToggle("wordstudy")}
-          title={version !== "KJV" ? "Switch to KJV to use Word Study" : "Tap words to see Hebrew/Greek roots"}
-          className={`rounded-md px-3 py-1.5 text-xs font-medium transition ${
-            readingMode === "wordstudy"
-              ? "bg-sky-600 text-white"
-              : "text-gray-500 hover:text-gray-800"
-          } ${version !== "KJV" ? "opacity-50 cursor-not-allowed" : ""}`}
-        >
-          🔤 Word Study
-        </button>
-      </div>
-
-      {/* Chapter heading */}
-      {selectedBook && (
-        <div className="border-b border-gray-200 pb-2">
-          <h2 className="text-lg font-semibold text-amber-700">
-            {selectedBook} {selectedChapter}
-          </h2>
-          <p className="text-xs text-gray-400">{VERSION_LABELS[version]}</p>
-        </div>
-      )}
-
-      {/* Mode hints */}
-      {!loading && !error && verses.length > 0 && (
-        <div>
-          {readingMode === "visual" && onVisualSearch && (
-            <p className="mb-3 text-xs text-gray-400 italic">
-              💡 Tap highlighted terms to see visual references
-            </p>
-          )}
-          {readingMode === "wordstudy" && version !== "KJV" && (
-            <div className="mb-3 rounded-lg border border-gray-300 bg-gray-100 px-3 py-2 text-xs text-gray-500">
-              🔤 Word Study searches Hebrew &amp; Greek roots via the KJV. Switch to KJV to tap any word and see its original root.
+          <div className="relative z-10 px-6 pt-7 pb-8">
+            {/* Header */}
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-2xl font-bold text-amber-400 tracking-wide">Holy Bible</h2>
+                <p className="text-xs text-stone-400 mt-0.5">Select a book to begin reading</p>
+              </div>
+              {/* Version toggle */}
+              <div className="flex gap-1 rounded-lg bg-stone-800/80 border border-stone-700 p-1">
+                {VERSIONS.map((v) => (
+                  <button
+                    key={v}
+                    type="button"
+                    onClick={() => setVersion(v)}
+                    className={`rounded-md px-3 py-1 text-xs font-bold transition ${
+                      version === v ? "bg-amber-500 text-stone-900" : "text-stone-400 hover:text-white"
+                    }`}
+                  >
+                    {v}
+                  </button>
+                ))}
+              </div>
             </div>
-          )}
-          {isWordStudyMode && (
-            <p className="mb-3 text-xs text-gray-400 italic">
-              🔤 Tap any word to see its Hebrew or Greek root
-            </p>
-          )}
-        </div>
-      )}
 
-      {/* Verse display */}
-      {loading && (
-        <div className="py-8 text-center text-gray-400">Loading…</div>
-      )}
-      {error && (
-        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
-          {error}
-        </div>
-      )}
+            {/* Divider */}
+            <div className="flex items-center gap-3 mb-4">
+              <div className="flex-1 h-px bg-amber-600/40" />
+              <span className="text-amber-500 text-xs font-bold uppercase tracking-[0.2em]">Old Testament</span>
+              <div className="flex-1 h-px bg-amber-600/40" />
+            </div>
 
-      {!loading && !error && (
-        <div className="font-serif text-[15px] text-gray-800">
-          {isWordStudyMode ? (
-            // Word Study mode — every word clickable, one verse per line
-            <div className="space-y-2 leading-8">
-              {verses.map((v) => (
-                <div key={v.id}>
-                  <WordStudyVerse
-                    verseNum={v.verse}
-                    text={v.text}
-                    book={selectedBook}
-                    onWordClick={(word, book) => onWordClick?.(word, book)}
-                  />
-                </div>
+            {/* OT Books grid */}
+            <div className="grid grid-cols-3 gap-x-4 gap-y-1 mb-6">
+              {otBooks.map((b) => (
+                <button
+                  key={b.name}
+                  type="button"
+                  onClick={() => handleBookChange(b.name)}
+                  className="text-left text-sm text-stone-300 hover:text-amber-400 transition py-0.5 truncate font-medium tracking-wide uppercase text-[11px]"
+                >
+                  {b.name}
+                </button>
               ))}
             </div>
-          ) : (
-            // Book layout — verses grouped into paragraphs
-            <div className="space-y-4 leading-8">
-              {groupIntoParagraphs(verses, selectedBook).map((para, pi) => {
-                const isPoetry = POETRY_BOOKS.has(selectedBook);
-                return (
-                  <p
-                    key={pi}
-                    className={isPoetry
-                      ? "border-l-2 border-amber-200/40 pl-4 italic text-gray-600"
-                      : "indent-6"
-                    }
-                  >
-                    {para.map((v) => (
-                      <span key={v.id}>
-                        <sup className="mr-[2px] ml-[1px] text-[10px] font-bold text-amber-600 not-italic select-none align-top leading-none">
-                          {v.verse}
-                        </sup>
-                        {readingMode === "visual" && onVisualSearch
-                          ? highlightTerms(v.text, onVisualSearch)
-                          : v.text}{" "}
-                      </span>
-                    ))}
-                  </p>
-                );
-              })}
-            </div>
-          )}
-        </div>
-      )}
 
-      {/* Chapter navigation at bottom */}
-      {!loading && verses.length > 0 && (
-        <div className="flex justify-between border-t border-gray-200 pt-4">
+            {/* NT divider */}
+            <div className="flex items-center gap-3 mb-4">
+              <div className="flex-1 h-px bg-amber-600/40" />
+              <span className="text-amber-500 text-xs font-bold uppercase tracking-[0.2em]">New Testament</span>
+              <div className="flex-1 h-px bg-amber-600/40" />
+            </div>
+
+            {/* NT Books grid */}
+            <div className="grid grid-cols-3 gap-x-4 gap-y-1">
+              {ntBooks.map((b) => (
+                <button
+                  key={b.name}
+                  type="button"
+                  onClick={() => handleBookChange(b.name)}
+                  className="text-left text-sm text-stone-300 hover:text-amber-400 transition py-0.5 truncate font-medium tracking-wide uppercase text-[11px]"
+                >
+                  {b.name}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── READING VIEW ────────────────────────────────────────────────────────
+  return (
+    <div className="space-y-0 rounded-2xl overflow-hidden border border-stone-200">
+
+      {/* Dark header bar */}
+      <div className="bg-stone-900 px-5 py-4 flex items-center justify-between gap-3 flex-wrap">
+        <div className="flex items-center gap-3">
           <button
             type="button"
-            onClick={handlePrevChapter}
-            disabled={selectedChapter <= 1}
-            className="rounded-lg border border-gray-300 px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 disabled:opacity-30"
+            onClick={() => setShowPicker(true)}
+            className="flex items-center gap-1.5 rounded-lg bg-stone-700 hover:bg-stone-600 px-3 py-1.5 text-xs font-semibold text-stone-300 hover:text-white transition"
           >
-            ← Previous Chapter
+            ☰ Books
           </button>
-          <button
-            type="button"
-            onClick={handleNextChapter}
-            disabled={selectedChapter >= totalChapters}
-            className="rounded-lg border border-gray-300 px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 disabled:opacity-30"
-          >
-            Next Chapter →
+          <div>
+            <h2 className="text-base font-bold text-amber-400">
+              {selectedBook} {selectedChapter}
+            </h2>
+            <p className="text-[10px] text-stone-500">{VERSION_LABELS[version]}</p>
+          </div>
+        </div>
+
+        {/* Controls */}
+        <div className="flex items-center gap-2 flex-wrap">
+          {/* Version */}
+          <div className="flex gap-1 rounded-lg bg-stone-800 border border-stone-700 p-0.5">
+            {VERSIONS.map((v) => (
+              <button key={v} type="button" onClick={() => setVersion(v)}
+                className={`rounded-md px-2.5 py-1 text-[11px] font-bold transition ${version === v ? "bg-amber-500 text-stone-900" : "text-stone-400 hover:text-white"}`}
+              >{v}</button>
+            ))}
+          </div>
+
+          {/* Chapter nav */}
+          <div className="flex items-center gap-1">
+            <button type="button" onClick={handlePrevChapter} disabled={selectedChapter <= 1}
+              className="rounded-lg bg-stone-700 hover:bg-stone-600 px-2.5 py-1.5 text-sm text-stone-300 disabled:opacity-30 transition">
+              ‹
+            </button>
+            <select value={selectedChapter} onChange={(e) => setSelectedChapter(Number(e.target.value))}
+              className="rounded-lg bg-stone-700 border-none px-2 py-1.5 text-xs font-semibold text-stone-200 focus:outline-none focus:ring-1 focus:ring-amber-500">
+              {Array.from({ length: totalChapters }, (_, i) => i + 1).map((ch) => (
+                <option key={ch} value={ch}>Ch. {ch}</option>
+              ))}
+            </select>
+            <button type="button" onClick={handleNextChapter} disabled={selectedChapter >= totalChapters}
+              className="rounded-lg bg-stone-700 hover:bg-stone-600 px-2.5 py-1.5 text-sm text-stone-300 disabled:opacity-30 transition">
+              ›
+            </button>
+          </div>
+
+          {/* Reading mode */}
+          <div className="flex gap-1 rounded-lg bg-stone-800 border border-stone-700 p-0.5">
+            <button type="button" onClick={() => handleModeToggle("visual")}
+              title="Tap highlighted terms for visual references"
+              className={`rounded-md px-2.5 py-1 text-[11px] font-semibold transition ${readingMode === "visual" ? "bg-amber-500 text-stone-900" : "text-stone-400 hover:text-white"}`}>
+              Visual
+            </button>
+            <button type="button" onClick={() => handleModeToggle("wordstudy")}
+              title={version !== "KJV" ? "Switch to KJV for Word Study" : "Tap words to see Hebrew/Greek roots"}
+              className={`rounded-md px-2.5 py-1 text-[11px] font-semibold transition ${readingMode === "wordstudy" ? "bg-sky-500 text-white" : "text-stone-400 hover:text-white"} ${version !== "KJV" ? "opacity-40 cursor-not-allowed" : ""}`}>
+              Word Study
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Reading area */}
+      <div className="bg-[#faf8f3] px-6 py-6 min-h-[400px]">
+        {loading && <div className="py-12 text-center text-stone-400 text-sm">Loading…</div>}
+        {error && <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">{error}</div>}
+
+        {!loading && !error && verses.length > 0 && (
+          <>
+            {/* Mode hint */}
+            {readingMode === "visual" && onVisualSearch && (
+              <p className="mb-4 text-xs text-stone-400 italic">Tap highlighted terms to see visual references</p>
+            )}
+            {isWordStudyMode && (
+              <p className="mb-4 text-xs text-stone-400 italic">Tap any word to see its Hebrew or Greek root</p>
+            )}
+
+            <div className="font-serif text-[16px] text-stone-800 leading-[1.9]">
+              {isWordStudyMode ? (
+                <div className="space-y-2">
+                  {verses.map((v) => (
+                    <div key={v.id}>
+                      <WordStudyVerse verseNum={v.verse} text={v.text} book={selectedBook}
+                        onWordClick={(word, book) => onWordClick?.(word, book)} />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {groupIntoParagraphs(verses, selectedBook).map((para, pi) => {
+                    const isPoetry = POETRY_BOOKS.has(selectedBook);
+                    return (
+                      <p key={pi} className={isPoetry ? "border-l-2 border-amber-300 pl-4 italic text-stone-600" : "indent-6"}>
+                        {para.map((v) => (
+                          <span key={v.id}>
+                            <sup className="mr-[2px] ml-[1px] text-[10px] font-bold text-amber-600 not-italic select-none align-top leading-none">{v.verse}</sup>
+                            {readingMode === "visual" && onVisualSearch ? highlightTerms(v.text, onVisualSearch) : v.text}{" "}
+                          </span>
+                        ))}
+                      </p>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* Bottom chapter nav */}
+      {!loading && verses.length > 0 && (
+        <div className="bg-stone-900 flex justify-between px-5 py-3">
+          <button type="button" onClick={handlePrevChapter} disabled={selectedChapter <= 1}
+            className="flex items-center gap-2 rounded-lg bg-stone-700 hover:bg-stone-600 px-4 py-2 text-sm font-semibold text-stone-300 hover:text-white disabled:opacity-30 transition">
+            ← Previous
+          </button>
+          <span className="text-stone-500 text-xs self-center">{selectedBook} · Ch. {selectedChapter} of {totalChapters}</span>
+          <button type="button" onClick={handleNextChapter} disabled={selectedChapter >= totalChapters}
+            className="flex items-center gap-2 rounded-lg bg-stone-700 hover:bg-stone-600 px-4 py-2 text-sm font-semibold text-stone-300 hover:text-white disabled:opacity-30 transition">
+            Next →
           </button>
         </div>
       )}
