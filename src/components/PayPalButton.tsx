@@ -1,64 +1,25 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-
 const HOSTED_BUTTON_ID = "BY773FGZ696TY";
-const PAYPAL_SDK_URL =
-  "https://www.paypal.com/sdk/js?client-id=BAAAEDHKL2HvNP29uT736TPt35iAHqs8-74rzz9u6QVxRBp6F7St8ye2RzQUcQqjD0E8S6_oE1FBZ__pJc&components=hosted-buttons&enable-funding=venmo&currency=USD";
 
 export default function PayPalButton() {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
-
-  useEffect(() => {
-    // If SDK already loaded (e.g. hot reload), render immediately
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    if ((window as any).paypal) {
-      renderButton();
-      return;
-    }
-
-    const script = document.createElement("script");
-    script.src = PAYPAL_SDK_URL;
-    script.async = true;
-    script.onload = renderButton;
-    script.onerror = () => setStatus("error");
-    document.body.appendChild(script);
-
-    return () => {
-      // clean up only if component unmounts before load
-      if (!script.dataset.loaded) document.body.removeChild(script);
-    };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  function renderButton() {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const paypal = (window as any).paypal;
-    if (!paypal || !containerRef.current) return;
-    // Avoid double-render
-    if (containerRef.current.childElementCount > 0) return;
-    try {
-      paypal
-        .HostedButtons({ hostedButtonId: HOSTED_BUTTON_ID })
-        .render(containerRef.current);
-      setStatus("ready");
-    } catch {
-      setStatus("error");
-    }
-  }
-
   return (
-    <div className="flex flex-col items-center gap-3">
-      <div ref={containerRef} className="w-full flex justify-center min-h-[55px]" />
-      {status === "loading" && (
-        <p className="text-xs text-stone-400 animate-pulse">Loading PayPal…</p>
-      )}
-      {status === "error" && (
-        <p className="text-xs text-red-400">
-          Could not load PayPal. Please try refreshing the page.
-        </p>
-      )}
+    <div className="flex flex-col items-center gap-4">
+      <a
+        href={`https://www.paypal.com/donate/?hosted_button_id=${HOSTED_BUTTON_ID}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center gap-3 rounded-xl bg-[#0070BA] px-8 py-3.5 text-base font-bold text-white hover:bg-[#005ea6] transition"
+      >
+        {/* PayPal logo mark */}
+        <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24">
+          <path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm14.146-14.42a3.35 3.35 0 0 0-.607-.541c1.379 3.443-.517 6.964-5.14 6.964h-3.532L10.3 21.337h3.836c.524 0 .97-.382 1.051-.9l.043-.258 1.005-6.37.065-.351c.081-.518.527-.9 1.051-.9h.66c4.3 0 7.663-1.747 8.647-6.797.407-2.087.024-3.83-1.436-4.844z"/>
+        </svg>
+        Donate with PayPal
+      </a>
+      <p className="text-xs text-stone-400">
+        You will be taken to PayPal&apos;s secure site to complete your gift.
+      </p>
     </div>
   );
 }
