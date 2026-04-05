@@ -1,12 +1,13 @@
 "use client";
 
-const HOSTED_BUTTON_ID = "BY773FGZ696TY";
+const DONATE_URL =
+  "https://www.paypal.com/donate?business=info%40scripturelives.com&item_name=Scripture+Lives+Ministry+Support&currency_code=USD";
 
 export default function PayPalButton() {
   return (
     <div className="flex flex-col items-center gap-4">
       <a
-        href={`https://www.paypal.com/donate/?hosted_button_id=${HOSTED_BUTTON_ID}`}
+        href={DONATE_URL}
         target="_blank"
         rel="noopener noreferrer"
         className="inline-flex items-center gap-3 rounded-xl bg-[#0070BA] px-8 py-3.5 text-base font-bold text-white hover:bg-[#005ea6] transition"
