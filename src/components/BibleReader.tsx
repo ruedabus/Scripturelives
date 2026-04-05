@@ -2644,6 +2644,38 @@ export default function BibleReader() {
 
             {/* Actions */}
             <div className="px-6 pb-6 flex flex-col gap-3">
+
+              {/* Facebook */}
+              <a
+                href="https://www.facebook.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => handleCopyPost(postPreview)}
+                className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#1877F2] px-5 py-3 text-sm font-semibold text-white hover:bg-[#1464d3] transition"
+              >
+                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.887v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
+                Copy &amp; Open Facebook
+              </a>
+
+              {/* SMS */}
+              <a
+                href={`sms:?&body=${encodeURIComponent(postPreview)}`}
+                className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#34C759] px-5 py-3 text-sm font-semibold text-white hover:bg-[#28a745] transition"
+              >
+                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg>
+                Send as Text Message
+              </a>
+
+              {/* Email */}
+              <a
+                href={`mailto:?subject=${encodeURIComponent("🙏 Grow Your Faith — Scripture Lives")}&body=${encodeURIComponent(postPreview)}`}
+                className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#EA4335] px-5 py-3 text-sm font-semibold text-white hover:bg-[#c5352a] transition"
+              >
+                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                Send as Email
+              </a>
+
+              {/* Copy */}
               <button
                 type="button"
                 onClick={() => handleCopyPost(postPreview)}
@@ -2653,20 +2685,11 @@ export default function BibleReader() {
                     : "border-gray-300 bg-white text-gray-800 hover:border-amber-400 hover:bg-amber-50"
                 }`}
               >
-                {postCopied ? "✅ Copied!" : "📋 Copy Post Text"}
+                {postCopied ? "✅ Copied!" : "📋 Copy Text Only"}
               </button>
-              <a
-                href="https://www.facebook.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => handleCopyPost(postPreview)}
-                className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#1877F2] px-5 py-3 text-sm font-semibold text-white hover:bg-[#1464d3] transition"
-              >
-                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.887v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
-                Copy & Open Facebook
-              </a>
+
               <p className="text-center text-xs text-gray-400">
-                Click &ldquo;Copy &amp; Open Facebook&rdquo; — the post text is copied automatically. Just paste it into your Facebook post.
+                Facebook: post text is copied automatically — just paste it in.
               </p>
             </div>
           </div>
