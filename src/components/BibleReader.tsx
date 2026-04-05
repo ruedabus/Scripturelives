@@ -1973,6 +1973,17 @@ export default function BibleReader() {
                       { name: "Smithsonian Bible Archaeology", url: "https://www.smithsonianmag.com/history/archaeology", desc: "Archaeological discoveries that illuminate the Bible." },
                       { name: "Biblical Archaeology Society", url: "https://www.biblicalarchaeology.org", desc: "Scholarly articles on biblical history and culture." },
                     ]},
+                    { category: "Prophecy & Israel", items: [
+                      { name: "Rapture Ready", url: "https://www.raptureready.com", desc: "Bible prophecy news, articles, and end-times resources." },
+                      { name: "Behold Israel", url: "https://beholdisrael.org", desc: "Amir Tsarfati's ministry — news and prophecy from Israel." },
+                    ]},
+                    { category: "Evangelism & Apologetics", items: [
+                      { name: "Living Waters", url: "https://livingwaters.com", desc: "Ray Comfort's evangelism training and gospel resources." },
+                      { name: "Koinonia House", url: "https://khouse.org", desc: "Chuck Missler's in-depth Bible study and strategic perspectives." },
+                    ]},
+                    { category: "Local Church", items: [
+                      { name: "Calvary Chapel Church", url: "https://calvarycch.org", desc: "Calvary Chapel — verse-by-verse Bible teaching and community." },
+                    ]},
                   ].map((section) => (
                     <div key={section.category}>
                       <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">{section.category}</p>
