@@ -116,17 +116,57 @@ function EraBadge({ label }: { label: string }) {
 // ── Share helper ────────────────────────────────────────────────────────────
 function shareVerse(reference: string, text: string) {
   const shareText = `"${text}" — ${reference} (KJV)`;
-  const shareUrl  = typeof window !== "undefined" ? window.location.href : "https://scripture-lives.com";
+  const shareUrl  = typeof window !== "undefined" ? window.location.href : "https://scripturelives.com";
 
-  // Use native Web Share API when available (mobile / Edge / Chrome)
   if (typeof navigator !== "undefined" && navigator.share) {
     navigator.share({ title: reference, text: shareText, url: shareUrl }).catch(() => {});
     return;
   }
 
-  // Desktop fallback — open Facebook Share dialog in a popup
   const fbUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}&quote=${encodeURIComponent(shareText)}`;
   window.open(fbUrl, "fb-share", "width=600,height=500,resizable=yes,scrollbars=yes");
+}
+
+// ── Branded post builder ─────────────────────────────────────────────────────
+function buildDevotionalPost(devotional: { icon: string; title: string; verse: string; reference: string; reflection: string; prayer: string }) {
+  const reflection = devotional.reflection.length > 220
+    ? devotional.reflection.slice(0, 220).trimEnd() + "…"
+    : devotional.reflection;
+  return [
+    `🙏 Grow Your Faith`,
+    ``,
+    `${devotional.icon} ${devotional.title}`,
+    ``,
+    `"${devotional.verse}"`,
+    `— ${devotional.reference} (KJV)`,
+    ``,
+    reflection,
+    ``,
+    `🙏 Prayer: ${devotional.prayer.length > 120 ? devotional.prayer.slice(0, 120).trimEnd() + "…" : devotional.prayer}`,
+    ``,
+    `📖 Read & study the full devotional at scripturelives.com`,
+    ``,
+    `#GrowYourFaith #ScriptureLives #BibleStudy #DailyDevotional #Faith`,
+  ].join("\n");
+}
+
+function buildStudyPost(reference: string, verseText: string, prompts: { title: string; prompt: string }[]) {
+  const questions = prompts.slice(0, 2).map((p, i) => `${i + 1}. ${p.prompt.length > 120 ? p.prompt.slice(0, 120).trimEnd() + "…" : p.prompt}`).join("\n");
+  return [
+    `🙏 Grow Your Faith`,
+    ``,
+    `✏️ Today's Bible Study — ${reference}`,
+    ``,
+    `"${verseText.length > 150 ? verseText.slice(0, 150).trimEnd() + "…" : verseText}"`,
+    `— ${reference} (KJV)`,
+    ``,
+    `📖 Study Questions:`,
+    questions,
+    ``,
+    `Dive deeper at scripturelives.com`,
+    ``,
+    `#GrowYourFaith #ScriptureLives #BibleStudy #Scripture #Faith`,
+  ].join("\n");
 }
 
 export default function BibleReader() {
@@ -180,6 +220,8 @@ export default function BibleReader() {
   const [promptError, setPromptError] = useState("");
   const [promptCustomRef, setPromptCustomRef] = useState("");
   const [promptOverride, setPromptOverride] = useState<{ ref: string; text: string } | null>(null);
+  const [postPreview, setPostPreview] = useState<string | null>(null);
+  const [postCopied, setPostCopied] = useState(false);
 
   const verseRefs = useRef<Record<string, HTMLElement | null>>({});
 
@@ -462,6 +504,13 @@ export default function BibleReader() {
   useEffect(() => {
     setActivePromptIndex(0);
   }, [selectedPlace?.name, presenterRef?.reference, selectedVerse?.id, promptOverride]);
+
+  const handleCopyPost = useCallback((text: string) => {
+    navigator.clipboard.writeText(text).then(() => {
+      setPostCopied(true);
+      setTimeout(() => setPostCopied(false), 2500);
+    });
+  }, []);
 
   const handleGenerateCustomPrompts = useCallback(() => {
     const ref = promptCustomRef.trim();
@@ -947,10 +996,7 @@ export default function BibleReader() {
                     </div>
                     <button
                       type="button"
-                      onClick={() => {
-                        const text = `${devotional.icon} ${devotional.title}\n\n"${devotional.verse}" — ${devotional.reference}\n\n${devotional.reflection}\n\n🙏 ${devotional.prayer}`;
-                        shareVerse(devotional.reference, text);
-                      }}
+                      onClick={() => setPostPreview(buildDevotionalPost(devotional))}
                       className="shrink-0 flex items-center gap-2 rounded-xl bg-[#1877F2] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#1464d3] transition"
                     >
                       <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.887v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
@@ -1000,10 +1046,7 @@ export default function BibleReader() {
                   </div>
                   <button
                     type="button"
-                    onClick={() => {
-                      const text = `${devotional.icon} ${devotional.title}\n\n"${devotional.verse}" — ${devotional.reference}\n\n${devotional.reflection}\n\n🙏 ${devotional.prayer}`;
-                      shareVerse(devotional.reference, text);
-                    }}
+                    onClick={() => setPostPreview(buildDevotionalPost(devotional))}
                     className="shrink-0 flex items-center gap-2 rounded-xl bg-[#1877F2] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#1464d3] transition"
                   >
                     <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.887v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
@@ -1771,6 +1814,28 @@ export default function BibleReader() {
                     Using built-in prompts. {promptError}
                   </p>
                 )}
+
+                {/* Branded Share button */}
+                {effectivePrompts.length > 0 && studyRef && (
+                  <div className="rounded-2xl border border-[#1877F2]/30 bg-[#1877F2]/5 px-5 py-4 flex items-center justify-between gap-4">
+                    <div>
+                      <p className="text-sm font-semibold text-gray-800">Share this study</p>
+                      <p className="text-xs text-gray-500 mt-0.5">Post a branded &ldquo;Grow Your Faith&rdquo; study to Facebook</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const ref = studyRef;
+                        const text = (promptOverride?.text ?? presenterRef?.text ?? selectedVerse?.translations?.KJV ?? "");
+                        setPostPreview(buildStudyPost(ref, text, effectivePrompts));
+                      }}
+                      className="shrink-0 flex items-center gap-2 rounded-xl bg-[#1877F2] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#1464d3] transition"
+                    >
+                      <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.887v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
+                      Share to Facebook
+                    </button>
+                  </div>
+                )}
               </div>
             )}
 
@@ -2521,6 +2586,65 @@ export default function BibleReader() {
           </aside>
         </div>{/* end center+right grid */}
       </div>{/* end xl:flex */}
+
+      {/* ── Post Preview Modal ───────────────────────────────────────────── */}
+      {postPreview && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4"
+          onClick={() => setPostPreview(null)}
+        >
+          <div
+            className="relative w-full max-w-lg rounded-2xl bg-white shadow-2xl overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="bg-[#1877F2] px-6 py-4 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <svg className="w-5 h-5 fill-white" viewBox="0 0 24 24"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.887v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
+                <span className="text-white font-bold text-sm">Your Branded Post Preview</span>
+              </div>
+              <button type="button" onClick={() => setPostPreview(null)} className="text-white/80 hover:text-white text-xl leading-none">✕</button>
+            </div>
+
+            {/* Post content */}
+            <div className="px-6 py-5">
+              <div className="rounded-xl border border-gray-200 bg-gray-50 p-4 max-h-72 overflow-y-auto">
+                <pre className="text-sm text-gray-800 whitespace-pre-wrap font-sans leading-6">{postPreview}</pre>
+              </div>
+              <p className="text-xs text-gray-400 mt-2">This is exactly what will appear in your Facebook post.</p>
+            </div>
+
+            {/* Actions */}
+            <div className="px-6 pb-6 flex flex-col gap-3">
+              <button
+                type="button"
+                onClick={() => handleCopyPost(postPreview)}
+                className={`w-full flex items-center justify-center gap-2 rounded-xl border-2 px-5 py-3 text-sm font-semibold transition ${
+                  postCopied
+                    ? "border-green-500 bg-green-50 text-green-700"
+                    : "border-gray-300 bg-white text-gray-800 hover:border-amber-400 hover:bg-amber-50"
+                }`}
+              >
+                {postCopied ? "✅ Copied!" : "📋 Copy Post Text"}
+              </button>
+              <a
+                href="https://www.facebook.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => handleCopyPost(postPreview)}
+                className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#1877F2] px-5 py-3 text-sm font-semibold text-white hover:bg-[#1464d3] transition"
+              >
+                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.887v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
+                Copy & Open Facebook
+              </a>
+              <p className="text-center text-xs text-gray-400">
+                Click &ldquo;Copy &amp; Open Facebook&rdquo; — the post text is copied automatically. Just paste it into your Facebook post.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
     </main>
   );
 }
