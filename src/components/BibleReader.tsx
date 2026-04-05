@@ -377,8 +377,8 @@ export default function BibleReader() {
   const studyRef = promptOverride?.ref ?? presenterRef?.reference ?? selectedVerse?.reference ?? null;
 
   const fallbackPrompts = useMemo(() => {
-    if (selectedPlace) return getPlaceStudyPrompts(selectedPlace, presenterRef?.reference ?? selectedVerse?.reference);
-    const ref = presenterRef?.reference ?? selectedVerse?.reference;
+    const ref = promptOverride?.ref ?? presenterRef?.reference ?? selectedVerse?.reference;
+    if (selectedPlace) return getPlaceStudyPrompts(selectedPlace, ref);
     if (!ref) return [];
     return [
       { id: "observation",    title: "Observation",          prompt: `Read ${ref} carefully. What stands out? Who is speaking, who is the audience, and what is the main action or declaration?` },
@@ -387,7 +387,7 @@ export default function BibleReader() {
       { id: "personal",       title: "Personal Application", prompt: `What does ${ref} mean for your life today? Is there a promise to claim, a warning to heed, a command to obey, or an example to follow?` },
       { id: "discussion",     title: "Group Discussion",     prompt: `If you were leading a Bible study on ${ref}, what 2–3 questions would help your group understand and apply its message?` },
     ];
-  }, [selectedPlace, presenterRef?.reference, selectedVerse?.reference, selectedVerse?.id]);
+  }, [promptOverride, selectedPlace, presenterRef?.reference, selectedVerse?.reference, selectedVerse?.id]);
 
   const effectivePrompts = aiPrompts.length > 0 ? aiPrompts : fallbackPrompts;
   const activePrompt = effectivePrompts[activePromptIndex] ?? null;
