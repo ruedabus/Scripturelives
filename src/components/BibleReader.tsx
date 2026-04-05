@@ -129,9 +129,6 @@ function shareVerse(reference: string, text: string) {
 
 // ── Branded post builder ─────────────────────────────────────────────────────
 function buildDevotionalPost(devotional: { icon: string; title: string; verse: string; reference: string; reflection: string; prayer: string }) {
-  const reflection = devotional.reflection.length > 220
-    ? devotional.reflection.slice(0, 220).trimEnd() + "…"
-    : devotional.reflection;
   return [
     `🙏 Grow Your Faith`,
     ``,
@@ -140,9 +137,9 @@ function buildDevotionalPost(devotional: { icon: string; title: string; verse: s
     `"${devotional.verse}"`,
     `— ${devotional.reference} (KJV)`,
     ``,
-    reflection,
+    devotional.reflection,
     ``,
-    `🙏 Prayer: ${devotional.prayer.length > 120 ? devotional.prayer.slice(0, 120).trimEnd() + "…" : devotional.prayer}`,
+    `🙏 Prayer: ${devotional.prayer}`,
     ``,
     `📖 Read & study the full devotional at scripturelives.com`,
     ``,
@@ -151,16 +148,17 @@ function buildDevotionalPost(devotional: { icon: string; title: string; verse: s
 }
 
 function buildStudyPost(reference: string, verseText: string, prompts: { title: string; prompt: string }[]) {
-  const questions = prompts.slice(0, 2).map((p, i) => `${i + 1}. ${p.prompt.length > 120 ? p.prompt.slice(0, 120).trimEnd() + "…" : p.prompt}`).join("\n");
+  const questions = prompts.slice(0, 2).map((p, i) => `${i + 1}. ${p.prompt}`).join("\n\n");
   return [
     `🙏 Grow Your Faith`,
     ``,
     `✏️ Today's Bible Study — ${reference}`,
     ``,
-    `"${verseText.length > 150 ? verseText.slice(0, 150).trimEnd() + "…" : verseText}"`,
+    `"${verseText}"`,
     `— ${reference} (KJV)`,
     ``,
     `📖 Study Questions:`,
+    ``,
     questions,
     ``,
     `Dive deeper at scripturelives.com`,
