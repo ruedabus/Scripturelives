@@ -797,8 +797,8 @@ export default function BibleReader() {
                     src="/bible-hero.jpg"
                     alt=""
                     aria-hidden="true"
-                    className="absolute -right-6 -top-4 h-48 w-64 object-cover object-left opacity-25 pointer-events-none select-none"
-                    style={{ maskImage: "linear-gradient(to left, black 0%, transparent 100%)", WebkitMaskImage: "linear-gradient(to left, black 0%, transparent 100%)" }}
+                    className="absolute right-8 -top-4 h-52 w-80 object-cover object-center opacity-50 pointer-events-none select-none"
+                    style={{ maskImage: "linear-gradient(to left, black 40%, transparent 100%)", WebkitMaskImage: "linear-gradient(to left, black 40%, transparent 100%)" }}
                     onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
                   />
                   {/* Content */}
