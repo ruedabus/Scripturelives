@@ -464,11 +464,8 @@ export default function BibleReader() {
     const ref = promptCustomRef.trim();
     if (!ref) return;
     // Try to find the verse text from the data
-    const found = verses.find((v) => {
-      const vRef = `${v.book} ${v.chapter}:${v.verse}`;
-      return vRef.toLowerCase() === ref.toLowerCase();
-    });
-    const text = found?.translations?.KJV ?? `"${ref}" — enter this verse in the Reader tab to see its full text.`;
+    const found = verses.find((v) => v.reference.toLowerCase() === ref.toLowerCase());
+    const text = found?.translations?.KJV ?? `${ref} — search this verse in the Reader tab to load its full text.`;
     setPromptOverride({ ref, text });
   }, [promptCustomRef]);
 
