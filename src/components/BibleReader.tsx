@@ -510,13 +510,43 @@ export default function BibleReader() {
     });
   }, []);
 
-  const handleGenerateCustomPrompts = useCallback(() => {
+  const handleGenerateCustomPrompts = useCallback(async () => {
     const ref = promptCustomRef.trim();
     if (!ref) return;
-    // Try to find the verse text from the data
+
+    // First try local verse dataset
     const found = verses.find((v) => v.reference.toLowerCase() === ref.toLowerCase());
-    const text = found?.translations?.KJV ?? `${ref} — search this verse in the Reader tab to load its full text.`;
-    setPromptOverride({ ref, text });
+    if (found?.translations?.KJV) {
+      setPromptOverride({ ref, text: found.translations.KJV });
+      return;
+    }
+
+    // Parse "Book Chapter:Verse" — handles "1 Corinthians 13:4", "Matthew 28:6" etc.
+    const match = ref.match(/^(.+?)\s+(\d+):(\d+)$/);
+    if (match) {
+      const [, book, chapterStr, verseStr] = match;
+      const chapter = parseInt(chapterStr, 10);
+      const verseNum = parseInt(verseStr, 10);
+      try {
+        setIsLoadingPrompts(true);
+        const res = await fetch(`/api/bible?version=KJV&book=${encodeURIComponent(book)}&chapter=${chapter}`);
+        if (res.ok) {
+          const data = await res.json();
+          const verseObj = (data.verses as { verse: number; text: string }[])?.find((v) => v.verse === verseNum);
+          if (verseObj?.text) {
+            setPromptOverride({ ref, text: verseObj.text });
+            return;
+          }
+        }
+      } catch {
+        // fall through to placeholder
+      } finally {
+        setIsLoadingPrompts(false);
+      }
+    }
+
+    // Fallback if not found
+    setPromptOverride({ ref, text: ref });
   }, [promptCustomRef]);
 
   const handleSelectBibleVerse = (
