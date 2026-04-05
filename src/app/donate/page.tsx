@@ -70,10 +70,6 @@ export default function DonatePage() {
           </p>
 
           <PayPalButton />
-
-          <p className="mt-4 text-xs text-stone-400">
-            You will be redirected to PayPal&apos;s secure site to complete your gift.
-          </p>
         </section>
 
         {/* Thank you note */}
