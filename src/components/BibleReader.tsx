@@ -14,6 +14,7 @@ import getPlaceStudyPrompts, {
 } from "@/components/getPlaceStudyPrompts";
 import FullBibleReader from "@/components/FullBibleReader";
 import { ATLAS_PLACES, ATLAS_BOOKS, type AtlasPlace } from "@/data/atlasPlaces";
+import { ANCIENT_LOCATIONS, type AncientLocation } from "@/data/ancientPlaces";
 import { getTodaysDevotional } from "@/data/devotionals";
 import VisualReferencePanel from "@/components/VisualReferencePanel";
 import LexiconPanel from "@/components/LexiconPanel";
@@ -136,7 +137,9 @@ export default function BibleReader() {
   const [placeQuery, setPlaceQuery] = useState("");
   const [placeEraFilter, setPlaceEraFilter] = useState("All eras");
   const [journeyEraFilter, setJourneyEraFilter] = useState<JourneyEra | "All eras">("All eras");
-  const [ancientWorldView, setAncientWorldView] = useState<"journeys" | "places">("journeys");
+  const [ancientWorldView, setAncientWorldView] = useState<"journeys" | "places" | "locations">("locations");
+  const [selectedAncientLocation, setSelectedAncientLocation] = useState<AncientLocation | null>(null);
+  const [ancientLocationSearch, setAncientLocationSearch] = useState("");
   const [activeJourneyStop, setActiveJourneyStop] = useState<number | null>(null);
   const [leftPanelTab, setLeftPanelTab] = useState<LeftPanelTab>("home");
   const [homeQuery, setHomeQuery] = useState("");
@@ -648,7 +651,7 @@ export default function BibleReader() {
             </div>
             <div>
               <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-widest text-stone-500">Explore</p>
-              {sideNavBtn("ancient_world", "🗺", "Ancient Journeys")}
+              {sideNavBtn("ancient_world", "🏛", "Ancient Places")}
               {sideNavBtn("atlas",         "🌍", "Bible Atlas")}
             </div>
             <div>
@@ -694,7 +697,7 @@ export default function BibleReader() {
               <button type="button" onClick={() => setLeftPanelTab("timeline")}      className={tabButtonClass("timeline")}>⏳ Timeline</button>
               <button type="button" onClick={() => setLeftPanelTab("commentary")}    className={tabButtonClass("commentary")}>💬 Commentary</button>
               <button type="button" onClick={() => setLeftPanelTab("dictionary")}    className={tabButtonClass("dictionary")}>📖 Dictionary</button>
-              <button type="button" onClick={() => setLeftPanelTab("ancient_world")} className={tabButtonClass("ancient_world")}>🗺 Journeys</button>
+              <button type="button" onClick={() => setLeftPanelTab("ancient_world")} className={tabButtonClass("ancient_world")}>🏛 Ancient Places</button>
               <button type="button" onClick={() => setLeftPanelTab("atlas")}         className={tabButtonClass("atlas")}>🌍 Atlas</button>
               <button type="button" onClick={() => setLeftPanelTab("study_prompts")} className={tabButtonClass("study_prompts")}>✏️ Study Prompts</button>
               <button type="button" onClick={() => setLeftPanelTab("bookmarks")}     className={tabButtonClass("bookmarks")}>🔖 Bookmarks</button>
@@ -842,7 +845,7 @@ export default function BibleReader() {
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                   {([
                     { tab: "reader"       as LeftPanelTab, icon: "📖", label: "Passage Reader",  desc: "Search & present verses"       },
-                    { tab: "ancient_world"as LeftPanelTab, icon: "🗺", label: "Ancient World",   desc: "Journeys & sacred places"      },
+                    { tab: "ancient_world"as LeftPanelTab, icon: "🏛", label: "Ancient Places",  desc: "Major locations & journeys"    },
                     { tab: "study_prompts"as LeftPanelTab, icon: "✏️", label: "Study Prompts",   desc: "Reflection & discussion"       },
                     { tab: "timeline"     as LeftPanelTab, icon: "⏳", label: "Timeline",         desc: "Biblical history eras"         },
                   ]).map(card => (
@@ -1061,33 +1064,155 @@ export default function BibleReader() {
               <div className="print:hidden space-y-4">
                 {/* Header */}
                 <div className="border-b border-gray-200 pb-3">
-                  <h2 className="text-lg font-semibold text-amber-700">Ancient World</h2>
+                  <h2 className="text-lg font-semibold text-amber-700">Ancient Places</h2>
                   <p className="text-xs text-gray-400 mt-0.5">
-                    Biblical journeys, sacred places, and the geography of scripture
+                    Major biblical locations, ancient journeys, and the geography of scripture
                   </p>
                 </div>
 
-                {/* View toggle: Journeys / Places */}
+                {/* View toggle: Locations / Journeys / Places */}
                 <div className="flex rounded-xl border border-gray-200 bg-gray-50 p-1 gap-1">
                   <button
                     type="button"
+                    onClick={() => { setAncientWorldView("locations"); setSelectedAncientLocation(null); }}
+                    className={`flex-1 rounded-lg px-2 py-2 text-xs font-medium transition ${
+                      ancientWorldView === "locations" ? "bg-amber-500 text-white" : "text-gray-600 hover:bg-gray-100"
+                    }`}
+                  >
+                    🏛 Locations
+                  </button>
+                  <button
+                    type="button"
                     onClick={() => setAncientWorldView("journeys")}
-                    className={`flex-1 rounded-lg px-3 py-2 text-sm font-medium transition ${
+                    className={`flex-1 rounded-lg px-2 py-2 text-xs font-medium transition ${
                       ancientWorldView === "journeys" ? "bg-amber-500 text-white" : "text-gray-600 hover:bg-gray-100"
                     }`}
                   >
-                    🗺 Ancient Journeys
+                    🗺 Journeys
                   </button>
                   <button
                     type="button"
                     onClick={() => setAncientWorldView("places")}
-                    className={`flex-1 rounded-lg px-3 py-2 text-sm font-medium transition ${
+                    className={`flex-1 rounded-lg px-2 py-2 text-xs font-medium transition ${
                       ancientWorldView === "places" ? "bg-amber-500 text-white" : "text-gray-600 hover:bg-gray-100"
                     }`}
                   >
-                    📍 Sacred Places
+                    📍 Places
                   </button>
                 </div>
+
+                {/* ── LOCATIONS VIEW ── */}
+                {ancientWorldView === "locations" && (
+                  <div className="space-y-3">
+                    {/* Search */}
+                    <input
+                      type="text"
+                      value={ancientLocationSearch}
+                      onChange={(e) => { setAncientLocationSearch(e.target.value); setSelectedAncientLocation(null); }}
+                      placeholder="Search locations… e.g. Babylon, Egypt"
+                      className="w-full rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 outline-none placeholder:text-gray-400 focus:border-amber-400"
+                    />
+
+                    {/* Detail panel for selected location */}
+                    {selectedAncientLocation ? (
+                      <div className="space-y-3">
+                        {/* Back button */}
+                        <button
+                          type="button"
+                          onClick={() => setSelectedAncientLocation(null)}
+                          className="flex items-center gap-1.5 text-xs text-amber-600 hover:text-amber-800 font-medium"
+                        >
+                          ← All Locations
+                        </button>
+
+                        {/* Location header */}
+                        <div className="rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4">
+                          <h3 className="text-base font-bold text-amber-800">{selectedAncientLocation.name}</h3>
+                          {selectedAncientLocation.aka && (
+                            <p className="text-xs text-amber-600 italic mt-0.5">{selectedAncientLocation.aka}</p>
+                          )}
+                          <span className="inline-block mt-2 rounded-full border border-amber-300 bg-white px-2.5 py-0.5 text-[10px] font-semibold text-amber-700">
+                            {selectedAncientLocation.era}
+                          </span>
+                          <p className="mt-3 text-sm text-gray-700 leading-6">{selectedAncientLocation.description}</p>
+                          <div className="mt-3 border-t border-amber-200 pt-3">
+                            <p className="text-xs font-semibold text-amber-700 mb-1">Biblical Significance</p>
+                            <p className="text-xs text-gray-600 leading-5">{selectedAncientLocation.significance}</p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setVisualQuery(selectedAncientLocation.name)}
+                            className="mt-3 flex items-center gap-1.5 rounded-lg bg-stone-800 px-3 py-1.5 text-xs font-semibold text-white hover:bg-stone-700 transition"
+                          >
+                            🖼 View Historical Image
+                          </button>
+                        </div>
+
+                        {/* Verse list */}
+                        <div>
+                          <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">
+                            Found in Scripture ({selectedAncientLocation.verses.length} references)
+                          </p>
+                          <div className="space-y-2">
+                            {selectedAncientLocation.verses.map((v) => (
+                              <div
+                                key={v.reference}
+                                className="rounded-xl border border-gray-200 bg-white px-4 py-3"
+                              >
+                                <div className="flex items-center justify-between mb-1">
+                                  <span className="text-xs font-semibold text-amber-700">{v.reference}</span>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setPromptCustomRef(v.reference);
+                                      setLeftPanelTab("study_prompts");
+                                    }}
+                                    className="text-[10px] text-gray-400 hover:text-amber-600 transition"
+                                  >
+                                    Study →
+                                  </button>
+                                </div>
+                                <p className="text-xs text-gray-600 leading-5 italic">&ldquo;{v.text}&rdquo;</p>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      /* Location grid */
+                      <div className="space-y-2">
+                        {ANCIENT_LOCATIONS.filter((loc) =>
+                          ancientLocationSearch === "" ||
+                          loc.name.toLowerCase().includes(ancientLocationSearch.toLowerCase()) ||
+                          (loc.aka ?? "").toLowerCase().includes(ancientLocationSearch.toLowerCase())
+                        ).map((loc) => (
+                          <button
+                            key={loc.name}
+                            type="button"
+                            onClick={() => {
+                              setSelectedAncientLocation(loc);
+                              setVisualQuery(loc.name);
+                            }}
+                            className="w-full text-left rounded-xl border border-gray-200 bg-white px-4 py-3 hover:border-amber-300 hover:bg-amber-50 transition group"
+                          >
+                            <div className="flex items-start justify-between gap-2">
+                              <div className="min-w-0">
+                                <p className="text-sm font-semibold text-gray-800 group-hover:text-amber-700">{loc.name}</p>
+                                {loc.aka && <p className="text-[10px] text-gray-400 italic">{loc.aka}</p>}
+                                <p className="text-xs text-gray-500 mt-1 line-clamp-2 leading-5">{loc.description}</p>
+                              </div>
+                              <div className="shrink-0 text-right">
+                                <span className="inline-block rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-700">
+                                  {loc.verses.length} verses
+                                </span>
+                              </div>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 {/* ── JOURNEYS VIEW ── */}
                 {ancientWorldView === "journeys" && (

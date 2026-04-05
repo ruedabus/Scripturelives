@@ -68,16 +68,11 @@ export default function DonatePage() {
             Secure, one-time or recurring donation. Any amount is deeply appreciated.
           </p>
 
-          {/*
-            ── PayPal Donate Button ──────────────────────────────────────────────
-            To activate: log in to paypal.com → Tools → PayPal Buttons → Donate.
-            Copy the hosted_button_id from the generated code and replace
-            "YOUR_PAYPAL_BUTTON_ID" below with it.
-            ─────────────────────────────────────────────────────────────────────
-          */}
           <form action="https://www.paypal.com/donate" method="post" target="_blank">
-            <input type="hidden" name="hosted_button_id" value="YOUR_PAYPAL_BUTTON_ID" />
+            <input type="hidden" name="business" value="info@scripturelives.com" />
+            <input type="hidden" name="item_name" value="Scripture Lives Ministry Support" />
             <input type="hidden" name="currency_code" value="USD" />
+            <input type="hidden" name="no_recurring" value="0" />
             <button
               type="submit"
               className="inline-flex items-center gap-3 rounded-xl bg-[#0070BA] px-8 py-3.5 text-base font-bold text-white hover:bg-[#005ea6] transition"
