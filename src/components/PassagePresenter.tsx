@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import useReadingPlan, { ReadingPlanEntry } from "@/components/useReadingPlan";
+import { BookOpen } from "lucide-react";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -113,7 +114,7 @@ function PlanCard({
             className="text-left group"
           >
             <p className="font-semibold text-amber-700 group-hover:text-amber-600 transition text-sm">
-              📖 {entry.reference}
+              <BookOpen size={13} className="inline mr-1 text-amber-600" />{entry.reference}
             </p>
             <p className="mt-0.5 text-xs text-gray-500 line-clamp-2 leading-relaxed">
               {entry.text.length > 120 ? entry.text.slice(0, 120) + "…" : entry.text}
@@ -682,7 +683,7 @@ export default function PassagePresenter({
           {/* Empty state */}
           {!presentBook && (
             <div className="rounded-2xl border border-dashed border-gray-200 bg-gray-50 p-10 text-center">
-              <p className="text-3xl mb-3">📖</p>
+              <BookOpen size={36} className="mx-auto mb-3 text-gray-300" />
               <p className="text-sm font-medium text-gray-600">Search for any verse or passage above</p>
               <p className="text-xs text-gray-400 mt-1">
                 Try "John 3:16", "grace", or "In the beginning"

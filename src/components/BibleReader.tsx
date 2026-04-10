@@ -25,6 +25,7 @@ import {
   Home, Feather, BookOpen, Library, Layers, BookText, BookMarked,
   ScrollText, Landmark, Globe, Star, ClipboardList, FileText,
   HeartHandshake, ExternalLink, BookHeart, HandCoins, MapPin, Compass,
+  Copy, Check,
 } from "lucide-react";
 
 const PlaceMap = dynamic(() => import("@/components/PlaceMap"), {
@@ -938,10 +939,10 @@ export default function BibleReader() {
                 {/* Quick-access feature cards */}
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                   {([
-                    { tab: "reader"       as LeftPanelTab, icon: "📖", label: "Passage Reader",  desc: "Search & present verses"       },
-                    { tab: "ancient_world"as LeftPanelTab, icon: "🏛", label: "Ancient Places",  desc: "Major locations & journeys"    },
-                    { tab: "study_prompts"as LeftPanelTab, icon: "✏️", label: "Study Prompts",   desc: "Reflection & discussion"       },
-                    { tab: "timeline"     as LeftPanelTab, icon: "⏳", label: "Timeline",         desc: "Biblical history eras"         },
+                    { tab: "reader"       as LeftPanelTab, Icon: BookOpen,     label: "Passage Reader",  desc: "Search & present verses"   },
+                    { tab: "ancient_world"as LeftPanelTab, Icon: Landmark,     label: "Ancient Places",  desc: "Major locations & journeys" },
+                    { tab: "study_prompts"as LeftPanelTab, Icon: ScrollText,   label: "Study Prompts",   desc: "Reflection & discussion"   },
+                    { tab: "timeline"     as LeftPanelTab, Icon: Layers,       label: "Timeline",        desc: "Biblical history eras"     },
                   ]).map(card => (
                     <button
                       key={card.tab}
@@ -949,7 +950,7 @@ export default function BibleReader() {
                       onClick={() => setLeftPanelTab(card.tab)}
                       className="rounded-2xl border border-gray-200 bg-white p-4 text-left transition hover:border-amber-300 hover:shadow-sm"
                     >
-                      <span className="text-2xl">{card.icon}</span>
+                      <card.Icon size={24} className="text-amber-500" />
                       <p className="mt-2 text-sm font-semibold text-gray-800">{card.label}</p>
                       <p className="mt-0.5 text-xs text-gray-500">{card.desc}</p>
                     </button>
@@ -1079,7 +1080,7 @@ export default function BibleReader() {
 
                 {/* Prayer */}
                 <div className="rounded-2xl border border-purple-200 bg-purple-50 px-6 py-5">
-                  <p className="text-xs font-bold uppercase tracking-widest text-purple-500 mb-3">🙏 Today&apos;s Prayer</p>
+                  <p className="text-xs font-bold uppercase tracking-widest text-purple-500 mb-3 flex items-center gap-1.5"><HeartHandshake size={13} /> Today&apos;s Prayer</p>
                   <p className="text-base font-medium text-purple-900 italic leading-7">{devotional.prayer}</p>
                 </div>
 
@@ -1480,7 +1481,7 @@ export default function BibleReader() {
                               }`}
                             >
                               <div className="flex items-center justify-between gap-3">
-                                <h3 className="font-semibold text-amber-700 text-sm">📍 {item.name}</h3>
+                                <h3 className="font-semibold text-amber-700 text-sm flex items-center gap-1"><MapPin size={13} /> {item.name}</h3>
                                 <span className="text-xs text-gray-400 shrink-0">{item.sourceReference}</span>
                               </div>
                               <div className="mt-1.5">
@@ -1502,7 +1503,7 @@ export default function BibleReader() {
               <div className="space-y-5">
                 {/* Header */}
                 <div className="border-b border-gray-200 pb-3">
-                  <h2 className="text-lg font-semibold text-amber-700">📖 Bible Dictionary</h2>
+                  <h2 className="text-lg font-semibold text-amber-700 flex items-center gap-2"><BookMarked size={18} /> Bible Dictionary</h2>
                   <p className="text-xs text-gray-400 mt-0.5">Easton's Bible Dictionary (1897) — Public Domain</p>
                 </div>
 
@@ -1718,7 +1719,7 @@ export default function BibleReader() {
                       {selectedPlace ? (
                         <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 flex items-start justify-between gap-3 shrink-0">
                           <div className="min-w-0">
-                            <p className="text-sm font-semibold text-amber-800">📍 {selectedPlace.name}</p>
+                            <p className="text-sm font-semibold text-amber-800 flex items-center gap-1"><MapPin size={14} /> {selectedPlace.name}</p>
                             <p className="text-xs text-amber-600 mt-0.5">{selectedPlace.era}</p>
                             {selectedPlace.description && (
                               <p className="text-xs text-gray-600 mt-1 leading-relaxed line-clamp-2">{selectedPlace.description}</p>
@@ -1844,7 +1845,7 @@ export default function BibleReader() {
                                 onClick={() => navigator.clipboard.writeText(prompt.prompt)}
                                 className="mt-3 flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs text-gray-600 hover:border-amber-400 hover:text-amber-700 transition"
                               >
-                                📋 Copy prompt
+                                <Copy size={13} className="inline mr-1" />Copy prompt
                               </button>
                             </div>
                           )}
@@ -1908,7 +1909,7 @@ export default function BibleReader() {
                         title="Download a formatted Word document"
                         className="rounded-lg border border-amber-500 bg-amber-500 px-3 py-2 text-sm font-medium text-gray-900 transition hover:opacity-90 disabled:opacity-50"
                       >
-                        {isExportingDocx ? "Exporting…" : "📝 Word"}
+                        {isExportingDocx ? "Exporting…" : <><FileText size={13} className="inline mr-1" />Word</>}
                       </button>
                     </div>
                     {exportError && (
@@ -2135,7 +2136,7 @@ export default function BibleReader() {
             {leftPanelTab === "testimonials" && (
               <div className="space-y-5">
                 <div className="border-b border-gray-200 pb-3">
-                  <h2 className="text-lg font-semibold text-amber-700">💬 Testimonials</h2>
+                  <h2 className="text-lg font-semibold text-amber-700 flex items-center gap-2"><HeartHandshake size={18} /> Testimonials</h2>
                   <p className="text-xs text-gray-400 mt-0.5">What God is doing through His Word in people&apos;s lives</p>
                 </div>
 
@@ -2185,7 +2186,7 @@ export default function BibleReader() {
             {leftPanelTab === "resources" && (
               <div className="space-y-5">
                 <div className="border-b border-gray-200 pb-3">
-                  <h2 className="text-lg font-semibold text-amber-700">🔗 More Resources</h2>
+                  <h2 className="text-lg font-semibold text-amber-700 flex items-center gap-2"><ExternalLink size={18} /> More Resources</h2>
                   <p className="text-xs text-gray-400 mt-0.5">Trusted external tools and ministries for deeper study</p>
                 </div>
 
@@ -2254,7 +2255,7 @@ export default function BibleReader() {
             {leftPanelTab === "books" && (
               <div className="space-y-5">
                 <div className="border-b border-gray-200 pb-3">
-                  <h2 className="text-lg font-semibold text-amber-700">📕 Christian Books</h2>
+                  <h2 className="text-lg font-semibold text-amber-700 flex items-center gap-2"><BookHeart size={18} /> Christian Books</h2>
                   <p className="text-xs text-gray-400 mt-0.5">Classic public domain works of the faith — free to read</p>
                 </div>
 
@@ -2276,7 +2277,7 @@ export default function BibleReader() {
                       rel="noopener noreferrer"
                       className="flex items-start gap-3 rounded-xl border border-gray-200 bg-white px-4 py-4 hover:border-amber-300 hover:bg-amber-50 transition group"
                     >
-                      <span className="text-2xl shrink-0">📕</span>
+                      <BookHeart size={22} className="text-amber-600 shrink-0" />
                       <div className="min-w-0">
                         <p className="text-sm font-semibold text-gray-800 group-hover:text-amber-700">{book.title}</p>
                         <p className="text-[10px] text-amber-600 font-medium mb-1">{book.author}</p>
@@ -2396,7 +2397,7 @@ export default function BibleReader() {
                       </p>
                       {activeJourney.stops[activeJourneyStop].reference && (
                         <p className="text-xs text-amber-600 font-medium">
-                          📖 {activeJourney.stops[activeJourneyStop].reference}
+                          <BookOpen size={13} className="inline mr-1" />{activeJourney.stops[activeJourneyStop].reference}
                         </p>
                       )}
                       <p className="text-xs text-gray-600 leading-relaxed">
@@ -2702,7 +2703,7 @@ export default function BibleReader() {
                     : "border-gray-300 bg-white text-gray-800 hover:border-amber-400 hover:bg-amber-50"
                 }`}
               >
-                {postCopied ? "✅ Copied!" : "📋 Copy Text Only"}
+                {postCopied ? <><Check size={14} className="inline mr-1" />Copied!</> : <><Copy size={14} className="inline mr-1" />Copy Text Only</>}
               </button>
 
               <p className="text-center text-xs text-gray-400">
