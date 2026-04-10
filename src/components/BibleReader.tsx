@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { verses, Verse, VersePlace } from "@/data/verses";
 import { journeys, Journey, ALL_JOURNEY_ERAS, JOURNEY_ERA_DOT, JOURNEY_ERA_BADGE, type JourneyEra } from "@/data/journeys";
 import dynamic from "next/dynamic";
@@ -21,6 +21,11 @@ import LexiconPanel from "@/components/LexiconPanel";
 import BiblicalTimeline from "@/components/BiblicalTimeline";
 import CommentaryPanel from "@/components/CommentaryPanel";
 import PassagePresenter from "@/components/PassagePresenter";
+import {
+  Home, Feather, BookOpen, Library, Layers, BookText, BookMarked,
+  ScrollText, Landmark, Globe, Star, ClipboardList, FileText,
+  HeartHandshake, ExternalLink, BookHeart, HandCoins, MapPin, Compass,
+} from "lucide-react";
 
 const PlaceMap = dynamic(() => import("@/components/PlaceMap"), {
   ssr: false,
@@ -663,7 +668,7 @@ export default function BibleReader() {
   }, []);
 
   // Sidebar nav button (desktop)
-  const sideNavBtn = (tab: LeftPanelTab, icon: string, label: string) => (
+  const sideNavBtn = (tab: LeftPanelTab, icon: React.ReactNode, label: string) => (
     <button
       key={tab}
       type="button"
@@ -674,7 +679,7 @@ export default function BibleReader() {
           : "text-stone-400 hover:bg-stone-800 hover:text-white"
       }`}
     >
-      <span className="shrink-0 text-base">{icon}</span>
+      <span className="shrink-0">{icon}</span>
       <span>{label}</span>
     </button>
   );
@@ -714,41 +719,41 @@ export default function BibleReader() {
           <div className="flex-1 py-5 px-3 space-y-6 overflow-y-auto">
             <div>
               <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-widest text-stone-500">Read</p>
-              {sideNavBtn("home",          "🏠", "Home")}
-              {sideNavBtn("devotional",    "🕊️", "Daily Devotional")}
-              {sideNavBtn("reader",        "📖", "Passage Reader")}
-              {sideNavBtn("bible",         "📚", "Full Bible")}
+              {sideNavBtn("home",          <Home size={16} />,         "Home")}
+              {sideNavBtn("devotional",    <Feather size={16} />,      "Daily Devotional")}
+              {sideNavBtn("reader",        <BookOpen size={16} />,     "Passage Reader")}
+              {sideNavBtn("bible",         <Library size={16} />,      "Full Bible")}
             </div>
             <div>
               <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-widest text-stone-500">Study</p>
-              {sideNavBtn("timeline",      "⏳", "Timeline")}
-              {sideNavBtn("commentary",    "💬", "Commentary")}
-              {sideNavBtn("dictionary",    "📖", "Dictionary")}
-              {sideNavBtn("study_prompts", "✏️", "Study Prompts")}
+              {sideNavBtn("timeline",      <Layers size={16} />,       "Timeline")}
+              {sideNavBtn("commentary",    <BookText size={16} />,     "Commentary")}
+              {sideNavBtn("dictionary",    <BookMarked size={16} />,   "Dictionary")}
+              {sideNavBtn("study_prompts", <ScrollText size={16} />,   "Study Prompts")}
             </div>
             <div>
               <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-widest text-stone-500">Explore</p>
-              {sideNavBtn("ancient_world", "🏛", "Ancient Places")}
-              {sideNavBtn("atlas",         "🌍", "Bible Atlas")}
+              {sideNavBtn("ancient_world", <Landmark size={16} />,     "Ancient Places")}
+              {sideNavBtn("atlas",         <Globe size={16} />,        "Bible Atlas")}
             </div>
             <div>
               <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-widest text-stone-500">My Library</p>
-              {sideNavBtn("bookmarks",     "🔖", "Bookmarks")}
-              {sideNavBtn("sessions",      "📋", "Sessions")}
-              {sideNavBtn("study_sheet",   "📄", "Study Sheet")}
+              {sideNavBtn("bookmarks",     <Star size={16} />,         "Bookmarks")}
+              {sideNavBtn("sessions",      <ClipboardList size={16} />, "Sessions")}
+              {sideNavBtn("study_sheet",   <FileText size={16} />,     "Study Sheet")}
             </div>
             <div>
               <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-widest text-stone-500">Community</p>
-              {sideNavBtn("testimonials",  "💬", "Testimonials")}
-              {sideNavBtn("resources",     "🔗", "More Resources")}
-              {sideNavBtn("books",         "📕", "Christian Books")}
+              {sideNavBtn("testimonials",  <HeartHandshake size={16} />, "Testimonials")}
+              {sideNavBtn("resources",     <ExternalLink size={16} />, "More Resources")}
+              {sideNavBtn("books",         <BookHeart size={16} />,    "Christian Books")}
             </div>
           </div>
 
           {/* Sidebar footer links */}
           <div className="shrink-0 border-t border-stone-800 px-4 py-4 space-y-1">
             <a href="/donate" className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-xs text-amber-400 hover:bg-stone-800 transition">
-              🙏 Support Scripture Lives
+              <HandCoins size={14} /> Support Scripture Lives
             </a>
             <a href="/about" className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-xs text-stone-400 hover:bg-stone-800 hover:text-stone-200 transition">
               About Us
@@ -767,22 +772,22 @@ export default function BibleReader() {
 
             {/* Mobile tab bar */}
             <div className="xl:hidden mb-4 flex flex-wrap gap-1.5 rounded-xl border border-gray-200 bg-white p-2 print:hidden">
-              <button type="button" onClick={() => setLeftPanelTab("home")}          className={tabButtonClass("home")}>🏠 Home</button>
-              <button type="button" onClick={() => setLeftPanelTab("devotional")}   className={tabButtonClass("devotional")}>🕊️ Devotional</button>
-              <button type="button" onClick={() => setLeftPanelTab("reader")}        className={tabButtonClass("reader")}>📖 Reader</button>
-              <button type="button" onClick={() => setLeftPanelTab("bible")}         className={tabButtonClass("bible")}>📚 Full Bible</button>
-              <button type="button" onClick={() => setLeftPanelTab("timeline")}      className={tabButtonClass("timeline")}>⏳ Timeline</button>
-              <button type="button" onClick={() => setLeftPanelTab("commentary")}    className={tabButtonClass("commentary")}>💬 Commentary</button>
-              <button type="button" onClick={() => setLeftPanelTab("dictionary")}    className={tabButtonClass("dictionary")}>📖 Dictionary</button>
-              <button type="button" onClick={() => setLeftPanelTab("ancient_world")} className={tabButtonClass("ancient_world")}>🏛 Ancient Places</button>
-              <button type="button" onClick={() => setLeftPanelTab("atlas")}         className={tabButtonClass("atlas")}>🌍 Atlas</button>
-              <button type="button" onClick={() => setLeftPanelTab("study_prompts")} className={tabButtonClass("study_prompts")}>✏️ Study Prompts</button>
-              <button type="button" onClick={() => setLeftPanelTab("bookmarks")}     className={tabButtonClass("bookmarks")}>🔖 Bookmarks</button>
-              <button type="button" onClick={() => setLeftPanelTab("sessions")}      className={tabButtonClass("sessions")}>📋 Sessions</button>
-              <button type="button" onClick={() => setLeftPanelTab("study_sheet")}   className={tabButtonClass("study_sheet")}>📄 Study Sheet</button>
-              <button type="button" onClick={() => setLeftPanelTab("testimonials")}  className={tabButtonClass("testimonials")}>💬 Testimonials</button>
-              <button type="button" onClick={() => setLeftPanelTab("resources")}     className={tabButtonClass("resources")}>🔗 More Resources</button>
-              <button type="button" onClick={() => setLeftPanelTab("books")}         className={tabButtonClass("books")}>📕 Christian Books</button>
+              <button type="button" onClick={() => setLeftPanelTab("home")}          className={tabButtonClass("home")}><Home size={13} className="inline mr-1" />Home</button>
+              <button type="button" onClick={() => setLeftPanelTab("devotional")}   className={tabButtonClass("devotional")}><Feather size={13} className="inline mr-1" />Devotional</button>
+              <button type="button" onClick={() => setLeftPanelTab("reader")}        className={tabButtonClass("reader")}><BookOpen size={13} className="inline mr-1" />Reader</button>
+              <button type="button" onClick={() => setLeftPanelTab("bible")}         className={tabButtonClass("bible")}><Library size={13} className="inline mr-1" />Full Bible</button>
+              <button type="button" onClick={() => setLeftPanelTab("timeline")}      className={tabButtonClass("timeline")}><Layers size={13} className="inline mr-1" />Timeline</button>
+              <button type="button" onClick={() => setLeftPanelTab("commentary")}    className={tabButtonClass("commentary")}><BookText size={13} className="inline mr-1" />Commentary</button>
+              <button type="button" onClick={() => setLeftPanelTab("dictionary")}    className={tabButtonClass("dictionary")}><BookMarked size={13} className="inline mr-1" />Dictionary</button>
+              <button type="button" onClick={() => setLeftPanelTab("ancient_world")} className={tabButtonClass("ancient_world")}><Landmark size={13} className="inline mr-1" />Ancient Places</button>
+              <button type="button" onClick={() => setLeftPanelTab("atlas")}         className={tabButtonClass("atlas")}><Globe size={13} className="inline mr-1" />Atlas</button>
+              <button type="button" onClick={() => setLeftPanelTab("study_prompts")} className={tabButtonClass("study_prompts")}><ScrollText size={13} className="inline mr-1" />Study Prompts</button>
+              <button type="button" onClick={() => setLeftPanelTab("bookmarks")}     className={tabButtonClass("bookmarks")}><Star size={13} className="inline mr-1" />Bookmarks</button>
+              <button type="button" onClick={() => setLeftPanelTab("sessions")}      className={tabButtonClass("sessions")}><ClipboardList size={13} className="inline mr-1" />Sessions</button>
+              <button type="button" onClick={() => setLeftPanelTab("study_sheet")}   className={tabButtonClass("study_sheet")}><FileText size={13} className="inline mr-1" />Study Sheet</button>
+              <button type="button" onClick={() => setLeftPanelTab("testimonials")}  className={tabButtonClass("testimonials")}><HeartHandshake size={13} className="inline mr-1" />Testimonials</button>
+              <button type="button" onClick={() => setLeftPanelTab("resources")}     className={tabButtonClass("resources")}><ExternalLink size={13} className="inline mr-1" />Resources</button>
+              <button type="button" onClick={() => setLeftPanelTab("books")}         className={tabButtonClass("books")}><BookHeart size={13} className="inline mr-1" />Christian Books</button>
             </div>
 
             {/* ── HOME TAB ─────────────────────────────────────────────────── */}
@@ -1162,7 +1167,7 @@ export default function BibleReader() {
                       ancientWorldView === "locations" ? "bg-amber-500 text-white" : "text-gray-600 hover:bg-gray-100"
                     }`}
                   >
-                    🏛 Locations
+                    <Landmark size={13} className="inline mr-1" />Locations
                   </button>
                   <button
                     type="button"
@@ -1171,7 +1176,7 @@ export default function BibleReader() {
                       ancientWorldView === "journeys" ? "bg-amber-500 text-white" : "text-gray-600 hover:bg-gray-100"
                     }`}
                   >
-                    🗺 Journeys
+                    <Compass size={13} className="inline mr-1" />Journeys
                   </button>
                   <button
                     type="button"
@@ -1180,7 +1185,7 @@ export default function BibleReader() {
                       ancientWorldView === "places" ? "bg-amber-500 text-white" : "text-gray-600 hover:bg-gray-100"
                     }`}
                   >
-                    📍 Places
+                    <MapPin size={13} className="inline mr-1" />Places
                   </button>
                 </div>
 
