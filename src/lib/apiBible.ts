@@ -76,6 +76,10 @@ export type ApiBibleVerse = {
 /**
  * Fetch all verses for a chapter from api.bible.
  * Returns verses in the same shape as your local BibleVerse type.
+ *
+ * Makes 2 parallel API calls:
+ *   1. Chapter HTML content (contains all verse text)
+ *   2. Book chapters list (for totalChapters count)
  */
 export async function fetchChapter(
   version: string,
@@ -91,59 +95,62 @@ export async function fetchChapter(
   const headers = getHeaders();
   const chapterId = `${usfm}.${chapter}`;
 
-  // Fetch verses for this chapter
-  const versesUrl = `${API_BIBLE_BASE}/bibles/${bibleId}/chapters/${chapterId}/verses`;
-  const versesRes = await fetch(versesUrl, { headers });
-  if (!versesRes.ok) throw new Error(`api.bible verses error: ${versesRes.status}`);
-  const versesData = await versesRes.json();
+  // Run both fetches in parallel
+  const [contentRes, chaptersRes] = await Promise.all([
+    fetch(
+      `${API_BIBLE_BASE}/bibles/${bibleId}/chapters/${chapterId}` +
+      `?content-type=html&include-notes=false&include-titles=false` +
+      `&include-chapter-numbers=false&include-verse-numbers=true&include-verse-spans=true`,
+      { headers }
+    ),
+    fetch(`${API_BIBLE_BASE}/bibles/${bibleId}/books/${usfm}/chapters`, { headers }),
+  ]);
 
-  // Fetch total chapter count for this book
-  const chaptersUrl = `${API_BIBLE_BASE}/bibles/${bibleId}/books/${usfm}/chapters`;
-  const chaptersRes = await fetch(chaptersUrl, { headers });
+  if (!contentRes.ok) throw new Error(`api.bible content error: ${contentRes.status}`);
   if (!chaptersRes.ok) throw new Error(`api.bible chapters error: ${chaptersRes.status}`);
-  const chaptersData = await chaptersRes.json();
 
-  // Chapter list includes an "intro" entry — filter to numeric chapters only
-  const totalChapters = chaptersData.data.filter(
-    (c: { id: string }) => /\.\d+$/.test(c.id)
+  const [contentData, chaptersData] = await Promise.all([
+    contentRes.json(),
+    chaptersRes.json(),
+  ]);
+
+  // Total chapters — filter out the "intro" entry (id doesn't end in a number)
+  const totalChapters = (chaptersData.data as Array<{ id: string }>).filter(
+    (c) => /\.\d+$/.test(c.id)
   ).length;
 
-  // api.bible /verses returns verse IDs but not text — fetch each verse's text
-  // For efficiency we fetch the chapter content instead and parse it
-  const contentUrl = `${API_BIBLE_BASE}/bibles/${bibleId}/chapters/${chapterId}?content-type=text&include-notes=false&include-titles=false&include-chapter-numbers=false&include-verse-numbers=true&include-verse-spans=false`;
-  const contentRes = await fetch(contentUrl, { headers });
-  if (!contentRes.ok) throw new Error(`api.bible content error: ${contentRes.status}`);
-  const contentData = await contentRes.json();
+  // Parse verse text from HTML.
+  // api.bible marks each verse with: <span data-number="N" ...>N</span>
+  // We split on those markers and strip remaining HTML from each segment.
+  const html: string = contentData.data?.content ?? "";
+  const verseTexts: Record<number, string> = {};
 
-  // The content comes back as one text block; split by verse number markers [1], [2], etc.
-  const rawContent: string = contentData.data?.content ?? "";
-  const cleaned = stripHtml(rawContent);
-
-  // Split on verse number markers like "1 " at the start or "  1 " mid-text
-  const verseTexts: string[] = [];
-  const parts = cleaned.split(/(?=\s*\[\d+\])/);
-  for (const part of parts) {
-    // Use [\s\S]+ instead of .+ with /s flag for broader TS target compatibility
-    const match = part.match(/^\s*\[(\d+)\]\s*([\s\S]+)/);
-    if (match) {
-      verseTexts[parseInt(match[1], 10)] = match[2].trim();
-    }
+  // Split the HTML on every verse-number span start tag
+  const segments = html.split(/<span[^>]+data-number="(\d+)"[^>]*>/);
+  // segments pattern after split: [pre, verseNum, content, verseNum, content, ...]
+  for (let i = 1; i < segments.length; i += 2) {
+    const verseNum = parseInt(segments[i], 10);
+    const raw = segments[i + 1] ?? "";
+    // Drop the verse number itself (it sits before the first </span>)
+    const afterLabel = raw.replace(/^[^<]*<\/span>/, "");
+    verseTexts[verseNum] = stripHtml(afterLabel).replace(/\s+/g, " ").trim();
   }
 
-  // Build structured verse array from the /verses list + parsed text
-  const verses: ApiBibleVerse[] = (versesData.data as Array<{ id: string; reference: string }>)
-    .map((v) => {
-      const verseNum = parseInt(v.id.split(".").pop() ?? "0", 10);
+  // Build structured verse array
+  const verses: ApiBibleVerse[] = Object.entries(verseTexts)
+    .filter(([, text]) => text.length > 0)
+    .map(([num, text]) => {
+      const verseNum = parseInt(num, 10);
       return {
-        id: v.id,
+        id: `${usfm}.${chapter}.${verseNum}`,
         book,
         chapter,
         verse: verseNum,
         reference: `${book} ${chapter}:${verseNum}`,
-        text: verseTexts[verseNum] ?? "",
+        text,
       };
     })
-    .filter((v) => v.text.length > 0);
+    .sort((a, b) => a.verse - b.verse);
 
   return { verses, totalChapters };
 }
