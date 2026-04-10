@@ -14,7 +14,7 @@
  * publisher after you sign up — check your api.bible dashboard.
  */
 
-const API_BIBLE_BASE = "https://api.scripture.api.bible/v1";
+const API_BIBLE_BASE = "https://rest.api.bible/v1";
 
 /**
  * Map your version codes to api.bible Bible IDs.

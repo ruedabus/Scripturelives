@@ -16,7 +16,7 @@ export async function GET() {
     );
   }
 
-  const res = await fetch("https://api.scripture.api.bible/v1/bibles", {
+  const res = await fetch("https://rest.api.bible/v1/bibles", {
     headers: { "api-key": key },
   });
 
