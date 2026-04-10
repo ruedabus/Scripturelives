@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { loadBible, BibleVersion } from "@/lib/loadBibleVersion";
+import { API_BIBLE_IDS, fetchChapter, fetchTotalChapters } from "@/lib/apiBible";
+
+/** Versions served locally vs. via api.bible */
+const LOCAL_VERSIONS = ["KJV", "ASV", "WEB"];
+const REMOTE_VERSIONS = Object.keys(API_BIBLE_IDS); // NIV, NKJV, ESV, NLT
 
 export const CANONICAL_BOOKS = [
   "Genesis", "Exodus", "Leviticus", "Numbers", "Deuteronomy",
@@ -26,17 +31,66 @@ function getChapterCount(version: BibleVersion, book: string): number {
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
-  const version = (searchParams.get("version") ?? "KJV").toUpperCase() as BibleVersion;
+  const version = (searchParams.get("version") ?? "KJV").toUpperCase();
   const book = searchParams.get("book");
   const chapterParam = searchParams.get("chapter");
 
-  if (!["KJV", "ASV", "WEB"].includes(version)) {
+  const isLocal = LOCAL_VERSIONS.includes(version);
+  const isRemote = REMOTE_VERSIONS.includes(version);
+
+  if (!isLocal && !isRemote) {
     return NextResponse.json({ error: "Invalid version" }, { status: 400 });
   }
 
+  // ── REMOTE (api.bible) versions ─────────────────────────────────────────
+  if (isRemote) {
+    // Book list: same 66 books for all versions — return using local KJV chapter counts
+    if (!book) {
+      const bible = loadBible("KJV");
+      const chaptersByBook = new Map<string, Set<number>>();
+      for (const v of bible) {
+        if (!CANONICAL_BOOKS.includes(v.book)) continue;
+        if (!chaptersByBook.has(v.book)) chaptersByBook.set(v.book, new Set());
+        chaptersByBook.get(v.book)!.add(v.chapter);
+      }
+      const books = CANONICAL_BOOKS.filter((b) => chaptersByBook.has(b)).map((b) => ({
+        name: b,
+        chapters: Math.max(...chaptersByBook.get(b)!),
+      }));
+      return NextResponse.json({ books });
+    }
+
+    // Chapter content
+    if (book && chapterParam) {
+      const chapter = parseInt(chapterParam, 10);
+      if (isNaN(chapter)) return NextResponse.json({ error: "Invalid chapter" }, { status: 400 });
+      try {
+        const { verses, totalChapters } = await fetchChapter(version, book, chapter);
+        return NextResponse.json({ verses, totalChapters });
+      } catch (err) {
+        const message = err instanceof Error ? err.message : "api.bible error";
+        return NextResponse.json({ error: message }, { status: 502 });
+      }
+    }
+
+    // Chapter count only
+    if (book) {
+      try {
+        const totalChapters = await fetchTotalChapters(version, book);
+        return NextResponse.json({ totalChapters });
+      } catch (err) {
+        const message = err instanceof Error ? err.message : "api.bible error";
+        return NextResponse.json({ error: message }, { status: 502 });
+      }
+    }
+  }
+
+  // ── LOCAL versions (KJV, ASV, WEB) ──────────────────────────────────────
+  const localVersion = version as BibleVersion;
+
   // Return book list with chapter counts
   if (!book) {
-    const bible = loadBible(version);
+    const bible = loadBible(localVersion);
     const chaptersByBook = new Map<string, Set<number>>();
     for (const v of bible) {
       if (!CANONICAL_BOOKS.includes(v.book)) continue;
@@ -55,15 +109,15 @@ export async function GET(req: NextRequest) {
     const chapter = parseInt(chapterParam, 10);
     if (isNaN(chapter)) return NextResponse.json({ error: "Invalid chapter" }, { status: 400 });
 
-    const bible = loadBible(version);
+    const bible = loadBible(localVersion);
     const verses = bible.filter((v) => v.book === book && v.chapter === chapter);
-    const totalChapters = getChapterCount(version, book);
+    const totalChapters = getChapterCount(localVersion, book);
     return NextResponse.json({ verses, totalChapters });
   }
 
   // Return just chapter count for a book
   if (book) {
-    const totalChapters = getChapterCount(version, book);
+    const totalChapters = getChapterCount(localVersion, book);
     return NextResponse.json({ totalChapters });
   }
 

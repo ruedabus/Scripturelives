@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback, useRef } from "react";
 
-type BibleVersion = "KJV" | "ASV" | "WEB";
+type BibleVersion = "KJV" | "ASV" | "WEB" | "NIV" | "NLT" | "AMP";
 
 type BibleVerse = {
   id: string;
@@ -19,12 +19,17 @@ type BookInfo = {
 };
 
 
-const VERSIONS: BibleVersion[] = ["KJV", "ASV", "WEB"];
+const LOCAL_VERSIONS: BibleVersion[] = ["KJV", "ASV", "WEB"];
+const CLOUD_VERSIONS: BibleVersion[] = ["NIV", "NLT", "AMP"];
+const VERSIONS: BibleVersion[] = [...LOCAL_VERSIONS, ...CLOUD_VERSIONS];
 
 const VERSION_LABELS: Record<BibleVersion, string> = {
   KJV: "King James Version",
   ASV: "American Standard Version",
   WEB: "World English Bible",
+  NIV: "New International Version",
+  NLT: "New Living Translation",
+  AMP: "Amplified Bible",
 };
 
 const OT_BOOKS = new Set([
@@ -303,20 +308,25 @@ export default function FullBibleReader({
                 <h2 className="text-2xl font-bold text-amber-400 tracking-wide">Holy Bible</h2>
                 <p className="text-xs text-stone-400 mt-0.5">Select a book to begin reading</p>
               </div>
-              {/* Version toggle */}
-              <div className="flex gap-1 rounded-lg bg-stone-800/80 border border-stone-700 p-1">
-                {VERSIONS.map((v) => (
-                  <button
-                    key={v}
-                    type="button"
-                    onClick={() => setVersion(v)}
-                    className={`rounded-md px-3 py-1 text-xs font-bold transition ${
-                      version === v ? "bg-amber-500 text-stone-900" : "text-stone-400 hover:text-white"
-                    }`}
-                  >
-                    {v}
-                  </button>
-                ))}
+              {/* Version toggle — two rows: Local | Licensed */}
+              <div className="flex flex-col gap-1">
+                <div className="flex gap-1 rounded-lg bg-stone-800/80 border border-stone-700 p-1">
+                  {LOCAL_VERSIONS.map((v) => (
+                    <button key={v} type="button" onClick={() => setVersion(v)}
+                      className={`rounded-md px-3 py-1 text-xs font-bold transition ${version === v ? "bg-amber-500 text-stone-900" : "text-stone-400 hover:text-white"}`}>
+                      {v}
+                    </button>
+                  ))}
+                </div>
+                <div className="flex gap-1 rounded-lg bg-stone-800/80 border border-sky-800 p-1">
+                  {CLOUD_VERSIONS.map((v) => (
+                    <button key={v} type="button" onClick={() => setVersion(v)}
+                      title={VERSION_LABELS[v]}
+                      className={`rounded-md px-3 py-1 text-xs font-bold transition ${version === v ? "bg-sky-500 text-white" : "text-stone-400 hover:text-sky-300"}`}>
+                      {v}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
 
@@ -391,13 +401,25 @@ export default function FullBibleReader({
 
         {/* Controls */}
         <div className="flex items-center gap-2 flex-wrap">
-          {/* Version */}
-          <div className="flex gap-1 rounded-lg bg-stone-800 border border-stone-700 p-0.5">
-            {VERSIONS.map((v) => (
-              <button key={v} type="button" onClick={() => setVersion(v)}
-                className={`rounded-md px-2.5 py-1 text-[11px] font-bold transition ${version === v ? "bg-amber-500 text-stone-900" : "text-stone-400 hover:text-white"}`}
-              >{v}</button>
-            ))}
+          {/* Version — Local row + Licensed row */}
+          <div className="flex flex-col gap-0.5">
+            <div className="flex gap-0.5 rounded-lg bg-stone-800 border border-stone-700 p-0.5">
+              {LOCAL_VERSIONS.map((v) => (
+                <button key={v} type="button" onClick={() => setVersion(v)}
+                  className={`rounded-md px-2 py-1 text-[10px] font-bold transition ${version === v ? "bg-amber-500 text-stone-900" : "text-stone-400 hover:text-white"}`}>
+                  {v}
+                </button>
+              ))}
+            </div>
+            <div className="flex gap-0.5 rounded-lg bg-stone-800 border border-sky-800 p-0.5">
+              {CLOUD_VERSIONS.map((v) => (
+                <button key={v} type="button" onClick={() => setVersion(v)}
+                  title={VERSION_LABELS[v]}
+                  className={`rounded-md px-2 py-1 text-[10px] font-bold transition ${version === v ? "bg-sky-500 text-white" : "text-stone-400 hover:text-sky-300"}`}>
+                  {v}
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Chapter nav */}
