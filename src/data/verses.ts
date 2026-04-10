@@ -1,4 +1,8 @@
-export type BibleVersion = "KJV" | "WEB" | "ASV";
+/** All supported versions — local (KJV/ASV/WEB) + cloud api.bible (NIV/NLT/AMP) */
+export type BibleVersion = "KJV" | "WEB" | "ASV" | "NIV" | "NLT" | "AMP";
+
+/** Local-only translation keys stored in verse data */
+export type LocalBibleVersion = "KJV" | "WEB" | "ASV";
 
 export type RelatedVerse = {
   reference: string;
@@ -23,7 +27,7 @@ export type VersePlace = {
   relatedVerses: RelatedVerse[];
 };
 
-export type VerseTranslations = Record<BibleVersion, string>;
+export type VerseTranslations = Record<LocalBibleVersion, string>;
 
 export type Verse = {
   id: string;

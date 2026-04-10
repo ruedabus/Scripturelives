@@ -25,7 +25,10 @@ type Props = {
 const VERSION_COLORS: Record<BibleVersion, string> = {
   KJV: "text-amber-700",
   ASV: "text-sky-600",
-  WEB: "text-emerald-400",
+  WEB: "text-emerald-500",
+  NIV: "text-purple-600",
+  NLT: "text-rose-500",
+  AMP: "text-teal-600",
 };
 
 export default function SearchBar({ onSelectVerse, onSelectBibleVerse, onVisualSearch, initialQuery = "" }: Props) {

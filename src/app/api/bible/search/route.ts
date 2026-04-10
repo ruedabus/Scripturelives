@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { loadBible, BibleVersion } from "@/lib/loadBibleVersion";
+import { fetchChapter, API_BIBLE_IDS } from "@/lib/apiBible";
 
 export type BibleSearchResult = {
   version: BibleVersion;
@@ -109,7 +110,8 @@ function parseReference(query: string): { book: string; chapter: number; verse?:
   return { book, chapter, verse };
 }
 
-const VERSIONS: BibleVersion[] = ["KJV", "ASV", "WEB"];
+const LOCAL_VERSIONS: BibleVersion[] = ["KJV", "ASV", "WEB"];
+const CLOUD_VERSIONS = Object.keys(API_BIBLE_IDS); // NIV, NLT, AMP
 const MAX_KEYWORD_RESULTS_PER_VERSION = 4;
 
 export async function GET(req: NextRequest) {
@@ -125,7 +127,8 @@ export async function GET(req: NextRequest) {
   // Try reference lookup first
   const ref = parseReference(q);
   if (ref) {
-    for (const version of VERSIONS) {
+    // Local versions — instant
+    for (const version of LOCAL_VERSIONS) {
       const bible = loadBible(version);
       const matches = bible.filter(
         (v) =>
@@ -137,12 +140,36 @@ export async function GET(req: NextRequest) {
         results.push({ ...v, version, matchType: "reference" });
       }
     }
+
+    // Cloud versions (NIV, NLT, AMP) — fetch in parallel, skip if key missing
+    if (process.env.API_BIBLE_KEY) {
+      const cloudResults = await Promise.allSettled(
+        CLOUD_VERSIONS.map(async (version) => {
+          const { verses } = await fetchChapter(version, ref.book, ref.chapter);
+          const matches = ref.verse
+            ? verses.filter((v) => v.verse === ref.verse)
+            : verses.slice(0, 5);
+          return matches.map((v) => ({
+            version: version as BibleVersion,
+            book: v.book,
+            chapter: v.chapter,
+            verse: v.verse,
+            reference: v.reference,
+            text: v.text,
+            matchType: "reference" as const,
+          }));
+        })
+      );
+      for (const r of cloudResults) {
+        if (r.status === "fulfilled") results.push(...r.value);
+      }
+    }
   }
 
-  // Also do keyword search if not a pure reference hit (or no ref found)
+  // Keyword search — local only (cloud doesn't support full-text search)
   if (!ref || results.length === 0) {
     const keywords = q.toLowerCase().split(/\s+/).filter(Boolean);
-    for (const version of VERSIONS) {
+    for (const version of LOCAL_VERSIONS) {
       const bible = loadBible(version);
       const matches = bible.filter((v) =>
         keywords.every((kw) => v.text.toLowerCase().includes(kw))
