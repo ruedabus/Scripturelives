@@ -25,7 +25,7 @@ import {
   Home, Feather, BookOpen, Library, Layers, BookText, BookMarked,
   ScrollText, Landmark, Globe, Star, ClipboardList, FileText,
   HeartHandshake, ExternalLink, BookHeart, HandCoins, MapPin, Compass,
-  Copy, Check,
+  Copy, Check, Image,
 } from "lucide-react";
 
 const PlaceMap = dynamic(() => import("@/components/PlaceMap"), {
@@ -1235,7 +1235,7 @@ export default function BibleReader() {
                             onClick={() => setVisualQuery(selectedAncientLocation.name)}
                             className="mt-3 flex items-center gap-1.5 rounded-lg bg-stone-800 px-3 py-1.5 text-xs font-semibold text-white hover:bg-stone-700 transition"
                           >
-                            🖼 View Historical Image
+                            <Image size={13} /> View Historical Image
                           </button>
                         </div>
 
