@@ -6,7 +6,7 @@ const STORAGE_KEY = "scripture-lives-reading-plan";
 
 export type ReadingPlanEntry = {
   id: string;            // unique, e.g. "KJV-John-3-16"
-  version: "KJV" | "ASV" | "WEB";
+  version: "KJV" | "ASV" | "WEB" | "NIV" | "NLT" | "AMP";
   book: string;
   chapter: number;
   verse?: number;        // if undefined, whole chapter

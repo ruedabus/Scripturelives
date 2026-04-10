@@ -6,7 +6,18 @@ import useReadingPlan, { ReadingPlanEntry } from "@/components/useReadingPlan";
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
-type BibleVersion = "KJV" | "ASV" | "WEB";
+type BibleVersion = "KJV" | "ASV" | "WEB" | "NIV" | "NLT" | "AMP";
+
+const LOCAL_VERSIONS: BibleVersion[] = ["KJV", "ASV", "WEB"];
+const CLOUD_VERSIONS: BibleVersion[] = ["NIV", "NLT", "AMP"];
+const VERSION_LABELS: Record<BibleVersion, string> = {
+  KJV: "King James Version",
+  ASV: "American Standard Version",
+  WEB: "World English Bible",
+  NIV: "New International Version",
+  NLT: "New Living Translation",
+  AMP: "Amplified Bible",
+};
 
 type BibleVerse = {
   verse: number;
@@ -254,16 +265,27 @@ export default function PassagePresenter({
   }, [query]);
 
   // ── Fetch chapter when book/chapter/version changes ────────────────────────
+  const [chapterError, setChapterError] = useState<string | null>(null);
+
   useEffect(() => {
     if (!presentBook) return;
     setLoadingChapter(true);
+    setChapterError(null);
     fetch(`/api/bible?version=${version}&book=${encodeURIComponent(presentBook)}&chapter=${presentChapter}`)
       .then((r) => r.json())
       .then((d) => {
-        setChapterVerses(d.verses ?? []);
-        setTotalChapters(d.totalChapters ?? 0);
+        if (d.error) {
+          setChapterVerses([]);
+          setChapterError(d.error);
+        } else {
+          setChapterVerses(d.verses ?? []);
+          setTotalChapters(d.totalChapters ?? 0);
+        }
       })
-      .catch(() => setChapterVerses([]))
+      .catch(() => {
+        setChapterVerses([]);
+        setChapterError("Failed to load — check your network connection.");
+      })
       .finally(() => setLoadingChapter(false));
   }, [presentBook, presentChapter, version]);
 
@@ -456,10 +478,18 @@ export default function PassagePresenter({
                   value={version}
                   onChange={(e) => setVersion(e.target.value as BibleVersion)}
                   className="rounded-lg border border-gray-300 bg-white px-2 py-1.5 text-xs text-gray-700 outline-none focus:border-amber-400"
+                  title={VERSION_LABELS[version]}
                 >
-                  <option value="KJV">KJV</option>
-                  <option value="ASV">ASV</option>
-                  <option value="WEB">WEB</option>
+                  <optgroup label="Classic">
+                    {LOCAL_VERSIONS.map((v) => (
+                      <option key={v} value={v}>{v}</option>
+                    ))}
+                  </optgroup>
+                  <optgroup label="Licensed">
+                    {CLOUD_VERSIONS.map((v) => (
+                      <option key={v} value={v}>{v}</option>
+                    ))}
+                  </optgroup>
                 </select>
 
                 {/* Reference label */}
@@ -532,6 +562,16 @@ export default function PassagePresenter({
               <div className={`px-5 py-5 ${presentMode ? "py-8" : ""}`}>
                 {loadingChapter ? (
                   <p className="text-sm text-gray-400 italic">Loading…</p>
+                ) : chapterError ? (
+                  <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-4 text-sm text-red-700">
+                    <p className="font-semibold mb-1">Could not load {version}</p>
+                    <p className="text-xs text-red-500">{chapterError}</p>
+                    {["NIV","NLT","AMP"].includes(version) && (
+                      <p className="mt-2 text-xs text-red-500">
+                        Make sure <code className="font-mono bg-red-100 px-1 rounded">API_BIBLE_KEY</code> is set in your Vercel environment variables.
+                      </p>
+                    )}
+                  </div>
                 ) : displayVerses.length === 0 ? (
                   <p className="text-sm text-gray-400 italic">No verses found.</p>
                 ) : (
