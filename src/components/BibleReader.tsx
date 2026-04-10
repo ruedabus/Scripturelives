@@ -939,20 +939,22 @@ export default function BibleReader() {
                 {/* Quick-access feature cards */}
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                   {([
-                    { tab: "reader"       as LeftPanelTab, Icon: BookOpen,     label: "Passage Reader",  desc: "Search & present verses"   },
-                    { tab: "ancient_world"as LeftPanelTab, Icon: Landmark,     label: "Ancient Places",  desc: "Major locations & journeys" },
-                    { tab: "study_prompts"as LeftPanelTab, Icon: ScrollText,   label: "Study Prompts",   desc: "Reflection & discussion"   },
-                    { tab: "timeline"     as LeftPanelTab, Icon: Layers,       label: "Timeline",        desc: "Biblical history eras"     },
+                    { tab: "reader"       as LeftPanelTab, Icon: BookOpen,   label: "Passage Reader",  desc: "Search & present verses",    gradient: "from-amber-50 to-orange-50",   ring: "hover:ring-amber-300",   iconBg: "bg-amber-100",   iconColor: "text-amber-600"  },
+                    { tab: "ancient_world"as LeftPanelTab, Icon: Landmark,   label: "Ancient Places",  desc: "Major locations & journeys", gradient: "from-stone-50 to-amber-50",    ring: "hover:ring-stone-300",   iconBg: "bg-stone-100",   iconColor: "text-stone-600"  },
+                    { tab: "study_prompts"as LeftPanelTab, Icon: ScrollText, label: "Study Prompts",   desc: "Reflection & discussion",    gradient: "from-indigo-50 to-purple-50",  ring: "hover:ring-indigo-300",  iconBg: "bg-indigo-100",  iconColor: "text-indigo-600" },
+                    { tab: "timeline"     as LeftPanelTab, Icon: Layers,     label: "Timeline",        desc: "Biblical history eras",      gradient: "from-sky-50 to-blue-50",       ring: "hover:ring-sky-300",     iconBg: "bg-sky-100",     iconColor: "text-sky-600"    },
                   ]).map(card => (
                     <button
                       key={card.tab}
                       type="button"
                       onClick={() => setLeftPanelTab(card.tab)}
-                      className="rounded-2xl border border-gray-200 bg-white p-4 text-left transition hover:border-amber-300 hover:shadow-sm"
+                      className={`group relative rounded-2xl bg-gradient-to-br ${card.gradient} p-4 text-left ring-1 ring-gray-200 ${card.ring} transition-all duration-200 hover:shadow-md hover:-translate-y-0.5`}
                     >
-                      <card.Icon size={24} className="text-amber-500" />
-                      <p className="mt-2 text-sm font-semibold text-gray-800">{card.label}</p>
-                      <p className="mt-0.5 text-xs text-gray-500">{card.desc}</p>
+                      <div className={`inline-flex items-center justify-center rounded-xl ${card.iconBg} p-2.5 mb-3`}>
+                        <card.Icon size={20} className={card.iconColor} />
+                      </div>
+                      <p className="text-sm font-semibold text-gray-800 leading-snug">{card.label}</p>
+                      <p className="mt-0.5 text-xs text-gray-400 leading-snug">{card.desc}</p>
                     </button>
                   ))}
                 </div>
