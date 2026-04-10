@@ -288,7 +288,7 @@ export default function FullBibleReader({
   // ── BOOK PICKER (hero view) ─────────────────────────────────────────────
   if (showPicker) {
     return (
-      <div className="rounded-2xl overflow-hidden">
+      <div className="rounded-xl overflow-hidden">
         {/* Hero background */}
         <div
           className="relative min-h-[520px] flex flex-col"
@@ -379,7 +379,7 @@ export default function FullBibleReader({
 
   // ── READING VIEW ────────────────────────────────────────────────────────
   return (
-    <div className="space-y-0 rounded-2xl overflow-hidden border border-stone-200">
+    <div className="space-y-0 rounded-xl overflow-hidden border border-stone-200">
 
       {/* Dark header bar */}
       <div className="bg-stone-900 px-5 py-4 flex items-center justify-between gap-3 flex-wrap">

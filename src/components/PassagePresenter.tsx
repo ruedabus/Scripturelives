@@ -470,7 +470,7 @@ export default function PassagePresenter({
 
           {/* ── Presentation Area ── */}
           {presentBook && (
-            <div className={`rounded-2xl border ${presentMode ? "border-amber-300 shadow-xl bg-amber-50/30" : "border-gray-200 bg-white"} overflow-hidden transition-all`}>
+            <div className={`rounded-xl border ${presentMode ? "border-amber-300 shadow-xl bg-amber-50/30" : "border-gray-200 bg-white"} overflow-hidden transition-all`}>
 
               {/* Toolbar */}
               <div className="flex flex-wrap items-center gap-2 border-b border-gray-200 px-4 py-3 bg-gray-50">
@@ -682,7 +682,7 @@ export default function PassagePresenter({
 
           {/* Empty state */}
           {!presentBook && (
-            <div className="rounded-2xl border border-dashed border-gray-200 bg-gray-50 p-10 text-center">
+            <div className="rounded-xl border border-dashed border-gray-200 bg-gray-50 p-10 text-center">
               <BookOpen size={36} className="mx-auto mb-3 text-gray-300" />
               <p className="text-sm font-medium text-gray-600">Search for any verse or passage above</p>
               <p className="text-xs text-gray-400 mt-1">
@@ -709,7 +709,7 @@ export default function PassagePresenter({
       {activeTab === "plan" && (
         <div className="space-y-3">
           {plan.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-gray-200 bg-gray-50 p-10 text-center">
+            <div className="rounded-xl border border-dashed border-gray-200 bg-gray-50 p-10 text-center">
               <p className="text-3xl mb-3">📌</p>
               <p className="text-sm font-medium text-gray-600">Your reading plan is empty</p>
               <p className="text-xs text-gray-400 mt-1">

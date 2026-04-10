@@ -44,7 +44,7 @@ export default function AboutPage() {
             <span className="text-3xl">✝️</span>
             <h2 className="text-2xl font-bold text-stone-900">Our Mission</h2>
           </div>
-          <div className="rounded-2xl border border-amber-200 bg-amber-50 px-8 py-8">
+          <div className="rounded-xl border border-amber-200 bg-amber-50 px-8 py-8">
             <p className="text-lg font-semibold text-amber-900 italic leading-9 text-center">
               &ldquo;To make the Word of God accessible, understandable, and shareable
               for every believer — and every seeker — wherever they are in the world.&rdquo;
@@ -98,7 +98,7 @@ export default function AboutPage() {
               { icon: "🌍", title: "Accessibility", body: "God's Word belongs to everyone. We will always offer a free tier and work to make Scripture Lives available across devices and connections." },
               { icon: "🤝", title: "Community", body: "Faith grows in community. Our sharing features are designed to help you bring others into what you are discovering in Scripture." },
             ].map((item) => (
-              <div key={item.title} className="rounded-2xl border border-stone-200 bg-white p-6">
+              <div key={item.title} className="rounded-xl border border-stone-200 bg-white p-6">
                 <span className="text-2xl mb-2 block">{item.icon}</span>
                 <h3 className="font-semibold text-stone-800 mb-2">{item.title}</h3>
                 <p className="text-sm text-stone-500 leading-6">{item.body}</p>
@@ -108,7 +108,7 @@ export default function AboutPage() {
         </section>
 
         {/* Support */}
-        <section className="rounded-2xl bg-gradient-to-br from-stone-900 to-stone-800 px-8 py-10 text-center text-white">
+        <section className="rounded-xl bg-gradient-to-br from-stone-900 to-stone-800 px-8 py-10 text-center text-white">
           <h2 className="text-2xl font-bold text-amber-400 mb-3">Support the Mission</h2>
           <p className="text-stone-300 leading-7 mb-6 max-w-xl mx-auto">
             Scripture Lives is free to use and always will be. If this platform has blessed you,

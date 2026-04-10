@@ -796,7 +796,7 @@ export default function BibleReader() {
               <div className="space-y-8 print:hidden">
 
                 {/* Hero search */}
-                <div className="relative rounded-2xl bg-gradient-to-br from-stone-950 to-stone-800 px-7 py-9 overflow-hidden">
+                <div className="relative rounded-xl bg-gradient-to-br from-stone-950 to-stone-800 px-7 py-9 overflow-hidden">
                   {/* Bible image — layered behind content, top-right */}
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
@@ -848,7 +848,7 @@ export default function BibleReader() {
 
                 {/* Dog-ear — Continue Reading banner */}
                 {lastRead && (
-                  <div className="rounded-2xl border border-blue-200 bg-blue-50 px-5 py-4 flex items-center justify-between gap-4">
+                  <div className="rounded-xl border border-blue-200 bg-blue-50 px-5 py-4 flex items-center justify-between gap-4">
                     <div className="flex items-center gap-3 min-w-0">
                       <span className="text-2xl shrink-0">🔖</span>
                       <div className="min-w-0">
@@ -872,7 +872,7 @@ export default function BibleReader() {
                 )}
 
                 {/* Verse of the Day */}
-                <div className="rounded-2xl border border-amber-200 bg-amber-50 px-6 py-5">
+                <div className="rounded-xl border border-amber-200 bg-amber-50 px-6 py-5">
                   <div className="flex items-center justify-between gap-4 mb-3">
                     <p className="text-xs font-bold uppercase tracking-widest text-amber-600">✦ Verse of the Day</p>
                     <div className="flex items-center gap-3">
@@ -902,7 +902,7 @@ export default function BibleReader() {
                 </div>
 
                 {/* Daily Devotional preview card */}
-                <div className="rounded-2xl border border-indigo-200 bg-gradient-to-br from-indigo-50 to-purple-50 px-6 py-5">
+                <div className="rounded-xl border border-indigo-200 bg-gradient-to-br from-indigo-50 to-purple-50 px-6 py-5">
                   <div className="flex items-center justify-between gap-3 mb-3">
                     <div className="flex items-center gap-2">
                       <span className="text-lg">{devotional.icon}</span>
@@ -948,7 +948,7 @@ export default function BibleReader() {
                       key={card.tab}
                       type="button"
                       onClick={() => setLeftPanelTab(card.tab)}
-                      className={`group relative rounded-2xl bg-gradient-to-br ${card.gradient} p-4 text-left ring-1 ring-gray-200 ${card.ring} transition-all duration-200 hover:shadow-md hover:-translate-y-0.5`}
+                      className={`group relative rounded-xl bg-gradient-to-br ${card.gradient} p-4 text-left ring-1 ring-gray-200 ${card.ring} transition-all duration-200 hover:shadow-md hover:-translate-y-0.5`}
                     >
                       <div className={`inline-flex items-center justify-center rounded-xl ${card.iconBg} p-2.5 mb-3`}>
                         <card.Icon size={20} className={card.iconColor} />
@@ -1032,7 +1032,7 @@ export default function BibleReader() {
             {leftPanelTab === "devotional" && (
               <div className="space-y-6">
                 {/* Header */}
-                <div className="rounded-2xl bg-gradient-to-br from-indigo-900 to-purple-900 px-7 py-8 text-white">
+                <div className="rounded-xl bg-gradient-to-br from-indigo-900 to-purple-900 px-7 py-8 text-white">
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <p className="text-xs font-bold uppercase tracking-widest text-indigo-300 mb-1">
@@ -1054,7 +1054,7 @@ export default function BibleReader() {
                 </div>
 
                 {/* Scripture */}
-                <div className="rounded-2xl border border-indigo-200 bg-indigo-50 px-6 py-5">
+                <div className="rounded-xl border border-indigo-200 bg-indigo-50 px-6 py-5">
                   <p className="text-xs font-bold uppercase tracking-widest text-indigo-500 mb-3">Today&apos;s Scripture</p>
                   <blockquote className="text-lg font-semibold text-indigo-900 italic leading-8 border-l-4 border-indigo-400 pl-4">
                     &ldquo;{devotional.verse}&rdquo;
@@ -1075,19 +1075,19 @@ export default function BibleReader() {
                 </div>
 
                 {/* Reflection */}
-                <div className="rounded-2xl border border-gray-200 bg-white px-6 py-5">
+                <div className="rounded-xl border border-gray-200 bg-white px-6 py-5">
                   <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3">Reflection</p>
                   <p className="text-base text-gray-800 leading-8">{devotional.reflection}</p>
                 </div>
 
                 {/* Prayer */}
-                <div className="rounded-2xl border border-purple-200 bg-purple-50 px-6 py-5">
+                <div className="rounded-xl border border-purple-200 bg-purple-50 px-6 py-5">
                   <p className="text-xs font-bold uppercase tracking-widest text-purple-500 mb-3 flex items-center gap-1.5"><HeartHandshake size={13} /> Today&apos;s Prayer</p>
                   <p className="text-base font-medium text-purple-900 italic leading-7">{devotional.prayer}</p>
                 </div>
 
                 {/* Share CTA */}
-                <div className="rounded-2xl border border-[#1877F2]/30 bg-[#1877F2]/5 px-6 py-5 flex items-center justify-between gap-4">
+                <div className="rounded-xl border border-[#1877F2]/30 bg-[#1877F2]/5 px-6 py-5 flex items-center justify-between gap-4">
                   <div>
                     <p className="text-sm font-semibold text-gray-800">Share today&apos;s devotional</p>
                     <p className="text-xs text-gray-500 mt-0.5">Encourage someone on Facebook with today&apos;s message</p>
@@ -1217,7 +1217,7 @@ export default function BibleReader() {
                         </button>
 
                         {/* Location header */}
-                        <div className="rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4">
+                        <div className="rounded-xl border border-amber-200 bg-amber-50 px-5 py-4">
                           <h3 className="text-base font-bold text-amber-800">{selectedAncientLocation.name}</h3>
                           {selectedAncientLocation.aka && (
                             <p className="text-xs text-amber-600 italic mt-0.5">{selectedAncientLocation.aka}</p>
@@ -1571,7 +1571,7 @@ export default function BibleReader() {
 
                 {/* Result */}
                 {dictResult?.found && dictResult.body && (
-                  <div className="rounded-2xl border border-amber-200 bg-amber-50 p-5 space-y-4">
+                  <div className="rounded-xl border border-amber-200 bg-amber-50 p-5 space-y-4">
                     <div className="flex items-start justify-between gap-4">
                       <h3 className="text-xl font-bold text-amber-800">{dictResult.term}</h3>
                       <a
@@ -1817,7 +1817,7 @@ export default function BibleReader() {
                       return (
                         <div
                           key={prompt.id}
-                          className={`rounded-2xl border transition overflow-hidden ${
+                          className={`rounded-xl border transition overflow-hidden ${
                             isActive ? "border-amber-400 shadow-sm" : "border-gray-200"
                           }`}
                         >
@@ -1865,7 +1865,7 @@ export default function BibleReader() {
 
                 {/* Branded Share button */}
                 {effectivePrompts.length > 0 && studyRef && (
-                  <div className="rounded-2xl border border-[#1877F2]/30 bg-[#1877F2]/5 px-5 py-4 flex items-center justify-between gap-4">
+                  <div className="rounded-xl border border-[#1877F2]/30 bg-[#1877F2]/5 px-5 py-4 flex items-center justify-between gap-4">
                     <div>
                       <p className="text-sm font-semibold text-gray-800">Share this study</p>
                       <p className="text-xs text-gray-500 mt-0.5">Post a branded &ldquo;Grow Your Faith&rdquo; study to Facebook</p>
@@ -2075,7 +2075,7 @@ export default function BibleReader() {
                     {bookmarkedPlaces.map((item, index) => (
                       <article
                         key={item.name}
-                        className="rounded-2xl border border-gray-200 bg-white p-6 print:break-inside-avoid print:border-gray-300 print:bg-white"
+                        className="rounded-xl border border-gray-200 bg-white p-6 print:break-inside-avoid print:border-gray-300 print:bg-white"
                       >
                         <div className="flex items-start justify-between gap-4">
                           <div>
@@ -2151,7 +2151,7 @@ export default function BibleReader() {
                     { name: "Pastor David K.", location: "Kenya", quote: "I use the study prompts every week to prepare my sermons. The questions are deep and thought-provoking.", verse: "John 5:39" },
                     { name: "Rebecca M.", location: "Canada", quote: "Finally a Bible app that works beautifully on my phone without needing data. God bless the team behind this!", verse: "Isaiah 40:8" },
                   ].map((t) => (
-                    <div key={t.name} className="rounded-2xl border border-stone-200 bg-white p-4">
+                    <div key={t.name} className="rounded-xl border border-stone-200 bg-white p-4">
                       <p className="text-sm text-gray-700 italic leading-6 mb-3">&ldquo;{t.quote}&rdquo;</p>
                       <div className="flex items-center justify-between gap-2">
                         <div>
@@ -2171,7 +2171,7 @@ export default function BibleReader() {
                 </div>
 
                 {/* Share your story CTA */}
-                <div className="rounded-2xl border border-amber-200 bg-amber-50 px-5 py-5 text-center">
+                <div className="rounded-xl border border-amber-200 bg-amber-50 px-5 py-5 text-center">
                   <p className="text-sm font-semibold text-amber-800 mb-1">Has Scripture Lives blessed you?</p>
                   <p className="text-xs text-amber-700 mb-3">We&apos;d love to hear your story and share it to encourage others.</p>
                   <a
@@ -2309,7 +2309,7 @@ export default function BibleReader() {
               const text = presenterRef?.text       ?? selectedVerse?.translations?.KJV ?? "";
               if (!ref || !text) return null;
               return (
-                <div className="rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 flex items-start justify-between gap-3">
+                <div className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 flex items-start justify-between gap-3">
                   <div className="min-w-0">
                     <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">Current Verse</p>
                     <p className="text-xs font-semibold text-amber-700 truncate">{ref}</p>
@@ -2346,7 +2346,7 @@ export default function BibleReader() {
               />
             )}
 
-            <section className="rounded-2xl border border-gray-200 bg-gray-50 p-6 shadow-lg">
+            <section className="rounded-xl border border-gray-200 bg-gray-50 p-6 shadow-lg">
               <div className="mb-4 flex items-center justify-between gap-3">
                 <h2 className="text-xl font-semibold">
                   {activeJourney ? `${activeJourney.icon} ${activeJourney.title}` : "Place Explorer"}
@@ -2439,7 +2439,7 @@ export default function BibleReader() {
                   </div>
 
                   {selectedImage && (
-                    <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
+                    <div className="overflow-hidden rounded-xl border border-gray-200 bg-white">
                       <img
                         src={selectedImage.url}
                         alt={selectedPlace.name}
@@ -2568,7 +2568,7 @@ export default function BibleReader() {
               )}
             </section>
 
-            <section className="rounded-2xl border border-gray-200 bg-gray-50 p-4 shadow-lg">
+            <section className="rounded-xl border border-gray-200 bg-gray-50 p-4 shadow-lg">
               <div className="mb-4 flex items-center justify-between">
                 <h2 className="text-xl font-semibold">Map</h2>
                 <span className="text-sm text-gray-500">
@@ -2642,7 +2642,7 @@ export default function BibleReader() {
           onClick={() => setPostPreview(null)}
         >
           <div
-            className="relative w-full max-w-lg rounded-2xl bg-white shadow-2xl overflow-hidden"
+            className="relative w-full max-w-lg rounded-xl bg-white shadow-2xl overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}

@@ -36,7 +36,7 @@ export default function DonatePage() {
       <main className="max-w-2xl mx-auto px-6 py-14 space-y-10">
 
         {/* Verse */}
-        <blockquote className="rounded-2xl border border-amber-200 bg-amber-50 px-8 py-6 text-center">
+        <blockquote className="rounded-xl border border-amber-200 bg-amber-50 px-8 py-6 text-center">
           <p className="text-base font-semibold text-amber-800 italic leading-8">
             &ldquo;Each of you should give what you have decided in your heart to give,
             not reluctantly or under compulsion, for God loves a cheerful giver.&rdquo;
@@ -53,7 +53,7 @@ export default function DonatePage() {
               { icon: "⚙️", label: "Development", desc: "Adding new features like audio Bible, more translations, and study tools." },
               { icon: "🌍", label: "Global Reach", desc: "Expanding access so believers in every nation can study the Word." },
             ].map((item) => (
-              <div key={item.label} className="rounded-2xl border border-stone-200 bg-white p-5 text-center">
+              <div key={item.label} className="rounded-xl border border-stone-200 bg-white p-5 text-center">
                 <span className="text-3xl mb-2 block">{item.icon}</span>
                 <p className="text-sm font-semibold text-stone-800 mb-1">{item.label}</p>
                 <p className="text-xs text-stone-500 leading-5">{item.desc}</p>
@@ -63,7 +63,7 @@ export default function DonatePage() {
         </section>
 
         {/* PayPal Donate */}
-        <section className="rounded-2xl border-2 border-[#0070BA]/30 bg-white px-8 py-8 text-center">
+        <section className="rounded-xl border-2 border-[#0070BA]/30 bg-white px-8 py-8 text-center">
           <h2 className="text-xl font-bold text-stone-800 mb-2">Give via PayPal</h2>
           <p className="text-sm text-stone-500 mb-6">
             Secure, one-time or recurring donation. Any amount is deeply appreciated.
