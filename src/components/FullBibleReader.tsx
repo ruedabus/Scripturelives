@@ -18,6 +18,16 @@ type BookInfo = {
   chapters: number;
 };
 
+type BibleBookmark = {
+  version: BibleVersion;
+  book: string;
+  chapter: number;
+  label: string; // e.g. "KJV · Job 1"
+  savedAt: string;
+};
+
+const BIBLE_BOOKMARKS_KEY = "scripture-lives-bible-bookmarks";
+
 
 const LOCAL_VERSIONS: BibleVersion[] = ["KJV", "ASV", "WEB"];
 const CLOUD_VERSIONS: BibleVersion[] = ["NIV", "NLT", "AMP"];
@@ -197,6 +207,40 @@ export default function FullBibleReader({
   const [totalChapters, setTotalChapters] = useState<number>(1);
   const [verses, setVerses] = useState<BibleVerse[]>([]);
   const [loading, setLoading] = useState(false);
+
+  // ── Bible bookmarks ────────────────────────────────────────────────────────
+  const [bibleBookmarks, setBibleBookmarks] = useState<BibleBookmark[]>([]);
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(BIBLE_BOOKMARKS_KEY);
+      if (stored) setBibleBookmarks(JSON.parse(stored));
+    } catch { /* ignore */ }
+  }, []);
+
+  useEffect(() => {
+    try { localStorage.setItem(BIBLE_BOOKMARKS_KEY, JSON.stringify(bibleBookmarks)); }
+    catch { /* ignore */ }
+  }, [bibleBookmarks]);
+
+  const currentBookmarkKey = `${version}|${selectedBook}|${selectedChapter}`;
+  const isCurrentBookmarked = bibleBookmarks.some(
+    (b) => `${b.version}|${b.book}|${b.chapter}` === currentBookmarkKey
+  );
+
+  const toggleBibleBookmark = useCallback(() => {
+    setBibleBookmarks((prev) => {
+      const exists = prev.some((b) => `${b.version}|${b.book}|${b.chapter}` === currentBookmarkKey);
+      if (exists) return prev.filter((b) => `${b.version}|${b.book}|${b.chapter}` !== currentBookmarkKey);
+      return [...prev, {
+        version,
+        book: selectedBook,
+        chapter: selectedChapter,
+        label: `${version} · ${selectedBook} ${selectedChapter}`,
+        savedAt: new Date().toISOString(),
+      }];
+    });
+  }, [currentBookmarkKey, version, selectedBook, selectedChapter]);
   const [error, setError] = useState("");
   const [showPicker, setShowPicker] = useState(true);
 
@@ -505,12 +549,32 @@ export default function FullBibleReader({
 
       {/* Bottom chapter nav */}
       {!loading && verses.length > 0 && (
-        <div className="bg-stone-900 flex justify-between px-5 py-3">
+        <div className="bg-stone-900 flex items-center justify-between px-5 py-3 gap-3">
           <button type="button" onClick={handlePrevChapter} disabled={selectedChapter <= 1}
             className="flex items-center gap-2 rounded-lg bg-stone-700 hover:bg-stone-600 px-4 py-2 text-sm font-semibold text-stone-300 hover:text-white disabled:opacity-30 transition">
             ← Previous
           </button>
-          <span className="text-stone-500 text-xs self-center">{selectedBook} · Ch. {selectedChapter} of {totalChapters}</span>
+
+          {/* Centre: reference + bookmark */}
+          <div className="flex items-center gap-2">
+            <span className="text-stone-500 text-xs">{selectedBook} · Ch. {selectedChapter} of {totalChapters}</span>
+            <button
+              type="button"
+              onClick={toggleBibleBookmark}
+              title={isCurrentBookmarked ? "Remove bookmark" : "Bookmark this chapter"}
+              className={`flex items-center justify-center w-7 h-7 rounded-lg transition ${
+                isCurrentBookmarked
+                  ? "bg-amber-500 text-stone-900 hover:bg-amber-400"
+                  : "bg-stone-700 text-stone-400 hover:bg-stone-600 hover:text-amber-400"
+              }`}
+            >
+              {/* Star icon — filled when bookmarked */}
+              <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill={isCurrentBookmarked ? "currentColor" : "none"} stroke="currentColor" strokeWidth={2}>
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+              </svg>
+            </button>
+          </div>
+
           <button type="button" onClick={handleNextChapter} disabled={selectedChapter >= totalChapters}
             className="flex items-center gap-2 rounded-lg bg-stone-700 hover:bg-stone-600 px-4 py-2 text-sm font-semibold text-stone-300 hover:text-white disabled:opacity-30 transition">
             Next →
