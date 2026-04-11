@@ -766,7 +766,7 @@ export default function BibleReader() {
               <img
                 src="/FT_transparent_logo.png"
                 alt="Faith Tails"
-                className="shrink-0 w-6 h-6 rounded-full object-cover ring-1 ring-stone-600 group-hover:ring-amber-400 transition"
+                className="shrink-0 w-7 h-7 rounded-full object-contain bg-white p-0.5 ring-1 ring-stone-600 group-hover:ring-amber-400 transition"
               />
               <span>Faith Tails on YouTube</span>
             </a>
