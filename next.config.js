@@ -27,8 +27,8 @@ const securityHeaders = [
       "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://pagead2.googlesyndication.com https://www.googletagmanager.com https://www.google-analytics.com",
       // Styles: self + inline (Next.js uses inline styles)
       "style-src 'self' 'unsafe-inline'",
-      // Images: self + Wikipedia/Wikimedia + YouTube thumbs + data URIs
-      "img-src 'self' data: blob: https://*.wikimedia.org https://*.wikipedia.org https://i.ytimg.com https://yt3.ggpht.com https://www.youtube.com",
+      // Images: self + Wikipedia/Wikimedia + YouTube thumbs + map tiles + data URIs
+      "img-src 'self' data: blob: https://*.wikimedia.org https://*.wikipedia.org https://i.ytimg.com https://yt3.ggpht.com https://www.youtube.com https://*.tile.openstreetmap.org https://*.basemaps.cartocdn.com https://tile.openstreetmap.org",
       // Fonts: self only
       "font-src 'self'",
       // Frames: YouTube embeds only
