@@ -27,6 +27,23 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Only format=docx is supported" }, { status: 400 });
   }
 
+  // ── Input validation ────────────────────────────────────────────────
+  // Guard against oversized payloads being passed to the Python subprocess
+  if (!Array.isArray(bookmarks) || bookmarks.length > 500) {
+    return NextResponse.json({ error: "Invalid or oversized bookmarks" }, { status: 400 });
+  }
+  if (!Array.isArray(sessions) || sessions.length > 500) {
+    return NextResponse.json({ error: "Invalid or oversized sessions" }, { status: 400 });
+  }
+  if (typeof notes !== "object" || notes === null || Array.isArray(notes)) {
+    return NextResponse.json({ error: "Invalid notes payload" }, { status: 400 });
+  }
+  // Rough total size check — reject payloads larger than 2 MB serialised
+  const rawPayloadSize = JSON.stringify({ bookmarks, notes, sessions }).length;
+  if (rawPayloadSize > 2_000_000) {
+    return NextResponse.json({ error: "Export payload too large" }, { status: 413 });
+  }
+
   // Path to the Python script (relative to project root at runtime)
   const scriptPath = path.join(process.cwd(), "scripts", "generate_docx.py");
 

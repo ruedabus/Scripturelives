@@ -66,15 +66,18 @@ Verse Reference: ${verseReference}
 Verse Text: ${verseText}
 `.trim();
 
-    const response = await fetch("https://api.openai.com/v1/responses", {
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${apiKey}`,
       },
       body: JSON.stringify({
-        model: "gpt-5-mini",
-        input: prompt,
+        model: "gpt-4o-mini",
+        messages: [{ role: "user", content: prompt }],
+        response_format: { type: "json_object" },
+        max_tokens: 800,
+        temperature: 0.7,
       }),
     });
 
@@ -88,10 +91,7 @@ Verse Text: ${verseText}
 
     const data = await response.json();
 
-    const text =
-      data.output_text ||
-      data.output?.map((item: any) => item?.content?.map((c: any) => c?.text).join("")).join("") ||
-      "";
+    const text: string = data.choices?.[0]?.message?.content ?? "";
 
     if (!text) {
       return NextResponse.json(

@@ -21,9 +21,16 @@ function loadIndex(): XrefIndex | null {
   return xrefIndex;
 }
 
+// Allowed characters: letters, digits, spaces, colons, hyphens, periods
+const SAFE_REF_RE = /^[\w\s.:,\-–]{1,60}$/;
+
 export async function GET(req: NextRequest) {
   const ref = req.nextUrl.searchParams.get("ref"); // e.g. "John 3:16"
   if (!ref) return NextResponse.json({ error: "Missing ref parameter" }, { status: 400 });
+
+  if (!SAFE_REF_RE.test(ref)) {
+    return NextResponse.json({ error: "Invalid ref parameter" }, { status: 400 });
+  }
 
   const index = loadIndex();
   if (!index) {
