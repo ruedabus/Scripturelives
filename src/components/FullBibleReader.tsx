@@ -27,6 +27,7 @@ type BibleBookmark = {
 };
 
 const BIBLE_BOOKMARKS_KEY = "scripture-lives-bible-bookmarks";
+const LAST_POSITION_KEY  = "scripture-lives-bible-position";
 
 
 const LOCAL_VERSIONS: BibleVersion[] = ["KJV", "ASV", "WEB"];
@@ -200,13 +201,28 @@ export default function FullBibleReader({
   onWordClick,
   onChapterChange,
 }: Props) {
-  const [version, setVersion] = useState<BibleVersion>("KJV");
+  // Restore last reading position from localStorage on first mount
+  const savedPosition = (() => {
+    if (typeof window === "undefined") return null;
+    try { return JSON.parse(localStorage.getItem(LAST_POSITION_KEY) ?? "null"); }
+    catch { return null; }
+  })();
+
+  const [version, setVersion] = useState<BibleVersion>(navTarget?.version ?? savedPosition?.version ?? "KJV");
   const [books, setBooks] = useState<BookInfo[]>([]);
-  const [selectedBook, setSelectedBook] = useState<string>("");
-  const [selectedChapter, setSelectedChapter] = useState<number>(1);
+  const [selectedBook, setSelectedBook] = useState<string>(navTarget?.book ?? savedPosition?.book ?? "");
+  const [selectedChapter, setSelectedChapter] = useState<number>(navTarget?.chapter ?? savedPosition?.chapter ?? 1);
   const [totalChapters, setTotalChapters] = useState<number>(1);
   const [verses, setVerses] = useState<BibleVerse[]>([]);
   const [loading, setLoading] = useState(false);
+
+  // ── Auto-save reading position ─────────────────────────────────────────────
+  useEffect(() => {
+    if (!selectedBook) return;
+    try {
+      localStorage.setItem(LAST_POSITION_KEY, JSON.stringify({ version, book: selectedBook, chapter: selectedChapter }));
+    } catch { /* ignore */ }
+  }, [version, selectedBook, selectedChapter]);
 
   // ── Bible bookmarks ────────────────────────────────────────────────────────
   const [bibleBookmarks, setBibleBookmarks] = useState<BibleBookmark[]>([]);
@@ -242,7 +258,7 @@ export default function FullBibleReader({
     });
   }, [currentBookmarkKey, version, selectedBook, selectedChapter]);
   const [error, setError] = useState("");
-  const [showPicker, setShowPicker] = useState(true);
+  const [showPicker, setShowPicker] = useState(!savedPosition && !navTarget);
 
   // Stable refs for callbacks — prevents infinite loops when parents pass
   // inline arrow functions that get a new reference on every render.
