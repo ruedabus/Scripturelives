@@ -432,11 +432,56 @@ export default function BibleReader() {
     if (selectedPlace) return getPlaceStudyPrompts(selectedPlace, ref);
     if (!ref) return [];
     return [
-      { id: "observation",    title: "Observation",          prompt: `Read ${ref} carefully. What stands out? Who is speaking, who is the audience, and what is the main action or declaration?` },
-      { id: "context",        title: "Historical Context",   prompt: `What was happening in Israel's history when ${ref} was written? How does the political, cultural, or religious context shape its meaning?` },
-      { id: "theological",    title: "Theological Truth",    prompt: `What does ${ref} reveal about God's character, His purposes, or His relationship with humanity? What truth is being communicated?` },
-      { id: "personal",       title: "Personal Application", prompt: `What does ${ref} mean for your life today? Is there a promise to claim, a warning to heed, a command to obey, or an example to follow?` },
-      { id: "discussion",     title: "Group Discussion",     prompt: `If you were leading a Bible study on ${ref}, what 2–3 questions would help your group understand and apply its message?` },
+      {
+        id: "observation",
+        title: "Observation",
+        prompt: `Read ${ref} carefully. What stands out? Who is speaking, who is the audience, and what is the main action or declaration?`,
+        variants: [
+          `What specific words or phrases in ${ref} carry the most weight? What repeated words, contrasts, or comparisons do you notice?`,
+          `Who are the key people in ${ref}? What are they doing, saying, or feeling — and what does that reveal about the situation?`,
+          `What questions does ${ref} raise for you as a first-time reader? What seems surprising, confusing, or unexpected?`,
+        ],
+      },
+      {
+        id: "context",
+        title: "Historical Context",
+        prompt: `What was happening in Israel's history when ${ref} was written? How does the political, cultural, or religious context shape its meaning?`,
+        variants: [
+          `What is the broader narrative context of ${ref}? What comes immediately before and after it — and how does that shape its meaning?`,
+          `Who was the original audience of ${ref}? What struggles, hopes, or questions might they have brought to this text?`,
+          `How does the genre of ${ref} — whether law, prophecy, poetry, letter, or narrative — affect how we should read and interpret it?`,
+        ],
+      },
+      {
+        id: "theological",
+        title: "Theological Truth",
+        prompt: `What does ${ref} reveal about God's character, His purposes, or His relationship with humanity? What truth is being communicated?`,
+        variants: [
+          `How does ${ref} connect to the person and work of Jesus? Is there a foreshadowing, fulfillment, or direct teaching about Christ?`,
+          `What does ${ref} teach about humanity — our condition, our need, or our calling before God?`,
+          `What tension or paradox exists in ${ref}? How does it hold together ideas like grace and justice, suffering and hope, or law and freedom?`,
+        ],
+      },
+      {
+        id: "personal",
+        title: "Personal Application",
+        prompt: `What does ${ref} mean for your life today? Is there a promise to claim, a warning to heed, a command to obey, or an example to follow?`,
+        variants: [
+          `What in ${ref} challenges a belief, attitude, or habit you currently hold? What might need to change?`,
+          `Is there someone in your life — family, friend, coworker — that ${ref} equips you to love or serve better? How?`,
+          `What would it look like to fully trust or obey what ${ref} is saying this week? What is one concrete step you could take?`,
+        ],
+      },
+      {
+        id: "discussion",
+        title: "Group Discussion",
+        prompt: `If you were leading a Bible study on ${ref}, what 2–3 questions would help your group understand and apply its message?`,
+        variants: [
+          `What part of ${ref} do you think your group would find most challenging — and how would you help them wrestle with it honestly?`,
+          `What story, illustration, or real-life example could you use to make the message of ${ref} come alive for your group?`,
+          `How would you close a study on ${ref}? What prayer, response, or commitment would you invite your group into?`,
+        ],
+      },
     ];
   }, [promptOverride, selectedPlace, presenterRef?.reference, selectedVerse?.reference, selectedVerse?.id]);
 
