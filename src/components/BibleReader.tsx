@@ -220,6 +220,8 @@ export default function BibleReader() {
 
   const [aiPrompts, setAiPrompts] = useState<StudyPrompt[]>([]);
   const [activePromptIndex, setActivePromptIndex] = useState(0);
+  // tracks which variant index is showing per prompt id (0 = default prompt)
+  const [promptVariantIndexes, setPromptVariantIndexes] = useState<Record<string, number>>({});
   const [isLoadingPrompts, setIsLoadingPrompts] = useState(false);
   const [promptError, setPromptError] = useState("");
   const [promptCustomRef, setPromptCustomRef] = useState("");
@@ -504,9 +506,10 @@ export default function BibleReader() {
     };
   }, [selectedPlace?.name, presenterRef?.reference, selectedVerse?.id, promptOverride]);
 
-  // Reset to first prompt when context changes
+  // Reset to first prompt and clear variant indexes when context changes
   useEffect(() => {
     setActivePromptIndex(0);
+    setPromptVariantIndexes({});
   }, [selectedPlace?.name, presenterRef?.reference, selectedVerse?.id, promptOverride]);
 
   const handleCopyPost = useCallback((text: string) => {
@@ -1834,6 +1837,17 @@ export default function BibleReader() {
                     {effectivePrompts.map((prompt, idx) => {
                       const isActive = activePromptIndex === idx;
                       const icons = ["🏺", "📖", "✝", "🪞", "🎓"];
+                      // Determine which question to show (default + variants array)
+                      const allVariants = [prompt.prompt, ...(prompt.variants ?? [])];
+                      const variantIdx = promptVariantIndexes[prompt.id] ?? 0;
+                      const displayPrompt = allVariants[variantIdx] ?? prompt.prompt;
+                      const hasVariants = allVariants.length > 1;
+                      const cycleVariant = () => {
+                        setPromptVariantIndexes((prev) => ({
+                          ...prev,
+                          [prompt.id]: ((prev[prompt.id] ?? 0) + 1) % allVariants.length,
+                        }));
+                      };
                       return (
                         <div
                           key={prompt.id}
@@ -1853,6 +1867,12 @@ export default function BibleReader() {
                             <span className={`text-sm font-semibold flex-1 ${isActive ? "text-amber-700" : "text-gray-800"}`}>
                               {prompt.title}
                             </span>
+                            {/* Variant counter badge */}
+                            {hasVariants && (
+                              <span className="text-[10px] text-gray-400 shrink-0 mr-1">
+                                {variantIdx + 1}/{allVariants.length}
+                              </span>
+                            )}
                             <span className={`text-xs shrink-0 ${isActive ? "text-amber-500" : "text-gray-400"}`}>
                               {isActive ? "▲" : "▼"}
                             </span>
@@ -1861,14 +1881,25 @@ export default function BibleReader() {
                           {/* Expanded prompt text */}
                           {isActive && (
                             <div className="px-4 pb-4 pt-1 bg-amber-50 border-t border-amber-100">
-                              <p className="text-sm text-gray-700 leading-7">{prompt.prompt}</p>
-                              <button
-                                type="button"
-                                onClick={() => navigator.clipboard.writeText(prompt.prompt)}
-                                className="mt-3 flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs text-gray-600 hover:border-amber-400 hover:text-amber-700 transition"
-                              >
-                                <Copy size={13} className="inline mr-1" />Copy prompt
-                              </button>
+                              <p className="text-sm text-gray-700 leading-7">{displayPrompt}</p>
+                              <div className="mt-3 flex items-center gap-2 flex-wrap">
+                                <button
+                                  type="button"
+                                  onClick={() => navigator.clipboard.writeText(displayPrompt)}
+                                  className="flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-xs text-gray-600 hover:border-amber-400 hover:text-amber-700 transition"
+                                >
+                                  <Copy size={13} className="inline mr-1" />Copy
+                                </button>
+                                {hasVariants && (
+                                  <button
+                                    type="button"
+                                    onClick={cycleVariant}
+                                    className="flex items-center gap-1 rounded-lg border border-amber-300 bg-white px-3 py-1.5 text-xs font-medium text-amber-700 hover:bg-amber-50 transition"
+                                  >
+                                    Next question →
+                                  </button>
+                                )}
+                              </div>
                             </div>
                           )}
                         </div>
