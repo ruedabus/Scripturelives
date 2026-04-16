@@ -17,8 +17,14 @@ export default function WelcomeModal() {
   if (!show) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 animate-fadeIn">
       <div className="bg-white max-w-md w-full p-6 rounded-2xl shadow-xl text-center">
+	  
+	    <img
+    src="/logo.png"
+    alt="Scripture Lives"
+    className="w-10 mx-auto mb-3"
+  />
         
         <h2 className="text-2xl font-bold mb-3">
           Welcome to Scripture Lives 🙏
