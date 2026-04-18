@@ -14,6 +14,9 @@ import getPlaceStudyPrompts, {
 } from "@/components/getPlaceStudyPrompts";
 import FullBibleReader from "@/components/FullBibleReader";
 import ParallelBibleReader from "@/components/ParallelBibleReader";
+import TopicalBible from "@/components/TopicalBible";
+import PrayerJournal from "@/components/PrayerJournal";
+import TestimonialWall from "@/components/TestimonialWall";
 import { ATLAS_PLACES, ATLAS_BOOKS, type AtlasPlace } from "@/data/atlasPlaces";
 import { ANCIENT_LOCATIONS, type AncientLocation } from "@/data/ancientPlaces";
 import { getTodaysDevotional } from "@/data/devotionals";
@@ -26,7 +29,7 @@ import {
   Home, Feather, BookOpen, Library, Layers, BookText, BookMarked,
   ScrollText, Landmark, Globe, Star, ClipboardList, FileText,
   HeartHandshake, ExternalLink, BookHeart, HandCoins, MapPin, Compass,
-  Copy, Check, Image, Columns3,
+  Copy, Check, Image, Columns3, Heart,
 } from "lucide-react";
 
 const PlaceMap = dynamic(() => import("@/components/PlaceMap"), {
@@ -46,6 +49,8 @@ type LeftPanelTab =
   | "reader"
   | "bible"
   | "parallel"
+  | "topical"
+  | "prayer_journal"
   | "timeline"
   | "commentary"
   | "dictionary"
@@ -775,6 +780,8 @@ export default function BibleReader() {
               {sideNavBtn("reader",        <BookOpen size={16} />,     "Passage Reader")}
               {sideNavBtn("bible",         <Library size={16} />,      "Full Bible")}
               {sideNavBtn("parallel",      <Columns3 size={16} />,     "Parallel Bible")}
+              {sideNavBtn("topical",       <BookText size={16} />,     "Topical Bible")}
+              {sideNavBtn("prayer_journal",<Heart size={16} />,        "Prayer Journal")}
             </div>
             <div>
               <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-widest text-stone-500">Study</p>
@@ -849,6 +856,8 @@ export default function BibleReader() {
               <button type="button" onClick={() => setLeftPanelTab("reader")}        className={tabButtonClass("reader")}><BookOpen size={13} className="inline mr-1" />Reader</button>
               <button type="button" onClick={() => setLeftPanelTab("bible")}         className={tabButtonClass("bible")}><Library size={13} className="inline mr-1" />Full Bible</button>
               <button type="button" onClick={() => setLeftPanelTab("parallel")}     className={tabButtonClass("parallel")}><Columns3 size={13} className="inline mr-1" />Parallel</button>
+              <button type="button" onClick={() => setLeftPanelTab("topical")}      className={tabButtonClass("topical")}><BookText size={13} className="inline mr-1" />Topical</button>
+              <button type="button" onClick={() => setLeftPanelTab("prayer_journal")} className={tabButtonClass("prayer_journal")}><Heart size={13} className="inline mr-1" />Prayer</button>
               <button type="button" onClick={() => setLeftPanelTab("timeline")}      className={tabButtonClass("timeline")}><Layers size={13} className="inline mr-1" />Timeline</button>
               <button type="button" onClick={() => setLeftPanelTab("commentary")}    className={tabButtonClass("commentary")}><BookText size={13} className="inline mr-1" />Commentary</button>
               <button type="button" onClick={() => setLeftPanelTab("dictionary")}    className={tabButtonClass("dictionary")}><BookMarked size={13} className="inline mr-1" />Dictionary</button>
@@ -1016,6 +1025,8 @@ export default function BibleReader() {
                     { tab: "study_prompts"as LeftPanelTab, Icon: ScrollText, label: "Study Prompts",   desc: "Reflection & discussion",    gradient: "from-indigo-50 to-purple-50",  ring: "hover:ring-indigo-300",  iconBg: "bg-indigo-100",  iconColor: "text-indigo-600" },
                     { tab: "timeline"     as LeftPanelTab, Icon: Layers,     label: "Timeline",        desc: "Biblical history eras",      gradient: "from-sky-50 to-blue-50",       ring: "hover:ring-sky-300",     iconBg: "bg-sky-100",     iconColor: "text-sky-600"    },
                     { tab: "parallel"     as LeftPanelTab, Icon: Columns3,   label: "Parallel Bible",  desc: "Compare 2–4 translations",   gradient: "from-violet-50 to-purple-50",  ring: "hover:ring-violet-300",  iconBg: "bg-violet-100",  iconColor: "text-violet-600" },
+                    { tab: "topical"      as LeftPanelTab, Icon: BookText,   label: "Topical Bible",   desc: "Browse by topic & theme",    gradient: "from-emerald-50 to-teal-50",   ring: "hover:ring-emerald-300", iconBg: "bg-emerald-100", iconColor: "text-emerald-600"},
+                    { tab: "prayer_journal" as LeftPanelTab, Icon: Heart,   label: "Prayer Journal",  desc: "Write & track your prayers", gradient: "from-rose-50 to-pink-50",      ring: "hover:ring-rose-300",    iconBg: "bg-rose-100",    iconColor: "text-rose-600"   },
                   ]).map(card => (
                     <button
                       key={card.tab}
@@ -1211,6 +1222,23 @@ export default function BibleReader() {
             {leftPanelTab === "parallel" && (
               <div className="h-full flex flex-col -mx-4 -mt-2">
                 <ParallelBibleReader />
+              </div>
+            )}
+
+            {leftPanelTab === "topical" && (
+              <div className="h-full flex flex-col -mx-4 -mt-2">
+                <TopicalBible
+                  onOpenVerse={(ref) => {
+                    setPromptCustomRef(ref);
+                    setLeftPanelTab("reader");
+                  }}
+                />
+              </div>
+            )}
+
+            {leftPanelTab === "prayer_journal" && (
+              <div className="h-full flex flex-col -mx-4 -mt-2">
+                <PrayerJournal />
               </div>
             )}
 
@@ -2243,51 +2271,8 @@ export default function BibleReader() {
 
             {/* ── TESTIMONIALS TAB ─────────────────────────────────────────── */}
             {leftPanelTab === "testimonials" && (
-              <div className="space-y-5">
-                <div className="border-b border-gray-200 pb-3">
-                  <h2 className="text-lg font-semibold text-amber-700 flex items-center gap-2"><HeartHandshake size={18} /> Testimonials</h2>
-                  <p className="text-xs text-gray-400 mt-0.5">What God is doing through His Word in people&apos;s lives</p>
-                </div>
-
-                {/* Curated testimonials */}
-                <div className="space-y-4">
-                  {[
-                    { name: "Maria G.", location: "Texas", quote: "Scripture Lives helped me find comfort in Psalm 23 during the hardest season of my life. I read it every morning now.", verse: "Psalm 23:1" },
-                    { name: "James T.", location: "Nigeria", quote: "I have been searching for a free Bible tool that doesn't require a login. This is exactly what I needed for my Bible study group.", verse: "2 Timothy 2:15" },
-                    { name: "Sarah L.", location: "Philippines", quote: "The daily devotionals keep me rooted in the Word. I share them with my church group on Facebook every morning.", verse: "Psalm 119:105" },
-                    { name: "Pastor David K.", location: "Kenya", quote: "I use the study prompts every week to prepare my sermons. The questions are deep and thought-provoking.", verse: "John 5:39" },
-                    { name: "Rebecca M.", location: "Canada", quote: "Finally a Bible app that works beautifully on my phone without needing data. God bless the team behind this!", verse: "Isaiah 40:8" },
-                  ].map((t) => (
-                    <div key={t.name} className="rounded-xl border border-stone-200 bg-white p-4">
-                      <p className="text-sm text-gray-700 italic leading-6 mb-3">&ldquo;{t.quote}&rdquo;</p>
-                      <div className="flex items-center justify-between gap-2">
-                        <div>
-                          <p className="text-xs font-semibold text-stone-800">{t.name}</p>
-                          <p className="text-[10px] text-stone-400">{t.location}</p>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => { setPromptCustomRef(t.verse); setLeftPanelTab("study_prompts"); }}
-                          className="text-[10px] text-amber-600 hover:underline font-medium"
-                        >
-                          {t.verse} →
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Share your story CTA */}
-                <div className="rounded-xl border border-amber-200 bg-amber-50 px-5 py-5 text-center">
-                  <p className="text-sm font-semibold text-amber-800 mb-1">Has Scripture Lives blessed you?</p>
-                  <p className="text-xs text-amber-700 mb-3">We&apos;d love to hear your story and share it to encourage others.</p>
-                  <a
-                    href="mailto:info@scripturelives.com?subject=My Scripture Lives Testimony"
-                    className="inline-block rounded-lg bg-amber-500 px-4 py-2 text-xs font-semibold text-white hover:bg-amber-600 transition"
-                  >
-                    Share Your Testimony
-                  </a>
-                </div>
+              <div className="h-full flex flex-col -mx-4 -mt-2">
+                <TestimonialWall />
               </div>
             )}
 
