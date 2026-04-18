@@ -13,6 +13,7 @@ import getPlaceStudyPrompts, {
   StudyPrompt,
 } from "@/components/getPlaceStudyPrompts";
 import FullBibleReader from "@/components/FullBibleReader";
+import ParallelBibleReader from "@/components/ParallelBibleReader";
 import { ATLAS_PLACES, ATLAS_BOOKS, type AtlasPlace } from "@/data/atlasPlaces";
 import { ANCIENT_LOCATIONS, type AncientLocation } from "@/data/ancientPlaces";
 import { getTodaysDevotional } from "@/data/devotionals";
@@ -25,7 +26,7 @@ import {
   Home, Feather, BookOpen, Library, Layers, BookText, BookMarked,
   ScrollText, Landmark, Globe, Star, ClipboardList, FileText,
   HeartHandshake, ExternalLink, BookHeart, HandCoins, MapPin, Compass,
-  Copy, Check, Image,
+  Copy, Check, Image, Columns3,
 } from "lucide-react";
 
 const PlaceMap = dynamic(() => import("@/components/PlaceMap"), {
@@ -44,6 +45,7 @@ type LeftPanelTab =
   | "devotional"
   | "reader"
   | "bible"
+  | "parallel"
   | "timeline"
   | "commentary"
   | "dictionary"
@@ -772,6 +774,7 @@ export default function BibleReader() {
               {sideNavBtn("devotional",    <Feather size={16} />,      "Daily Devotional")}
               {sideNavBtn("reader",        <BookOpen size={16} />,     "Passage Reader")}
               {sideNavBtn("bible",         <Library size={16} />,      "Full Bible")}
+              {sideNavBtn("parallel",      <Columns3 size={16} />,     "Parallel Bible")}
             </div>
             <div>
               <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-widest text-stone-500">Study</p>
@@ -845,6 +848,7 @@ export default function BibleReader() {
               <button type="button" onClick={() => setLeftPanelTab("devotional")}   className={tabButtonClass("devotional")}><Feather size={13} className="inline mr-1" />Devotional</button>
               <button type="button" onClick={() => setLeftPanelTab("reader")}        className={tabButtonClass("reader")}><BookOpen size={13} className="inline mr-1" />Reader</button>
               <button type="button" onClick={() => setLeftPanelTab("bible")}         className={tabButtonClass("bible")}><Library size={13} className="inline mr-1" />Full Bible</button>
+              <button type="button" onClick={() => setLeftPanelTab("parallel")}     className={tabButtonClass("parallel")}><Columns3 size={13} className="inline mr-1" />Parallel</button>
               <button type="button" onClick={() => setLeftPanelTab("timeline")}      className={tabButtonClass("timeline")}><Layers size={13} className="inline mr-1" />Timeline</button>
               <button type="button" onClick={() => setLeftPanelTab("commentary")}    className={tabButtonClass("commentary")}><BookText size={13} className="inline mr-1" />Commentary</button>
               <button type="button" onClick={() => setLeftPanelTab("dictionary")}    className={tabButtonClass("dictionary")}><BookMarked size={13} className="inline mr-1" />Dictionary</button>
@@ -1011,6 +1015,7 @@ export default function BibleReader() {
                     { tab: "ancient_world"as LeftPanelTab, Icon: Landmark,   label: "Ancient Places",  desc: "Major locations & journeys", gradient: "from-stone-50 to-amber-50",    ring: "hover:ring-stone-300",   iconBg: "bg-stone-100",   iconColor: "text-stone-600"  },
                     { tab: "study_prompts"as LeftPanelTab, Icon: ScrollText, label: "Study Prompts",   desc: "Reflection & discussion",    gradient: "from-indigo-50 to-purple-50",  ring: "hover:ring-indigo-300",  iconBg: "bg-indigo-100",  iconColor: "text-indigo-600" },
                     { tab: "timeline"     as LeftPanelTab, Icon: Layers,     label: "Timeline",        desc: "Biblical history eras",      gradient: "from-sky-50 to-blue-50",       ring: "hover:ring-sky-300",     iconBg: "bg-sky-100",     iconColor: "text-sky-600"    },
+                    { tab: "parallel"     as LeftPanelTab, Icon: Columns3,   label: "Parallel Bible",  desc: "Compare 2–4 translations",   gradient: "from-violet-50 to-purple-50",  ring: "hover:ring-violet-300",  iconBg: "bg-violet-100",  iconColor: "text-violet-600" },
                   ]).map(card => (
                     <button
                       key={card.tab}
@@ -1200,6 +1205,12 @@ export default function BibleReader() {
                     setVisualQuery(null);
                   }}
                 />
+              </div>
+            )}
+
+            {leftPanelTab === "parallel" && (
+              <div className="h-full flex flex-col -mx-4 -mt-2">
+                <ParallelBibleReader />
               </div>
             )}
 
