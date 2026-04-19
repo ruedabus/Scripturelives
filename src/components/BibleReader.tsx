@@ -20,6 +20,7 @@ import TestimonialWall from "@/components/TestimonialWall";
 import OutlineBuilder from "@/components/OutlineBuilder";
 import MemorizationFlashcards from "@/components/MemorizationFlashcards";
 import ReadingProgress from "@/components/ReadingProgress";
+import BibleCharacterProfiles from "@/components/BibleCharacterProfiles";
 import { ATLAS_PLACES, ATLAS_BOOKS, type AtlasPlace } from "@/data/atlasPlaces";
 import { ANCIENT_LOCATIONS, type AncientLocation } from "@/data/ancientPlaces";
 import { getTodaysDevotional } from "@/data/devotionals";
@@ -32,7 +33,7 @@ import {
   Home, Feather, BookOpen, Library, Layers, BookText, BookMarked,
   ScrollText, Landmark, Globe, Star, ClipboardList, FileText,
   HeartHandshake, ExternalLink, BookHeart, HandCoins, MapPin, Compass,
-  Copy, Check, Image, Columns3, Heart, Menu, X, Brain, BarChart2,
+  Copy, Check, Image, Columns3, Heart, Menu, X, Brain, BarChart2, Users,
 } from "lucide-react";
 
 const PlaceMap = dynamic(() => import("@/components/PlaceMap"), {
@@ -68,7 +69,8 @@ type LeftPanelTab =
   | "books"
   | "outline"
   | "flashcards"
-  | "reading_progress";
+  | "reading_progress"
+  | "characters";
 
 // ── Bible book lists ──────────────────────────────────────────────────────
 const OT_SECTIONS = [
@@ -827,6 +829,7 @@ export default function BibleReader() {
               <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-widest text-stone-500">Explore</p>
               {sideNavBtn("ancient_world", <Landmark size={16} />,     "Ancient Places")}
               {sideNavBtn("atlas",         <Globe size={16} />,        "Bible Atlas")}
+              {sideNavBtn("characters",    <Users size={16} />,        "Character Profiles")}
             </div>
             <div>
               <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-widest text-stone-500">My Library</p>
@@ -1043,6 +1046,7 @@ export default function BibleReader() {
                     { tab: "outline"          as LeftPanelTab, Icon: FileText,  label: "Sermon Outlines",    desc: "AI-generated study outlines",  gradient: "from-slate-50 to-gray-50",     ring: "hover:ring-slate-300",   iconBg: "bg-slate-100",   iconColor: "text-slate-600"   },
                     { tab: "flashcards"       as LeftPanelTab, Icon: Brain,     label: "Memorization",       desc: "Flashcards & spaced review",   gradient: "from-fuchsia-50 to-purple-50", ring: "hover:ring-fuchsia-300",  iconBg: "bg-fuchsia-100", iconColor: "text-fuchsia-600" },
                     { tab: "reading_progress" as LeftPanelTab, Icon: BarChart2, label: "Reading Progress",   desc: "Track your Bible journey",     gradient: "from-teal-50 to-cyan-50",      ring: "hover:ring-teal-300",    iconBg: "bg-teal-100",    iconColor: "text-teal-600"    },
+                    { tab: "characters"       as LeftPanelTab, Icon: Users,    label: "Character Profiles", desc: "Biographies of Bible figures",  gradient: "from-orange-50 to-amber-50",   ring: "hover:ring-orange-300",  iconBg: "bg-orange-100",  iconColor: "text-orange-600"  },
                   ]).map(card => (
                     <button
                       key={card.tab}
@@ -2426,6 +2430,17 @@ export default function BibleReader() {
               <ReadingProgress />
             )}
 
+            {/* ── BIBLE CHARACTER PROFILES ──────────────────────────────────── */}
+            {leftPanelTab === "characters" && (
+              <BibleCharacterProfiles
+                onOpenVerse={(ref) => {
+                  const m = ref.match(/^(.+?)\s+(\d+):(\d+)$/);
+                  if (m) setReaderJumpRef({ book: m[1], chapter: parseInt(m[2], 10), verse: parseInt(m[3], 10) });
+                  setLeftPanelTab("reader");
+                }}
+              />
+            )}
+
           </section>
 
           {/* RIGHT PANEL */}
@@ -2607,6 +2622,7 @@ export default function BibleReader() {
             <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 px-4 mb-1">Explore</p>
             {drawerBtn("ancient_world", <Landmark size={16} />,     "Ancient World Map")}
             {drawerBtn("atlas",         <Globe size={16} />,        "Atlas")}
+            {drawerBtn("characters",    <Users size={16} />,        "Character Profiles")}
             {drawerBtn("resources",     <ExternalLink size={16} />, "Resources")}
             {drawerBtn("books",         <BookHeart size={16} />,    "Christian Books")}
           </div>
