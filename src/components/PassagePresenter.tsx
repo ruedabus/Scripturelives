@@ -42,6 +42,8 @@ type Props = {
   onVerseChange?: (ref: { book: string; chapter: number; verse?: number; reference: string; text: string }) => void;
   /** Pre-populate the search box when navigating from the home-page search */
   initialQuery?: string;
+  /** Jump directly to a parsed verse — bypasses the search box entirely */
+  jumpToRef?: { book: string; chapter: number; verse: number } | null;
 };
 
 // ---------------------------------------------------------------------------
@@ -215,6 +217,7 @@ export default function PassagePresenter({
   onNavigateFullBible,
   onVerseChange,
   initialQuery = "",
+  jumpToRef,
 }: Props) {
   // ── Search ────────────────────────────────────────────────────────────────
   const [query, setQuery] = useState(initialQuery);
@@ -246,6 +249,16 @@ export default function PassagePresenter({
   useEffect(() => {
     if (initialQuery) setQuery(initialQuery);
   }, [initialQuery]);
+
+  // Jump directly to a verse when parent provides parsed coordinates
+  useEffect(() => {
+    if (!jumpToRef) return;
+    setPresentBook(jumpToRef.book);
+    setPresentChapter(jumpToRef.chapter);
+    setPresentVerse(jumpToRef.verse);
+    setQuery("");
+    setSearchResults([]);
+  }, [jumpToRef]);
 
   // ── Search effect ─────────────────────────────────────────────────────────
   useEffect(() => {

@@ -201,6 +201,7 @@ export default function BibleReader() {
   const [leftPanelTab, setLeftPanelTab] = useState<LeftPanelTab>("home");
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const [homeQuery, setHomeQuery] = useState("");
+  const [readerJumpRef, setReaderJumpRef] = useState<{ book: string; chapter: number; verse: number } | null>(null);
 
   // Dictionary state
   const [dictQuery, setDictQuery] = useState("");
@@ -1210,6 +1211,7 @@ export default function BibleReader() {
                 onNavigateFullBible={handlePresenterNavigateFullBible}
                 onVerseChange={handlePresenterVerseChange}
                 initialQuery={homeQuery}
+                jumpToRef={readerJumpRef}
               />
             )}
 
@@ -1244,7 +1246,11 @@ export default function BibleReader() {
               <div className="h-full flex flex-col -mx-4 -mt-2">
                 <TopicalBible
                   onOpenVerse={(ref) => {
-                    setPromptCustomRef(ref);
+                    // Parse "Book Chapter:Verse" e.g. "John 11:35", "1 Corinthians 13:4"
+                    const m = ref.match(/^(.+?)\s+(\d+):(\d+)$/);
+                    if (m) {
+                      setReaderJumpRef({ book: m[1], chapter: parseInt(m[2], 10), verse: parseInt(m[3], 10) });
+                    }
                     setLeftPanelTab("reader");
                   }}
                 />
