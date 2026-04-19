@@ -29,7 +29,7 @@ import {
   Home, Feather, BookOpen, Library, Layers, BookText, BookMarked,
   ScrollText, Landmark, Globe, Star, ClipboardList, FileText,
   HeartHandshake, ExternalLink, BookHeart, HandCoins, MapPin, Compass,
-  Copy, Check, Image, Columns3, Heart,
+  Copy, Check, Image, Columns3, Heart, Menu, X,
 } from "lucide-react";
 
 const PlaceMap = dynamic(() => import("@/components/PlaceMap"), {
@@ -193,6 +193,7 @@ export default function BibleReader() {
   const [ancientLocationSearch, setAncientLocationSearch] = useState("");
   const [activeJourneyStop, setActiveJourneyStop] = useState<number | null>(null);
   const [leftPanelTab, setLeftPanelTab] = useState<LeftPanelTab>("home");
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const [homeQuery, setHomeQuery] = useState("");
 
   // Dictionary state
@@ -740,13 +741,36 @@ export default function BibleReader() {
     </button>
   );
 
-  // Tab button (mobile)
+  // Tab button (mobile — legacy, kept for reference)
   const tabButtonClass = (tab: LeftPanelTab) =>
     `rounded-lg px-3 py-1.5 text-xs font-medium transition whitespace-nowrap ${
       leftPanelTab === tab
         ? "bg-amber-500 text-gray-900"
         : "text-gray-600 hover:bg-gray-100"
     }`;
+
+  // Mobile nav helper — navigate and close drawer
+  const mobileNav = (tab: LeftPanelTab) => {
+    setLeftPanelTab(tab);
+    setMobileDrawerOpen(false);
+  };
+
+  // Drawer row button
+  const drawerBtn = (tab: LeftPanelTab, icon: React.ReactNode, label: string) => (
+    <button
+      key={tab}
+      type="button"
+      onClick={() => mobileNav(tab)}
+      className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition w-full text-left ${
+        leftPanelTab === tab
+          ? "bg-amber-500 text-stone-900"
+          : "text-gray-700 hover:bg-amber-50"
+      }`}
+    >
+      <span className={`shrink-0 ${leftPanelTab === tab ? "text-stone-900" : "text-amber-600"}`}>{icon}</span>
+      {label}
+    </button>
+  );
 
   return (
     <main className="min-h-screen bg-white text-gray-900 print:bg-white print:text-black">
@@ -847,30 +871,9 @@ export default function BibleReader() {
         <div className="flex-1 xl:grid xl:grid-cols-[1fr_400px] min-h-screen print:block">
 
           {/* CENTER — main content */}
-          <section className="bg-gray-50 p-4 xl:p-6 min-h-screen print:border-none print:bg-white print:p-0 print:shadow-none">
+          <section className="bg-gray-50 p-4 xl:p-6 min-h-screen pb-24 xl:pb-6 print:border-none print:bg-white print:p-0 print:shadow-none">
 
-            {/* Mobile tab bar */}
-            <div className="xl:hidden mb-4 flex flex-wrap gap-1.5 rounded-xl border border-gray-200 bg-white p-2 print:hidden">
-              <button type="button" onClick={() => setLeftPanelTab("home")}          className={tabButtonClass("home")}><Home size={13} className="inline mr-1" />Home</button>
-              <button type="button" onClick={() => setLeftPanelTab("devotional")}   className={tabButtonClass("devotional")}><Feather size={13} className="inline mr-1" />Devotional</button>
-              <button type="button" onClick={() => setLeftPanelTab("reader")}        className={tabButtonClass("reader")}><BookOpen size={13} className="inline mr-1" />Reader</button>
-              <button type="button" onClick={() => setLeftPanelTab("bible")}         className={tabButtonClass("bible")}><Library size={13} className="inline mr-1" />Full Bible</button>
-              <button type="button" onClick={() => setLeftPanelTab("parallel")}     className={tabButtonClass("parallel")}><Columns3 size={13} className="inline mr-1" />Parallel</button>
-              <button type="button" onClick={() => setLeftPanelTab("topical")}      className={tabButtonClass("topical")}><BookText size={13} className="inline mr-1" />Topical</button>
-              <button type="button" onClick={() => setLeftPanelTab("prayer_journal")} className={tabButtonClass("prayer_journal")}><Heart size={13} className="inline mr-1" />Prayer</button>
-              <button type="button" onClick={() => setLeftPanelTab("timeline")}      className={tabButtonClass("timeline")}><Layers size={13} className="inline mr-1" />Timeline</button>
-              <button type="button" onClick={() => setLeftPanelTab("commentary")}    className={tabButtonClass("commentary")}><BookText size={13} className="inline mr-1" />Commentary</button>
-              <button type="button" onClick={() => setLeftPanelTab("dictionary")}    className={tabButtonClass("dictionary")}><BookMarked size={13} className="inline mr-1" />Dictionary</button>
-              <button type="button" onClick={() => setLeftPanelTab("ancient_world")} className={tabButtonClass("ancient_world")}><Landmark size={13} className="inline mr-1" />Ancient Places</button>
-              <button type="button" onClick={() => setLeftPanelTab("atlas")}         className={tabButtonClass("atlas")}><Globe size={13} className="inline mr-1" />Atlas</button>
-              <button type="button" onClick={() => setLeftPanelTab("study_prompts")} className={tabButtonClass("study_prompts")}><ScrollText size={13} className="inline mr-1" />Study Prompts</button>
-              <button type="button" onClick={() => setLeftPanelTab("bookmarks")}     className={tabButtonClass("bookmarks")}><Star size={13} className="inline mr-1" />Bookmarks</button>
-              <button type="button" onClick={() => setLeftPanelTab("sessions")}      className={tabButtonClass("sessions")}><ClipboardList size={13} className="inline mr-1" />Sessions</button>
-              <button type="button" onClick={() => setLeftPanelTab("study_sheet")}   className={tabButtonClass("study_sheet")}><FileText size={13} className="inline mr-1" />Study Sheet</button>
-              <button type="button" onClick={() => setLeftPanelTab("testimonials")}  className={tabButtonClass("testimonials")}><HeartHandshake size={13} className="inline mr-1" />Testimonials</button>
-              <button type="button" onClick={() => setLeftPanelTab("resources")}     className={tabButtonClass("resources")}><ExternalLink size={13} className="inline mr-1" />Resources</button>
-              <button type="button" onClick={() => setLeftPanelTab("books")}         className={tabButtonClass("books")}><BookHeart size={13} className="inline mr-1" />Christian Books</button>
-            </div>
+            {/* Mobile: no inline nav strip — replaced by fixed bottom bar below */}
 
             {/* ── HOME TAB ─────────────────────────────────────────────────── */}
             {leftPanelTab === "home" && (
@@ -2807,6 +2810,112 @@ export default function BibleReader() {
           </div>
         </div>
       )}
+
+      {/* ── MOBILE BOTTOM NAV BAR ────────────────────────────────────────── */}
+      {/* Backdrop */}
+      {mobileDrawerOpen && (
+        <div
+          className="xl:hidden fixed inset-0 z-40 bg-black/40 print:hidden"
+          onClick={() => setMobileDrawerOpen(false)}
+        />
+      )}
+
+      {/* Slide-up drawer */}
+      <div
+        className={`xl:hidden fixed inset-x-0 bottom-16 z-50 bg-white rounded-t-2xl shadow-2xl border-t border-gray-200 transition-transform duration-300 print:hidden ${
+          mobileDrawerOpen ? "translate-y-0" : "translate-y-full"
+        }`}
+      >
+        {/* Drag handle */}
+        <div className="flex justify-center pt-3 pb-1">
+          <div className="w-10 h-1 rounded-full bg-gray-300" />
+        </div>
+
+        <div className="px-4 pb-6 pt-2 max-h-[70vh] overflow-y-auto space-y-4">
+
+          {/* Read */}
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 px-4 mb-1">Read</p>
+            {drawerBtn("reader",       <BookOpen size={16} />,      "Passage Reader")}
+            {drawerBtn("bible",        <Library size={16} />,       "Full Bible")}
+            {drawerBtn("parallel",     <Columns3 size={16} />,      "Parallel Bible")}
+            {drawerBtn("devotional",   <Feather size={16} />,       "Devotional")}
+          </div>
+
+          {/* Study */}
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 px-4 mb-1">Study</p>
+            {drawerBtn("study_prompts", <ScrollText size={16} />,   "Study Prompts")}
+            {drawerBtn("topical",       <BookText size={16} />,     "Topical Bible")}
+            {drawerBtn("commentary",    <BookText size={16} />,     "Commentary")}
+            {drawerBtn("dictionary",    <BookMarked size={16} />,   "Dictionary / Lexicon")}
+            {drawerBtn("timeline",      <Layers size={16} />,       "Timeline")}
+          </div>
+
+          {/* Explore */}
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 px-4 mb-1">Explore</p>
+            {drawerBtn("ancient_world", <Landmark size={16} />,     "Ancient World Map")}
+            {drawerBtn("atlas",         <Globe size={16} />,        "Atlas")}
+            {drawerBtn("resources",     <ExternalLink size={16} />, "Resources")}
+            {drawerBtn("books",         <BookHeart size={16} />,    "Christian Books")}
+          </div>
+
+          {/* My Library */}
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 px-4 mb-1">My Library</p>
+            {drawerBtn("prayer_journal", <Heart size={16} />,        "Prayer Journal")}
+            {drawerBtn("bookmarks",      <Star size={16} />,         "Bookmarks")}
+            {drawerBtn("sessions",       <ClipboardList size={16} />, "Study Sessions")}
+            {drawerBtn("study_sheet",    <FileText size={16} />,     "Study Sheet")}
+          </div>
+
+          {/* Community */}
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 px-4 mb-1">Community</p>
+            {drawerBtn("testimonials",  <HeartHandshake size={16} />, "Testimonials")}
+          </div>
+
+        </div>
+      </div>
+
+      {/* Fixed bottom bar — 5 key tabs */}
+      <nav className="xl:hidden fixed bottom-0 inset-x-0 z-50 bg-white border-t border-gray-200 flex items-stretch h-16 print:hidden">
+        {(
+          [
+            { tab: "home"   as LeftPanelTab, icon: <Home size={20} />,     label: "Home"    },
+            { tab: "reader" as LeftPanelTab, icon: <BookOpen size={20} />, label: "Reader"  },
+            { tab: "bible"  as LeftPanelTab, icon: <Library size={20} />,  label: "Bible"   },
+            { tab: "prayer_journal" as LeftPanelTab, icon: <Heart size={20} />, label: "Prayer" },
+          ] as { tab: LeftPanelTab; icon: React.ReactNode; label: string }[]
+        ).map(({ tab, icon, label }) => (
+          <button
+            key={tab}
+            type="button"
+            onClick={() => { setLeftPanelTab(tab); setMobileDrawerOpen(false); }}
+            className={`flex-1 flex flex-col items-center justify-center gap-0.5 text-[10px] font-semibold transition ${
+              leftPanelTab === tab && !mobileDrawerOpen
+                ? "text-amber-600"
+                : "text-gray-400 hover:text-gray-600"
+            }`}
+          >
+            <span className={leftPanelTab === tab && !mobileDrawerOpen ? "text-amber-600" : ""}>{icon}</span>
+            {label}
+          </button>
+        ))}
+
+        {/* Menu / More button */}
+        <button
+          type="button"
+          onClick={() => setMobileDrawerOpen((o) => !o)}
+          className={`flex-1 flex flex-col items-center justify-center gap-0.5 text-[10px] font-semibold transition ${
+            mobileDrawerOpen ? "text-amber-600" : "text-gray-400 hover:text-gray-600"
+          }`}
+        >
+          <span>{mobileDrawerOpen ? <X size={20} /> : <Menu size={20} />}</span>
+          {mobileDrawerOpen ? "Close" : "More"}
+        </button>
+      </nav>
 
     </main>
   );
