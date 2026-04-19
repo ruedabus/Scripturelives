@@ -385,6 +385,27 @@ export default function VerseOfDayGenerator() {
     }
   }
 
+  // ── Share to Facebook ────────────────────────────────────────────────────
+  const [fbTip, setFbTip] = useState(false);
+
+  function handleShareFacebook() {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    // 1. Auto-download the image
+    const link = document.createElement("a");
+    link.download = `scripture-lives-${displayVerse.reference.replace(/[^a-z0-9]/gi, "-").toLowerCase()}.png`;
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+
+    // 2. Open Facebook create-post in a new tab
+    window.open("https://www.facebook.com/", "_blank", "noopener");
+
+    // 3. Show tip
+    setFbTip(true);
+    setTimeout(() => setFbTip(false), 6000);
+  }
+
   // ── Cycle verses ──────────────────────────────────────────────────────────
   function cycleVerse(dir: 1 | -1) {
     const currentIdx = typeof verseIdx === "number" ? verseIdx : VERSE_POOL.indexOf(getVerseOfDay());
@@ -433,11 +454,36 @@ export default function VerseOfDayGenerator() {
           type="button"
           onClick={handleShare}
           className="flex items-center justify-center gap-2 rounded-xl border border-gray-200 px-4 py-3 text-sm font-semibold text-gray-600 hover:border-amber-400 hover:text-amber-600 transition"
+          title="Share via OS share sheet"
         >
           <Share2 size={16} />
           {shared ? "Copied!" : "Share"}
         </button>
       </div>
+
+      {/* Facebook share button */}
+      <button
+        type="button"
+        onClick={handleShareFacebook}
+        className="w-full flex items-center justify-center gap-2.5 rounded-xl bg-[#1877F2] py-3 text-sm font-semibold text-white hover:bg-[#1464d3] transition"
+      >
+        {/* Facebook logo */}
+        <svg className="w-4 h-4 fill-white shrink-0" viewBox="0 0 24 24">
+          <path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.887v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/>
+        </svg>
+        Share to Facebook
+      </button>
+
+      {/* Facebook tip banner */}
+      {fbTip && (
+        <div className="rounded-xl bg-blue-50 border border-blue-200 px-4 py-3 text-sm text-blue-800 flex items-start gap-2">
+          <span className="text-lg shrink-0">📸</span>
+          <div>
+            <p className="font-semibold">Image downloaded!</p>
+            <p className="text-xs text-blue-600 mt-0.5">Facebook is open in a new tab. Create a new post and upload the downloaded image to share it with your followers.</p>
+          </div>
+        </div>
+      )}
 
       {/* ── Theme picker ──────────────────────────────────────────────────── */}
       <div>
