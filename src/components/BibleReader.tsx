@@ -17,6 +17,9 @@ import ParallelBibleReader from "@/components/ParallelBibleReader";
 import TopicalBible from "@/components/TopicalBible";
 import PrayerJournal from "@/components/PrayerJournal";
 import TestimonialWall from "@/components/TestimonialWall";
+import OutlineBuilder from "@/components/OutlineBuilder";
+import MemorizationFlashcards from "@/components/MemorizationFlashcards";
+import ReadingProgress from "@/components/ReadingProgress";
 import { ATLAS_PLACES, ATLAS_BOOKS, type AtlasPlace } from "@/data/atlasPlaces";
 import { ANCIENT_LOCATIONS, type AncientLocation } from "@/data/ancientPlaces";
 import { getTodaysDevotional } from "@/data/devotionals";
@@ -29,7 +32,7 @@ import {
   Home, Feather, BookOpen, Library, Layers, BookText, BookMarked,
   ScrollText, Landmark, Globe, Star, ClipboardList, FileText,
   HeartHandshake, ExternalLink, BookHeart, HandCoins, MapPin, Compass,
-  Copy, Check, Image, Columns3, Heart, Menu, X,
+  Copy, Check, Image, Columns3, Heart, Menu, X, Brain, BarChart2,
 } from "lucide-react";
 
 const PlaceMap = dynamic(() => import("@/components/PlaceMap"), {
@@ -62,7 +65,10 @@ type LeftPanelTab =
   | "sessions"
   | "testimonials"
   | "resources"
-  | "books";
+  | "books"
+  | "outline"
+  | "flashcards"
+  | "reading_progress";
 
 // ── Bible book lists ──────────────────────────────────────────────────────
 const OT_SECTIONS = [
@@ -813,6 +819,8 @@ export default function BibleReader() {
               {sideNavBtn("commentary",    <BookText size={16} />,     "Commentary")}
               {sideNavBtn("dictionary",    <BookMarked size={16} />,   "Dictionary")}
               {sideNavBtn("study_prompts", <ScrollText size={16} />,   "Study Prompts")}
+              {sideNavBtn("outline",       <FileText size={16} />,     "Sermon Outlines")}
+              {sideNavBtn("flashcards",    <Brain size={16} />,        "Memorization")}
             </div>
             <div>
               <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-widest text-stone-500">Explore</p>
@@ -821,9 +829,10 @@ export default function BibleReader() {
             </div>
             <div>
               <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-widest text-stone-500">My Library</p>
-              {sideNavBtn("bookmarks",     <Star size={16} />,         "Bookmarks")}
-              {sideNavBtn("sessions",      <ClipboardList size={16} />, "Sessions")}
-              {sideNavBtn("study_sheet",   <FileText size={16} />,     "Study Sheet")}
+              {sideNavBtn("bookmarks",       <Star size={16} />,         "Bookmarks")}
+              {sideNavBtn("sessions",        <ClipboardList size={16} />, "Sessions")}
+              {sideNavBtn("study_sheet",     <FileText size={16} />,     "Study Sheet")}
+              {sideNavBtn("reading_progress",<BarChart2 size={16} />,    "Reading Progress")}
             </div>
             <div>
               <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-widest text-stone-500">Community</p>
@@ -1029,7 +1038,10 @@ export default function BibleReader() {
                     { tab: "timeline"     as LeftPanelTab, Icon: Layers,     label: "Timeline",        desc: "Biblical history eras",      gradient: "from-sky-50 to-blue-50",       ring: "hover:ring-sky-300",     iconBg: "bg-sky-100",     iconColor: "text-sky-600"    },
                     { tab: "parallel"     as LeftPanelTab, Icon: Columns3,   label: "Parallel Bible",  desc: "Compare 2–4 translations",   gradient: "from-violet-50 to-purple-50",  ring: "hover:ring-violet-300",  iconBg: "bg-violet-100",  iconColor: "text-violet-600" },
                     { tab: "topical"      as LeftPanelTab, Icon: BookText,   label: "Topical Bible",   desc: "Browse by topic & theme",    gradient: "from-emerald-50 to-teal-50",   ring: "hover:ring-emerald-300", iconBg: "bg-emerald-100", iconColor: "text-emerald-600"},
-                    { tab: "prayer_journal" as LeftPanelTab, Icon: Heart,   label: "Prayer Journal",  desc: "Write & track your prayers", gradient: "from-rose-50 to-pink-50",      ring: "hover:ring-rose-300",    iconBg: "bg-rose-100",    iconColor: "text-rose-600"   },
+                    { tab: "prayer_journal"   as LeftPanelTab, Icon: Heart,     label: "Prayer Journal",     desc: "Write & track your prayers",   gradient: "from-rose-50 to-pink-50",      ring: "hover:ring-rose-300",    iconBg: "bg-rose-100",    iconColor: "text-rose-600"    },
+                    { tab: "outline"          as LeftPanelTab, Icon: FileText,  label: "Sermon Outlines",    desc: "AI-generated study outlines",  gradient: "from-slate-50 to-gray-50",     ring: "hover:ring-slate-300",   iconBg: "bg-slate-100",   iconColor: "text-slate-600"   },
+                    { tab: "flashcards"       as LeftPanelTab, Icon: Brain,     label: "Memorization",       desc: "Flashcards & spaced review",   gradient: "from-fuchsia-50 to-purple-50", ring: "hover:ring-fuchsia-300",  iconBg: "bg-fuchsia-100", iconColor: "text-fuchsia-600" },
+                    { tab: "reading_progress" as LeftPanelTab, Icon: BarChart2, label: "Reading Progress",   desc: "Track your Bible journey",     gradient: "from-teal-50 to-cyan-50",      ring: "hover:ring-teal-300",    iconBg: "bg-teal-100",    iconColor: "text-teal-600"    },
                   ]).map(card => (
                     <button
                       key={card.tab}
@@ -2393,6 +2405,21 @@ export default function BibleReader() {
               </div>
             )}
 
+            {/* ── SERMON OUTLINE BUILDER ────────────────────────────────────── */}
+            {leftPanelTab === "outline" && (
+              <OutlineBuilder />
+            )}
+
+            {/* ── VERSE MEMORIZATION FLASHCARDS ────────────────────────────── */}
+            {leftPanelTab === "flashcards" && (
+              <MemorizationFlashcards />
+            )}
+
+            {/* ── READING PROGRESS TRACKER ─────────────────────────────────── */}
+            {leftPanelTab === "reading_progress" && (
+              <ReadingProgress />
+            )}
+
           </section>
 
           {/* RIGHT PANEL */}
@@ -2847,6 +2874,8 @@ export default function BibleReader() {
             <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 px-4 mb-1">Study</p>
             {drawerBtn("study_prompts", <ScrollText size={16} />,   "Study Prompts")}
             {drawerBtn("topical",       <BookText size={16} />,     "Topical Bible")}
+            {drawerBtn("outline",       <FileText size={16} />,     "Sermon Outlines")}
+            {drawerBtn("flashcards",    <Brain size={16} />,        "Memorization")}
             {drawerBtn("commentary",    <BookText size={16} />,     "Commentary")}
             {drawerBtn("dictionary",    <BookMarked size={16} />,   "Dictionary / Lexicon")}
             {drawerBtn("timeline",      <Layers size={16} />,       "Timeline")}
@@ -2864,10 +2893,11 @@ export default function BibleReader() {
           {/* My Library */}
           <div>
             <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 px-4 mb-1">My Library</p>
-            {drawerBtn("prayer_journal", <Heart size={16} />,        "Prayer Journal")}
-            {drawerBtn("bookmarks",      <Star size={16} />,         "Bookmarks")}
-            {drawerBtn("sessions",       <ClipboardList size={16} />, "Study Sessions")}
-            {drawerBtn("study_sheet",    <FileText size={16} />,     "Study Sheet")}
+            {drawerBtn("prayer_journal",   <Heart size={16} />,        "Prayer Journal")}
+            {drawerBtn("reading_progress", <BarChart2 size={16} />,  "Reading Progress")}
+            {drawerBtn("bookmarks",        <Star size={16} />,       "Bookmarks")}
+            {drawerBtn("sessions",         <ClipboardList size={16} />, "Study Sessions")}
+            {drawerBtn("study_sheet",      <FileText size={16} />,   "Study Sheet")}
           </div>
 
           {/* Community */}
