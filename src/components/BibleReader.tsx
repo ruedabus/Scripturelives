@@ -21,6 +21,7 @@ import OutlineBuilder from "@/components/OutlineBuilder";
 import MemorizationFlashcards from "@/components/MemorizationFlashcards";
 import ReadingProgress from "@/components/ReadingProgress";
 import BibleCharacterProfiles from "@/components/BibleCharacterProfiles";
+import VerseOfDayGenerator from "@/components/VerseOfDayGenerator";
 import { ATLAS_PLACES, ATLAS_BOOKS, type AtlasPlace } from "@/data/atlasPlaces";
 import { ANCIENT_LOCATIONS, type AncientLocation } from "@/data/ancientPlaces";
 import { getTodaysDevotional } from "@/data/devotionals";
@@ -33,7 +34,7 @@ import {
   Home, Feather, BookOpen, Library, Layers, BookText, BookMarked,
   ScrollText, Landmark, Globe, Star, ClipboardList, FileText,
   HeartHandshake, ExternalLink, BookHeart, HandCoins, MapPin, Compass,
-  Copy, Check, Image, Columns3, Heart, Menu, X, Brain, BarChart2, Users,
+  Copy, Check, Image, Columns3, Heart, Menu, X, Brain, BarChart2, Users, Sparkles,
 } from "lucide-react";
 
 const PlaceMap = dynamic(() => import("@/components/PlaceMap"), {
@@ -70,7 +71,8 @@ type LeftPanelTab =
   | "outline"
   | "flashcards"
   | "reading_progress"
-  | "characters";
+  | "characters"
+  | "verse_image";
 
 // ── Bible book lists ──────────────────────────────────────────────────────
 const OT_SECTIONS = [
@@ -824,6 +826,7 @@ export default function BibleReader() {
               {sideNavBtn("study_prompts", <ScrollText size={16} />,   "Study Prompts")}
               {sideNavBtn("outline",       <FileText size={16} />,     "Sermon Outlines")}
               {sideNavBtn("flashcards",    <Brain size={16} />,        "Memorization")}
+              {sideNavBtn("verse_image",   <Sparkles size={16} />,     "Verse Image Cards")}
             </div>
             <div>
               <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-widest text-stone-500">Explore</p>
@@ -1046,7 +1049,8 @@ export default function BibleReader() {
                     { tab: "outline"          as LeftPanelTab, Icon: FileText,  label: "Sermon Outlines",    desc: "AI-generated study outlines",  gradient: "from-slate-50 to-gray-50",     ring: "hover:ring-slate-300",   iconBg: "bg-slate-100",   iconColor: "text-slate-600"   },
                     { tab: "flashcards"       as LeftPanelTab, Icon: Brain,     label: "Memorization",       desc: "Flashcards & spaced review",   gradient: "from-fuchsia-50 to-purple-50", ring: "hover:ring-fuchsia-300",  iconBg: "bg-fuchsia-100", iconColor: "text-fuchsia-600" },
                     { tab: "reading_progress" as LeftPanelTab, Icon: BarChart2, label: "Reading Progress",   desc: "Track your Bible journey",     gradient: "from-teal-50 to-cyan-50",      ring: "hover:ring-teal-300",    iconBg: "bg-teal-100",    iconColor: "text-teal-600"    },
-                    { tab: "characters"       as LeftPanelTab, Icon: Users,    label: "Character Profiles", desc: "Biographies of Bible figures",  gradient: "from-orange-50 to-amber-50",   ring: "hover:ring-orange-300",  iconBg: "bg-orange-100",  iconColor: "text-orange-600"  },
+                    { tab: "characters"       as LeftPanelTab, Icon: Users,     label: "Character Profiles", desc: "Biographies of Bible figures",    gradient: "from-orange-50 to-amber-50",    ring: "hover:ring-orange-300",   iconBg: "bg-orange-100",   iconColor: "text-orange-600"   },
+                    { tab: "verse_image"      as LeftPanelTab, Icon: Sparkles,  label: "Verse Image Cards",  desc: "Shareable quote cards for social", gradient: "from-pink-50 to-rose-50",       ring: "hover:ring-pink-300",     iconBg: "bg-pink-100",     iconColor: "text-pink-600"     },
                   ]).map(card => (
                     <button
                       key={card.tab}
@@ -2430,6 +2434,11 @@ export default function BibleReader() {
               <ReadingProgress />
             )}
 
+            {/* ── VERSE OF THE DAY IMAGE GENERATOR ────────────────────────── */}
+            {leftPanelTab === "verse_image" && (
+              <VerseOfDayGenerator />
+            )}
+
             {/* ── BIBLE CHARACTER PROFILES ──────────────────────────────────── */}
             {leftPanelTab === "characters" && (
               <BibleCharacterProfiles
@@ -2612,6 +2621,7 @@ export default function BibleReader() {
             {drawerBtn("topical",       <BookText size={16} />,     "Topical Bible")}
             {drawerBtn("outline",       <FileText size={16} />,     "Sermon Outlines")}
             {drawerBtn("flashcards",    <Brain size={16} />,        "Memorization")}
+            {drawerBtn("verse_image",   <Sparkles size={16} />,     "Verse Image Cards")}
             {drawerBtn("commentary",    <BookText size={16} />,     "Commentary")}
             {drawerBtn("dictionary",    <BookMarked size={16} />,   "Dictionary / Lexicon")}
             {drawerBtn("timeline",      <Layers size={16} />,       "Timeline")}
