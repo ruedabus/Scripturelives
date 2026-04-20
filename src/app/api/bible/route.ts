@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { loadBible, BibleVersion } from "@/lib/loadBibleVersion";
 import { API_BIBLE_IDS, fetchChapter, fetchTotalChapters } from "@/lib/apiBible";
+import { rateLimit, getClientIp } from "@/lib/rateLimit";
 
 /** Versions served locally vs. via api.bible */
 const LOCAL_VERSIONS = ["KJV", "ASV", "WEB"];
@@ -30,10 +31,33 @@ function getChapterCount(version: BibleVersion, book: string): number {
 }
 
 export async function GET(req: NextRequest) {
+  // ── Rate limit: 60 req / min per IP ───────────────────────────────────────
+  const ip = getClientIp(req);
+  const rl = rateLimit(ip, { limit: 60, windowMs: 60_000 });
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: "Too many requests. Please slow down." },
+      { status: 429, headers: { "Retry-After": String(Math.ceil((rl.resetMs - Date.now()) / 1000)) } }
+    );
+  }
+
   const { searchParams } = new URL(req.url);
   const version = (searchParams.get("version") ?? "KJV").toUpperCase();
   const book = searchParams.get("book");
   const chapterParam = searchParams.get("chapter");
+
+  // ── Validate book against canonical list ──────────────────────────────────
+  if (book && !CANONICAL_BOOKS.includes(book)) {
+    return NextResponse.json({ error: "Invalid book name." }, { status: 400 });
+  }
+
+  // ── Validate chapter range ─────────────────────────────────────────────────
+  if (chapterParam !== null) {
+    const ch = parseInt(chapterParam, 10);
+    if (isNaN(ch) || ch < 1 || ch > 150) {
+      return NextResponse.json({ error: "Invalid chapter number." }, { status: 400 });
+    }
+  }
 
   const isLocal = LOCAL_VERSIONS.includes(version);
   const isRemote = REMOTE_VERSIONS.includes(version);
@@ -68,8 +92,8 @@ export async function GET(req: NextRequest) {
         const { verses, totalChapters } = await fetchChapter(version, book, chapter);
         return NextResponse.json({ verses, totalChapters });
       } catch (err) {
-        const message = err instanceof Error ? err.message : "api.bible error";
-        return NextResponse.json({ error: message }, { status: 502 });
+        console.error("[bible] fetchChapter error:", err);
+        return NextResponse.json({ error: "Failed to load chapter." }, { status: 502 });
       }
     }
 
@@ -79,8 +103,8 @@ export async function GET(req: NextRequest) {
         const totalChapters = await fetchTotalChapters(version, book);
         return NextResponse.json({ totalChapters });
       } catch (err) {
-        const message = err instanceof Error ? err.message : "api.bible error";
-        return NextResponse.json({ error: message }, { status: 502 });
+        console.error("[bible] fetchTotalChapters error:", err);
+        return NextResponse.json({ error: "Failed to load chapter count." }, { status: 502 });
       }
     }
   }

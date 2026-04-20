@@ -9,9 +9,11 @@
  *   2. StudyLight.org       (Easton's as fallback)
  */
 import { NextRequest, NextResponse } from "next/server";
+import { LRUCache } from "@/lib/lruCache";
+import { rateLimit, getClientIp } from "@/lib/rateLimit";
 
-// ── In-memory cache: "Aaron" → entry | null ──────────────────────────────────
-const cache = new Map<string, { title: string; body: string; sourceUrl: string } | null>();
+// ── In-memory LRU cache: "aaron" → entry | null (max 300 entries) ─────────────
+const cache = new LRUCache<string, { title: string; body: string; sourceUrl: string } | null>(300);
 
 // ── Term → URL slug helpers ───────────────────────────────────────────────────
 function toBstSlug(term: string): string {
@@ -157,9 +159,22 @@ async function fetchEntry(term: string): Promise<{ title: string; body: string; 
 
 // ── Handler ───────────────────────────────────────────────────────────────────
 export async function GET(req: NextRequest) {
+  // ── Rate limit: 30 req / min per IP ───────────────────────────────────────
+  const ip = getClientIp(req);
+  const rl = rateLimit(ip, { limit: 30, windowMs: 60_000 });
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: "Too many requests. Please slow down." },
+      { status: 429, headers: { "Retry-After": String(Math.ceil((rl.resetMs - Date.now()) / 1000)) } }
+    );
+  }
+
   const term = req.nextUrl.searchParams.get("term")?.trim() ?? "";
   if (!term || term.length < 2) {
     return NextResponse.json({ error: "Provide a term (min 2 chars)" }, { status: 400 });
+  }
+  if (term.length > 80) {
+    return NextResponse.json({ error: "Term too long (max 80 characters)" }, { status: 400 });
   }
 
   const entry = await fetchEntry(term);

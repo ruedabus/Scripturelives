@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
 
+const isProd = process.env.NODE_ENV === "production";
+
 const securityHeaders = [
   // Prevent clickjacking — disallow iframing from other sites
   { key: "X-Frame-Options", value: "SAMEORIGIN" },
@@ -12,22 +14,21 @@ const securityHeaders = [
     key: "Permissions-Policy",
     value: "camera=(), microphone=(), geolocation=(), payment=()",
   },
-  // Force HTTPS for 1 year (enable once fully on HTTPS/production)
-  {
-    key: "Strict-Transport-Security",
-    value: "max-age=31536000; includeSubDomains",
-  },
-  // Basic Content Security Policy
-  // 'unsafe-inline' kept for Next.js inline styles; tighten further once stable
+  // Force HTTPS for 1 year — production only (avoids breaking local HTTP dev)
+  ...(isProd
+    ? [{ key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains" }]
+    : []),
+  // Content Security Policy
+  // 'unsafe-inline' kept for Next.js inline styles; 'unsafe-eval' removed.
   {
     key: "Content-Security-Policy",
     value: [
       "default-src 'self'",
-      // Scripts: self + Google AdSense/Analytics
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://pagead2.googlesyndication.com https://www.googletagmanager.com https://www.google-analytics.com",
+      // Scripts: self + Google Analytics/Tag Manager (no unsafe-eval)
+      "script-src 'self' 'unsafe-inline' https://pagead2.googlesyndication.com https://www.googletagmanager.com https://www.google-analytics.com",
       // Styles: self + inline (Next.js uses inline styles)
       "style-src 'self' 'unsafe-inline'",
-      // Images: self + Wikipedia/Wikimedia + YouTube thumbs + map tiles + data URIs
+      // Images: self + Wikipedia/Wikimedia + YouTube thumbs + data/blob URIs
       "img-src 'self' data: blob: https://*.wikimedia.org https://*.wikipedia.org https://i.ytimg.com https://yt3.ggpht.com https://www.youtube.com https://*.tile.openstreetmap.org https://*.basemaps.cartocdn.com https://tile.openstreetmap.org",
       // Fonts: self only
       "font-src 'self'",
@@ -48,7 +49,11 @@ const securityHeaders = [
 ];
 
 const nextConfig = {
-  allowedDevOrigins: ["192.168.1.3"],
+  // allowedDevOrigins accepts a list of local dev hosts.
+  // Set COWORK_DEV_ORIGIN=192.168.x.x in .env.local for LAN preview.
+  ...(process.env.COWORK_DEV_ORIGIN
+    ? { allowedDevOrigins: [process.env.COWORK_DEV_ORIGIN] }
+    : {}),
 
   async headers() {
     return [

@@ -38,6 +38,16 @@ export async function POST(req: NextRequest) {
   if (typeof notes !== "object" || notes === null || Array.isArray(notes)) {
     return NextResponse.json({ error: "Invalid notes payload" }, { status: 400 });
   }
+  // Guard against objects with too many keys
+  if (Object.keys(notes).length > 1000) {
+    return NextResponse.json({ error: "Too many notes entries" }, { status: 400 });
+  }
+  // Ensure all note values are strings (prevent arbitrary object injection)
+  for (const [k, v] of Object.entries(notes)) {
+    if (typeof k !== "string" || typeof v !== "string") {
+      return NextResponse.json({ error: "Invalid notes entry type" }, { status: 400 });
+    }
+  }
   // Rough total size check — reject payloads larger than 2 MB serialised
   const rawPayloadSize = JSON.stringify({ bookmarks, notes, sessions }).length;
   if (rawPayloadSize > 2_000_000) {

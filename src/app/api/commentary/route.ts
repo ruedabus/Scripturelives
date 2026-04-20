@@ -10,11 +10,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { readFileSync, existsSync } from "fs";
 import { join } from "path";
+import { LRUCache } from "@/lib/lruCache";
+import { rateLimit, getClientIp } from "@/lib/rateLimit";
 
 const MHC_PATH = join(process.cwd(), "src", "data", "commentary", "mhc.json");
 
-// ── In-memory cache: "Genesis:1" → text | null ───────────────────────────────
-const liveCache = new Map<string, string | null>();
+// ── In-memory LRU cache: "Genesis:1" → text | null (max 300 entries) ─────────
+const liveCache = new LRUCache<string, string | null>(300);
 
 // ── Local file ────────────────────────────────────────────────────────────────
 let localData: Record<string, unknown> | null = null;
@@ -227,11 +229,31 @@ function extractFromLocal(data: Record<string, unknown>, book: string, chapter: 
 
 // ── Handler ───────────────────────────────────────────────────────────────────
 export async function GET(req: NextRequest) {
+  // ── Rate limit: 30 req / min per IP ───────────────────────────────────────
+  const ip = getClientIp(req);
+  const rl = rateLimit(ip, { limit: 30, windowMs: 60_000 });
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: "Too many requests. Please slow down." },
+      { status: 429, headers: { "Retry-After": String(Math.ceil((rl.resetMs - Date.now()) / 1000)) } }
+    );
+  }
+
   const book    = req.nextUrl.searchParams.get("book") ?? "";
   const chapter = parseInt(req.nextUrl.searchParams.get("chapter") ?? "0", 10);
 
   if (!book || !chapter) {
     return NextResponse.json({ error: "Missing book or chapter" }, { status: 400 });
+  }
+
+  // ── Whitelist: only known books accepted ──────────────────────────────────
+  if (!Object.prototype.hasOwnProperty.call(BOOK_TO_BIBLEHUB, book)) {
+    return NextResponse.json({ error: "Invalid book name." }, { status: 400 });
+  }
+
+  // ── Chapter range ─────────────────────────────────────────────────────────
+  if (chapter < 1 || chapter > 150) {
+    return NextResponse.json({ error: "Invalid chapter number." }, { status: 400 });
   }
 
   const onlineUrl = publicUrl(book, chapter);

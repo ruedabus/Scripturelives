@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { readFileSync, existsSync } from "fs";
 import { join } from "path";
+import { rateLimit, getClientIp } from "@/lib/rateLimit";
 
 const KJV_DIR = join(process.cwd(), "src", "data", "strongs", "kjv");
 
@@ -96,11 +97,31 @@ function loadBook(bookName: string) {
 }
 
 export async function GET(req: NextRequest) {
+  // ── Rate limit: 30 req / min per IP ───────────────────────────────────────
+  const ip = getClientIp(req);
+  const rl = rateLimit(ip, { limit: 30, windowMs: 60_000 });
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: "Too many requests. Please slow down." },
+      { status: 429, headers: { "Retry-After": String(Math.ceil((rl.resetMs - Date.now()) / 1000)) } }
+    );
+  }
+
   const book = req.nextUrl.searchParams.get("book");
   const chapter = parseInt(req.nextUrl.searchParams.get("chapter") ?? "0", 10);
 
   if (!book || !chapter) {
     return NextResponse.json({ error: "Missing parameters: book and chapter" }, { status: 400 });
+  }
+
+  // ── Whitelist: BOOK_FILE_MAP acts as the canonical book list ─────────────
+  if (!Object.prototype.hasOwnProperty.call(BOOK_FILE_MAP, book)) {
+    return NextResponse.json({ error: "Invalid book name." }, { status: 400 });
+  }
+
+  // ── Chapter range ─────────────────────────────────────────────────────────
+  if (chapter < 1 || chapter > 150) {
+    return NextResponse.json({ error: "Invalid chapter number." }, { status: 400 });
   }
 
   try {
