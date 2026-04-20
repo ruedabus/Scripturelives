@@ -22,6 +22,7 @@ import MemorizationFlashcards from "@/components/MemorizationFlashcards";
 import ReadingProgress from "@/components/ReadingProgress";
 import BibleCharacterProfiles from "@/components/BibleCharacterProfiles";
 import VerseOfDayGenerator from "@/components/VerseOfDayGenerator";
+import BibleQuiz from "@/components/BibleQuiz";
 import { ATLAS_PLACES, ATLAS_BOOKS, type AtlasPlace } from "@/data/atlasPlaces";
 import { ANCIENT_LOCATIONS, type AncientLocation } from "@/data/ancientPlaces";
 import { getTodaysDevotional } from "@/data/devotionals";
@@ -34,7 +35,7 @@ import {
   Home, Feather, BookOpen, Library, Layers, BookText, BookMarked,
   ScrollText, Landmark, Globe, Star, ClipboardList, FileText,
   HeartHandshake, ExternalLink, BookHeart, HandCoins, MapPin, Compass,
-  Copy, Check, Image, Columns3, Heart, Menu, X, Brain, BarChart2, Users, Sparkles,
+  Copy, Check, Image, Columns3, Heart, Menu, X, Brain, BarChart2, Users, Sparkles, Trophy,
 } from "lucide-react";
 
 const PlaceMap = dynamic(() => import("@/components/PlaceMap"), {
@@ -72,7 +73,8 @@ type LeftPanelTab =
   | "flashcards"
   | "reading_progress"
   | "characters"
-  | "verse_image";
+  | "verse_image"
+  | "quiz";
 
 // ── Bible book lists ──────────────────────────────────────────────────────
 const OT_SECTIONS = [
@@ -833,6 +835,7 @@ export default function BibleReader() {
               {sideNavBtn("ancient_world", <Landmark size={16} />,     "Ancient Places")}
               {sideNavBtn("atlas",         <Globe size={16} />,        "Bible Atlas")}
               {sideNavBtn("characters",    <Users size={16} />,        "Character Profiles")}
+              {sideNavBtn("quiz",          <Trophy size={16} />,       "Bible Quiz")}
             </div>
             <div>
               <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-widest text-stone-500">My Library</p>
@@ -1051,6 +1054,7 @@ export default function BibleReader() {
                     { tab: "reading_progress" as LeftPanelTab, Icon: BarChart2, label: "Reading Progress",   desc: "Track your Bible journey",     gradient: "from-teal-50 to-cyan-50",      ring: "hover:ring-teal-300",    iconBg: "bg-teal-100",    iconColor: "text-teal-600"    },
                     { tab: "characters"       as LeftPanelTab, Icon: Users,     label: "Character Profiles", desc: "Biographies of Bible figures",    gradient: "from-orange-50 to-amber-50",    ring: "hover:ring-orange-300",   iconBg: "bg-orange-100",   iconColor: "text-orange-600"   },
                     { tab: "verse_image"      as LeftPanelTab, Icon: Sparkles,  label: "Verse Image Cards",  desc: "Shareable quote cards for social", gradient: "from-pink-50 to-rose-50",       ring: "hover:ring-pink-300",     iconBg: "bg-pink-100",     iconColor: "text-pink-600"     },
+                    { tab: "quiz"             as LeftPanelTab, Icon: Trophy,    label: "Bible Quiz",         desc: "Trivia — 4 categories, 80 questions", gradient: "from-yellow-50 to-amber-50",  ring: "hover:ring-yellow-300",   iconBg: "bg-yellow-100",   iconColor: "text-yellow-600"   },
                   ]).map(card => (
                     <button
                       key={card.tab}
@@ -2450,6 +2454,11 @@ export default function BibleReader() {
               />
             )}
 
+            {/* ── BIBLE QUIZ ─────────────────────────────────────────────────── */}
+            {leftPanelTab === "quiz" && (
+              <BibleQuiz />
+            )}
+
           </section>
 
           {/* RIGHT PANEL */}
@@ -2633,6 +2642,7 @@ export default function BibleReader() {
             {drawerBtn("ancient_world", <Landmark size={16} />,     "Ancient World Map")}
             {drawerBtn("atlas",         <Globe size={16} />,        "Atlas")}
             {drawerBtn("characters",    <Users size={16} />,        "Character Profiles")}
+            {drawerBtn("quiz",          <Trophy size={16} />,       "Bible Quiz")}
             {drawerBtn("resources",     <ExternalLink size={16} />, "Resources")}
             {drawerBtn("books",         <BookHeart size={16} />,    "Christian Books")}
           </div>
