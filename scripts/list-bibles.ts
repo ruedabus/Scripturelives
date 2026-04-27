@@ -159,6 +159,62 @@ Or pass the key directly to test it right now:
     console.log("   → Click 'Add Bible' and search for 'Reina-Valera 1960'");
     console.log("   → After adding it, re-run: npm run list-bibles\n");
   }
+
+  // ── Audio Bibles ──────────────────────────────────────────────────────────
+  console.log("\n🔊  Checking audio Bibles on your account…\n");
+
+  type AudioBible = {
+    id: string;
+    name: string;
+    nameLocal?: string;
+    abbreviation: string;
+    language: { name: string; id: string };
+    type?: string;
+  };
+
+  const audioResult = await get("https://rest.api.bible/v1/audio-bibles", API_KEY!) as {
+    statusCode?: number;
+    error?: string;
+    data?: AudioBible[];
+  };
+
+  if (!audioResult.data || !Array.isArray(audioResult.data)) {
+    console.log("⚠️   Could not fetch audio Bibles:", JSON.stringify(audioResult).slice(0, 200));
+  } else if (audioResult.data.length === 0) {
+    console.log("──────────────────────────────────────────────────────────");
+    console.log("ℹ️   No audio Bibles are linked to your account yet.");
+    console.log("   → Go to https://scripture.api.bible → My Apps → your app");
+    console.log("   → Look for 'Add Audio Bible' and enable audio versions");
+    console.log("   → Common ones: KJV Audio Drama, NIV Audio Bible\n");
+  } else {
+    // Group by language
+    const byLang = new Map<string, AudioBible[]>();
+    for (const b of audioResult.data) {
+      const lang = b.language?.name ?? "Unknown";
+      if (!byLang.has(lang)) byLang.set(lang, []);
+      byLang.get(lang)!.push(b);
+    }
+
+    const langs = [...byLang.keys()].sort((a, b) =>
+      a === "English" ? -1 : b === "English" ? 1 : a.localeCompare(b)
+    );
+
+    console.log(`✅  Found ${audioResult.data.length} audio Bible(s) on your account:\n`);
+    for (const lang of langs) {
+      const bibles = byLang.get(lang)!;
+      console.log(`── ${lang} (${bibles.length}) ${"─".repeat(Math.max(0, 46 - lang.length))}`);
+      for (const b of bibles) {
+        console.log(`   ${b.id.padEnd(36)} ${(b.abbreviation ?? "—").padEnd(12)} ${b.name}`);
+      }
+      console.log();
+    }
+
+    console.log("──────────────────────────────────────────────────────────");
+    console.log("To use audio Bibles in Scripture Lives, add to your .env.local:");
+    console.log("   API_BIBLE_AUDIO_KJV_ID=<id of the KJV audio Bible above>");
+    console.log("   API_BIBLE_AUDIO_NIV_ID=<id of the NIV audio Bible above>");
+    console.log("(Use whichever IDs match the translations you want to offer)\n");
+  }
 }
 
 main().catch((err) => {
