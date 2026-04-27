@@ -849,6 +849,14 @@ export default function BibleReader() {
               {sideNavBtn("testimonials",  <HeartHandshake size={16} />, "Testimonials")}
               {sideNavBtn("resources",     <ExternalLink size={16} />, "More Resources")}
               {sideNavBtn("books",         <BookHeart size={16} />,    "Christian Books")}
+              <a
+                href="/devotionals"
+                className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-stone-300 hover:bg-stone-800 hover:text-white transition-colors"
+              >
+                <ScrollText size={16} />
+                <span>Devotional Articles</span>
+                <span className="ml-auto text-[10px] text-indigo-400 font-bold">New</span>
+              </a>
             </div>
           </div>
 
@@ -1069,6 +1077,19 @@ export default function BibleReader() {
                       <p className="mt-0.5 text-xs text-gray-400 leading-snug">{card.desc}</p>
                     </button>
                   ))}
+
+                  {/* Devotionals blog card — links to /devotionals page */}
+                  <a
+                    href="/devotionals"
+                    className="group relative rounded-xl bg-gradient-to-br from-indigo-50 to-blue-50 p-4 text-left ring-1 ring-gray-200 hover:ring-indigo-300 transition-all duration-200 hover:shadow-md hover:-translate-y-0.5"
+                  >
+                    <div className="inline-flex items-center justify-center rounded-xl bg-indigo-100 p-2.5 mb-3">
+                      <ScrollText size={20} className="text-indigo-600" />
+                    </div>
+                    <p className="text-sm font-semibold text-gray-800 leading-snug">Devotional Articles</p>
+                    <p className="mt-0.5 text-xs text-gray-400 leading-snug">Original Bible studies & reflections</p>
+                    <span className="absolute top-3 right-3 text-[10px] text-indigo-400 font-semibold">New ✦</span>
+                  </a>
                 </div>
 
                 {/* OT / NT Book Grid */}
@@ -2645,6 +2666,14 @@ export default function BibleReader() {
             {drawerBtn("quiz",          <Trophy size={16} />,       "Bible Quiz")}
             {drawerBtn("resources",     <ExternalLink size={16} />, "Resources")}
             {drawerBtn("books",         <BookHeart size={16} />,    "Christian Books")}
+            <a
+              href="/devotionals"
+              className="flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium text-gray-600 hover:bg-amber-50 hover:text-amber-700 transition-colors"
+            >
+              <ScrollText size={16} />
+              <span>Devotional Articles</span>
+              <span className="ml-auto text-[10px] text-indigo-500 font-bold">New</span>
+            </a>
           </div>
 
           {/* My Library */}
