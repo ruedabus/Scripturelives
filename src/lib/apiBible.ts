@@ -19,12 +19,19 @@ const API_BIBLE_BASE = "https://rest.api.bible/v1";
 /**
  * Map your version codes to api.bible Bible IDs.
  * To find your exact IDs: api.bible dashboard → your app → "Additional Bibles"
- * Or call: GET https://api.scripture.api.bible/v1/bibles  (with your api-key header)
+ * Or run:  npm run list-bibles          ← lists every Bible on your api.bible account
+ * Or call: GET https://rest.api.bible/v1/bibles  (with your api-key header)
+ *
+ * Spanish (RVR1960):
+ *   The default ID below is the Reina-Valera 1960 on api.bible.
+ *   If your account uses a different ID, set API_BIBLE_RVR1960_ID in .env.local.
+ *   RVR1960 may require publisher approval — check your api.bible dashboard.
  */
 export const API_BIBLE_IDS: Record<string, string> = {
-  NIV: "06125adad2d5898a-01",   // New International Version
-  NLT: "65eec8e0b60e656b-01",   // New Living Translation
-  AMP: "a81b73293d3080c9-01",   // Amplified Bible
+  NIV:     "06125adad2d5898a-01",   // New International Version (English)
+  NLT:     "65eec8e0b60e656b-01",   // New Living Translation (English)
+  AMP:     "a81b73293d3080c9-01",   // Amplified Bible (English)
+  RVR1960: process.env.API_BIBLE_RVR1960_ID ?? "592420522e16049f-01",  // Reina-Valera 1960 (Español)
 };
 
 /** Map canonical book names → api.bible 3-letter USFM codes */

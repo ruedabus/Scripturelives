@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback, useRef } from "react";
 
-type BibleVersion = "KJV" | "ASV" | "WEB" | "NIV" | "NLT" | "AMP";
+type BibleVersion = "KJV" | "ASV" | "WEB" | "NIV" | "NLT" | "AMP" | "RVR1960";
 
 type BibleVerse = {
   id: string;
@@ -30,18 +30,56 @@ const BIBLE_BOOKMARKS_KEY = "scripture-lives-bible-bookmarks";
 const LAST_POSITION_KEY  = "scripture-lives-bible-position";
 
 
-const LOCAL_VERSIONS: BibleVersion[] = ["KJV", "ASV", "WEB"];
-const CLOUD_VERSIONS: BibleVersion[] = ["NIV", "NLT", "AMP"];
-const VERSIONS: BibleVersion[] = [...LOCAL_VERSIONS, ...CLOUD_VERSIONS];
+const LOCAL_VERSIONS:   BibleVersion[] = ["KJV", "ASV", "WEB"];
+const CLOUD_VERSIONS:   BibleVersion[] = ["NIV", "NLT", "AMP"];
+const SPANISH_VERSIONS: BibleVersion[] = ["RVR1960"];
+const VERSIONS: BibleVersion[] = [...LOCAL_VERSIONS, ...CLOUD_VERSIONS, ...SPANISH_VERSIONS];
 
 const VERSION_LABELS: Record<BibleVersion, string> = {
-  KJV: "King James Version",
-  ASV: "American Standard Version",
-  WEB: "World English Bible",
-  NIV: "New International Version",
-  NLT: "New Living Translation",
-  AMP: "Amplified Bible",
+  KJV:     "King James Version",
+  ASV:     "American Standard Version",
+  WEB:     "World English Bible",
+  NIV:     "New International Version",
+  NLT:     "New Living Translation",
+  AMP:     "Amplified Bible",
+  RVR1960: "Reina-Valera 1960 (Español)",
 };
+
+// ── Spanish book names for the book picker ────────────────────────────────────
+const SPANISH_BOOK_NAMES: Record<string, string> = {
+  "Genesis": "Génesis", "Exodus": "Éxodo", "Leviticus": "Levítico",
+  "Numbers": "Números", "Deuteronomy": "Deuteronomio", "Joshua": "Josué",
+  "Judges": "Jueces", "Ruth": "Rut", "1 Samuel": "1 Samuel", "2 Samuel": "2 Samuel",
+  "1 Kings": "1 Reyes", "2 Kings": "2 Reyes",
+  "1 Chronicles": "1 Crónicas", "2 Chronicles": "2 Crónicas",
+  "Ezra": "Esdras", "Nehemiah": "Nehemías", "Esther": "Ester",
+  "Job": "Job", "Psalm": "Salmos", "Psalms": "Salmos", "Proverbs": "Proverbios",
+  "Ecclesiastes": "Eclesiastés", "Song of Solomon": "Cantares",
+  "Isaiah": "Isaías", "Jeremiah": "Jeremías", "Lamentations": "Lamentaciones",
+  "Ezekiel": "Ezequiel", "Daniel": "Daniel", "Hosea": "Oseas",
+  "Joel": "Joel", "Amos": "Amós", "Obadiah": "Abdías", "Jonah": "Jonás",
+  "Micah": "Miqueas", "Nahum": "Nahúm", "Habakkuk": "Habacuc",
+  "Zephaniah": "Sofonías", "Haggai": "Hageo", "Zechariah": "Zacarías",
+  "Malachi": "Malaquías",
+  "Matthew": "Mateo", "Mark": "Marcos", "Luke": "Lucas", "John": "Juan",
+  "Acts": "Hechos", "Romans": "Romanos",
+  "1 Corinthians": "1 Corintios", "2 Corinthians": "2 Corintios",
+  "Galatians": "Gálatas", "Ephesians": "Efesios", "Philippians": "Filipenses",
+  "Colossians": "Colosenses",
+  "1 Thessalonians": "1 Tesalonicenses", "2 Thessalonians": "2 Tesalonicenses",
+  "1 Timothy": "1 Timoteo", "2 Timothy": "2 Timoteo", "Titus": "Tito",
+  "Philemon": "Filemón", "Hebrews": "Hebreos", "James": "Santiago",
+  "1 Peter": "1 Pedro", "2 Peter": "2 Pedro",
+  "1 John": "1 Juan", "2 John": "2 Juan", "3 John": "3 Juan",
+  "Jude": "Judas", "Revelation": "Apocalipsis",
+};
+
+function bookDisplayName(book: string, version: BibleVersion): string {
+  if (SPANISH_VERSIONS.includes(version as BibleVersion)) {
+    return SPANISH_BOOK_NAMES[book] ?? book;
+  }
+  return book;
+}
 
 const OT_BOOKS = new Set([
   "Genesis","Exodus","Leviticus","Numbers","Deuteronomy","Joshua","Judges","Ruth",
@@ -368,7 +406,7 @@ export default function FullBibleReader({
                 <h2 className="text-2xl font-bold text-amber-400 tracking-wide">Holy Bible</h2>
                 <p className="text-xs text-stone-400 mt-0.5">Select a book to begin reading</p>
               </div>
-              {/* Version toggle — two rows: Local | Licensed */}
+              {/* Version toggle — three rows: Local | Licensed | Spanish */}
               <div className="flex flex-col gap-1">
                 <div className="flex gap-1 rounded-lg bg-stone-800/80 border border-stone-700 p-1">
                   {LOCAL_VERSIONS.map((v) => (
@@ -387,13 +425,24 @@ export default function FullBibleReader({
                     </button>
                   ))}
                 </div>
+                <div className="flex gap-1 rounded-lg bg-stone-800/80 border border-green-800 p-1">
+                  {SPANISH_VERSIONS.map((v) => (
+                    <button key={v} type="button" onClick={() => setVersion(v)}
+                      title={VERSION_LABELS[v]}
+                      className={`rounded-md px-3 py-1 text-xs font-bold transition ${version === v ? "bg-green-500 text-white" : "text-stone-400 hover:text-green-300"}`}>
+                      🇪🇸 {v}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
 
             {/* Divider */}
             <div className="flex items-center gap-3 mb-4">
               <div className="flex-1 h-px bg-amber-600/40" />
-              <span className="text-amber-500 text-xs font-bold uppercase tracking-[0.2em]">Old Testament</span>
+              <span className="text-amber-500 text-xs font-bold uppercase tracking-[0.2em]">
+                {SPANISH_VERSIONS.includes(version) ? "Antiguo Testamento" : "Old Testament"}
+              </span>
               <div className="flex-1 h-px bg-amber-600/40" />
             </div>
 
@@ -406,7 +455,7 @@ export default function FullBibleReader({
                   onClick={() => handleBookChange(b.name)}
                   className="text-left text-sm text-stone-300 hover:text-amber-400 transition py-0.5 truncate font-medium tracking-wide uppercase text-[11px]"
                 >
-                  {b.name}
+                  {bookDisplayName(b.name, version)}
                 </button>
               ))}
             </div>
@@ -414,7 +463,9 @@ export default function FullBibleReader({
             {/* NT divider */}
             <div className="flex items-center gap-3 mb-4">
               <div className="flex-1 h-px bg-amber-600/40" />
-              <span className="text-amber-500 text-xs font-bold uppercase tracking-[0.2em]">New Testament</span>
+              <span className="text-amber-500 text-xs font-bold uppercase tracking-[0.2em]">
+                {SPANISH_VERSIONS.includes(version) ? "Nuevo Testamento" : "New Testament"}
+              </span>
               <div className="flex-1 h-px bg-amber-600/40" />
             </div>
 
@@ -427,7 +478,7 @@ export default function FullBibleReader({
                   onClick={() => handleBookChange(b.name)}
                   className="text-left text-sm text-stone-300 hover:text-amber-400 transition py-0.5 truncate font-medium tracking-wide uppercase text-[11px]"
                 >
-                  {b.name}
+                  {bookDisplayName(b.name, version)}
                 </button>
               ))}
             </div>
@@ -461,7 +512,7 @@ export default function FullBibleReader({
 
         {/* Controls */}
         <div className="flex items-center gap-2 flex-wrap">
-          {/* Version — Local row + Licensed row */}
+          {/* Version — Local row + Licensed row + Spanish row */}
           <div className="flex flex-col gap-0.5">
             <div className="flex gap-0.5 rounded-lg bg-stone-800 border border-stone-700 p-0.5">
               {LOCAL_VERSIONS.map((v) => (
@@ -477,6 +528,15 @@ export default function FullBibleReader({
                   title={VERSION_LABELS[v]}
                   className={`rounded-md px-2 py-1 text-[10px] font-bold transition ${version === v ? "bg-sky-500 text-white" : "text-stone-400 hover:text-sky-300"}`}>
                   {v}
+                </button>
+              ))}
+            </div>
+            <div className="flex gap-0.5 rounded-lg bg-stone-800 border border-green-800 p-0.5">
+              {SPANISH_VERSIONS.map((v) => (
+                <button key={v} type="button" onClick={() => setVersion(v)}
+                  title={VERSION_LABELS[v]}
+                  className={`rounded-md px-2 py-1 text-[10px] font-bold transition ${version === v ? "bg-green-500 text-white" : "text-stone-400 hover:text-green-300"}`}>
+                  🇪🇸 {v}
                 </button>
               ))}
             </div>
