@@ -4,7 +4,7 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import { BookOpen, ChevronLeft, ChevronRight, Columns3, X } from "lucide-react";
 
 // ── Types ──────────────────────────────────────────────────────────────────
-type BibleVersion = "KJV" | "ASV" | "WEB" | "NIV" | "NLT" | "AMP";
+type BibleVersion = "KJV" | "ASV" | "WEB" | "NIV" | "NLT" | "AMP" | "RVR1960";
 
 type BibleVerse = {
   verse: number;
@@ -17,33 +17,36 @@ type BookInfo = {
 };
 
 // ── Constants ──────────────────────────────────────────────────────────────
-const ALL_VERSIONS: BibleVersion[] = ["KJV", "ASV", "WEB", "NIV", "NLT", "AMP"];
+const ALL_VERSIONS: BibleVersion[] = ["KJV", "ASV", "WEB", "NIV", "NLT", "AMP", "RVR1960"];
 
 const VERSION_LABELS: Record<BibleVersion, string> = {
-  KJV: "KJV",
-  ASV: "ASV",
-  WEB: "WEB",
-  NIV: "NIV",
-  NLT: "NLT",
-  AMP: "AMP",
+  KJV:     "KJV",
+  ASV:     "ASV",
+  WEB:     "WEB",
+  NIV:     "NIV",
+  NLT:     "NLT",
+  AMP:     "AMP",
+  RVR1960: "🇪🇸 RVR",
 };
 
 const VERSION_FULL: Record<BibleVersion, string> = {
-  KJV: "King James Version",
-  ASV: "American Standard Version",
-  WEB: "World English Bible",
-  NIV: "New International Version",
-  NLT: "New Living Translation",
-  AMP: "Amplified Bible",
+  KJV:     "King James Version",
+  ASV:     "American Standard Version",
+  WEB:     "World English Bible",
+  NIV:     "New International Version",
+  NLT:     "New Living Translation",
+  AMP:     "Amplified Bible",
+  RVR1960: "Reina-Valera 1960 (Español)",
 };
 
 const VERSION_COLORS: Record<BibleVersion, { bg: string; text: string; border: string }> = {
-  KJV: { bg: "bg-amber-100",  text: "text-amber-800",  border: "border-amber-300" },
-  ASV: { bg: "bg-sky-100",    text: "text-sky-800",    border: "border-sky-300" },
-  WEB: { bg: "bg-green-100",  text: "text-green-800",  border: "border-green-300" },
-  NIV: { bg: "bg-purple-100", text: "text-purple-800", border: "border-purple-300" },
-  NLT: { bg: "bg-rose-100",   text: "text-rose-800",   border: "border-rose-300" },
-  AMP: { bg: "bg-teal-100",   text: "text-teal-800",   border: "border-teal-300" },
+  KJV:     { bg: "bg-amber-100",  text: "text-amber-800",  border: "border-amber-300"  },
+  ASV:     { bg: "bg-sky-100",    text: "text-sky-800",    border: "border-sky-300"    },
+  WEB:     { bg: "bg-green-100",  text: "text-green-800",  border: "border-green-300"  },
+  NIV:     { bg: "bg-purple-100", text: "text-purple-800", border: "border-purple-300" },
+  NLT:     { bg: "bg-rose-100",   text: "text-rose-800",   border: "border-rose-300"   },
+  AMP:     { bg: "bg-teal-100",   text: "text-teal-800",   border: "border-teal-300"   },
+  RVR1960: { bg: "bg-emerald-100", text: "text-emerald-800", border: "border-emerald-300" },
 };
 
 const DEFAULT_VERSIONS: BibleVersion[] = ["KJV", "NIV"];
