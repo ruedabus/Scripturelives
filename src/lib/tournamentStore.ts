@@ -1,15 +1,24 @@
 /**
- * Tournament room store — Upstash Redis + local file fallback.
+ * Tournament room store — Supabase PostgreSQL + local file fallback.
  *
- * Production (Vercel): uses Upstash Redis REST API so all lambda instances
- *   share the same state regardless of which cold/warm instance handles each
- *   request.  Set UPSTASH_REDIS_REST_URL + UPSTASH_REDIS_REST_TOKEN in your
- *   Vercel environment and in .env.local for local testing.
+ * Production (Vercel): reads/writes to a Supabase `tournament_rooms` table
+ *   via their REST API.  All lambda instances share the same database so
+ *   state is consistent regardless of which cold/warm function handles the request.
  *
- * Local dev without Redis env vars: falls back to a JSON file in /tmp.
- *   This works fine for a single-machine dev session.
+ * Local dev (no Supabase env vars): falls back to a /tmp JSON file, which
+ *   works fine for single-machine testing.
  *
- * All functions are async.  Rooms expire after 3 hours.
+ * Required env vars (add to .env.local and Vercel):
+ *   SUPABASE_URL              — e.g. https://xxxx.supabase.co
+ *   SUPABASE_SERVICE_ROLE_KEY — secret key from Project Settings → API
+ *
+ * Table schema (run once in Supabase SQL Editor):
+ *   create table tournament_rooms (
+ *     code        text primary key,
+ *     data        jsonb not null,
+ *     created_at  timestamptz default now(),
+ *     expires_at  timestamptz not null
+ *   );
  */
 
 import fs   from "fs";
@@ -17,41 +26,51 @@ import path from "path";
 import os   from "os";
 import type { GameRoom } from "@/lib/tournamentTypes";
 
-const EXPIRY_SEC  = 3 * 60 * 60;        // 3 hours in seconds (for Redis TTL)
-const EXPIRY_MS   = EXPIRY_SEC * 1000;
-const STORE_FILE  = path.join(os.tmpdir(), "scripture-tournament-rooms.json");
-const REDIS_URL   = process.env.UPSTASH_REDIS_REST_URL;
-const REDIS_TOKEN = process.env.UPSTASH_REDIS_REST_TOKEN;
-const USE_REDIS   = !!(REDIS_URL && REDIS_TOKEN);
+const EXPIRY_MS  = 3 * 60 * 60 * 1000;   // 3 hours
+const STORE_FILE = path.join(os.tmpdir(), "scripture-tournament-rooms.json");
 
-// ── Redis helpers (Upstash REST API — no npm package needed) ─────────────────
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const USE_SUPABASE = !!(SUPABASE_URL && SUPABASE_KEY);
 
-async function redisCmd(command: unknown[]): Promise<unknown> {
-  const res = await fetch(REDIS_URL!, {
-    method:  "POST",
-    headers: {
-      Authorization:  `Bearer ${REDIS_TOKEN}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(command),
+// ── Supabase REST helpers ─────────────────────────────────────────────────────
+
+function sbHeaders() {
+  return {
+    apikey:          SUPABASE_KEY!,
+    Authorization:   `Bearer ${SUPABASE_KEY}`,
+    "Content-Type":  "application/json",
+  };
+}
+
+const TABLE = () => `${SUPABASE_URL}/rest/v1/tournament_rooms`;
+
+async function sbGet(code: string): Promise<GameRoom | undefined> {
+  const res  = await fetch(`${TABLE()}?code=eq.${encodeURIComponent(code)}&select=data`, {
+    headers: sbHeaders(),
   });
-  const data = (await res.json()) as { result: unknown };
-  return data.result;
+  const rows = (await res.json()) as { data: GameRoom }[];
+  if (!Array.isArray(rows) || rows.length === 0) return undefined;
+  return rows[0].data;
 }
 
-async function redisGet(key: string): Promise<string | null> {
-  return (await redisCmd(["GET", key])) as string | null;
+async function sbUpsert(room: GameRoom): Promise<void> {
+  const expiresAt = new Date(room.createdAt + EXPIRY_MS).toISOString();
+  await fetch(TABLE(), {
+    method:  "POST",
+    headers: { ...sbHeaders(), Prefer: "resolution=merge-duplicates" },
+    body:    JSON.stringify({ code: room.code, data: room, expires_at: expiresAt }),
+  });
 }
 
-async function redisSet(key: string, value: string): Promise<void> {
-  await redisCmd(["SET", key, value, "EX", EXPIRY_SEC]);
+async function sbDelete(code: string): Promise<void> {
+  await fetch(`${TABLE()}?code=eq.${encodeURIComponent(code)}`, {
+    method:  "DELETE",
+    headers: sbHeaders(),
+  });
 }
 
-async function redisDel(key: string): Promise<void> {
-  await redisCmd(["DEL", key]);
-}
-
-// ── File-based fallback (local dev) ──────────────────────────────────────────
+// ── File-based fallback (local dev without Supabase) ─────────────────────────
 
 function fileRead(): Record<string, GameRoom> {
   try {
@@ -74,8 +93,8 @@ function fileWrite(store: Record<string, GameRoom>): void {
 // ── Public async API ─────────────────────────────────────────────────────────
 
 export async function createRoom(room: GameRoom): Promise<void> {
-  if (USE_REDIS) {
-    await redisSet(`tournament:${room.code}`, JSON.stringify(room));
+  if (USE_SUPABASE) {
+    await sbUpsert(room);
   } else {
     const store = fileRead();
     store[room.code] = room;
@@ -85,12 +104,10 @@ export async function createRoom(room: GameRoom): Promise<void> {
 
 export async function getRoom(code: string): Promise<GameRoom | undefined> {
   const key = code.toUpperCase();
-  if (USE_REDIS) {
-    const raw = await redisGet(`tournament:${key}`);
-    return raw ? (JSON.parse(raw) as GameRoom) : undefined;
-  } else {
-    return fileRead()[key];
+  if (USE_SUPABASE) {
+    return sbGet(key);
   }
+  return fileRead()[key];
 }
 
 export async function updateRoom(
@@ -101,8 +118,8 @@ export async function updateRoom(
   const room = await getRoom(key);
   if (!room) return null;
   const updated = updater({ ...room, lastUpdated: Date.now() });
-  if (USE_REDIS) {
-    await redisSet(`tournament:${key}`, JSON.stringify(updated));
+  if (USE_SUPABASE) {
+    await sbUpsert(updated);
   } else {
     const store = fileRead();
     store[key]  = updated;
@@ -113,8 +130,8 @@ export async function updateRoom(
 
 export async function deleteRoom(code: string): Promise<void> {
   const key = code.toUpperCase();
-  if (USE_REDIS) {
-    await redisDel(`tournament:${key}`);
+  if (USE_SUPABASE) {
+    await sbDelete(key);
   } else {
     const store = fileRead();
     delete store[key];
@@ -123,6 +140,6 @@ export async function deleteRoom(code: string): Promise<void> {
 }
 
 export async function listRooms(): Promise<string[]> {
-  if (USE_REDIS) return []; // not needed for production
+  if (USE_SUPABASE) return [];
   return Object.keys(fileRead());
 }
