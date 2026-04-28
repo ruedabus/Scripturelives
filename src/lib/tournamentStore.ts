@@ -1,7 +1,10 @@
 /**
  * In-memory game room store.
  *
- * Works perfectly for development and single-instance deployments.
+ * Uses a Node.js global so the Map survives Next.js hot-module reloads in dev
+ * and is shared across all API routes in the same process (no "Room not found"
+ * errors caused by each route getting a fresh module instance).
+ *
  * On Vercel, game sessions are short (< 1 hour) and the same warm lambda
  * instance handles requests from the same origin within a session.
  * Rooms auto-expire after 3 hours.
@@ -11,17 +14,29 @@ import type { GameRoom } from "@/lib/tournamentTypes";
 
 const EXPIRY_MS = 3 * 60 * 60 * 1000; // 3 hours
 
-// Global store — persists across requests within the same process
-const rooms = new Map<string, GameRoom>();
+// ── Singleton pattern — survives hot reloads in dev ────────────────────────
+declare global {
+  // eslint-disable-next-line no-var
+  var __tournamentRooms: Map<string, GameRoom> | undefined;
+  // eslint-disable-next-line no-var
+  var __tournamentPruneStarted: boolean | undefined;
+}
 
-// ── Prune expired rooms periodically ───────────────────────────────────────
+const rooms: Map<string, GameRoom> =
+  globalThis.__tournamentRooms ??
+  (globalThis.__tournamentRooms = new Map<string, GameRoom>());
+
+// ── Prune expired rooms periodically (only start one timer per process) ────
 function pruneExpired() {
   const now = Date.now();
   for (const [code, room] of rooms) {
     if (now - room.createdAt > EXPIRY_MS) rooms.delete(code);
   }
 }
-setInterval(pruneExpired, 10 * 60 * 1000); // every 10 min
+if (!globalThis.__tournamentPruneStarted) {
+  globalThis.__tournamentPruneStarted = true;
+  setInterval(pruneExpired, 10 * 60 * 1000); // every 10 min
+}
 
 // ── CRUD ────────────────────────────────────────────────────────────────────
 export function createRoom(room: GameRoom): void {
