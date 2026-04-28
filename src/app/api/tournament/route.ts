@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
   let code = generateCode();
   // Avoid collisions
   let attempts = 0;
-  while (getRoom(code) && attempts < 10) { code = generateCode(); attempts++; }
+  while ((await getRoom(code)) && attempts < 10) { code = generateCode(); attempts++; }
 
   const hostId = `host-${Date.now()}`;
   const settings: GameSettings = {
@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
     lastUpdated:           Date.now(),
   };
 
-  createRoom(room);
+  await createRoom(room);
 
   return NextResponse.json({ code, hostId });
 }
@@ -69,7 +69,7 @@ export async function GET(req: NextRequest) {
   const code = new URL(req.url).searchParams.get("code")?.toUpperCase();
   if (!code) return NextResponse.json({ error: "Missing code" }, { status: 400 });
 
-  const room = getRoom(code);
+  const room = await getRoom(code);
   if (!room) return NextResponse.json({ error: "Room not found" }, { status: 404 });
 
   // Strip sensitive info (host id) before sending to players

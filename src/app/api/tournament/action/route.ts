@@ -3,19 +3,6 @@
  *
  * All game actions flow through here. The request body includes:
  *   { code, playerId, action, payload? }
- *
- * Actions:
- *   join              — player joins the lobby
- *   start_tournament  — host seeds bracket and begins
- *   start_match       — host starts the current match
- *   reveal_question   — host reveals next question
- *   submit_answer     — player submits an answer (MC / verse)
- *   buzz_in           — player buzzes in (buzz rounds)
- *   buzz_answer       — player who buzzed answers
- *   reveal_answer     — host reveals the correct answer + scores
- *   next_question     — host advances to next question
- *   advance_bracket   — host advances winner in bracket
- *   generate_ai_qs    — host triggers AI question generation
  */
 
 import { NextRequest, NextResponse } from "next/server";
@@ -41,7 +28,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Missing code or action" }, { status: 400 });
   }
 
-  const room = getRoom(code);
+  const room = await getRoom(code);
   if (!room) return NextResponse.json({ error: "Room not found" }, { status: 404 });
 
   // ── join ──────────────────────────────────────────────────────────────────
@@ -61,7 +48,7 @@ export async function POST(req: NextRequest) {
       score: 0, wins: 0, correctAnswers: 0, buzzWins: 0,
       verseCorrect: 0, eliminated: false, placement: null,
     };
-    const updated = updateRoom(code, (r) => ({
+    const updated = await updateRoom(code, (r) => ({
       ...r,
       players: { ...r.players, [pid]: player },
       chatMessages: [...r.chatMessages, sysMsg(`${name} joined the game! ${avatar}`)],
@@ -85,7 +72,7 @@ export async function POST(req: NextRequest) {
     for (const m of bracket.filter((m) => m.isBye)) {
       finalBracket = advanceWinner(finalBracket, m);
     }
-    const updated = updateRoom(code, (r) => ({
+    const updated = await updateRoom(code, (r) => ({
       ...r,
       phase:   "seeding",
       bracket: finalBracket,
@@ -97,7 +84,7 @@ export async function POST(req: NextRequest) {
   // ── start_match ───────────────────────────────────────────────────────────
   if (action === "start_match") {
     const matchId: string = payload.matchId;
-    const updated = updateRoom(code, (r) => ({
+    const updated = await updateRoom(code, (r) => ({
       ...r,
       phase:                "matchup",
       currentMatchId:       matchId,
@@ -114,7 +101,7 @@ export async function POST(req: NextRequest) {
 
   // ── reveal_question ───────────────────────────────────────────────────────
   if (action === "reveal_question") {
-    const updated = updateRoom(code, (r) => {
+    const updated = await updateRoom(code, (r) => {
       const match = r.bracket.find((m) => m.id === r.currentMatchId);
       if (!match) return r;
       const qi = r.currentQuestionIndex;
@@ -135,7 +122,7 @@ export async function POST(req: NextRequest) {
   // ── submit_answer (MC / verse) ─────────────────────────────────────────────
   if (action === "submit_answer") {
     const answer: string = (payload.answer ?? "").slice(0, 200);
-    const updated = updateRoom(code, (r) => {
+    const updated = await updateRoom(code, (r) => {
       const match = r.bracket.find((m) => m.id === r.currentMatchId);
       const q     = r.currentQuestion;
       if (!match || !q || r.phase !== "question" || q.type === "buzz") return r;
@@ -160,9 +147,9 @@ export async function POST(req: NextRequest) {
           ...r.players,
           [playerId]: {
             ...r.players[playerId],
-            score:         (r.players[playerId]?.score ?? 0) + pts,
+            score:          (r.players[playerId]?.score ?? 0) + pts,
             correctAnswers: correct ? (r.players[playerId]?.correctAnswers ?? 0) + 1 : (r.players[playerId]?.correctAnswers ?? 0),
-            verseCorrect:  q.type === "verse" && correct ? (r.players[playerId]?.verseCorrect ?? 0) + 1 : (r.players[playerId]?.verseCorrect ?? 0),
+            verseCorrect:   q.type === "verse" && correct ? (r.players[playerId]?.verseCorrect ?? 0) + 1 : (r.players[playerId]?.verseCorrect ?? 0),
           },
         },
         bracket: r.bracket.map((m) =>
@@ -177,15 +164,15 @@ export async function POST(req: NextRequest) {
 
   // ── buzz_in ───────────────────────────────────────────────────────────────
   if (action === "buzz_in") {
-    const updated = updateRoom(code, (r) => {
+    const updated = await updateRoom(code, (r) => {
       if (r.phase !== "question" || r.currentQuestion?.type !== "buzz") return r;
       if (r.buzzedPlayerId) return r; // already buzzed
       return {
         ...r,
-        phase:         "buzzed",
+        phase:          "buzzed",
         buzzedPlayerId: playerId,
-        buzzedAt:      Date.now(),
-        chatMessages:  [...r.chatMessages, sysMsg(`⚡ ${r.players[playerId]?.name ?? "?"} buzzed in!`)],
+        buzzedAt:       Date.now(),
+        chatMessages:   [...r.chatMessages, sysMsg(`⚡ ${r.players[playerId]?.name ?? "?"} buzzed in!`)],
       };
     });
     return NextResponse.json({ room: updated });
@@ -194,7 +181,7 @@ export async function POST(req: NextRequest) {
   // ── buzz_answer ───────────────────────────────────────────────────────────
   if (action === "buzz_answer") {
     const answer: string = (payload.answer ?? "").slice(0, 200);
-    const updated = updateRoom(code, (r) => {
+    const updated = await updateRoom(code, (r) => {
       if (r.phase !== "buzzed" || r.buzzedPlayerId !== playerId) return r;
       const match = r.bracket.find((m) => m.id === r.currentMatchId);
       const q     = r.currentQuestion;
@@ -215,8 +202,8 @@ export async function POST(req: NextRequest) {
           ...r.players,
           [playerId]: {
             ...r.players[playerId],
-            score:    (r.players[playerId]?.score ?? 0) + pts,
-            buzzWins: correct ? (r.players[playerId]?.buzzWins ?? 0) + 1 : (r.players[playerId]?.buzzWins ?? 0),
+            score:          (r.players[playerId]?.score ?? 0) + pts,
+            buzzWins:       correct ? (r.players[playerId]?.buzzWins ?? 0) + 1 : (r.players[playerId]?.buzzWins ?? 0),
             correctAnswers: correct ? (r.players[playerId]?.correctAnswers ?? 0) + 1 : (r.players[playerId]?.correctAnswers ?? 0),
           },
         },
@@ -232,12 +219,11 @@ export async function POST(req: NextRequest) {
 
   // ── reveal_answer ─────────────────────────────────────────────────────────
   if (action === "reveal_answer") {
-    const updated = updateRoom(code, (r) => {
+    const updated = await updateRoom(code, (r) => {
       const match = r.bracket.find((m) => m.id === r.currentMatchId);
       const q     = r.currentQuestion;
       if (!match || !q) return r;
 
-      // Tally who won this question
       const p1id = match.player1Id!;
       const p2id = match.player2Id!;
       const p1ans = (match.answers[p1id] ?? []).at(-1);
@@ -247,7 +233,6 @@ export async function POST(req: NextRequest) {
       if (p1ans?.correct && !p2ans?.correct)       questionWinner = p1id;
       else if (p2ans?.correct && !p1ans?.correct)  questionWinner = p2id;
       else if (p1ans?.correct && p2ans?.correct) {
-        // Both correct — faster wins
         questionWinner = (p1ans.submittedAt ?? Infinity) < (p2ans.submittedAt ?? Infinity) ? p1id : p2id;
       }
 
@@ -255,7 +240,6 @@ export async function POST(req: NextRequest) {
       if (questionWinner) newMatchScore[questionWinner] = (newMatchScore[questionWinner] ?? 0) + 1;
 
       const updatedMatch = { ...match, matchScore: newMatchScore };
-      const winner = getMatchWinner(updatedMatch);
 
       return {
         ...r,
@@ -273,15 +257,14 @@ export async function POST(req: NextRequest) {
 
   // ── next_question ─────────────────────────────────────────────────────────
   if (action === "next_question") {
-    const updated = updateRoom(code, (r) => {
+    const updated = await updateRoom(code, (r) => {
       const match = r.bracket.find((m) => m.id === r.currentMatchId);
       if (!match) return r;
 
-      const nextIdx = r.currentQuestionIndex + 1;
+      const nextIdx    = r.currentQuestionIndex + 1;
       const matchWinner = getMatchWinner({ ...match, matchScore: match.matchScore });
 
       if (matchWinner || nextIdx >= match.questions.length) {
-        // Match over
         const winnerId = matchWinner?.winnerId ?? match.player1Id!;
         const loserId  = matchWinner?.loserId  ?? match.player2Id!;
         const updatedPlayers = {
@@ -318,10 +301,9 @@ export async function POST(req: NextRequest) {
 
   // ── advance_bracket ───────────────────────────────────────────────────────
   if (action === "advance_bracket") {
-    const updated = updateRoom(code, (r) => {
+    const updated = await updateRoom(code, (r) => {
       const next = getNextMatch(r.bracket);
       if (!next) {
-        // Tournament complete — compute awards
         const awards = computeAwards(r);
         return { ...r, phase: "complete", awards };
       }
@@ -375,8 +357,7 @@ Return ONLY a JSON array like this:
       const raw  = data.choices?.[0]?.message?.content ?? "[]";
       const qs   = JSON.parse(raw.replace(/```json|```/g, "").trim());
 
-      // Inject AI questions into current match
-      const updated = updateRoom(code, (r) => ({
+      const updated = await updateRoom(code, (r) => ({
         ...r,
         bracket: r.bracket.map((m) =>
           m.id === r.currentMatchId
