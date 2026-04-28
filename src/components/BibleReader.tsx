@@ -2705,6 +2705,14 @@ export default function BibleReader() {
               <span>Devotional Articles</span>
               <span className="ml-auto text-[10px] text-indigo-500 font-bold">New</span>
             </a>
+            <a
+              href="/tournament"
+              className="flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium text-gray-600 hover:bg-amber-50 hover:text-amber-700 transition-colors"
+            >
+              <Trophy size={16} />
+              <span>Bible Bowl</span>
+              <span className="ml-auto text-[10px] text-amber-500 font-bold">New</span>
+            </a>
           </div>
 
           {/* My Library */}
