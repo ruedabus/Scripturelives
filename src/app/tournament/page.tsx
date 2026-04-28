@@ -1,0 +1,209 @@
+"use client";
+
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Trophy, Users, Zap, BookOpen, ArrowRight, Loader2 } from "lucide-react";
+
+export default function TournamentLanding() {
+  const router = useRouter();
+
+  const [mode,      setMode]      = useState<"home" | "host" | "join">("home");
+  const [hostName,  setHostName]  = useState("");
+  const [joinCode,  setJoinCode]  = useState("");
+  const [joinName,  setJoinName]  = useState("");
+  const [loading,   setLoading]   = useState(false);
+  const [error,     setError]     = useState("");
+
+  // ── Host: create room ────────────────────────────────────────────────────
+  const createGame = async () => {
+    if (!hostName.trim()) { setError("Enter your name"); return; }
+    setLoading(true); setError("");
+    try {
+      const res = await fetch("/api/tournament", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ hostName: hostName.trim() }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Failed to create game");
+      router.push(`/tournament/host/${data.code}?hostId=${data.hostId}`);
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : "Something went wrong");
+      setLoading(false);
+    }
+  };
+
+  // ── Player: join room ────────────────────────────────────────────────────
+  const joinGame = async () => {
+    const code = joinCode.trim().toUpperCase();
+    if (!code || code.length !== 4) { setError("Enter a valid 4-letter code"); return; }
+    if (!joinName.trim()) { setError("Enter your name"); return; }
+    setLoading(true); setError("");
+    try {
+      const res = await fetch("/api/tournament/action", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code, action: "join", payload: { name: joinName.trim() } }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Failed to join game");
+      router.push(`/tournament/play/${code}?playerId=${data.playerId}`);
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : "Something went wrong");
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-indigo-950 via-purple-950 to-indigo-950 flex flex-col items-center justify-center px-4 py-12">
+
+      {/* ── Logo ────────────────────────────────────────────────────── */}
+      <div className="text-center mb-10">
+        <div className="text-6xl mb-3">✝️🏆</div>
+        <h1 className="text-4xl sm:text-5xl font-extrabold text-white tracking-tight">
+          Bible Bowl
+        </h1>
+        <p className="mt-2 text-indigo-300 text-base sm:text-lg max-w-md mx-auto">
+          Tournament-style Bible trivia for youth groups. Join from your phone. Compete for the crown.
+        </p>
+
+        {/* Feature chips */}
+        <div className="mt-5 flex flex-wrap justify-center gap-2">
+          {[
+            { icon: <Trophy size={13} />,   label: "Bracket Tournament"    },
+            { icon: <Zap size={13} />,      label: "Lightning Buzz-in"     },
+            { icon: <BookOpen size={13} />, label: "Verse Completion"      },
+            { icon: <Users size={13} />,    label: "Up to 16 Players"      },
+          ].map((f) => (
+            <span key={f.label} className="flex items-center gap-1.5 bg-white/10 text-indigo-200 text-xs font-semibold px-3 py-1.5 rounded-full">
+              {f.icon} {f.label}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Main card ───────────────────────────────────────────────── */}
+      <div className="w-full max-w-md">
+
+        {mode === "home" && (
+          <div className="grid gap-4">
+            <button
+              type="button"
+              onClick={() => { setMode("host"); setError(""); }}
+              className="group rounded-2xl bg-amber-500 hover:bg-amber-400 text-white p-6 text-left transition active:scale-[.98] shadow-xl"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xl font-extrabold">Host a Game</p>
+                  <p className="text-amber-100 text-sm mt-1">Create a room · share the code · run the tournament</p>
+                </div>
+                <Trophy size={32} className="opacity-80 group-hover:scale-110 transition-transform" />
+              </div>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => { setMode("join"); setError(""); }}
+              className="group rounded-2xl bg-white/10 hover:bg-white/20 text-white p-6 text-left transition active:scale-[.98] border border-white/20"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xl font-extrabold">Join a Game</p>
+                  <p className="text-indigo-300 text-sm mt-1">Enter the 4-letter room code to play</p>
+                </div>
+                <Users size={32} className="opacity-70 group-hover:scale-110 transition-transform" />
+              </div>
+            </button>
+
+            <a
+              href="/"
+              className="text-center text-sm text-indigo-400 hover:text-indigo-200 transition mt-2"
+            >
+              ← Back to Scripture Lives
+            </a>
+          </div>
+        )}
+
+        {mode === "host" && (
+          <div className="bg-white/10 backdrop-blur rounded-2xl p-6 border border-white/20">
+            <button onClick={() => setMode("home")} className="text-indigo-400 text-sm mb-4 hover:text-white transition">← Back</button>
+            <h2 className="text-xl font-bold text-white mb-1">Host a Tournament</h2>
+            <p className="text-indigo-300 text-sm mb-5">Your students will join with a room code</p>
+
+            <div className="space-y-3">
+              <div>
+                <label className="block text-xs font-semibold text-indigo-300 mb-1">Your Name</label>
+                <input
+                  value={hostName}
+                  onChange={(e) => setHostName(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && createGame()}
+                  placeholder="Pastor Mike, Coach Sarah…"
+                  maxLength={30}
+                  className="w-full rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 px-4 py-3 text-sm focus:outline-none focus:border-amber-400"
+                />
+              </div>
+
+              {error && <p className="text-red-400 text-xs">{error}</p>}
+
+              <button
+                type="button"
+                onClick={createGame}
+                disabled={loading}
+                className="w-full rounded-xl bg-amber-500 hover:bg-amber-400 disabled:opacity-50 text-white font-bold py-3 flex items-center justify-center gap-2 transition"
+              >
+                {loading ? <Loader2 size={18} className="animate-spin" /> : <><Trophy size={18} /> Create Game Room</>}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {mode === "join" && (
+          <div className="bg-white/10 backdrop-blur rounded-2xl p-6 border border-white/20">
+            <button onClick={() => setMode("home")} className="text-indigo-400 text-sm mb-4 hover:text-white transition">← Back</button>
+            <h2 className="text-xl font-bold text-white mb-1">Join a Game</h2>
+            <p className="text-indigo-300 text-sm mb-5">Get the room code from your youth pastor</p>
+
+            <div className="space-y-3">
+              <div>
+                <label className="block text-xs font-semibold text-indigo-300 mb-1">Room Code</label>
+                <input
+                  value={joinCode}
+                  onChange={(e) => setJoinCode(e.target.value.toUpperCase().slice(0, 4))}
+                  placeholder="JOHN"
+                  maxLength={4}
+                  className="w-full rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 px-4 py-3 text-2xl font-bold tracking-widest text-center focus:outline-none focus:border-amber-400"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-indigo-300 mb-1">Your Name</label>
+                <input
+                  value={joinName}
+                  onChange={(e) => setJoinName(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && joinGame()}
+                  placeholder="Enter your name"
+                  maxLength={20}
+                  className="w-full rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 px-4 py-3 text-sm focus:outline-none focus:border-amber-400"
+                />
+              </div>
+
+              {error && <p className="text-red-400 text-xs">{error}</p>}
+
+              <button
+                type="button"
+                onClick={joinGame}
+                disabled={loading}
+                className="w-full rounded-xl bg-indigo-500 hover:bg-indigo-400 disabled:opacity-50 text-white font-bold py-3 flex items-center justify-center gap-2 transition"
+              >
+                {loading ? <Loader2 size={18} className="animate-spin" /> : <><ArrowRight size={18} /> Join Game</>}
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <p className="mt-8 text-indigo-500 text-xs text-center">
+        Scripture Lives · Bible Bowl · Free for youth groups
+      </p>
+    </div>
+  );
+}
