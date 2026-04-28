@@ -1,64 +1,79 @@
 /**
- * In-memory game room store.
+ * File-backed game room store.
  *
- * Uses a Node.js global so the Map survives Next.js hot-module reloads in dev
- * and is shared across all API routes in the same process (no "Room not found"
- * errors caused by each route getting a fresh module instance).
+ * Stores game state as JSON in /tmp/tournament-rooms.json so it survives
+ * Next.js hot-module reloads and is shared across all API route handlers
+ * regardless of how Next.js isolates module instances between routes.
  *
- * On Vercel, game sessions are short (< 1 hour) and the same warm lambda
- * instance handles requests from the same origin within a session.
+ * /tmp is available in both local development and Vercel serverless functions.
  * Rooms auto-expire after 3 hours.
  */
 
+import fs from "fs";
+import path from "path";
+import os from "os";
 import type { GameRoom } from "@/lib/tournamentTypes";
 
-const EXPIRY_MS = 3 * 60 * 60 * 1000; // 3 hours
+const EXPIRY_MS  = 3 * 60 * 60 * 1000; // 3 hours
+const STORE_FILE = path.join(os.tmpdir(), "scripture-tournament-rooms.json");
 
-// ── Singleton pattern — survives hot reloads in dev ────────────────────────
-declare global {
-  // eslint-disable-next-line no-var
-  var __tournamentRooms: Map<string, GameRoom> | undefined;
-  // eslint-disable-next-line no-var
-  var __tournamentPruneStarted: boolean | undefined;
-}
+// ── File I/O ─────────────────────────────────────────────────────────────────
 
-const rooms: Map<string, GameRoom> =
-  globalThis.__tournamentRooms ??
-  (globalThis.__tournamentRooms = new Map<string, GameRoom>());
-
-// ── Prune expired rooms periodically (only start one timer per process) ────
-function pruneExpired() {
-  const now = Date.now();
-  for (const [code, room] of rooms) {
-    if (now - room.createdAt > EXPIRY_MS) rooms.delete(code);
+function readStore(): Record<string, GameRoom> {
+  try {
+    const raw = fs.readFileSync(STORE_FILE, "utf-8");
+    return JSON.parse(raw) as Record<string, GameRoom>;
+  } catch {
+    return {};
   }
 }
-if (!globalThis.__tournamentPruneStarted) {
-  globalThis.__tournamentPruneStarted = true;
-  setInterval(pruneExpired, 10 * 60 * 1000); // every 10 min
+
+function writeStore(store: Record<string, GameRoom>): void {
+  try {
+    // Prune expired rooms before writing
+    const now = Date.now();
+    const pruned: Record<string, GameRoom> = {};
+    for (const [code, room] of Object.entries(store)) {
+      if (now - room.createdAt < EXPIRY_MS) pruned[code] = room;
+    }
+    fs.writeFileSync(STORE_FILE, JSON.stringify(pruned), "utf-8");
+  } catch (e) {
+    console.error("[tournamentStore] write error:", e);
+  }
 }
 
-// ── CRUD ────────────────────────────────────────────────────────────────────
+// ── CRUD ─────────────────────────────────────────────────────────────────────
+
 export function createRoom(room: GameRoom): void {
-  rooms.set(room.code, room);
+  const store = readStore();
+  store[room.code] = room;
+  writeStore(store);
 }
 
 export function getRoom(code: string): GameRoom | undefined {
-  return rooms.get(code.toUpperCase());
+  const store = readStore();
+  return store[code.toUpperCase()];
 }
 
-export function updateRoom(code: string, updater: (r: GameRoom) => GameRoom): GameRoom | null {
-  const room = rooms.get(code.toUpperCase());
+export function updateRoom(
+  code: string,
+  updater: (r: GameRoom) => GameRoom
+): GameRoom | null {
+  const store = readStore();
+  const room  = store[code.toUpperCase()];
   if (!room) return null;
   const updated = updater({ ...room, lastUpdated: Date.now() });
-  rooms.set(code.toUpperCase(), updated);
+  store[code.toUpperCase()] = updated;
+  writeStore(store);
   return updated;
 }
 
 export function deleteRoom(code: string): void {
-  rooms.delete(code.toUpperCase());
+  const store = readStore();
+  delete store[code.toUpperCase()];
+  writeStore(store);
 }
 
 export function listRooms(): string[] {
-  return [...rooms.keys()];
+  return Object.keys(readStore());
 }

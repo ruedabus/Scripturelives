@@ -17,9 +17,11 @@ function useGameRoom(code: string) {
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const poll = useCallback(async () => {
+    if (!code) return;                  // wait until code is resolved from params
     try {
       const res = await fetch(`/api/tournament?code=${code}`, { cache: "no-store" });
       if (!res.ok) { setError("Room not found"); return; }
+      setError("");                     // clear any previous error on success
       setRoom(await res.json());
     } catch { setError("Connection lost"); }
   }, [code]);
