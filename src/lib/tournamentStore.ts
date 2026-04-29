@@ -46,28 +46,50 @@ function sbHeaders() {
 const TABLE = () => `${SUPABASE_URL}/rest/v1/tournament_rooms`;
 
 async function sbGet(code: string): Promise<GameRoom | undefined> {
-  const res  = await fetch(`${TABLE()}?code=eq.${encodeURIComponent(code)}&select=data`, {
+  const res = await fetch(`${TABLE()}?code=eq.${encodeURIComponent(code)}&select=data`, {
     headers: sbHeaders(),
+    cache: "no-store",
   });
-  const rows = (await res.json()) as { data: GameRoom }[];
+  if (!res.ok) {
+    const body = await res.text().catch(() => "(unreadable)");
+    console.error(`[tournamentStore] sbGet HTTP ${res.status}:`, body);
+    throw new Error(`Supabase GET failed (${res.status}): ${body}`);
+  }
+  let rows: { data: GameRoom }[];
+  try {
+    rows = (await res.json()) as { data: GameRoom }[];
+  } catch (e) {
+    console.error("[tournamentStore] sbGet JSON parse error:", e);
+    throw new Error("Supabase GET returned invalid JSON");
+  }
   if (!Array.isArray(rows) || rows.length === 0) return undefined;
   return rows[0].data;
 }
 
 async function sbUpsert(room: GameRoom): Promise<void> {
   const expiresAt = new Date(room.createdAt + EXPIRY_MS).toISOString();
-  await fetch(TABLE(), {
+  const res = await fetch(TABLE(), {
     method:  "POST",
     headers: { ...sbHeaders(), Prefer: "resolution=merge-duplicates" },
     body:    JSON.stringify({ code: room.code, data: room, expires_at: expiresAt }),
   });
+  if (!res.ok) {
+    const body = await res.text().catch(() => "(unreadable)");
+    console.error(`[tournamentStore] sbUpsert HTTP ${res.status}:`, body);
+    throw new Error(`Supabase UPSERT failed (${res.status}): ${body}`);
+  }
 }
 
 async function sbDelete(code: string): Promise<void> {
-  await fetch(`${TABLE()}?code=eq.${encodeURIComponent(code)}`, {
+  const res = await fetch(`${TABLE()}?code=eq.${encodeURIComponent(code)}`, {
     method:  "DELETE",
     headers: sbHeaders(),
   });
+  if (!res.ok) {
+    const body = await res.text().catch(() => "(unreadable)");
+    console.error(`[tournamentStore] sbDelete HTTP ${res.status}:`, body);
+    // Non-fatal — log but don't throw
+  }
 }
 
 // ── File-based fallback (local dev without Supabase) ─────────────────────────

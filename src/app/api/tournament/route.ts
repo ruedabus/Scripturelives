@@ -59,7 +59,15 @@ export async function POST(req: NextRequest) {
     lastUpdated:           Date.now(),
   };
 
-  await createRoom(room);
+  try {
+    await createRoom(room);
+  } catch (e) {
+    console.error("[POST /api/tournament] createRoom failed:", e);
+    return NextResponse.json(
+      { error: `Failed to save game room: ${e instanceof Error ? e.message : String(e)}` },
+      { status: 500 }
+    );
+  }
 
   return NextResponse.json({ code, hostId });
 }
@@ -69,7 +77,16 @@ export async function GET(req: NextRequest) {
   const code = new URL(req.url).searchParams.get("code")?.toUpperCase();
   if (!code) return NextResponse.json({ error: "Missing code" }, { status: 400 });
 
-  const room = await getRoom(code);
+  let room;
+  try {
+    room = await getRoom(code);
+  } catch (e) {
+    console.error("[GET /api/tournament] getRoom failed:", e);
+    return NextResponse.json(
+      { error: `Database error: ${e instanceof Error ? e.message : String(e)}` },
+      { status: 503 }
+    );
+  }
   if (!room) return NextResponse.json({ error: "Room not found" }, { status: 404 });
 
   // Strip sensitive info (host id) before sending to players
