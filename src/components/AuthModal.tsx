@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Loader2, X, Mail } from "lucide-react";
-import { useAuth, getGoogleOAuthUrl } from "@/lib/authClient";
+import { useAuth } from "@/lib/authClient";
 
 type Props = {
   onClose:   () => void;
@@ -33,9 +33,8 @@ export default function AuthModal({ onClose, onSuccess }: Props) {
     }
   };
 
-  const handleGoogle = async () => {
-    const url = await getGoogleOAuthUrl();
-    window.location.href = url;
+  const handleGoogle = () => {
+    window.location.href = "/api/auth/google";
   };
 
   return (
