@@ -157,8 +157,18 @@ export default function MatchmakingPage() {
               className="w-full py-4 bg-amber-500 hover:bg-amber-400 active:bg-amber-600 text-black font-bold text-lg rounded-xl transition-colors flex items-center justify-center gap-2"
             >
               <Zap size={22} />
-              Find Opponent
+              Find Random Opponent
             </button>
+
+            <div className="w-full border-t border-white/10 pt-4">
+              <p className="text-indigo-400 text-xs text-center mb-3">or challenge someone specific</p>
+              <button
+                onClick={() => router.push("/challenge/new")}
+                className="w-full py-3 bg-purple-700 hover:bg-purple-600 text-white font-bold rounded-xl transition-colors flex items-center justify-center gap-2"
+              >
+                🎯 Challenge a Friend
+              </button>
+            </div>
           </>
         )}
 
