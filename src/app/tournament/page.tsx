@@ -2,13 +2,18 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Trophy, Users, Zap, BookOpen, ArrowRight, Loader2, ChevronDown, ChevronUp } from "lucide-react";
+import { Trophy, Users, Zap, BookOpen, ArrowRight, Loader2, ChevronDown, ChevronUp, BarChart2, LogIn } from "lucide-react";
 import { TOURNAMENT_CATEGORIES } from "@/lib/tournamentTypes";
+import { useAuth } from "@/lib/authClient";
+import AuthModal from "@/components/AuthModal";
+import Link from "next/link";
 
 const ALL_CATEGORY_IDS = TOURNAMENT_CATEGORIES.map((c) => c.id);
 
 export default function TournamentLanding() {
   const router = useRouter();
+  const { user, logout } = useAuth();
+  const [showAuth, setShowAuth] = useState(false);
 
   const [mode,           setMode]           = useState<"home" | "host" | "join">("home");
   const [hostName,       setHostName]       = useState("");
@@ -75,6 +80,33 @@ export default function TournamentLanding() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-indigo-950 via-purple-950 to-indigo-950 flex flex-col items-center justify-center px-4 py-12">
+
+      {showAuth && (
+        <AuthModal
+          onClose={() => setShowAuth(false)}
+          onSuccess={() => setShowAuth(false)}
+        />
+      )}
+
+      {/* ── Auth bar ── */}
+      <div className="fixed top-0 right-0 left-0 flex items-center justify-end gap-3 px-4 py-3 bg-black/20 backdrop-blur z-40">
+        <Link href="/leaderboard" className="flex items-center gap-1.5 text-xs text-indigo-300 hover:text-amber-300 font-semibold transition">
+          <BarChart2 size={14} /> Leaderboard
+        </Link>
+        {user ? (
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-indigo-300">Signed in</span>
+            <button onClick={() => logout()} className="text-xs text-white/40 hover:text-white transition">Sign out</button>
+          </div>
+        ) : (
+          <button
+            onClick={() => setShowAuth(true)}
+            className="flex items-center gap-1.5 text-xs bg-amber-500 hover:bg-amber-400 text-black font-bold px-3 py-1.5 rounded-lg transition"
+          >
+            <LogIn size={13} /> Sign In
+          </button>
+        )}
+      </div>
 
       {/* ── Logo ── */}
       <div className="text-center mb-10">
