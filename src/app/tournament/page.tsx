@@ -185,6 +185,22 @@ export default function TournamentLanding() {
               </div>
             </button>
 
+            {/* Solo Practice */}
+            <button
+              type="button"
+              onClick={() => router.push("/solo")}
+              className="group rounded-2xl bg-white/10 hover:bg-white/15 text-white p-6 text-left transition active:scale-[.98] border border-white/20"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xl font-extrabold">📖 Solo Practice</p>
+                  <p className="text-indigo-300 text-sm mt-1">Quiz yourself against the clock</p>
+                  <p className="text-indigo-400 text-xs mt-0.5">No sign-in needed · 5, 10, or 20 questions</p>
+                </div>
+                <div className="text-3xl opacity-80 group-hover:scale-110 transition-transform">🏆</div>
+              </div>
+            </button>
+
             <a href="/" className="text-center text-sm text-indigo-400 hover:text-indigo-200 transition mt-2">
               ← Back to Scripture Lives
             </a>
