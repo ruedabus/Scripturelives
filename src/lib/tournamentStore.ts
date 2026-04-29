@@ -43,7 +43,7 @@ function sbHeaders() {
   };
 }
 
-const TABLE = () => `${SUPABASE_URL}/rest/v1/tournament_rooms`;
+const TABLE = () => `${SUPABASE_URL?.replace(/\/+$/, "")}/rest/v1/tournament_rooms`;
 
 async function sbGet(code: string): Promise<GameRoom | undefined> {
   const res = await fetch(`${TABLE()}?code=eq.${encodeURIComponent(code)}&select=data`, {

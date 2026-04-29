@@ -26,7 +26,7 @@ export async function GET() {
     "Content-Type": "application/json",
     Prefer:         "resolution=merge-duplicates",
   };
-  const TABLE = `${SUPABASE_URL}/rest/v1/tournament_rooms`;
+  const TABLE = `${SUPABASE_URL.replace(/\/+$/, "")}/rest/v1/tournament_rooms`;
   const TEST_CODE = "_TEST_";
 
   // 1. Write a test row
