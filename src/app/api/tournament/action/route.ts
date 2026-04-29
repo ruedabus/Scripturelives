@@ -242,6 +242,8 @@ export async function POST(req: NextRequest) {
   // ── reveal_answer ─────────────────────────────────────────────────────────
   if (action === "reveal_answer") {
     const updated = await updateRoom(code, (r) => {
+      // Idempotency: already revealed (handles dual auto-host calls)
+      if (r.phase !== "question" && r.phase !== "buzzed") return r;
       const match = r.bracket.find((m) => m.id === r.currentMatchId);
       const q     = r.currentQuestion;
       if (!match || !q) return r;
@@ -283,6 +285,8 @@ export async function POST(req: NextRequest) {
     let completedMatch: { winnerId: string; loserId: string; winnerScore: number; loserScore: number; winnerSbId?: string; loserSbId?: string } | null = null;
 
     const updated = await updateRoom(code, (r) => {
+      // Idempotency: only process when in revealed state
+      if (r.phase !== "revealed") return r;
       const match = r.bracket.find((m) => m.id === r.currentMatchId);
       if (!match) return r;
 
@@ -360,6 +364,9 @@ export async function POST(req: NextRequest) {
   // ── advance_bracket ───────────────────────────────────────────────────────
   if (action === "advance_bracket") {
     const updated = await updateRoom(code, (r) => {
+      // Idempotency: if already complete or not in advancing phase, skip
+      if (r.phase === "complete") return r;
+      if (r.phase !== "advancing") return r;
       const next = getNextMatch(r.bracket);
       if (!next) {
         const awards = computeAwards(r);

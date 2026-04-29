@@ -166,6 +166,25 @@ export default function TournamentLanding() {
               </div>
             </button>
 
+            {/* Quick Match — 1v1 global */}
+            <button
+              type="button"
+              onClick={() => router.push("/matchmaking")}
+              className="group rounded-2xl bg-gradient-to-r from-purple-700 to-indigo-700 hover:from-purple-600 hover:to-indigo-600 text-white p-6 text-left transition active:scale-[.98] border border-purple-500/40 shadow-lg"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xl font-extrabold flex items-center gap-2">
+                    ⚡ Quick Match
+                    <span className="text-xs bg-amber-400 text-black font-bold px-2 py-0.5 rounded-full">NEW</span>
+                  </p>
+                  <p className="text-purple-200 text-sm mt-1">1v1 head-to-head against players worldwide</p>
+                  <p className="text-purple-300 text-xs mt-0.5">Requires sign-in · ELO rated</p>
+                </div>
+                <div className="text-3xl opacity-80 group-hover:scale-110 transition-transform">🌍</div>
+              </div>
+            </button>
+
             <a href="/" className="text-center text-sm text-indigo-400 hover:text-indigo-200 transition mt-2">
               ← Back to Scripture Lives
             </a>
