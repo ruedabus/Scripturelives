@@ -28,7 +28,16 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Missing code or action" }, { status: 400 });
   }
 
-  const room = await getRoom(code);
+  let room;
+  try {
+    room = await getRoom(code);
+  } catch (e) {
+    console.error("[POST /api/tournament/action] getRoom failed:", e);
+    return NextResponse.json(
+      { error: `Database error: ${e instanceof Error ? e.message : String(e)}` },
+      { status: 503 }
+    );
+  }
   if (!room) return NextResponse.json({ error: "Room not found" }, { status: 404 });
 
   // ── join ──────────────────────────────────────────────────────────────────

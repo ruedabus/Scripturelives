@@ -20,56 +20,60 @@ function generateCode(): string {
 
 // ── POST — create room ──────────────────────────────────────────────────────
 export async function POST(req: NextRequest) {
-  const body = await req.json().catch(() => ({}));
-  const hostName: string = (body.hostName ?? "Host").slice(0, 30);
-
-  let code = generateCode();
-  // Avoid collisions
-  let attempts = 0;
-  while ((await getRoom(code)) && attempts < 10) { code = generateCode(); attempts++; }
-
-  const hostId = `host-${Date.now()}`;
-  const settings: GameSettings = {
-    questionsPerMatch:      body.questionsPerMatch      ?? 3,
-    finalQuestionsPerMatch: body.finalQuestionsPerMatch ?? 5,
-    categories:             body.categories             ?? ["Old Testament", "New Testament"],
-    difficulties:           body.difficulties           ?? ["easy", "medium"],
-    includeAiQuestions:     body.includeAiQuestions     ?? false,
-    aiTopic:                body.aiTopic,
-  };
-
-  resetUsedQuestions();
-
-  const room: GameRoom = {
-    code,
-    hostId,
-    createdAt:             Date.now(),
-    phase:                 "lobby",
-    players:               {},
-    bracket:               [],
-    currentMatchId:        null,
-    currentQuestionIndex:  0,
-    currentQuestion:       null,
-    questionStartedAt:     null,
-    buzzedPlayerId:        null,
-    buzzedAt:              null,
-    settings,
-    awards:                [],
-    chatMessages:          [],
-    lastUpdated:           Date.now(),
-  };
-
   try {
+    const body = await req.json().catch(() => ({}));
+    const hostName: string = (body.hostName ?? "Host").slice(0, 30);
+
+    let code = generateCode();
+    // Avoid collisions — skip check if DB is unreachable (treat as no collision)
+    try {
+      let attempts = 0;
+      while ((await getRoom(code)) && attempts < 10) { code = generateCode(); attempts++; }
+    } catch {
+      // Collision check failed — just proceed with the generated code
+    }
+
+    const hostId = `host-${Date.now()}`;
+    const settings: GameSettings = {
+      questionsPerMatch:      body.questionsPerMatch      ?? 3,
+      finalQuestionsPerMatch: body.finalQuestionsPerMatch ?? 5,
+      categories:             body.categories             ?? ["Old Testament", "New Testament"],
+      difficulties:           body.difficulties           ?? ["easy", "medium"],
+      includeAiQuestions:     body.includeAiQuestions     ?? false,
+      aiTopic:                body.aiTopic,
+    };
+
+    resetUsedQuestions();
+
+    const room: GameRoom = {
+      code,
+      hostId,
+      createdAt:             Date.now(),
+      phase:                 "lobby",
+      players:               {},
+      bracket:               [],
+      currentMatchId:        null,
+      currentQuestionIndex:  0,
+      currentQuestion:       null,
+      questionStartedAt:     null,
+      buzzedPlayerId:        null,
+      buzzedAt:              null,
+      settings,
+      awards:                [],
+      chatMessages:          [],
+      lastUpdated:           Date.now(),
+    };
+
     await createRoom(room);
+
+    return NextResponse.json({ code, hostId });
   } catch (e) {
-    console.error("[POST /api/tournament] createRoom failed:", e);
+    console.error("[POST /api/tournament] unhandled error:", e);
     return NextResponse.json(
-      { error: `Failed to save game room: ${e instanceof Error ? e.message : String(e)}` },
+      { error: `Failed to create game: ${e instanceof Error ? e.message : String(e)}` },
       { status: 500 }
     );
   }
-
-  return NextResponse.json({ code, hostId });
 }
 
 // ── GET — poll state ────────────────────────────────────────────────────────
