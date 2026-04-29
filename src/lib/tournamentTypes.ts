@@ -30,6 +30,7 @@ export type Player = {
   name: string;
   avatarEmoji: string;
   joinedAt: number;
+  supabaseUserId?: string;  // linked account if player is signed in
   // in-game stats
   score: number;
   wins: number;

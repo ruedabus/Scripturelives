@@ -168,6 +168,11 @@ export async function recordMatch(match: Omit<MatchRecord, "id" | "played_at">):
   ]);
 }
 
+/** Update stats for a single player — safe to call even if they have no profile yet. */
+export async function updatePlayerStatsById(supabaseUserId: string, won: boolean, points: number): Promise<void> {
+  return updatePlayerStats(supabaseUserId, won, points);
+}
+
 async function updatePlayerStats(playerId: string, won: boolean, points: number): Promise<void> {
   // Fetch current profile
   const profile = await getProfile(playerId);
