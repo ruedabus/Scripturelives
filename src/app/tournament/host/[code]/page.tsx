@@ -4,10 +4,11 @@ import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import {
   Trophy, Users, Zap, ChevronRight, Loader2, CheckCircle2,
-  XCircle, Clock, SkipForward, Sparkles, Crown,
+  XCircle, Clock, SkipForward, Sparkles, Crown, Volume2, VolumeX,
 } from "lucide-react";
 import type { GameRoom, BracketMatch, Player } from "@/lib/tournamentTypes";
 import { getRoundName, getTotalRounds } from "@/lib/tournamentTypes";
+import { getGameAudio } from "@/lib/gameAudio";
 
 // ── Hooks ────────────────────────────────────────────────────────────────────
 
@@ -169,6 +170,63 @@ export default function HostPage({ params }: { params: Promise<{ code: string }>
   const [aiLoading, setAiLoading] = useState(false);
   const [timer, setTimer]       = useState(0);
 
+  // ── Audio ──────────────────────────────────────────────────────────────────
+  const [musicOn,   setMusicOn]   = useState(false);
+  const [volume,    setVolume]    = useState(0.45);
+  const prevPhaseRef  = useRef<string>("");
+  const prevBuzzRef   = useRef<string | null>(null);
+  const prevRevealRef = useRef<number>(0);
+
+  // Toggle music (requires user gesture to init AudioContext)
+  const toggleMusic = () => {
+    const audio = getGameAudio();
+    const nowOn = audio.toggle(room?.phase === "lobby" ? "lobby" : room?.phase === "question" ? "question" : "off");
+    setMusicOn(nowOn);
+  };
+
+  const handleVolume = (v: number) => {
+    setVolume(v);
+    getGameAudio().setVolume(v);
+  };
+
+  // React to game phase changes
+  useEffect(() => {
+    if (!room || !musicOn) return;
+    const audio  = getGameAudio();
+    const phase  = room.phase;
+    const prev   = prevPhaseRef.current;
+
+    if (phase !== prev) {
+      prevPhaseRef.current = phase;
+
+      if      (phase === "lobby")     audio.setScene("lobby");
+      else if (phase === "question")  audio.setScene("question");
+      else if (phase === "buzzed")  { audio.setScene("off"); audio.buzzIn(); }
+      else if (phase === "advancing"){ audio.setScene("off"); audio.advance(); }
+      else if (phase === "complete") { audio.setScene("off"); audio.fanfare(); }
+      else                            audio.setScene("off");
+    }
+
+    // Buzz detected mid-phase (buzz_in before phase flips)
+    if (room.buzzedPlayerId && room.buzzedPlayerId !== prevBuzzRef.current) {
+      prevBuzzRef.current = room.buzzedPlayerId;
+      audio.buzzIn();
+    }
+
+    // Revealed — check if someone got it right
+    if (phase === "revealed" && room.lastUpdated !== prevRevealRef.current) {
+      prevRevealRef.current = room.lastUpdated;
+      const match = room.bracket.find((m) => m.id === room.currentMatchId);
+      if (match) {
+        const gotIt = Object.values(match.answers).some((ans) => ans.at(-1)?.correct);
+        gotIt ? audio.correct() : audio.wrong();
+      }
+    }
+  }, [room, musicOn]);
+
+  // Cleanup on unmount
+  useEffect(() => () => { getGameAudio().disable(); }, []);
+
   // Countdown display
   useEffect(() => {
     if (!room?.questionStartedAt || !room.currentQuestion) return;
@@ -233,6 +291,30 @@ export default function HostPage({ params }: { params: Promise<{ code: string }>
           }`}>
             {room.phase.toUpperCase()}
           </span>
+
+          {/* ── Music controls ── */}
+          <div className="flex items-center gap-2 border-l border-white/10 pl-3">
+            <button
+              type="button"
+              onClick={toggleMusic}
+              title={musicOn ? "Mute music" : "Enable music"}
+              className={`flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-bold transition
+                ${musicOn ? "bg-amber-500/20 text-amber-300 hover:bg-amber-500/30" : "bg-white/10 text-white/50 hover:bg-white/20 hover:text-white"}`}
+            >
+              {musicOn ? <Volume2 size={14} /> : <VolumeX size={14} />}
+              {musicOn ? "Music ON" : "Music"}
+            </button>
+            {musicOn && (
+              <input
+                type="range"
+                min={0} max={1} step={0.05}
+                value={volume}
+                onChange={(e) => handleVolume(parseFloat(e.target.value))}
+                className="w-16 accent-amber-400"
+                title="Volume"
+              />
+            )}
+          </div>
         </div>
       </header>
 
