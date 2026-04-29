@@ -2,54 +2,46 @@
 
 /**
  * OAuth callback — Supabase redirects here after Google sign-in.
- * Extracts the access_token from the URL hash, saves to localStorage,
- * then redirects to profile setup (if new) or /tournament.
+ * The Supabase JS SDK automatically exchanges the PKCE code for a session.
  */
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
+import { supabase } from "@/lib/supabaseClient";
 import { saveSession } from "@/lib/authClient";
 
 export default function AuthCallback() {
-  const router = useRouter();
+  const router  = useRouter();
   const [status, setStatus] = useState("Signing you in…");
 
   useEffect(() => {
-    const hash   = window.location.hash.slice(1);
-    const params = new URLSearchParams(hash);
-    const token  = params.get("access_token");
-    const type   = params.get("type"); // "signup" on first login
+    supabase.auth.getSession().then(async ({ data: { session }, error }) => {
+      if (error || !session) {
+        // Give it one more second for PKCE exchange to complete
+        setTimeout(async () => {
+          const { data: { session: s2 } } = await supabase.auth.getSession();
+          if (s2) {
+            saveSession({ id: s2.user.id, email: s2.user.email!, access_token: s2.access_token });
+            router.push("/profile/setup");
+          } else {
+            setStatus("Something went wrong. Redirecting…");
+            setTimeout(() => router.push("/tournament"), 2000);
+          }
+        }, 1000);
+        return;
+      }
 
-    if (!token) {
-      setStatus("Sign-in failed — no token received.");
-      setTimeout(() => router.push("/tournament"), 2000);
-      return;
-    }
+      saveSession({ id: session.user.id, email: session.user.email!, access_token: session.access_token });
 
-    // Fetch the user object from Supabase
-    const SUPABASE_URL  = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-    const SUPABASE_ANON = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-
-    fetch(`${SUPABASE_URL}/auth/v1/user`, {
-      headers: { apikey: SUPABASE_ANON, Authorization: `Bearer ${token}` },
-    })
-      .then((r) => r.json())
-      .then((user) => {
-        if (!user?.id) throw new Error("No user returned");
-        saveSession({ id: user.id, email: user.email, access_token: token });
-
-        // New user → go to profile setup; returning user → tournament
-        if (type === "signup") {
-          router.push("/profile/setup");
-        } else {
-          router.push("/tournament");
-        }
-      })
-      .catch(() => {
-        setStatus("Something went wrong. Redirecting…");
-        setTimeout(() => router.push("/tournament"), 2000);
-      });
+      // Check if they already have a profile
+      const res = await fetch(`/api/profile?id=${session.user.id}`);
+      if (res.ok) {
+        router.push("/tournament");
+      } else {
+        router.push("/profile/setup");
+      }
+    });
   }, [router]);
 
   return (

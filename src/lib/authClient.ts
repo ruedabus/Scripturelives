@@ -1,60 +1,16 @@
 /**
  * Supabase Auth — browser/client side only.
- * Uses the public anon key (safe to expose).
- *
+ * Uses the official Supabase JS SDK.
  * Import this ONLY in "use client" components.
  */
 
-const SUPABASE_URL  = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const SUPABASE_ANON = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+import { supabase } from "@/lib/supabaseClient";
 
 export type SessionUser = {
   id:           string;
   email:        string;
   access_token: string;
 };
-
-// ── Auth actions ──────────────────────────────────────────────────────────────
-
-export async function signInWithEmail(email: string, password: string): Promise<{ user: SessionUser | null; error: string | null }> {
-  const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
-    method:  "POST",
-    headers: { apikey: SUPABASE_ANON, "Content-Type": "application/json" },
-    body:    JSON.stringify({ email, password }),
-  });
-  const data = await res.json();
-  if (!res.ok) return { user: null, error: data.error_description ?? data.msg ?? "Sign in failed" };
-  return {
-    user: { id: data.user.id, email: data.user.email, access_token: data.access_token },
-    error: null,
-  };
-}
-
-export async function signUpWithEmail(email: string, password: string): Promise<{ user: SessionUser | null; error: string | null }> {
-  const res = await fetch(`${SUPABASE_URL}/auth/v1/signup`, {
-    method:  "POST",
-    headers: { apikey: SUPABASE_ANON, "Content-Type": "application/json" },
-    body:    JSON.stringify({ email, password }),
-  });
-  const data = await res.json();
-  if (!res.ok || data.error) return { user: null, error: data.error_description ?? data.msg ?? data.error ?? "Sign up failed" };
-  if (!data.access_token) return { user: null, error: "Check your email to confirm your account" };
-  return {
-    user: { id: data.user.id, email: data.user.email, access_token: data.access_token },
-    error: null,
-  };
-}
-
-export async function signOut(token: string): Promise<void> {
-  await fetch(`${SUPABASE_URL}/auth/v1/logout`, {
-    method:  "POST",
-    headers: { apikey: SUPABASE_ANON, Authorization: `Bearer ${token}` },
-  });
-}
-
-export async function getGoogleOAuthUrl(): Promise<string> {
-  return `${SUPABASE_URL}/auth/v1/authorize?provider=google&redirect_to=${encodeURIComponent(window.location.origin + "/auth/callback")}`;
-}
 
 // ── Session persistence (localStorage) ───────────────────────────────────────
 
@@ -78,7 +34,7 @@ export function clearSession(): void {
   localStorage.removeItem(SESSION_KEY);
 }
 
-// ── Auth context hook (use in components) ─────────────────────────────────────
+// ── Auth hook ─────────────────────────────────────────────────────────────────
 
 import { useState, useEffect, useCallback } from "react";
 
@@ -87,27 +43,63 @@ export function useAuth() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setUser(loadSession());
-    setLoading(false);
+    // Try localStorage first (fast)
+    const saved = loadSession();
+    if (saved) setUser(saved);
+
+    // Then verify/refresh with Supabase SDK
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        const u = { id: session.user.id, email: session.user.email!, access_token: session.access_token };
+        saveSession(u);
+        setUser(u);
+      } else if (!saved) {
+        setUser(null);
+      }
+      setLoading(false);
+    });
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) {
+        const u = { id: session.user.id, email: session.user.email!, access_token: session.access_token };
+        saveSession(u);
+        setUser(u);
+      } else {
+        clearSession();
+        setUser(null);
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   const login = useCallback(async (email: string, password: string) => {
-    const { user: u, error } = await signInWithEmail(email, password);
-    if (u) { saveSession(u); setUser(u); }
-    return error;
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) return error.message;
+    if (data.session) {
+      const u = { id: data.session.user.id, email: data.session.user.email!, access_token: data.session.access_token };
+      saveSession(u);
+      setUser(u);
+    }
+    return null;
   }, []);
 
   const signup = useCallback(async (email: string, password: string) => {
-    const { user: u, error } = await signUpWithEmail(email, password);
-    if (u) { saveSession(u); setUser(u); }
-    return error;
+    const { data, error } = await supabase.auth.signUp({ email, password });
+    if (error) return error.message;
+    if (!data.session) return "Check your email to confirm your account";
+    const u = { id: data.session.user.id, email: data.session.user.email!, access_token: data.session.access_token };
+    saveSession(u);
+    setUser(u);
+    return null;
   }, []);
 
   const logout = useCallback(async () => {
-    if (user) await signOut(user.access_token);
+    await supabase.auth.signOut();
     clearSession();
     setUser(null);
-  }, [user]);
+  }, []);
 
   return { user, loading, login, signup, logout };
 }

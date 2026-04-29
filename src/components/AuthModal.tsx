@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Loader2, X, Mail } from "lucide-react";
 import { useAuth } from "@/lib/authClient";
+import { supabase } from "@/lib/supabaseClient";
 
 type Props = {
   onClose:   () => void;
@@ -33,8 +34,13 @@ export default function AuthModal({ onClose, onSuccess }: Props) {
     }
   };
 
-  const handleGoogle = () => {
-    window.location.href = "/api/auth/google";
+  const handleGoogle = async () => {
+    await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
   };
 
   return (
