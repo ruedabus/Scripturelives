@@ -35,7 +35,7 @@ const securityHeaders = [
       // Frames: YouTube embeds only
       "frame-src https://www.youtube.com https://www.youtube-nocookie.com",
       // Fetch / XHR / API calls
-      "connect-src 'self' https://rest.api.bible https://api.openai.com https://en.wikipedia.org https://en.m.wikipedia.org https://www.googleapis.com",
+      "connect-src 'self' https://rest.api.bible https://api.openai.com https://en.wikipedia.org https://en.m.wikipedia.org https://www.googleapis.com https://*.supabase.co",
       // Media
       "media-src 'self'",
       // Object/plugin embeds — none
