@@ -583,9 +583,20 @@ export default function HostPage({ params }: { params: Promise<{ code: string }>
                 </div>
               )}
 
-              <a href="/tournament" className="rounded-xl bg-indigo-500 hover:bg-indigo-400 text-white font-bold px-8 py-3 transition">
-                Play Again
-              </a>
+              <div className="flex gap-3">
+                <a
+                  href="/tournament"
+                  className="rounded-xl bg-indigo-500 hover:bg-indigo-400 text-white font-bold px-8 py-3 transition"
+                >
+                  Play Again
+                </a>
+                <a
+                  href="/"
+                  className="rounded-xl bg-white/10 hover:bg-white/20 text-white/70 hover:text-white font-semibold px-8 py-3 transition"
+                >
+                  Exit Game
+                </a>
+              </div>
             </div>
           )}
         </main>

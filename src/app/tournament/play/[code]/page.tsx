@@ -693,12 +693,20 @@ export default function PlayerPage({ params }: { params: Promise<{ code: string 
           </div>
         </div>
 
-        <a
-          href="/tournament"
-          className="block w-full text-center rounded-xl bg-indigo-500 hover:bg-indigo-400 text-white font-bold py-4 transition"
-        >
-          Play Again
-        </a>
+        <div className="flex flex-col gap-3">
+          <a
+            href="/tournament"
+            className="block w-full text-center rounded-xl bg-indigo-500 hover:bg-indigo-400 text-white font-bold py-4 transition"
+          >
+            Play Again
+          </a>
+          <a
+            href="/"
+            className="block w-full text-center rounded-xl bg-white/10 hover:bg-white/20 text-white/70 hover:text-white font-semibold py-3 transition"
+          >
+            Exit Game
+          </a>
+        </div>
       </div>
     );
   }
