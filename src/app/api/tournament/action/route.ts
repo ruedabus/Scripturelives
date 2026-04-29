@@ -13,6 +13,7 @@ import {
 } from "@/lib/bracket";
 import { BIBLE_AVATARS, AWARDS_CONFIG } from "@/lib/tournamentTypes";
 import type { GameRoom, Player, MatchAnswer, Award, ChatMessage } from "@/lib/tournamentTypes";
+import { getAuthUser, recordMatch, updatePlayerStatsById } from "@/lib/auth";
 
 const OPENAI_KEY = process.env.OPENAI_API_KEY;
 
@@ -52,8 +53,19 @@ export async function POST(req: NextRequest) {
     }
     const pid = `p-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
     const avatar = BIBLE_AVATARS[existingCount % BIBLE_AVATARS.length];
+
+    // If the player is signed in, attach their Supabase user ID
+    let supabaseUserId: string | undefined;
+    if (payload.accessToken) {
+      const authUser = await getAuthUser(new Request("https://x", {
+        headers: { Authorization: `Bearer ${payload.accessToken}` },
+      }) as NextRequest);
+      supabaseUserId = authUser?.id;
+    }
+
     const player: Player = {
       id: pid, name, avatarEmoji: avatar, joinedAt: Date.now(),
+      supabaseUserId,
       score: 0, wins: 0, correctAnswers: 0, buzzWins: 0,
       verseCorrect: 0, eliminated: false, placement: null,
     };
@@ -267,16 +279,30 @@ export async function POST(req: NextRequest) {
 
   // ── next_question ─────────────────────────────────────────────────────────
   if (action === "next_question") {
+    // Capture match completion info so we can record stats after updateRoom
+    let completedMatch: { winnerId: string; loserId: string; winnerScore: number; loserScore: number; winnerSbId?: string; loserSbId?: string } | null = null;
+
     const updated = await updateRoom(code, (r) => {
       const match = r.bracket.find((m) => m.id === r.currentMatchId);
       if (!match) return r;
 
-      const nextIdx    = r.currentQuestionIndex + 1;
+      const nextIdx     = r.currentQuestionIndex + 1;
       const matchWinner = getMatchWinner({ ...match, matchScore: match.matchScore });
 
       if (matchWinner || nextIdx >= match.questions.length) {
         const winnerId = matchWinner?.winnerId ?? match.player1Id!;
         const loserId  = matchWinner?.loserId  ?? match.player2Id!;
+
+        // Capture for post-update leaderboard recording
+        completedMatch = {
+          winnerId,
+          loserId,
+          winnerScore: match.matchScore[winnerId] ?? 0,
+          loserScore:  match.matchScore[loserId]  ?? 0,
+          winnerSbId:  r.players[winnerId]?.supabaseUserId,
+          loserSbId:   r.players[loserId]?.supabaseUserId,
+        };
+
         const updatedPlayers = {
           ...r.players,
           [winnerId]: { ...r.players[winnerId], wins: (r.players[winnerId]?.wins ?? 0) + 1 },
@@ -306,6 +332,28 @@ export async function POST(req: NextRequest) {
         phase:                "matchup",
       };
     });
+
+    // Record leaderboard stats for authenticated players (fire and forget)
+    if (completedMatch) {
+      const cm = completedMatch as { winnerId: string; loserId: string; winnerScore: number; loserScore: number; winnerSbId?: string; loserSbId?: string };
+      if (cm.winnerSbId && cm.loserSbId) {
+        // Both players authenticated — record full match
+        recordMatch({
+          player1_id:    cm.winnerSbId,
+          player2_id:    cm.loserSbId,
+          winner_id:     cm.winnerSbId,
+          player1_score: cm.winnerScore,
+          player2_score: cm.loserScore,
+          questions:     0,
+          category:      null,
+        }).catch(console.error);
+      } else {
+        // Update stats for whichever players are authenticated
+        if (cm.winnerSbId) updatePlayerStatsById(cm.winnerSbId, true,  cm.winnerScore).catch(console.error);
+        if (cm.loserSbId)  updatePlayerStatsById(cm.loserSbId,  false, cm.loserScore).catch(console.error);
+      }
+    }
+
     return NextResponse.json({ room: updated });
   }
 

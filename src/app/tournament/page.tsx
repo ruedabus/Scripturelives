@@ -67,7 +67,7 @@ export default function TournamentLanding() {
       const res = await fetch("/api/tournament/action", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ code, action: "join", payload: { name: joinName.trim() } }),
+        body: JSON.stringify({ code, action: "join", payload: { name: joinName.trim(), accessToken: user?.access_token } }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Failed to join game");
