@@ -38,7 +38,7 @@ export default function AuthModal({ onClose, onSuccess }: Props) {
     await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: "https://scripturelives.com/auth/callback",
       },
     });
   };

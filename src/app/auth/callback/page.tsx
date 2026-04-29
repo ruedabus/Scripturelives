@@ -1,10 +1,5 @@
 "use client";
 
-/**
- * OAuth callback — Supabase redirects here after Google sign-in.
- * The Supabase JS SDK automatically exchanges the PKCE code for a session.
- */
-
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
@@ -16,32 +11,37 @@ export default function AuthCallback() {
   const [status, setStatus] = useState("Signing you in…");
 
   useEffect(() => {
-    supabase.auth.getSession().then(async ({ data: { session }, error }) => {
-      if (error || !session) {
-        // Give it one more second for PKCE exchange to complete
-        setTimeout(async () => {
-          const { data: { session: s2 } } = await supabase.auth.getSession();
-          if (s2) {
-            saveSession({ id: s2.user.id, email: s2.user.email!, access_token: s2.access_token });
-            router.push("/profile/setup");
+    // onAuthStateChange fires as soon as the SDK finishes the PKCE code exchange
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (event === "SIGNED_IN" && session) {
+          saveSession({
+            id:           session.user.id,
+            email:        session.user.email!,
+            access_token: session.access_token,
+          });
+
+          // Check if they already have a profile
+          const res = await fetch(`/api/profile?id=${session.user.id}`);
+          if (res.ok) {
+            router.push("/tournament");
           } else {
-            setStatus("Something went wrong. Redirecting…");
-            setTimeout(() => router.push("/tournament"), 2000);
+            router.push("/profile/setup");
           }
-        }, 1000);
-        return;
+        }
       }
+    );
 
-      saveSession({ id: session.user.id, email: session.user.email!, access_token: session.access_token });
+    // Timeout fallback — if nothing happens in 8s, something went wrong
+    const timeout = setTimeout(() => {
+      setStatus("Something went wrong. Redirecting…");
+      setTimeout(() => router.push("/tournament"), 2000);
+    }, 8000);
 
-      // Check if they already have a profile
-      const res = await fetch(`/api/profile?id=${session.user.id}`);
-      if (res.ok) {
-        router.push("/tournament");
-      } else {
-        router.push("/profile/setup");
-      }
-    });
+    return () => {
+      subscription.unsubscribe();
+      clearTimeout(timeout);
+    };
   }, [router]);
 
   return (
