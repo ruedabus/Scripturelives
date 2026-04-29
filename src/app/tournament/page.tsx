@@ -2,17 +2,33 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Trophy, Users, Zap, BookOpen, ArrowRight, Loader2 } from "lucide-react";
+import { Trophy, Users, Zap, BookOpen, ArrowRight, Loader2, ChevronDown, ChevronUp } from "lucide-react";
+import { TOURNAMENT_CATEGORIES } from "@/lib/tournamentTypes";
+
+const ALL_CATEGORY_IDS = TOURNAMENT_CATEGORIES.map((c) => c.id);
 
 export default function TournamentLanding() {
   const router = useRouter();
 
-  const [mode,      setMode]      = useState<"home" | "host" | "join">("home");
-  const [hostName,  setHostName]  = useState("");
-  const [joinCode,  setJoinCode]  = useState("");
-  const [joinName,  setJoinName]  = useState("");
-  const [loading,   setLoading]   = useState(false);
-  const [error,     setError]     = useState("");
+  const [mode,           setMode]           = useState<"home" | "host" | "join">("home");
+  const [hostName,       setHostName]       = useState("");
+  const [joinCode,       setJoinCode]       = useState("");
+  const [joinName,       setJoinName]       = useState("");
+  const [loading,        setLoading]        = useState(false);
+  const [error,          setError]          = useState("");
+  const [showAdvanced,   setShowAdvanced]   = useState(false);
+  const [selectedCats,   setSelectedCats]   = useState<string[]>([...ALL_CATEGORY_IDS]);
+
+  const toggleCategory = (id: string) => {
+    setSelectedCats((prev) =>
+      prev.includes(id)
+        ? prev.length > 1 ? prev.filter((c) => c !== id) : prev  // keep at least 1
+        : [...prev, id]
+    );
+  };
+
+  const allSelected  = selectedCats.length === ALL_CATEGORY_IDS.length;
+  const toggleAll    = () => setSelectedCats(allSelected ? [ALL_CATEGORY_IDS[0]] : [...ALL_CATEGORY_IDS]);
 
   // ── Host: create room ────────────────────────────────────────────────────
   const createGame = async () => {
@@ -22,7 +38,10 @@ export default function TournamentLanding() {
       const res = await fetch("/api/tournament", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ hostName: hostName.trim() }),
+        body: JSON.stringify({
+          hostName:   hostName.trim(),
+          categories: selectedCats,
+        }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Failed to create game");
@@ -57,7 +76,7 @@ export default function TournamentLanding() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-indigo-950 via-purple-950 to-indigo-950 flex flex-col items-center justify-center px-4 py-12">
 
-      {/* ── Logo ────────────────────────────────────────────────────── */}
+      {/* ── Logo ── */}
       <div className="text-center mb-10">
         <div className="text-6xl mb-3">✝️🏆</div>
         <h1 className="text-4xl sm:text-5xl font-extrabold text-white tracking-tight">
@@ -82,7 +101,7 @@ export default function TournamentLanding() {
         </div>
       </div>
 
-      {/* ── Main card ───────────────────────────────────────────────── */}
+      {/* ── Main card ── */}
       <div className="w-full max-w-md">
 
         {mode === "home" && (
@@ -115,10 +134,7 @@ export default function TournamentLanding() {
               </div>
             </button>
 
-            <a
-              href="/"
-              className="text-center text-sm text-indigo-400 hover:text-indigo-200 transition mt-2"
-            >
+            <a href="/" className="text-center text-sm text-indigo-400 hover:text-indigo-200 transition mt-2">
               ← Back to Scripture Lives
             </a>
           </div>
@@ -130,7 +146,8 @@ export default function TournamentLanding() {
             <h2 className="text-xl font-bold text-white mb-1">Host a Tournament</h2>
             <p className="text-indigo-300 text-sm mb-5">Your students will join with a room code</p>
 
-            <div className="space-y-3">
+            <div className="space-y-4">
+              {/* Host name */}
               <div>
                 <label className="block text-xs font-semibold text-indigo-300 mb-1">Your Name</label>
                 <input
@@ -142,6 +159,81 @@ export default function TournamentLanding() {
                   className="w-full rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/40 px-4 py-3 text-sm focus:outline-none focus:border-amber-400"
                 />
               </div>
+
+              {/* Advanced settings toggle */}
+              <button
+                type="button"
+                onClick={() => setShowAdvanced(!showAdvanced)}
+                className="flex items-center gap-2 text-indigo-400 hover:text-indigo-200 text-xs font-semibold transition w-full"
+              >
+                {showAdvanced ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                {showAdvanced ? "Hide" : "Show"} category settings
+                <span className="ml-auto text-indigo-600 text-[10px]">
+                  {selectedCats.length}/{ALL_CATEGORY_IDS.length} selected
+                </span>
+              </button>
+
+              {/* Category picker */}
+              {showAdvanced && (
+                <div className="bg-white/5 rounded-xl p-4 space-y-3 border border-white/10">
+                  <div className="flex items-center justify-between mb-1">
+                    <p className="text-xs font-bold text-indigo-300 uppercase tracking-widest">Question Categories</p>
+                    <button
+                      type="button"
+                      onClick={toggleAll}
+                      className="text-[10px] text-amber-400 hover:text-amber-300 font-bold transition"
+                    >
+                      {allSelected ? "Deselect All" : "Select All"}
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-1 gap-2">
+                    {TOURNAMENT_CATEGORIES.map((cat) => {
+                      const on = selectedCats.includes(cat.id);
+                      return (
+                        <button
+                          key={cat.id}
+                          type="button"
+                          onClick={() => toggleCategory(cat.id)}
+                          className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-left transition border text-sm
+                            ${on
+                              ? "bg-amber-500/20 border-amber-400/60 text-white"
+                              : "bg-white/5 border-white/10 text-white/40"
+                            }`}
+                        >
+                          <span className="text-lg leading-none">{cat.emoji}</span>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-semibold text-xs leading-snug">{cat.label}</p>
+                            <p className="text-[10px] text-indigo-400/80 leading-snug">{cat.desc}</p>
+                          </div>
+                          <div className={`w-4 h-4 rounded border shrink-0 flex items-center justify-center
+                            ${on ? "bg-amber-500 border-amber-400" : "border-white/20"}`}>
+                            {on && <span className="text-[8px] text-black font-bold">✓</span>}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Difficulty progression info */}
+                  <div className="mt-2 pt-2 border-t border-white/10">
+                    <p className="text-[10px] text-indigo-400 font-semibold uppercase tracking-widest mb-1.5">Difficulty Progression</p>
+                    <div className="flex gap-1 text-[10px]">
+                      {[
+                        { label: "Round 1", color: "bg-green-500", desc: "Easy" },
+                        { label: "Round 2", color: "bg-yellow-500", desc: "Mixed" },
+                        { label: "Semis",   color: "bg-orange-500", desc: "Med/Hard" },
+                        { label: "Finals",  color: "bg-red-500",    desc: "Hard" },
+                      ].map((r) => (
+                        <div key={r.label} className="flex-1 text-center">
+                          <div className={`${r.color} rounded-full h-1.5 w-full mb-1`} />
+                          <p className="text-indigo-300 font-semibold">{r.label}</p>
+                          <p className="text-indigo-500">{r.desc}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {error && <p className="text-red-400 text-xs">{error}</p>}
 

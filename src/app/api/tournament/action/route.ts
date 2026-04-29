@@ -65,7 +65,8 @@ export async function POST(req: NextRequest) {
     const bracket = generateBracket(
       players,
       room.settings.questionsPerMatch,
-      room.settings.difficulties
+      room.settings.difficulties,
+      room.settings.categories
     );
     // Auto-advance byes
     let finalBracket = bracket;

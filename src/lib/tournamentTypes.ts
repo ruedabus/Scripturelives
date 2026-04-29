@@ -120,6 +120,19 @@ export function getTotalRounds(playerCount: number): number {
   return Math.ceil(Math.log2(Math.max(playerCount, 2)));
 }
 
+// ── Tournament categories ────────────────────────────────────────────────────
+
+export const TOURNAMENT_CATEGORIES = [
+  { id: "Old Testament",        label: "Old Testament",       emoji: "📜", desc: "History, law, and the patriarchs" },
+  { id: "Gospels",              label: "Gospels",             emoji: "✝️",  desc: "Life and teachings of Jesus"     },
+  { id: "New Testament",        label: "New Testament",       emoji: "📖", desc: "Acts and general NT knowledge"    },
+  { id: "Letters & Epistles",   label: "Letters & Epistles",  emoji: "✉️",  desc: "Paul's letters and general epistles" },
+  { id: "Prophecy & Revelation",label: "Prophecy",            emoji: "🔮", desc: "Prophets, Daniel, and Revelation" },
+  { id: "Psalms & Wisdom",      label: "Psalms & Wisdom",     emoji: "🎶", desc: "Psalms, Proverbs, Job, Ecclesiastes" },
+] as const;
+
+export type TournamentCategory = typeof TOURNAMENT_CATEGORIES[number]["id"];
+
 export const BIBLE_AVATARS = [
   "👑", "⚔️", "📜", "🕊️", "🌟", "🦁", "🐑", "🌿",
   "🏹", "🎺", "🌊", "🔥", "🌙", "☀️", "🪨", "🍞",
