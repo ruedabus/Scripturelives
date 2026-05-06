@@ -223,10 +223,11 @@ type Props = {
 
 export default function VerseShareModal({ verse, onClose }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [themeIdx, setThemeIdx]     = useState(0);
-  const [copied,   setCopied]       = useState(false);
-  const [sharing,  setSharing]      = useState(false);
-  const [canShare, setCanShare]     = useState(false);
+  const [themeIdx,   setThemeIdx]   = useState(0);
+  const [copied,     setCopied]     = useState(false);
+  const [sharing,    setSharing]    = useState(false);
+  const [canShare,   setCanShare]   = useState(false);
+  const [fbDone,     setFbDone]     = useState(false);
 
   const theme = THEMES[themeIdx];
 
@@ -294,6 +295,30 @@ export default function VerseShareModal({ verse, onClose }: Props) {
     } catch { /* ignore */ }
   }, [verse]);
 
+  // Facebook — download image first so the user can attach it, then open the
+  // FB Share dialog with the verse text pre-filled as a quote.
+  const handleShareFacebook = useCallback(async () => {
+    // 1. Trigger the PNG download so they have the image ready to post
+    await handleDownload();
+    // 2. Open Facebook sharer with verse text as quote and site URL
+    const text   = `"${verse.text}" — ${verse.reference} (${verse.version})`;
+    const fbUrl  = `https://www.facebook.com/sharer/sharer.php`
+      + `?u=${encodeURIComponent("https://scripturelives.com")}`
+      + `&quote=${encodeURIComponent(text)}`;
+    window.open(fbUrl, "_blank", "noopener,noreferrer,width=600,height=500");
+    setFbDone(true);
+    setTimeout(() => setFbDone(false), 3000);
+  }, [handleDownload, verse]);
+
+  // SMS — opens the native Messages app (works on iOS/Android, some desktops)
+  // Body is pre-filled with the verse text + reference.
+  const handleShareSMS = useCallback(() => {
+    const body = `"${verse.text}" — ${verse.reference} (${verse.version}) | scripturelives.com`;
+    // iOS uses & as separator, Android uses ?
+    const sep  = /iPhone|iPad|iPod/i.test(navigator.userAgent) ? "&" : "?";
+    window.open(`sms:${sep}body=${encodeURIComponent(body)}`, "_self");
+  }, [verse]);
+
   return (
     /* Backdrop */
     <div
@@ -355,9 +380,9 @@ export default function VerseShareModal({ verse, onClose }: Props) {
           </div>
         </div>
 
-        {/* Action buttons */}
-        <div className="px-5 py-4 flex flex-wrap gap-2 border-t border-stone-700">
-          {/* Share — only on mobile / when API available */}
+        {/* Action buttons — row 1: save/copy */}
+        <div className="px-5 pt-4 pb-2 flex flex-wrap gap-2 border-t border-stone-700">
+          {/* Share via native sheet — mobile/supported browsers */}
           {canShare && (
             <button
               type="button"
@@ -385,6 +410,48 @@ export default function VerseShareModal({ verse, onClose }: Props) {
             className={`flex items-center gap-2 rounded-xl font-semibold text-sm px-4 py-2.5 transition ${copied ? "bg-green-600 text-white" : "bg-stone-700 hover:bg-stone-600 text-white"}`}
           >
             {copied ? "✓ Copied!" : "📋 Copy Text"}
+          </button>
+        </div>
+
+        {/* Action buttons — row 2: social / SMS */}
+        <div className="px-5 pb-4 flex flex-wrap items-center gap-2">
+          <span className="text-stone-500 text-[11px] font-semibold uppercase tracking-widest w-full -mb-0.5">
+            Share to
+          </span>
+
+          {/* Facebook */}
+          <button
+            type="button"
+            onClick={handleShareFacebook}
+            title="Share to Facebook (downloads image + opens share dialog)"
+            className={`flex items-center gap-2 rounded-xl font-bold text-sm px-4 py-2.5 transition ${fbDone ? "bg-blue-400 text-white" : "bg-[#1877F2] hover:bg-[#1666d8] text-white"}`}
+          >
+            {fbDone ? "✓ Image saved!" : (
+              <>
+                {/* Facebook 'f' logo */}
+                <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current shrink-0" aria-hidden="true">
+                  <path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.413c0-3.018 1.793-4.688 4.533-4.688 1.313 0 2.686.235 2.686.235v2.953h-1.513c-1.491 0-1.956.927-1.956 1.877v2.255h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/>
+                </svg>
+                Facebook
+              </>
+            )}
+          </button>
+          {fbDone && (
+            <span className="text-stone-400 text-xs">Image downloaded — attach it in the Facebook post!</span>
+          )}
+
+          {/* SMS */}
+          <button
+            type="button"
+            onClick={handleShareSMS}
+            title="Send via SMS / Messages app"
+            className="flex items-center gap-2 rounded-xl bg-green-600 hover:bg-green-500 text-white font-bold text-sm px-4 py-2.5 transition"
+          >
+            {/* Speech bubble icon */}
+            <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current shrink-0" aria-hidden="true">
+              <path d="M20 2H4c-1.103 0-2 .897-2 2v18l4-4h14c1.103 0 2-.897 2-2V4c0-1.103-.897-2-2-2zm-3 9H7V9h10v2zm0-4H7V5h10v2z"/>
+            </svg>
+            SMS
           </button>
         </div>
       </div>
