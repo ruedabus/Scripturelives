@@ -90,6 +90,9 @@ export default function TournamentLanding() {
 
       {/* ── Auth bar ── */}
       <div className="fixed top-0 right-0 left-0 flex items-center justify-end gap-3 px-4 py-3 bg-black/20 backdrop-blur z-40">
+        <Link href="/churches" className="flex items-center gap-1.5 text-xs text-indigo-300 hover:text-amber-300 font-semibold transition">
+          ⛪ Churches
+        </Link>
         <Link href="/leaderboard" className="flex items-center gap-1.5 text-xs text-indigo-300 hover:text-amber-300 font-semibold transition">
           <BarChart2 size={14} /> Leaderboard
         </Link>

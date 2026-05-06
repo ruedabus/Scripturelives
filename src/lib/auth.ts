@@ -205,6 +205,58 @@ export async function getChurchLeaderboard(limit = 20): Promise<{ church_name: s
     .slice(0, limit);
 }
 
+export type ChurchStat = {
+  church_name:  string;
+  church_city:  string | null;
+  country:      string | null;
+  total_wins:   number;
+  total_points: number;
+  player_count: number;
+  avg_elo:      number;
+  top_elo:      number;
+};
+
+/** Fetch all members of a church, sorted by ELO descending. */
+export async function getChurchMembers(churchName: string): Promise<UserProfile[]> {
+  const res = await fetch(
+    `${PROFILES()}?church_name=eq.${encodeURIComponent(churchName)}&order=elo.desc&select=*`,
+    { headers: sbHeaders(), cache: "no-store" }
+  );
+  if (!res.ok) return [];
+  return (await res.json()) as UserProfile[];
+}
+
+/** Return enriched church stats (replaces the simpler getChurchLeaderboard). */
+export async function getChurches(limit = 100): Promise<ChurchStat[]> {
+  const res = await fetch(
+    `${PROFILES()}?select=church_name,church_city,country,games_won,total_points,elo&church_name=not.is.null&limit=1000`,
+    { headers: sbHeaders(), cache: "no-store" }
+  );
+  if (!res.ok) return [];
+  const rows = await res.json() as (Pick<UserProfile, "church_name" | "church_city" | "country" | "games_won" | "total_points" | "elo">)[];
+
+  const map = new Map<string, ChurchStat & { _elo_sum: number }>();
+  for (const r of rows) {
+    if (!r.church_name) continue;
+    const key = r.church_name;
+    const cur = map.get(key) ?? {
+      church_name: r.church_name, church_city: r.church_city, country: r.country,
+      total_wins: 0, total_points: 0, player_count: 0, avg_elo: 0, top_elo: 0, _elo_sum: 0,
+    };
+    cur.total_wins   += r.games_won    ?? 0;
+    cur.total_points += r.total_points ?? 0;
+    cur.player_count += 1;
+    cur._elo_sum     += r.elo          ?? 1000;
+    cur.top_elo       = Math.max(cur.top_elo, r.elo ?? 0);
+    map.set(key, cur);
+  }
+
+  return [...map.values()]
+    .map(({ _elo_sum, ...c }) => ({ ...c, avg_elo: Math.round(_elo_sum / c.player_count) }))
+    .sort((a, b) => b.total_wins - a.total_wins || b.player_count - a.player_count)
+    .slice(0, limit);
+}
+
 export async function recordMatch(match: Omit<MatchRecord, "id" | "played_at">): Promise<void> {
   // Save match
   const res = await fetch(MATCHES(), {
