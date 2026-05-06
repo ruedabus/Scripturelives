@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback, useRef, useMemo } from "react"
 import type { BibleSearchResult } from "@/app/api/bible/search/route";
 import VerseShareModal from "@/components/VerseShareModal";
 import type { ShareVerse } from "@/components/VerseShareModal";
+import StreakBadge from "@/components/StreakBadge";
 
 type BibleVersion = "KJV" | "ASV" | "WEB" | "NIV" | "NLT" | "AMP" | "RVR1960";
 
@@ -387,6 +388,11 @@ export default function FullBibleReader({
     setSearchResults([]);
   }, []);
 
+  // ── Reading streak ─────────────────────────────────────────────────────────
+  // Flips to true (then stays true) the first time verses load for the session.
+  // StreakBadge detects the change via a ref and records today's read.
+  const [triggerRead, setTriggerRead] = useState(false);
+
   // ── Verse sharing ──────────────────────────────────────────────────────────
   const [activeShareVerse, setActiveShareVerse] = useState<ShareVerse | null>(null);
 
@@ -438,6 +444,8 @@ export default function FullBibleReader({
         .then((data) => {
           setVerses(data.verses ?? []);
           setTotalChapters(data.totalChapters ?? 1);
+          // Count as a read for today's streak once verses arrive
+          if ((data.verses ?? []).length > 0) setTriggerRead(true);
         })
         .catch(() => setError("Failed to load chapter."))
         .finally(() => setLoading(false));
@@ -690,6 +698,9 @@ export default function FullBibleReader({
           >
             🔍
           </button>
+
+          {/* Streak badge */}
+          <StreakBadge triggerRead={triggerRead} />
 
           {/* Font size controls */}
           <div className="flex items-center gap-0.5 rounded-lg bg-stone-800 border border-stone-700 p-0.5">
