@@ -95,7 +95,9 @@ export default function TournamentLanding() {
         </Link>
         {user ? (
           <div className="flex items-center gap-2">
-            <span className="text-xs text-indigo-300">Signed in</span>
+            <Link href={`/profile/me`} className="text-xs text-indigo-300 hover:text-amber-300 font-semibold transition">
+              👤 My Profile
+            </Link>
             <button onClick={() => logout()} className="text-xs text-white/40 hover:text-white transition">Sign out</button>
           </div>
         ) : (

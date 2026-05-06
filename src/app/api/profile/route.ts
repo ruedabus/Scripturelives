@@ -1,27 +1,37 @@
 /**
- * GET  /api/profile?id=xxx         — fetch any profile by user id
- * GET  /api/profile?username=xxx   — fetch by username
- * POST /api/profile                — create / update own profile (auth required)
+ * GET  /api/profile?id=xxx               — fetch any profile by user id
+ * GET  /api/profile?username=xxx         — fetch by username
+ * GET  /api/profile?username=xxx&matches=true — profile + last 15 enriched matches
+ * POST /api/profile                      — create / update own profile (auth required)
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { getAuthUser, getProfile, getProfileByUsername, upsertProfile } from "@/lib/auth";
+import { getAuthUser, getProfile, getProfileByUsername, upsertProfile, getMatchHistory } from "@/lib/auth";
 
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
-    const id       = searchParams.get("id");
-    const username = searchParams.get("username");
+    const id          = searchParams.get("id");
+    const username    = searchParams.get("username");
+    const withMatches = searchParams.get("matches") === "true";
 
     if (id) {
       const p = await getProfile(id);
       if (!p) return NextResponse.json({ error: "Profile not found" }, { status: 404 });
+      if (withMatches) {
+        const matches = await getMatchHistory(p.id);
+        return NextResponse.json({ profile: p, matches }, { headers: { "Cache-Control": "no-store" } });
+      }
       return NextResponse.json(p, { headers: { "Cache-Control": "no-store" } });
     }
 
     if (username) {
       const p = await getProfileByUsername(username);
       if (!p) return NextResponse.json({ error: "Profile not found" }, { status: 404 });
+      if (withMatches) {
+        const matches = await getMatchHistory(p.id);
+        return NextResponse.json({ profile: p, matches }, { headers: { "Cache-Control": "no-store" } });
+      }
       return NextResponse.json(p, { headers: { "Cache-Control": "no-store" } });
     }
 

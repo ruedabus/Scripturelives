@@ -50,6 +50,18 @@ export type MatchRecord = {
   played_at:      string;
 };
 
+export type EnrichedMatch = {
+  id:              string;
+  opponent_id:     string;
+  opponent_name:   string;
+  opponent_avatar: string | null;
+  won:             boolean;
+  my_score:        number;
+  opponent_score:  number;
+  category:        string | null;
+  played_at:       string;
+};
+
 // ── Server-side auth helpers ──────────────────────────────────────────────────
 
 function sbHeaders() {
@@ -113,6 +125,50 @@ export async function upsertProfile(profile: Partial<UserProfile> & { id: string
   }
   const rows = await res.json() as UserProfile[];
   return rows[0] ?? null;
+}
+
+/** Fetch the last N matches for a user, enriched with opponent name/avatar. */
+export async function getMatchHistory(userId: string, limit = 15): Promise<EnrichedMatch[]> {
+  // Fetch raw matches where the user was player1 or player2
+  const [r1, r2] = await Promise.all([
+    fetch(`${MATCHES()}?player1_id=eq.${encodeURIComponent(userId)}&order=played_at.desc&limit=${limit}&select=*`, { headers: sbHeaders(), cache: "no-store" }),
+    fetch(`${MATCHES()}?player2_id=eq.${encodeURIComponent(userId)}&order=played_at.desc&limit=${limit}&select=*`, { headers: sbHeaders(), cache: "no-store" }),
+  ]);
+  if (!r1.ok || !r2.ok) return [];
+
+  const [rows1, rows2] = await Promise.all([r1.json() as Promise<MatchRecord[]>, r2.json() as Promise<MatchRecord[]>]);
+  const all = [...rows1, ...rows2].sort((a, b) => new Date(b.played_at).getTime() - new Date(a.played_at).getTime()).slice(0, limit);
+
+  if (all.length === 0) return [];
+
+  // Collect unique opponent IDs
+  const opponentIds = [...new Set(all.map((m) => m.player1_id === userId ? m.player2_id : m.player1_id))];
+  const opponentMap = new Map<string, { name: string; avatar: string | null }>();
+
+  // Bulk-fetch opponent profiles in one query
+  const ids = opponentIds.map((id) => `id.eq.${encodeURIComponent(id)}`).join(",");
+  const pr = await fetch(`${PROFILES()}?or=(${ids})&select=id,display_name,avatar_url`, { headers: sbHeaders(), cache: "no-store" });
+  if (pr.ok) {
+    const profiles = await pr.json() as Array<{ id: string; display_name: string; avatar_url: string | null }>;
+    for (const p of profiles) opponentMap.set(p.id, { name: p.display_name, avatar: p.avatar_url });
+  }
+
+  return all.map((m) => {
+    const isP1      = m.player1_id === userId;
+    const oppId     = isP1 ? m.player2_id : m.player1_id;
+    const opp       = opponentMap.get(oppId);
+    return {
+      id:              m.id,
+      opponent_id:     oppId,
+      opponent_name:   opp?.name ?? "Unknown",
+      opponent_avatar: opp?.avatar ?? null,
+      won:             m.winner_id === userId,
+      my_score:        isP1 ? m.player1_score : m.player2_score,
+      opponent_score:  isP1 ? m.player2_score : m.player1_score,
+      category:        m.category,
+      played_at:       m.played_at,
+    };
+  });
 }
 
 export async function getLeaderboard(limit = 50, offset = 0): Promise<UserProfile[]> {
