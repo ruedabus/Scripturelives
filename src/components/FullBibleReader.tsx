@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
+import type { BibleSearchResult } from "@/app/api/bible/search/route";
 
 type BibleVersion = "KJV" | "ASV" | "WEB" | "NIV" | "NLT" | "AMP" | "RVR1960";
 
@@ -331,6 +332,74 @@ export default function FullBibleReader({
     return next;
   });
 
+  // ── Search ─────────────────────────────────────────────────────────────────
+  const [showSearch,    setShowSearch]    = useState(false);
+  const [searchQuery,   setSearchQuery]   = useState("");
+  const [searchResults, setSearchResults] = useState<BibleSearchResult[]>([]);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [searchError,   setSearchError]   = useState("");
+  const searchInputRef                    = useRef<HTMLInputElement>(null);
+  const searchDebounceRef                 = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Auto-focus when panel opens
+  useEffect(() => {
+    if (showSearch) setTimeout(() => searchInputRef.current?.focus(), 50);
+  }, [showSearch]);
+
+  // Debounced search — fires 450 ms after user stops typing
+  useEffect(() => {
+    if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
+    if (!searchQuery.trim() || searchQuery.trim().length < 2) {
+      setSearchResults([]);
+      setSearchError("");
+      return;
+    }
+    searchDebounceRef.current = setTimeout(async () => {
+      setSearchLoading(true);
+      setSearchError("");
+      try {
+        const res  = await fetch(
+          `/api/bible/search?q=${encodeURIComponent(searchQuery.trim())}&version=${version}&limit=30`,
+          { cache: "no-store" }
+        );
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error ?? "Search failed");
+        setSearchResults(data.results ?? []);
+      } catch (e) {
+        setSearchError(e instanceof Error ? e.message : "Search failed");
+        setSearchResults([]);
+      } finally {
+        setSearchLoading(false);
+      }
+    }, 450);
+    return () => { if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current); };
+  }, [searchQuery, version]); // re-search when version changes too
+
+  // Navigate to a search result
+  const goToResult = useCallback((result: BibleSearchResult) => {
+    setSelectedBook(result.book);
+    setSelectedChapter(result.chapter);
+    setShowPicker(false);
+    setShowSearch(false);
+    setSearchQuery("");
+    setSearchResults([]);
+  }, []);
+
+  // Highlight matched terms in verse text
+  const highlightSearch = useMemo(() => {
+    const terms = searchQuery.trim().toLowerCase().split(/\s+/).filter((w) => w.length >= 2);
+    return (text: string): React.ReactNode => {
+      if (terms.length === 0) return text;
+      const pattern = new RegExp(`(${terms.map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|")})`, "gi");
+      const parts   = text.split(pattern);
+      return parts.map((part, i) =>
+        pattern.test(part)
+          ? <mark key={i} className="bg-amber-200 text-stone-900 rounded px-0.5">{part}</mark>
+          : part
+      );
+    };
+  }, [searchQuery]);
+
   // Load book list when version changes
   useEffect(() => {
     setLoading(true);
@@ -597,6 +666,20 @@ export default function FullBibleReader({
             </button>
           </div>
 
+          {/* Search toggle */}
+          <button
+            type="button"
+            onClick={() => setShowSearch((s) => !s)}
+            title="Search the Bible"
+            className={`rounded-lg px-2.5 py-1.5 text-sm transition flex items-center gap-1 font-semibold ${
+              showSearch
+                ? "bg-amber-500 text-stone-900"
+                : "bg-stone-700 hover:bg-stone-600 text-stone-300 hover:text-white"
+            }`}
+          >
+            🔍
+          </button>
+
           {/* Font size controls */}
           <div className="flex items-center gap-0.5 rounded-lg bg-stone-800 border border-stone-700 p-0.5">
             <button
@@ -624,6 +707,69 @@ export default function FullBibleReader({
 
         </div>
       </div>
+
+      {/* ── Search panel ──────────────────────────────────────────────────────── */}
+      {showSearch && (
+        <div className="bg-stone-800 border-b border-stone-700 px-4 py-3 flex flex-col gap-3">
+          {/* Input row */}
+          <div className="flex items-center gap-2">
+            <div className="relative flex-1">
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 text-sm pointer-events-none">🔍</span>
+              <input
+                ref={searchInputRef}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={(e) => e.key === "Escape" && setShowSearch(false)}
+                placeholder={`Search ${version} — type a word or "John 3:16"…`}
+                className="w-full pl-8 pr-4 py-2 rounded-lg bg-stone-700 border border-stone-600 text-white placeholder-stone-400 text-sm focus:outline-none focus:border-amber-400"
+              />
+            </div>
+            <button
+              type="button"
+              onClick={() => { setShowSearch(false); setSearchQuery(""); setSearchResults([]); }}
+              className="text-stone-400 hover:text-white text-lg leading-none px-1 transition"
+              title="Close search"
+            >
+              ✕
+            </button>
+          </div>
+
+          {/* Results */}
+          <div className="max-h-80 overflow-y-auto flex flex-col gap-1 overscroll-contain">
+            {searchLoading && (
+              <p className="text-stone-400 text-sm text-center py-4">Searching…</p>
+            )}
+            {searchError && (
+              <p className="text-red-400 text-sm text-center py-3">{searchError}</p>
+            )}
+            {!searchLoading && !searchError && searchQuery.trim().length >= 2 && searchResults.length === 0 && (
+              <p className="text-stone-400 text-sm text-center py-4">
+                No results for &ldquo;{searchQuery}&rdquo; in {version}
+              </p>
+            )}
+            {!searchLoading && searchResults.map((r, i) => (
+              <button
+                key={i}
+                type="button"
+                onClick={() => goToResult(r)}
+                className="text-left rounded-lg px-3 py-2.5 hover:bg-stone-700 transition group"
+              >
+                <p className="text-amber-400 text-xs font-bold mb-0.5 group-hover:text-amber-300">
+                  {r.reference}
+                </p>
+                <p className="text-stone-300 text-sm leading-snug line-clamp-2">
+                  {highlightSearch(r.text)}
+                </p>
+              </button>
+            ))}
+            {!searchLoading && searchResults.length > 0 && (
+              <p className="text-stone-500 text-xs text-center pt-1 pb-0.5">
+                {searchResults.length} result{searchResults.length !== 1 ? "s" : ""} · click to navigate
+              </p>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Reading area */}
       <div className="bg-[#faf8f3] px-6 py-6 min-h-[400px]">
