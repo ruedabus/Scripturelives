@@ -28,6 +28,10 @@ type BibleBookmark = {
 
 const BIBLE_BOOKMARKS_KEY = "scripture-lives-bible-bookmarks";
 const LAST_POSITION_KEY  = "scripture-lives-bible-position";
+const FONT_SIZE_KEY      = "scripture-lives-font-size";
+
+const FONT_SIZES = [14, 16, 18, 21, 24] as const;
+type FontSize = typeof FONT_SIZES[number];
 
 
 const LOCAL_VERSIONS:   BibleVersion[] = ["KJV", "ASV", "WEB"];
@@ -308,6 +312,25 @@ export default function FullBibleReader({
   // Word Study
   const [readingMode, setReadingMode] = useState<ReadingMode>("visual");
 
+  // ── Font size (persisted) ──────────────────────────────────────────────────
+  const [fontSize, setFontSize] = useState<FontSize>(() => {
+    if (typeof window === "undefined") return 16;
+    const saved = Number(localStorage.getItem(FONT_SIZE_KEY));
+    return (FONT_SIZES.includes(saved as FontSize) ? saved : 16) as FontSize;
+  });
+
+  const increaseFontSize = () => setFontSize((prev) => {
+    const next = FONT_SIZES[FONT_SIZES.indexOf(prev) + 1] ?? prev;
+    try { localStorage.setItem(FONT_SIZE_KEY, String(next)); } catch { /* ignore */ }
+    return next;
+  });
+
+  const decreaseFontSize = () => setFontSize((prev) => {
+    const next = FONT_SIZES[FONT_SIZES.indexOf(prev) - 1] ?? prev;
+    try { localStorage.setItem(FONT_SIZE_KEY, String(next)); } catch { /* ignore */ }
+    return next;
+  });
+
   // Load book list when version changes
   useEffect(() => {
     setLoading(true);
@@ -573,6 +596,32 @@ export default function FullBibleReader({
               Word Study
             </button>
           </div>
+
+          {/* Font size controls */}
+          <div className="flex items-center gap-0.5 rounded-lg bg-stone-800 border border-stone-700 p-0.5">
+            <button
+              type="button"
+              onClick={decreaseFontSize}
+              disabled={fontSize === FONT_SIZES[0]}
+              title="Decrease text size"
+              className="rounded-md px-2 py-1 text-[11px] font-bold text-stone-400 hover:text-white disabled:opacity-30 transition select-none"
+            >
+              A−
+            </button>
+            <span className="text-stone-600 text-[10px] px-0.5 select-none">
+              {FONT_SIZES.indexOf(fontSize) + 1}/{FONT_SIZES.length}
+            </span>
+            <button
+              type="button"
+              onClick={increaseFontSize}
+              disabled={fontSize === FONT_SIZES[FONT_SIZES.length - 1]}
+              title="Increase text size"
+              className="rounded-md px-2 py-1 text-[13px] font-bold text-stone-400 hover:text-white disabled:opacity-30 transition select-none"
+            >
+              A+
+            </button>
+          </div>
+
         </div>
       </div>
 
@@ -591,7 +640,7 @@ export default function FullBibleReader({
               <p className="mb-4 text-xs text-stone-400 italic">Tap any word to see its Hebrew or Greek root</p>
             )}
 
-            <div className="font-serif text-[16px] text-stone-800 leading-[1.9]">
+            <div className="font-serif text-stone-800 leading-[1.9]" style={{ fontSize: `${fontSize}px` }}>
               {isWordStudyMode ? (
                 <div className="space-y-2">
                   {verses.map((v) => (
