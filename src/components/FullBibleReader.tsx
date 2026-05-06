@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import type { BibleSearchResult } from "@/app/api/bible/search/route";
+import VerseShareModal from "@/components/VerseShareModal";
+import type { ShareVerse } from "@/components/VerseShareModal";
 
 type BibleVersion = "KJV" | "ASV" | "WEB" | "NIV" | "NLT" | "AMP" | "RVR1960";
 
@@ -194,7 +196,7 @@ function WordStudyVerse({
   const parts = text.split(/(\b[A-Za-z'']+\b)/);
   return (
     <span>
-      <sup className="mr-1 text-xs font-bold text-amber-600">{verseNum}</sup>
+      {verseNum > 0 && <sup className="mr-1 text-xs font-bold text-amber-600">{verseNum}</sup>}
       {parts.map((part, i) => {
         if (/^[A-Za-z'']+$/.test(part)) {
           return (
@@ -384,6 +386,15 @@ export default function FullBibleReader({
     setSearchQuery("");
     setSearchResults([]);
   }, []);
+
+  // ── Verse sharing ──────────────────────────────────────────────────────────
+  const [activeShareVerse, setActiveShareVerse] = useState<ShareVerse | null>(null);
+
+  const openShareModal = useCallback((v: BibleVerse) => {
+    setActiveShareVerse({ reference: v.reference, text: v.text, version });
+  }, [version]);
+
+  const closeShareModal = useCallback(() => setActiveShareVerse(null), []);
 
   // Highlight matched terms in verse text
   const highlightSearch = useMemo(() => {
@@ -790,8 +801,15 @@ export default function FullBibleReader({
               {isWordStudyMode ? (
                 <div className="space-y-2">
                   {verses.map((v) => (
-                    <div key={v.id}>
-                      <WordStudyVerse verseNum={v.verse} text={v.text} book={selectedBook}
+                    <div key={v.id} className="group/wsverse flex items-start gap-1">
+                      <span
+                        className="mt-[3px] text-[10px] font-bold text-amber-600 cursor-pointer hover:text-amber-400 transition select-none shrink-0"
+                        title={`Share ${v.reference}`}
+                        onClick={() => openShareModal(v)}
+                      >
+                        {v.verse}
+                      </span>
+                      <WordStudyVerse verseNum={0} text={v.text} book={selectedBook}
                         onWordClick={(word, book) => onWordClick?.(word, book)} />
                     </div>
                   ))}
@@ -803,8 +821,18 @@ export default function FullBibleReader({
                     return (
                       <p key={pi} className={isPoetry ? "border-l-2 border-amber-300 pl-4 italic text-stone-600" : "indent-6"}>
                         {para.map((v) => (
-                          <span key={v.id}>
-                            <sup className="mr-[2px] ml-[1px] text-[10px] font-bold text-amber-600 not-italic select-none align-top leading-none">{v.verse}</sup>
+                          <span key={v.id} className="group/verse relative">
+                            <sup
+                              className="mr-[2px] ml-[1px] text-[10px] font-bold text-amber-600 not-italic select-none align-top leading-none cursor-pointer hover:text-amber-400 transition relative"
+                              title={`Share ${v.reference}`}
+                              onClick={() => openShareModal(v)}
+                            >
+                              {v.verse}
+                              {/* Tooltip hint */}
+                              <span className="hidden group-hover/verse:inline-block absolute -top-5 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-stone-800 text-white text-[9px] px-1.5 py-0.5 pointer-events-none z-10 shadow-lg">
+                                share
+                              </span>
+                            </sup>
                             {readingMode === "visual" && onVisualSearch ? highlightTerms(v.text, onVisualSearch) : v.text}{" "}
                           </span>
                         ))}
@@ -817,6 +845,11 @@ export default function FullBibleReader({
           </>
         )}
       </div>
+
+      {/* ── Verse share modal ─────────────────────────────────────────────────── */}
+      {activeShareVerse && (
+        <VerseShareModal verse={activeShareVerse} onClose={closeShareModal} />
+      )}
 
       {/* Bottom chapter nav */}
       {!loading && verses.length > 0 && (
