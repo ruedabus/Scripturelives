@@ -45,7 +45,7 @@ function Field({
           className="w-full rounded-xl px-4 py-3 text-sm resize-y focus:outline-none focus:ring-2 leading-relaxed"
           style={{
             border: "1px solid #ddd6c8", background: "#faf8f3", color: NAVY,
-            minHeight: "120px", focusRingColor: GOLD,
+            minHeight: "120px",
           }}
         />
       ) : (
