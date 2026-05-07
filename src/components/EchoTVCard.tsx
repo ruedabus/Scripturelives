@@ -13,30 +13,41 @@ export default function EchoTVCard() {
       style={{ border: "1px solid #e8d5b0", boxShadow: "0 4px 20px rgba(201,149,42,0.10)" }}
     >
       {/* ── Header ── */}
-      <div className="px-5 py-4 flex items-center justify-between" style={{ background: NAVY }}>
-        <div className="flex items-center gap-3">
-          <div
-            className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
-            style={{ background: "rgba(201,149,42,0.18)", border: "1px solid rgba(201,149,42,0.35)" }}
-          >
-            {/* TV icon */}
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={GOLD} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="2" y="7" width="20" height="15" rx="2" ry="2"/>
-              <polyline points="17 2 12 7 7 2"/>
-            </svg>
-          </div>
+      <div className="relative overflow-hidden px-5 py-4 flex items-center justify-between" style={{ minHeight: "72px" }}>
+        {/* Banner photo as full-bleed background */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/goneechotvbanner.png"
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 w-full h-full object-cover pointer-events-none select-none"
+          style={{ objectPosition: "center center" }}
+        />
+        {/* Dark overlay so text stays readable */}
+        <div className="absolute inset-0" style={{ background: "linear-gradient(to right, rgba(10,16,30,0.82) 0%, rgba(10,16,30,0.55) 60%, rgba(10,16,30,0.72) 100%)" }} />
+
+        {/* Logo + label */}
+        <div className="relative z-10 flex items-center gap-3">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/echotvlogo.png"
+            alt="Echo TV Studios logo"
+            className="h-9 w-auto object-contain shrink-0"
+            style={{ filter: "brightness(0) invert(1)" }}
+          />
           <div>
             <p className="text-[10px] font-black uppercase tracking-[0.2em]" style={{ color: GOLD }}>Featured Ministry</p>
             <p className="text-sm font-black text-white leading-tight">Echo TV Studios</p>
           </div>
         </div>
 
+        {/* Visit site button */}
         <a
           href={SITE_URL}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition hover:opacity-80"
-          style={{ background: "rgba(255,255,255,0.08)", color: "rgba(255,255,255,0.65)", border: "1px solid rgba(255,255,255,0.12)" }}
+          className="relative z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition hover:opacity-80"
+          style={{ background: "rgba(255,255,255,0.10)", color: "rgba(255,255,255,0.75)", border: "1px solid rgba(255,255,255,0.18)" }}
         >
           Visit site
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -91,14 +102,14 @@ export default function EchoTVCard() {
 
             {/* Branding block */}
             <div className="relative z-10 flex flex-col items-center gap-2 px-6 text-center">
-              {/* TV icon */}
-              <div className="w-11 h-11 rounded-2xl flex items-center justify-center mb-1"
-                style={{ background: "rgba(201,149,42,0.20)", border: "1px solid rgba(201,149,42,0.40)" }}>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={GOLD} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="2" y="7" width="20" height="15" rx="2" ry="2"/>
-                  <polyline points="17 2 12 7 7 2"/>
-                </svg>
-              </div>
+              {/* Logo */}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/echotvlogo.png"
+                alt="Echo TV Studios"
+                className="mb-1 object-contain"
+                style={{ height: "36px", width: "auto", filter: "brightness(0) invert(1) sepia(1) saturate(3) hue-rotate(5deg)" }}
+              />
 
               {/* Logo text */}
               <div>
