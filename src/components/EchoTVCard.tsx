@@ -24,7 +24,7 @@ export default function EchoTVCard() {
           style={{ objectPosition: "center center" }}
         />
         {/* Dark overlay so text stays readable */}
-        <div className="absolute inset-0" style={{ background: "linear-gradient(to right, rgba(10,16,30,0.82) 0%, rgba(10,16,30,0.55) 60%, rgba(10,16,30,0.72) 100%)" }} />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(to right, rgba(10,16,30,0.60) 0%, rgba(10,16,30,0.30) 60%, rgba(10,16,30,0.50) 100%)" }} />
 
         {/* Logo + label */}
         <div className="relative z-10 flex items-center gap-3">
@@ -33,7 +33,6 @@ export default function EchoTVCard() {
             src="/echotvlogo.png"
             alt="Echo TV Studios logo"
             className="h-9 w-auto object-contain shrink-0"
-            style={{ filter: "brightness(0) invert(1)" }}
           />
           <div>
             <p className="text-[10px] font-black uppercase tracking-[0.2em]" style={{ color: GOLD }}>Featured Ministry</p>
@@ -108,7 +107,7 @@ export default function EchoTVCard() {
                 src="/echotvlogo.png"
                 alt="Echo TV Studios"
                 className="mb-1 object-contain"
-                style={{ height: "36px", width: "auto", filter: "brightness(0) invert(1) sepia(1) saturate(3) hue-rotate(5deg)" }}
+                style={{ height: "36px", width: "auto" }}
               />
 
               {/* Logo text */}
