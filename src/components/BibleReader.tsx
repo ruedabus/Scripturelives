@@ -2781,6 +2781,14 @@ export default function BibleReader() {
               <span>Bible Bowl</span>
               <span className="ml-auto text-[10px] text-amber-500 font-bold">New</span>
             </a>
+            <a
+              href="/games"
+              className="flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium text-gray-600 hover:bg-amber-50 hover:text-amber-700 transition-colors"
+            >
+              <span className="text-sm leading-none">🎮</span>
+              <span>Bible Wordle</span>
+              <span className="ml-auto text-[10px] font-bold" style={{ color: "#C9952A" }}>New</span>
+            </a>
           </div>
 
           {/* My Library */}
