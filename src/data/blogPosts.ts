@@ -8,7 +8,11 @@ export type BlogCategory =
   | "Prayer"
   | "Faith & Trust"
   | "Grace & Forgiveness"
-  | "Purpose & Calling";
+  | "Purpose & Calling"
+  | "Hope & Perseverance"
+  | "Courage & Strength"
+  | "Identity in Christ"
+  | "Healing & Restoration";
 
 export interface BlogPost {
   slug: string;
@@ -963,6 +967,1022 @@ export const blogPosts: BlogPost[] = [
 
 <h2>The Invitation That Remains Open</h2>
 <p>The story ends with him walking away sad. But it does not say he never came back. And for us, the story does not have to end the same way. Jesus still looks at us with love — knowing exactly what the "one thing" is, and asking for it anyway. Not because He wants to take it from us, but because He knows that until that thing is on the altar, it is holding us back from the life He is offering. What is the one thing for you? Name it. Then consider what it would mean to open your hands.</p>
+    `.trim(),
+  },
+
+  // ── 20 ─────────────────────────────────────────────────────────────────────
+  {
+    slug: "woman-at-the-well-living-water",
+    title: "The Woman at the Well: Living Water for Thirsty Souls",
+    subtitle: "Why Jesus chose to reveal Himself to the most unlikely person — and what that means for you",
+    category: "Devotional",
+    author: "Scripture Lives",
+    publishedAt: "2025-11-20",
+    readingTimeMin: 6,
+    coverEmoji: "💧",
+    keyVerse: "Jesus answered, 'Everyone who drinks this water will be thirsty again, but whoever drinks the water I give them will never thirst.'",
+    keyVerseRef: "John 4:13-14 (NIV)",
+    excerpt: "A Samaritan woman with five failed marriages and a shameful reputation came to the well at noon — the wrong time, avoiding people. Jesus was already there, waiting. Their conversation changed everything.",
+    tags: ["John 4", "living water", "Samaritan woman", "grace", "identity", "evangelism"],
+    content: `
+<p>She came at noon. That detail matters. In first-century Palestine, women drew water in the cool of the morning, in groups, together. The midday heat was brutal and unnecessary. But this woman came alone at noon — the social signal could not have been clearer. She was avoiding people. Or rather, people were avoiding her.</p>
+
+<p>John 4 tells us she had been married five times and the man she currently lived with was not her husband. We don't know the circumstances — widowhood, divorce, abandonment — but we know the weight. She was used to being looked at sideways, talked about in lowered voices. The well at noon, in the blazing heat, was her way of buying peace at the price of comfort.</p>
+
+<p>And Jesus was already there.</p>
+
+<h2>A Conversation That Should Not Have Happened</h2>
+
+<p>What follows is one of the longest recorded conversations Jesus has with any individual in the Gospels — and it happens with a Samaritan woman. This was scandalous on multiple counts. Jews and Samaritans despised each other, a centuries-old ethnic and religious hostility. Rabbis did not speak to women in public. And this particular woman had a reputation. The disciples, when they return, are astonished "that he was talking with a woman" (John 4:27) — they don't even address the Samaritan piece, the woman part is surprising enough.</p>
+
+<p>Jesus asks her for a drink. Not a sermon. A drink. He initiates with a simple human request that acknowledges need — His need. He is tired and thirsty. He does not begin by cataloguing her failures or demanding she repent before He will engage. He begins with a cup of water.</p>
+
+<h2>The Water He Offers</h2>
+
+<p>The conversation pivots. He tells her about living water — water that becomes a spring welling up to eternal life. She is practical, almost sharp: "Sir, you have nothing to draw with and the well is deep. Where can you get this living water?" (v. 11). She is thinking about buckets and logistics. He is talking about the deep thirst of the human soul.</p>
+
+<p>All of us know what it is to drink from wells that do not satisfy. Achievement, approval, relationships, substances, status — we return to them again and again, never quite full. The five marriages may represent that for this woman, though we cannot know. But the pattern is universal. We are thirsty creatures drawn to things that offer refreshment but leave us dry by afternoon.</p>
+
+<p>Jesus offers something different: water that permanently addresses the thirst at the root. Not a better well, but a different kind of water altogether — the kind that becomes a spring inside you, welling up rather than running out.</p>
+
+<h2>He Already Knows, and He Stays Anyway</h2>
+
+<p>Then comes the moment of exposure. "Go, call your husband," Jesus says. "I have no husband," she replies. "You are right when you say you have no husband," Jesus says. "The fact is, you have had five husbands, and the man you now have is not your husband" (vv. 17-18). He knew before she arrived. He knew when He asked for the drink. He knew all along.</p>
+
+<p>And He was still there. Still talking to her. Still offering living water. The knowledge of her full story did not send Him away — it was the context for the mercy He was offering.</p>
+
+<p>This is the nature of God's pursuit. He does not gather information about us and then decide whether to engage. He already knows, and He comes to the well anyway.</p>
+
+<h2>She Became the First Evangelist</h2>
+
+<p>Her response is remarkable. She leaves her water jar — the thing she came for — and runs into town. She says to everyone she had been hiding from: "Come, see a man who told me everything I ever did. Could this be the Messiah?" (v. 29). The woman who came at noon to avoid people becomes the catalyst for an entire village's encounter with Jesus.</p>
+
+<p>God does not disqualify the broken. He recruits them. The very thing she was ashamed of — that He knew everything she had done — became the headline of her testimony. Not despite her story, but through it.</p>
+
+<p>Come to the well. Come honestly, in whatever condition you are in, at whatever hour feels most private. He is already there. And the water He offers is unlike anything you have found before.</p>
+    `.trim(),
+  },
+
+  // ── 21 ─────────────────────────────────────────────────────────────────────
+  {
+    slug: "daniel-lions-den-courage-in-darkness",
+    title: "Daniel and the Lions' Den: Courage That Does Not Negotiate",
+    subtitle: "What Daniel's refusal to pray secretly teaches us about integrity under pressure",
+    category: "Courage & Strength",
+    author: "Scripture Lives",
+    publishedAt: "2025-11-27",
+    readingTimeMin: 6,
+    coverEmoji: "🦁",
+    keyVerse: "Now when Daniel learned that the decree had been published, he went home to his upstairs room where the windows opened toward Jerusalem. Three times a day he got down on his knees and prayed.",
+    keyVerseRef: "Daniel 6:10 (NIV)",
+    excerpt: "Daniel knew the law. He knew the consequence. He opened his window anyway. There is something in that open window that speaks directly to every believer who has ever been tempted to practice their faith quietly, privately, inconveniently.",
+    tags: ["Daniel 6", "courage", "prayer", "integrity", "persecution", "faith under pressure"],
+    content: `
+<p>King Darius had been manipulated. His administrators, jealous of Daniel's influence, had convinced the king to sign a law — irrevocable under the Medes and Persians — forbidding prayer to anyone but the king for thirty days. The penalty was the lions' den. It was a trap, and Daniel was the prey.</p>
+
+<p>What Daniel did next is one of the most quietly courageous acts in Scripture. He went home. He went upstairs. He opened his windows toward Jerusalem. And he prayed — just as he had always done, three times a day (Daniel 6:10).</p>
+
+<p>He did not go underground. He did not close the shutters. He did not pause his practice for thirty days and resume after the edict expired. He opened the windows.</p>
+
+<h2>The Particular Courage of the Open Window</h2>
+
+<p>It would have been easier — and perhaps even defensible — to pray quietly, behind closed shutters, just for a month. God would understand the prudence, surely. No one would know. He could resume in thirty-one days. His life, his influence, his ability to serve God in a pagan empire — all of it would be preserved.</p>
+
+<p>But that calculation, as reasonable as it sounds, rests on a false premise: that faith is primarily about a private transaction between the soul and God, and that external expression is optional. Daniel did not believe this. His open window was not stubbornness or a death wish. It was a statement of identity. I am a man who prays. That is not a habit that pauses. That is who I am.</p>
+
+<p>There is a challenge in this for every Christian who has ever been tempted to practice their faith quietly in environments that make it awkward — workplaces, family gatherings, social settings where mentioning Jesus is uncomfortable. The open window asks: Is your faith something you do in private when convenient, or is it the shape of your life?</p>
+
+<h2>God's Protection and God's Purposes</h2>
+
+<p>Daniel was thrown into the den. There is no miraculous escape before the trial — the lions are real, the threat is real, the night in the pit is real. King Darius, who genuinely cared for Daniel, could not sleep. He ran to the den at first light and called out — almost desperately: "Daniel, servant of the living God, has your God, whom you serve continually, been able to rescue you?" (v. 20).</p>
+
+<p>The answer came back: "My God sent his angel, and he shut the mouths of the lions" (v. 22). Daniel emerges unharmed. Not because the lions weren't hungry. Not because the situation wasn't dangerous. But because God is able.</p>
+
+<p>Notice the phrase Daniel uses: "I was found innocent in his sight." He is not claiming moral perfection. He is claiming covenant faithfulness — he had not abandoned his relationship with God, and God had not abandoned him.</p>
+
+<h2>The Reversal</h2>
+
+<p>The men who accused Daniel, along with their families, are thrown into the lions' den — and they do not survive even to reach the bottom. The contrast is brutal and intentional. God's protection of Daniel was not coincidence or luck. It was specific, targeted, and complete.</p>
+
+<p>Then Darius issues a decree of his own: that throughout his kingdom, people must fear and reverence the God of Daniel — "for he is the living God and he endures forever" (v. 26). Daniel's open window led to an entire empire hearing about his God.</p>
+
+<h2>The Window Is Still Open</h2>
+
+<p>We may not face lions. But pressure to close the shutters on our faith is real — the social pressure to keep it private, the professional pressure to leave it at the door, the relational pressure to tone it down. Daniel's example does not demand recklessness, but it does demand this: do not let pressure renegotiate the shape of your faith. Open the window. Pray the prayer. Live as who you are.</p>
+
+<p>The God who shut the lions' mouths has not changed. And some watching Dariuses may come to faith precisely because they saw you pray.</p>
+    `.trim(),
+  },
+
+  // ── 22 ─────────────────────────────────────────────────────────────────────
+  {
+    slug: "peter-restoration-do-you-love-me",
+    title: "Do You Love Me? Peter's Restoration and Yours",
+    subtitle: "How Jesus restores the broken — not with a lecture, but with breakfast and a question",
+    category: "Healing & Restoration",
+    author: "Scripture Lives",
+    publishedAt: "2025-12-04",
+    readingTimeMin: 6,
+    coverEmoji: "🔥",
+    keyVerse: "When they had finished eating, Jesus said to Simon Peter, 'Simon son of John, do you love me more than these?'",
+    keyVerseRef: "John 21:15 (NIV)",
+    excerpt: "Peter had denied Jesus three times around a charcoal fire. Now Jesus builds another charcoal fire on the beach and asks him the same question three times. Restoration, it turns out, is deeply intentional.",
+    tags: ["John 21", "Peter", "restoration", "forgiveness", "calling", "failure and grace"],
+    content: `
+<p>The detail is easy to miss, but John includes it deliberately: the fire on the beach was a charcoal fire (<em>anthrakia</em>, John 21:9). The same word appears only one other time in the entire New Testament — in John 18:18, describing the fire in the courtyard of the high priest, where Peter stood warming himself when he denied knowing Jesus. Three times, around a charcoal fire, Peter said: "I don't know the man."</p>
+
+<p>Now there is another charcoal fire. And Jesus is cooking breakfast on it.</p>
+
+<p>The scent, the warmth, the flickering light — for Peter, a man haunted by what he had done, this beach scene must have carried the full weight of that other night. Jesus had not arranged this setting by accident. He was going back, tenderly and deliberately, to the exact location of Peter's deepest shame.</p>
+
+<h2>Breakfast Before Business</h2>
+
+<p>What strikes me first about this scene is that Jesus feeds them before He asks anything of them. "Come and have breakfast," He says (v. 12). No interrogation at the water's edge. No "We need to talk about what you did." Just fish and bread and a fire on the morning shore.</p>
+
+<p>This is God's way. He tends to the body, the hunger, the human need — before the hard conversation. He is not in a rush to process your failures. He is patient enough to make you breakfast first.</p>
+
+<h2>Three Questions for Three Denials</h2>
+
+<p>After they eat, Jesus turns to Peter. Three times He asks: "Do you love me?" Three times Peter answers yes. Three times Jesus commissions him: "Feed my lambs. Take care of my sheep. Feed my sheep." The symmetry with the three denials is unmistakable — and unmistakably gracious. Jesus is not rubbing Peter's face in the failure. He is overwriting it, one question at a time.</p>
+
+<p>The third time Jesus asks, the text tells us Peter was grieved (v. 17). The word is <em>elypethe</em> — it means wounded, distressed, sorrowful. The repetition had done its work. Peter felt it. Perhaps he was remembering the courtyard, the fire, the girl asking "Are you one of his disciples?" and his three-peat of cowardice. The grief was the beginning of healing, not its obstacle.</p>
+
+<p>"Lord, you know all things," Peter says. "You know that I love you." It is the most honest thing he could have said. He stops defending himself or explaining himself. He throws himself on what Jesus already knows. And Jesus accepts it: "Feed my sheep."</p>
+
+<h2>Restoration Is a Recommissioning</h2>
+
+<p>Notice that Jesus does not restore Peter to a quiet life. He restores him to leadership — to shepherding, to feeding, to caring for the flock. The restoration is not just emotional healing, a "you're forgiven, go in peace." It is a re-entrusting of the very calling Peter had seemed to disqualify himself from.</p>
+
+<p>This is the pattern of God's restoration. He does not merely put the broken piece on the shelf, fixed but unused. He puts it back in the wall. He uses the cracked vessel. The same Peter who warmed himself by the enemy's fire while denying Jesus would stand at Pentecost and preach to thousands. The same voice that said "I don't know him" would say "Let all Israel be assured of this: God has made this Jesus, whom you crucified, both Lord and Messiah" (Acts 2:36).</p>
+
+<h2>The Question Still Comes</h2>
+
+<p>Jesus asks Peter the question three times. But He still asks it, across the centuries, in the quiet moments of our lives: <em>Do you love me?</em> Not "have you performed adequately?" Not "have you made up for what you did?" Just the foundational question about the heart.</p>
+
+<p>If Peter — with his spectacular, documented, embarrassing failure — could be restored to full usefulness, then the charcoal fire on your beach is not a monument to what you did. It is the setting for your restoration. Come and have breakfast. The question is coming, and it is not an accusation. It is a doorway.</p>
+    `.trim(),
+  },
+
+  // ── 23 ─────────────────────────────────────────────────────────────────────
+  {
+    slug: "hannah-prayer-weeping-to-worship",
+    title: "Hannah's Prayer: From Weeping to Worship",
+    subtitle: "How a barren, heartbroken woman modeled the kind of prayer that moves heaven",
+    category: "Prayer",
+    author: "Scripture Lives",
+    publishedAt: "2025-12-11",
+    readingTimeMin: 5,
+    coverEmoji: "🙏",
+    keyVerse: "In her deep anguish Hannah prayed to the Lord, weeping bitterly.",
+    keyVerseRef: "1 Samuel 1:10 (NIV)",
+    excerpt: "Hannah brought her broken heart to God without cleaning it up first. She wept, she made a vow, she poured out her soul. And the priest mistook her grief for drunkenness. God did not.",
+    tags: ["Hannah", "1 Samuel 1", "prayer", "barrenness", "answered prayer", "grief"],
+    content: `
+<p>She had been provoked again. Peninnah — Elkanah's other wife, who had children and therefore a position of social power that Hannah lacked — had made her weep. Again. This was apparently a pattern (1 Samuel 1:7), the annual torment at the time of the family pilgrimage to Shiloh. And so Hannah, instead of eating the portion her devoted husband had given her, got up from the table and went to the temple.</p>
+
+<p>What she did there is one of the most raw portraits of prayer in the entire Bible.</p>
+
+<h2>She Did Not Clean It Up First</h2>
+
+<p>Hannah did not compose herself before approaching God. She arrived weeping. She prayed "in bitterness of soul" (v. 10). Her lips moved but no sound came out — so unusual a sight that Eli the priest, watching from his seat by the doorpost, assumed she was drunk and rebuked her publicly: "How long are you going to stay drunk? Put away your wine" (v. 14).</p>
+
+<p>Hannah's response is dignified and honest: "I am a woman who is deeply troubled. I have not been drinking wine or beer; I was pouring out my soul to the Lord. Do not take your servant for a wicked woman; I have been praying here out of my great anguish and grief" (vv. 15-16).</p>
+
+<p><em>I was pouring out my soul to the Lord.</em> That phrase deserves to sit with us. Hannah did not present God with a composed list of requests. She poured — that suggests the vessel was full and she tipped it over completely, held nothing back, let it all come out before Him. The grief, the shame, the ache of empty arms, the sting of Peninnah's cruelty — all of it went onto the altar of that desperate prayer.</p>
+
+<h2>The Vow She Made</h2>
+
+<p>Hannah made a vow that day: if God gave her a son, she would give the boy back to God — "no razor will ever be used on his head" (v. 11), the sign of a Nazirite set apart for lifelong service. This is a remarkable offer from a woman whose entire grief was that she had no child. She asked for the very thing she was prepared to release. She was not trying to accumulate a son for herself. She was asking God to work through her, for His purposes.</p>
+
+<p>This is the shape of great faith: asking not just for what we want, but for what God can do through what we want.</p>
+
+<h2>Something Changed Before the Answer Came</h2>
+
+<p>After Eli blesses her — "Go in peace, and may the God of Israel grant you what you have asked of him" (v. 17) — something remarkable happens. Hannah goes back to the table, eats, and her face is no longer downcast (v. 18). The son has not yet come. Her circumstances have not changed. Only a priest's blessing has been spoken over her.</p>
+
+<p>But Hannah had moved from petition to trust. She had handed the burden across. The peace that came was not the peace of answered prayer — it was the peace of entrusted prayer, the peace of having placed the ache in stronger hands.</p>
+
+<h2>God Remembered</h2>
+
+<p>The Bible says the Lord "remembered" Hannah (v. 19). This is covenant language — not that God had forgotten her, but that He acted in specific faithfulness toward her. She conceived and bore a son. She named him Samuel, meaning "heard by God" — because, she said, "I asked the Lord for him" (v. 20).</p>
+
+<p>Then, as promised, she brought him to Shiloh and gave him to Eli. And out of that surrender came one of the greatest prophets in Israel's history — the man who would anoint both Saul and David as kings.</p>
+
+<p>Her prayer did not just get her a son. Her prayer shaped the history of a nation.</p>
+
+<h2>You Can Bring It to God Like This</h2>
+
+<p>Whatever your Peninnah is — the person or circumstance that provokes you, the ache that returns every year — you do not need to dress it up before bringing it to God. Hannah brought her exact grief, unedited, weeping, unable even to speak aloud. And God heard every silent word.</p>
+
+<p>Pour out your soul. Trust the hearing God. And let the peace that comes before the answer be enough for today.</p>
+    `.trim(),
+  },
+
+  // ── 24 ─────────────────────────────────────────────────────────────────────
+  {
+    slug: "the-lost-sheep-gods-relentless-pursuit",
+    title: "The Lost Sheep: Why God Leaves the Ninety-Nine",
+    subtitle: "What Jesus's parable of the one lost sheep reveals about the relentless, personal love of God",
+    category: "Devotional",
+    author: "Scripture Lives",
+    publishedAt: "2025-12-18",
+    readingTimeMin: 5,
+    coverEmoji: "🐑",
+    keyVerse: "Suppose one of you has a hundred sheep and loses one of them. Doesn't he leave the ninety-nine in the open country and go after the lost sheep until he finds it?",
+    keyVerseRef: "Luke 15:4 (NIV)",
+    excerpt: "The math doesn't make sense — leaving 99 for 1 is bad risk management. But Jesus tells the story to describe how God thinks. The one that is lost matters as much as all the rest.",
+    tags: ["Luke 15", "lost sheep", "God's love", "searching", "salvation", "parable"],
+    content: `
+<p>Luke 15 is a chapter Jesus preached in response to a complaint. The Pharisees and teachers of the law were muttering: "This man welcomes sinners and eats with them" (v. 2). They meant it as an accusation. Jesus took it as a sermon prompt. In response, He told three stories — a lost sheep, a lost coin, and a lost son — each one a window into the heart of the God they thought they already understood.</p>
+
+<p>The first story is the smallest in scale but perhaps the most striking in its mathematics.</p>
+
+<h2>The Math That Does Not Make Sense</h2>
+
+<p>A shepherd has a hundred sheep. One wanders off. What does he do? According to Jesus: he leaves the ninety-nine in the open country and searches for the one "until he finds it" (v. 4). That phrase "until he finds it" is important — it is not "until he gives up" or "until it seems impractical." He searches until the search succeeds.</p>
+
+<p>From a purely rational standpoint, this is terrible risk management. Leaving ninety-nine unattended animals in open country to search for a single stray exposes the entire flock to predators, theft, and scattering. No sensible shepherd would do this. Which is precisely why Jesus uses it to describe God. God's love is not calculated on risk-management spreadsheets. It is personal, particular, and relentless.</p>
+
+<h2>The Sheep Is Carried Home</h2>
+
+<p>When the shepherd finds the sheep, he does not scold it, or make it walk home at an inconveniently slow pace as a lesson in consequences. He "joyfully puts it on his shoulders" (v. 5). Joyfully. The image is one of tenderness — a lamb draped across the back of a man walking home with a full heart. The sheep doesn't have to find its own way back. It is carried.</p>
+
+<p>This is a picture of grace. We don't find our way home through sheer spiritual effort. We are found, and we are carried. The initiative, the journey, the cost of the search — all of that belongs to the Shepherd.</p>
+
+<h2>There Is a Party in Heaven</h2>
+
+<p>The story ends with a celebration. The shepherd calls his friends and neighbors: "Rejoice with me; I have found my lost sheep" (v. 6). And then Jesus makes the application explicit: "I tell you that in the same way there will be more rejoicing in heaven over one sinner who repents than over ninety-nine righteous persons who do not need to repent" (v. 7).</p>
+
+<p>Heaven throws a party for the one. Not for the ninety-nine who stayed in the pen and behaved well — they are presumably fine, accounted for, not in crisis. The party is for the found one. The one who was missing is the occasion for the greatest celebration.</p>
+
+<p>This is deeply counterintuitive. We tend to celebrate institutional success, steady growth, the reliable majority. Jesus says the angels celebrate the singular rescue. The one prodigal returning. The one lost sheep found. The one sinner who turns around.</p>
+
+<h2>Which Sheep Are You?</h2>
+
+<p>Some of us identify with the lost sheep — we have wandered, we have been far, and we need to hear that the Shepherd has not written us off. He is still out in the open country, looking. He will search until He finds. He will carry us home and throw a party that shakes the rafters of heaven.</p>
+
+<p>Some of us identify with the ninety-nine — safe, accounted for, faithful. And the challenge there is different: can we share in the Shepherd's joy when the wandering one comes home? Or do we quietly resent the party, like the older brother in the next parable? The Pharisees who were muttering in Luke 15 were the ninety-nine who had lost their capacity for joy at a sinner's return.</p>
+
+<p>The God Jesus describes is looking for you, is carrying you home, is throwing a party for you. And He is inviting you — wherever you stand — to rejoice with Him when the lost are found.</p>
+    `.trim(),
+  },
+
+  // ── 25 ─────────────────────────────────────────────────────────────────────
+  {
+    slug: "walking-on-water-faith-in-the-storm",
+    title: "Walking on Water: What Peter Teaches Us About Faith and Fear",
+    subtitle: "Why keeping your eyes on Jesus is the only way to stay above what would otherwise swallow you",
+    category: "Faith & Trust",
+    author: "Scripture Lives",
+    publishedAt: "2025-12-25",
+    readingTimeMin: 5,
+    coverEmoji: "🌊",
+    keyVerse: "But when he saw the wind, he was afraid and, beginning to sink, he cried out, 'Lord, save me!'",
+    keyVerseRef: "Matthew 14:30 (NIV)",
+    excerpt: "Peter got out of the boat. That alone puts him ahead of the eleven who stayed. But the moment his gaze shifted from Jesus to the waves, he began to sink. The lesson is ancient and daily.",
+    tags: ["Matthew 14", "Peter", "faith", "fear", "storms", "walking on water"],
+    content: `
+<p>It was the fourth watch of the night — between three and six in the morning — and the disciples were exhausted, straining at the oars against a contrary wind. They had been at it for hours. Then they saw something on the water moving toward them, and they cried out in fear: a ghost.</p>
+
+<p>"Take courage! It is I. Don't be afraid," Jesus said (Matthew 14:27). And then Peter did something extraordinary.</p>
+
+<h2>He Got Out of the Boat</h2>
+
+<p>"Lord, if it's you," Peter says, "tell me to come to you on the water." And Jesus says: "Come" (v. 29). One word. Come. And Peter climbed over the side of the boat and walked on water toward Jesus.</p>
+
+<p>We tend to focus on what happens next — the sinking — and treat it as the cautionary moral. But sit with this for a moment: Peter walked on water. On actual water, in a storm, at three in the morning, in response to a word from Jesus. He did the supernatural thing. He got out of the boat.</p>
+
+<p>Eleven other disciples stayed in the boat. We don't know why — fear, good sense, uncertainty. But Peter stepped out onto an impossible surface and found it solid under his feet. This is what obedience to a direct word from Jesus produces: the impossible becomes walkable.</p>
+
+<h2>The Moment of the Shift</h2>
+
+<p>Then "he saw the wind" (v. 30). He did not see new information — the wind had been there the whole time. But his attention shifted. He looked away from Jesus and looked at his circumstances. And the same water that had been holding him became his threat.</p>
+
+<p>The shift was not from faith to no-faith in an instant. It was a gradual reorientation of attention. And the result was gradual sinking. The principle is both simple and demanding: what we focus on determines what holds us.</p>
+
+<p>We do this daily. We begin a morning with our eyes on Jesus — in prayer, in the Word — and we feel steady. Then the inbox opens. The diagnosis comes in. The relationship strains. The finances look alarming. And our attention, almost without our permission, migrates from Jesus to the waves. And we feel ourselves going under.</p>
+
+<h2>The Cry and the Catch</h2>
+
+<p>Peter "cried out, 'Lord, save me!'" (v. 30). Three words in English. One Greek word for save: <em>soson</em>. It is the same root as salvation — <em>soteria</em>. In his moment of crisis, Peter the confident fisherman collapsed into the most basic prayer a human being can pray: Lord, rescue me.</p>
+
+<p>And "immediately Jesus reached out his hand and caught him" (v. 31). Not after Peter treaded water for a while to build character. Not after Jesus allowed him to get quite close to drowning as a lesson. Immediately. The hand was extended before Peter had finished the sentence.</p>
+
+<p>The rebuke that follows — "You of little faith, why did you doubt?" — is gentle, not harsh. The Greek word for "little faith" (<em>oligopiste</em>) is a term Jesus uses for disciples, not outsiders. It is a word of formation, not rejection. You had enough faith to get out of the boat. Now let's work on keeping your eyes up.</p>
+
+<h2>They Worshipped</h2>
+
+<p>When they climbed into the boat and the wind died down, those in the boat worshipped Jesus and said, "Truly you are the Son of God" (v. 33). The storm had produced clarity. The crisis had produced confession. Sometimes the waves — and our panic in them — are exactly what move us from theological knowledge to genuine worship.</p>
+
+<p>Get out of the boat. Keep your eyes up. And when you sink — because you will, because we all do — cry the three-word prayer. The hand is already extended.</p>
+    `.trim(),
+  },
+
+  // ── 26 ─────────────────────────────────────────────────────────────────────
+  {
+    slug: "shadrach-meshach-abednego-even-if",
+    title: "'Even If He Does Not': The Faith of the Fiery Furnace",
+    subtitle: "Two of the most powerful words in the Bible — spoken by three men facing death",
+    category: "Faith & Trust",
+    author: "Scripture Lives",
+    publishedAt: "2026-01-01",
+    readingTimeMin: 5,
+    coverEmoji: "🔥",
+    keyVerse: "But even if he does not, we want you to know, Your Majesty, that we will not serve your gods or worship the image of gold you have set up.",
+    keyVerseRef: "Daniel 3:18 (NIV)",
+    excerpt: "Shadrach, Meshach, and Abednego believed God could save them. But they were not certain He would. And they bowed to no one either way. That 'even if' is one of the most mature statements of faith in the Bible.",
+    tags: ["Daniel 3", "fiery furnace", "faith", "obedience", "suffering", "Shadrach Meshach Abednego"],
+    content: `
+<p>Nebuchadnezzar had built a statue ninety feet tall. Gold from top to bottom. And when the music played, every person in the province was to fall down and worship it. The penalty for failure was immediate — the blazing furnace, heated to such a temperature that it would kill the soldiers who threw people into it (Daniel 3:22).</p>
+
+<p>Shadrach, Meshach, and Abednego did not bow.</p>
+
+<p>When brought before the furious king, they were given a second chance: the music will play again, bow and be forgiven. And they responded with one of the most remarkable declarations of faith recorded anywhere in Scripture.</p>
+
+<h2>The Two-Part Answer</h2>
+
+<p>"If we are thrown into the blazing furnace, the God we serve is able to deliver us from it, and he will deliver us from Your Majesty's hand" (v. 17). That is the first half — a bold, confident declaration of God's power and intention. They believe He can, and they believe He will.</p>
+
+<p>Then: "But even if he does not, we want you to know, Your Majesty, that we will not serve your gods or worship the image of gold you have set up" (v. 18).</p>
+
+<p><em>Even if he does not.</em> Two words that contain a whole theology of mature faith. They are not hedging. They are not faithless. They are doing something harder than either simple confidence or simple despair — they are holding God's sovereignty and their own obedience completely independent of each other. Their obedience is not contingent on a favorable outcome. They will not worship false gods regardless of what God chooses to do with the furnace.</p>
+
+<h2>The Faith That Does Not Need a Deal</h2>
+
+<p>Much of what passes for faith is actually a negotiated arrangement: I will trust You if You come through for me. I will praise You if the diagnosis is good. I will follow You if my life keeps working. This is faith with conditions — which is, at its root, not really faith in <em>God</em> but faith in a favorable outcome with God as the means to reach it.</p>
+
+<p>Shadrach, Meshach, and Abednego had removed the conditions. They trusted God's goodness even if His plan for them involved the furnace. They worshipped the God who was worth worshipping whether or not He intervened. This is faith that has moved past using God and into actually knowing Him.</p>
+
+<h2>A Fourth Man in the Fire</h2>
+
+<p>They were bound and thrown into a furnace so hot it killed the soldiers who threw them. And Nebuchadnezzar, peering in, leaped to his feet in astonishment: "Look! I see four men walking around in the fire, unbound and unharmed, and the fourth looks like a son of the gods" (v. 25).</p>
+
+<p>The ropes burned. The men did not. And they were not alone. The presence that met them in the furnace — identified by Christians as a pre-incarnate appearance of Christ — had been there all along, waiting for them to arrive.</p>
+
+<p>The fire was the meeting place. The danger was the door to the divine encounter. They could not have met that fourth figure on safe ground. The furnace was required.</p>
+
+<h2>What Your Furnace Might Be</h2>
+
+<p>Most of us will not face a literal furnace. But the structure of the test repeats: bow to this thing — this compromise, this fear, this idol of comfort or approval — or face the consequences. And the invitation of Daniel 3 is to develop the "even if" kind of faith before the music plays.</p>
+
+<p>Know what you believe. Decide now, in the quiet, who you will not bow to regardless of cost. And trust that if the furnace comes, you will not walk through it alone.</p>
+
+<p>The fourth man is always already in the fire.</p>
+    `.trim(),
+  },
+
+  // ── 27 ─────────────────────────────────────────────────────────────────────
+  {
+    slug: "abraham-faith-leave-the-known",
+    title: "Abraham: The Faith That Leaves Without Knowing Where",
+    subtitle: "What it looks like to obey a God who gives directions one step at a time",
+    category: "Faith & Trust",
+    author: "Scripture Lives",
+    publishedAt: "2026-01-08",
+    readingTimeMin: 5,
+    coverEmoji: "⭐",
+    keyVerse: "By faith Abraham, when called to go to a place he would later receive as his inheritance, obeyed and went, even though he did not know where he was going.",
+    keyVerseRef: "Hebrews 11:8 (NIV)",
+    excerpt: "The call of Abraham contains one of the strangest commands in Scripture: 'Go to the land I will show you.' Not 'Go to this specific place.' Just: go, and I will show you. Faith sometimes moves before the destination is clear.",
+    tags: ["Abraham", "Genesis 12", "faith", "calling", "obedience", "trust"],
+    content: `
+<p>Abram was seventy-five years old, settled in Haran, when God spoke to him. The command was simple and shattering: "Go from your country, your people and your father's household to the land I will show you" (Genesis 12:1). Leave everything familiar. Leave family. Leave homeland. Go — to a land I have not yet named.</p>
+
+<p>Hebrews 11:8 gives us the interior of this moment: "he obeyed and went, even though he did not know where he was going." He packed up his household, gathered his wife Sarai and his nephew Lot, and stepped out into a journey without a specific destination. Just a promise. Just a voice he had decided to trust.</p>
+
+<h2>The Promise Attached to the Command</h2>
+
+<p>The command came with extraordinary promises: a great nation, a great name, blessing, and the most sweeping covenant in the Old Testament — "all peoples on earth will be blessed through you" (v. 3). But Abram was seventy-five and childless. A "great nation" from a man with no heir is not a plan that seems viable on paper.</p>
+
+<p>And yet he went. He did not argue, delay, or demand a more detailed itinerary. He simply went, as the Lord had told him. The obedience preceded the understanding. It almost always does.</p>
+
+<h2>Faith That Moves Before It Sees</h2>
+
+<p>Our generation has access to more information than any previous one. We can research every destination before we arrive, read reviews, study maps, calculate risks. The idea of leaving for a place "I will show you" — with the address to follow — is not just unusual; it runs against every instinct our culture has trained into us.</p>
+
+<p>But this is exactly how God tends to lead. He gives the next step, not the full itinerary. He says "go" before He says "where." He calls people into processes whose full shape will only become clear in retrospect. Abraham did not know he was beginning a journey that would make him the father of faith for three world religions and billions of people across four millennia. He just knew: God said go.</p>
+
+<h2>The Altars Along the Way</h2>
+
+<p>As Abram traveled through Canaan, he built altars — at Shechem, between Bethel and Ai, at Hebron. These altars were not achievements to be celebrated. They were acknowledgments: the Lord has been here. The Lord appeared to me here. The Lord met me at this place on the journey I did not fully understand.</p>
+
+<p>Faith in motion leaves altars behind it. Not because we are marking our own progress, but because we want to name the moments where God showed up, provided, confirmed, guided. Those altars become the evidence — for us and for those who come after us — that the journey was accompanied.</p>
+
+<h2>The Test at Moriah</h2>
+
+<p>Decades later, God would ask Abraham to do the hardest thing imaginable: offer Isaac, the son of the promise, on Mount Moriah. And Abraham would rise early in the morning and go — once again, without argument, without delay. His obedience had been formed by years of going when called and finding God faithful at every step.</p>
+
+<p>Faith is cumulative. The small acts of trust — the Shechem altars, the moves to places not yet named — prepare us for the Moriah moments. Each time we go when God says go and find Him there, we build the kind of trust that can carry us through the tests that seem to contradict everything He promised.</p>
+
+<h2>The Invitation in Your Season</h2>
+
+<p>You may be standing at a Haran moment — comfortable, established, familiar. And a voice is calling you to leave something known for something not yet clear. The destination is "the land I will show you." The invitation is to go, trust the voice, and build your altars along the way. The one who called Abraham is the same one calling you — and He has a track record worth trusting.</p>
+    `.trim(),
+  },
+
+  // ── 28 ─────────────────────────────────────────────────────────────────────
+  {
+    slug: "pauls-thorn-grace-in-weakness",
+    title: "Paul's Thorn: When God Says No to a Good Prayer",
+    subtitle: "What we learn when God's answer to our most heartfelt request is 'My grace is sufficient'",
+    category: "Hope & Perseverance",
+    author: "Scripture Lives",
+    publishedAt: "2026-01-15",
+    readingTimeMin: 6,
+    coverEmoji: "🌿",
+    keyVerse: "But he said to me, 'My grace is sufficient for you, for my power is made perfect in weakness.'",
+    keyVerseRef: "2 Corinthians 12:9 (NIV)",
+    excerpt: "Paul prayed three times for his thorn to be removed. Three times God said no — not because God was withholding good, but because the thorn was serving a purpose Paul could not yet see.",
+    tags: ["2 Corinthians 12", "Paul", "suffering", "weakness", "grace", "unanswered prayer"],
+    content: `
+<p>Paul does not tell us what the thorn was. The Greek word is <em>skolops</em> — a pointed stake or splinter, something sharp and lodged. Whatever it was — a physical ailment, a chronic condition, a persistent opponent — it was significant enough that Paul called it "a messenger of Satan" sent to torment him, and urgent enough that he pleaded with the Lord three times to take it away (2 Corinthians 12:7-8).</p>
+
+<p>And three times, God said no.</p>
+
+<h2>The Right Prayer That Received the Wrong Answer</h2>
+
+<p>This is one of the most instructive moments in Paul's letters — not because of the thorn itself, but because of what it reveals about how God operates. Paul was not praying selfishly or faithlessly. He was praying about something that genuinely hindered him, something that hurt. And he asked a good God to remove a bad thing.</p>
+
+<p>God's answer was not removal but reframing: "My grace is sufficient for you, for my power is made perfect in weakness" (v. 9). Not "I will heal you" or even "I understand this is hard." But: the thorn stays, and in the thorn's staying, something will be accomplished that could not be accomplished in its removal.</p>
+
+<h2>Power Made Perfect in Weakness</h2>
+
+<p>The word "perfect" here is <em>teleitai</em> — completed, brought to its intended end. God's power reaches its designed fullness <em>in</em> human weakness. Not despite it. Not around it. In it. The implication is that God's strength, displayed through weakness, accomplishes something that strength displayed through human capability cannot.</p>
+
+<p>Why? Because when a weak vessel carries great weight, the source of strength is unmistakable. When Paul — worn down, limited, perhaps visibly struggling — plants churches, writes world-changing letters, endures imprisonment with hymns in the night, the power displayed cannot be attributed to Paul's resilience or talent. The glory lands where it belongs.</p>
+
+<p>"When I am weak," Paul writes, "then I am strong" (v. 10). Not "when I eventually recover my strength." When I am <em>weak</em>, I am strong — because in weakness, I am most dependent on the strength that actually works.</p>
+
+<h2>The Thorn as Teacher</h2>
+
+<p>Paul tells us why the thorn was given in the first place: "to keep me from becoming conceited" because of the surpassing greatness of the revelations he had received (v. 7). He had been caught up to the third heaven, heard inexpressible things (vv. 2-4). His spiritual resume was extraordinary. Pride was a genuine danger.</p>
+
+<p>The thorn was preventive medicine. It was God saying: I have given you access to things most humans never see. I cannot also give you immunity to the frailty that keeps you dependent on Me. The revelation and the thorn had to come as a set.</p>
+
+<p>This does not mean every suffering we experience is disciplinary or preventive. Job's story warns against too quickly assigning a cause to every hardship. But it does mean that some things God permits are targeted precisely at the places where we are most prone to self-sufficiency — the areas where our natural gifting or success could seduce us into believing we no longer need Him.</p>
+
+<h2>Learning to Boast in Weakness</h2>
+
+<p>Paul's response is almost shocking: "I will boast all the more gladly about my weaknesses, so that Christ's power may rest on me. That is why, for Christ's sake, I delight in weaknesses, in insults, in hardships, in persecutions, in difficulties" (vv. 9-10).</p>
+
+<p>He is not performing stoicism. He is reporting a genuine reorientation of values. He has received the divine answer to his prayer — not the removal of the thorn, but the sufficiency of grace — and that answer has changed what he values. He values the presence of Christ's power more than he values comfort. And he has learned that the two come as a package: Christ's power rests on him most fully when he is most empty of his own.</p>
+
+<h2>The Thorn You Are Carrying</h2>
+
+<p>What is your thorn? The chronic thing, the persistent limitation, the prayer you have prayed repeatedly with no yes? Bring it to God again. But also bring yourself to 2 Corinthians 12, and sit with the possibility that God's answer may be neither silence nor removal — it may be the same word He gave Paul: My grace is sufficient. My power needs your weakness to show up as what it truly is.</p>
+
+<p>The thorn that will not leave may be the very thing making room for what cannot be manufactured — the power of the living God, resting on you, doing through you what you could never do yourself.</p>
+    `.trim(),
+  },
+
+  // ── 29 ─────────────────────────────────────────────────────────────────────
+  {
+    slug: "the-transfiguration-glimpsing-glory",
+    title: "The Transfiguration: A Glimpse of Who Jesus Really Is",
+    subtitle: "Why God pulled back the curtain on a mountainside — and what Peter wanted to do about it",
+    category: "Bible Study",
+    author: "Scripture Lives",
+    publishedAt: "2026-01-22",
+    readingTimeMin: 5,
+    coverEmoji: "☀️",
+    keyVerse: "There he was transfigured before them. His face shone like the sun, and his clothes became as white as the light.",
+    keyVerseRef: "Matthew 17:2 (NIV)",
+    excerpt: "For a brief moment on a mountaintop, the humanity Jesus wore became translucent and the divine light inside showed through. Three disciples saw it. Only one of them knew what to do — and it wasn't Peter.",
+    tags: ["Matthew 17", "transfiguration", "glory of Christ", "Moses", "Elijah", "identity of Jesus"],
+    content: `
+<p>Six days after Peter's declaration — "You are the Messiah, the Son of the living God" (Matthew 16:16) — and the first prediction of the cross, Jesus took Peter, James, and John up a high mountain. What happened next was perhaps the most concentrated revelation of Jesus's true nature that any human being witnessed before the resurrection.</p>
+
+<p>The Greek word is <em>metemorphothe</em> — He was transformed in form before them. His face blazed like the sun. His garments became white light. And then Moses and Elijah appeared and spoke with Him.</p>
+
+<h2>Who Was Moses, and Who Was Elijah?</h2>
+
+<p>The two figures who appear are not arbitrary. Moses represents the Law — the Torah, the covenant, the entire Old Testament system of commandments and sacrifices. Elijah represents the Prophets — the long line of God's messengers who spoke of the one who was coming. In Jewish tradition, "the Law and the Prophets" is a shorthand for the entire Hebrew Bible.</p>
+
+<p>Both men appear here in conversation with Jesus, flanking Him. The visual theology is unmistakable: the whole Old Testament — Law and Prophecy — is oriented toward this person. They are not His equals or colleagues. They are His witnesses. Jesus is not one more figure in the story. He is the one the story has been about all along.</p>
+
+<p>Luke adds one detail Matthew doesn't: they spoke with Jesus about "his departure, which he was about to bring to fulfillment at Jerusalem" (Luke 9:31). The Greek word for "departure" is <em>exodus</em>. Moses, who led the first great Exodus, was now discussing the greater Exodus — the deliverance Jesus would accomplish at the cross.</p>
+
+<h2>Peter's Impulse</h2>
+
+<p>Peter, in his characteristic way, felt the need to do something. "Lord, it is good for us to be here. If you wish, I will put up three shelters — one for you, one for Moses and one for Elijah" (Matthew 17:4). He wanted to build tabernacles, to mark and extend the moment, to make it permanent.</p>
+
+<p>Matthew adds: "He did not know what he was saying" (well, that is Luke's addition — Luke 9:33). Peter meant well. But his instinct was wrong. You cannot tabernacle glory. You cannot build structures to contain what God intends to be momentary and forward-pointing. This vision was not a destination. It was a provision for the road ahead — a glimpse of who Jesus was, so that the horror of the cross would not destroy their faith entirely.</p>
+
+<h2>The Voice and the Command</h2>
+
+<p>While Peter is still speaking, a bright cloud envelops them and a voice speaks from the cloud: "This is my Son, whom I love; with him I am well pleased. Listen to him!" (v. 5). The disciples fall facedown, terrified. When Jesus touches them and tells them to rise, the mountain is empty. Moses and Elijah are gone. "They saw no one except Jesus" (v. 8).</p>
+
+<p>That phrase is the sermon. After the cloud and the voice and the shining and the Law and the Prophets — when it all settles — there is only Jesus. He has not been replaced by the experience of the vision. He is what remains. He is what the vision was always pointing toward.</p>
+
+<h2>A Glimpse for the Journey</h2>
+
+<p>Jesus instructs them to tell no one until after the resurrection. The vision was not for public consumption yet — it was for the three who would need it most in the coming days. They would stand at the cross. They would flee from the garden. They would huddle behind locked doors.</p>
+
+<p>But they had seen His face shining like the sun. They had heard the Father's voice. They had watched Moses and Elijah defer to Him. Whatever happened in Jerusalem, they had been given a deposit of truth to return to: He is exactly who He said He was. The suffering was real. The glory behind it was more real.</p>
+
+<p>God gives us our own glimpses — moments of clarity, answered prayer, overwhelming worship, the words of Scripture that ignite — not as permanent states to be tabernacled, but as provisions for the road. Carry the light. The journey still has dark stretches. But you have seen the face that shines like the sun.</p>
+    `.trim(),
+  },
+
+  // ── 30 ─────────────────────────────────────────────────────────────────────
+  {
+    slug: "nicodemus-born-again-night-conversation",
+    title: "Born Again: What Jesus Meant When He Said It to Nicodemus",
+    subtitle: "The night conversation that gave the world one of its most misunderstood phrases",
+    category: "Bible Study",
+    author: "Scripture Lives",
+    publishedAt: "2026-01-29",
+    readingTimeMin: 6,
+    coverEmoji: "🌙",
+    keyVerse: "Jesus replied, 'Very truly I tell you, no one can see the kingdom of God unless they are born again.'",
+    keyVerseRef: "John 3:3 (NIV)",
+    excerpt: "Nicodemus came at night — a respected Pharisee, a ruler of the Jews, curious about Jesus. What Jesus told him turned his categories upside down. It still does.",
+    tags: ["John 3", "Nicodemus", "born again", "new birth", "Holy Spirit", "salvation"],
+    content: `
+<p>He came at night. Whether out of caution — he was a Pharisee and a member of the Jewish ruling council, after all, with a reputation to protect — or out of a desire for a private conversation without the noise of the crowds, John does not say. But Nicodemus came to Jesus in the dark, and what he received was light.</p>
+
+<p>"Rabbi, we know that you are a teacher who has come from God," he begins (John 3:2). A respectful, even generous opening. Jesus does not thank him for the compliment. He cuts immediately to what Nicodemus actually needs: "Very truly I tell you, no one can see the kingdom of God unless they are born again."</p>
+
+<h2>The Greek Word That Changes Everything</h2>
+
+<p>The Greek word is <em>anothen</em>, and it carries two meanings simultaneously: "again" and "from above." This double meaning is probably intentional on John's part — both senses are true. The new birth is a second birth (again) and it is from God (above). It is a beginning that comes down rather than rising up from human effort.</p>
+
+<p>Nicodemus hears "again" and asks, reasonably enough, how an old man can re-enter his mother's womb. He is thinking biologically, chronologically. Jesus redirects him: "Flesh gives birth to flesh, but the Spirit gives birth to spirit" (v. 6). Two different categories, two different kinds of birth. Physical birth grants you biological life and temporal existence. Spiritual birth — birth from above — grants you a different quality of life altogether: life in the kingdom, life connected to God, the life the New Testament calls <em>zoe</em> rather than <em>bios</em>.</p>
+
+<h2>The Wind You Cannot Control</h2>
+
+<p>Jesus uses a striking analogy: "The wind blows wherever it pleases. You hear its sound, but you cannot tell where it comes from or where it is going. So it is with everyone born of the Spirit" (v. 8). In Greek, the word for "wind" and "Spirit" is the same: <em>pneuma</em>. Jesus is playing with this intentionally.</p>
+
+<p>The Spirit's work is like wind — real, powerful, evident in its effects, but not controllable or predictable by human calculation. You cannot manufacture the new birth. You cannot earn it, schedule it, or replicate it through religious effort. It is the sovereign work of God, and it goes where it will. Our role is not to control it but to receive it, to be open to it, to not obstruct it.</p>
+
+<h2>Why Nicodemus Should Have Known</h2>
+
+<p>Jesus gently rebukes him: "You are Israel's teacher, and do you not understand these things?" (v. 10). This was not new theology. Ezekiel 36:26-27 had promised: "I will give you a new heart and put a new spirit in you." Jeremiah 31:33 spoke of God writing His law on human hearts. The Hebrew prophets had anticipated an inner transformation that external law-keeping could never accomplish.</p>
+
+<p>Nicodemus, with all his theological education, had the texts. What he had missed was that these promises were now standing in front of him, inviting him to receive what they described.</p>
+
+<h2>What Happened to Nicodemus</h2>
+
+<p>John gives us two more glimpses of this man. In John 7:50-51, Nicodemus speaks up in the Pharisees' council, defending Jesus's right to a fair hearing — a small but notable act of courage from inside the establishment. And in John 19:39, after the crucifixion, Nicodemus comes to help bury Jesus — bringing an enormous quantity of burial spices, performing a tender and dangerous public act of devotion for a man the authorities had just executed.</p>
+
+<p>He came at night in John 3. He came in daylight in John 19. Something had changed. The conversation with Jesus had done its work. The Spirit had blown where it pleased, and Nicodemus had eventually been carried with it.</p>
+
+<h2>The Birth You Cannot Give Yourself</h2>
+
+<p>No one engineers their own birth. The same is true of the new birth. It is received, not achieved. It comes from above, not from below. And it changes the person from the inside out — not by adding religious behavior to an unreformed heart, but by giving a person a new heart with different desires, different directions, different loyalties.</p>
+
+<p>If you have never asked God for the new birth — to be born of the Spirit, to receive the life from above — you can ask now. It is not complicated. It is not earned. It is the gift Jesus described to a religious man in the dark, and it is available to you in whatever light or darkness you are sitting in right now.</p>
+    `.trim(),
+  },
+
+  // ── 31 ─────────────────────────────────────────────────────────────────────
+  {
+    slug: "ten-lepers-gratitude-and-the-one-who-returned",
+    title: "The Ten Lepers: What Gratitude Really Looks Like",
+    subtitle: "Only one of the ten came back to say thank you — and Jesus noticed",
+    category: "Devotional",
+    author: "Scripture Lives",
+    publishedAt: "2026-02-05",
+    readingTimeMin: 5,
+    coverEmoji: "🙌",
+    keyVerse: "One of them, when he saw he was healed, came back, praising God in a loud voice.",
+    keyVerseRef: "Luke 17:15 (NIV)",
+    excerpt: "Ten lepers cried out to Jesus. All ten were healed. Only one returned to give thanks. He was a Samaritan. And Jesus asked the question that still hangs in the air: 'Where are the other nine?'",
+    tags: ["Luke 17", "ten lepers", "gratitude", "thankfulness", "healing", "Samaritan"],
+    content: `
+<p>They stood at a distance — as the law required for those with leprosy — and called out in a loud voice: "Jesus, Master, have pity on us!" (Luke 17:13). They had heard about Him. They had positioned themselves where He would pass. Ten men, united by their shared condition and their shared desperation, crying out together.</p>
+
+<p>Jesus's response was simple and, at first glance, anti-climactic: "Go, show yourselves to the priests" (v. 14). That was the prescribed process for a leper who had been healed — present yourself to the priest, who would certify the cleansing. But they were not yet healed. Jesus sent them before the evidence arrived. He was asking them to act on what had not yet happened.</p>
+
+<p>And as they went, they were cleansed.</p>
+
+<h2>The Obedience That Preceded the Miracle</h2>
+
+<p>The healing happened in motion, not in place. They were healed "as they went" (v. 14) — a detail worth sitting with. Faith had to take a step before it saw the result. The ten believed enough to move, and the healing met them mid-stride.</p>
+
+<p>This is a consistent pattern in Jesus's healings. He asked the man with the withered hand to stretch it out (Matthew 12:13). He sent the blind man to wash (John 9:7). He told the paralyzed man to pick up his mat and walk (John 5:8). The command comes first; the capacity to obey follows the obedience itself.</p>
+
+<h2>One Turned Back</h2>
+
+<p>Ten were healed. Nine continued to the priest, presumably following the instruction literally. One — when he saw that he was healed — turned around. He came back to Jesus "praising God in a loud voice." He threw himself at Jesus's feet and "thanked him" (v. 16). And Luke tells us something significant: he was a Samaritan.</p>
+
+<p>The detail stings. Samaritans were considered religiously contaminated by the Jewish establishment — half-breeds, theologically compromised, cultural outsiders. Yet the one who returned was the foreigner. The nine who kept walking — presumably observant Jews going to the Jewish priests as instructed — did not come back to give thanks.</p>
+
+<h2>Where Are the Other Nine?</h2>
+
+<p>Jesus asked three questions in quick succession: "Were not all ten cleansed? Where are the other nine? Has no one returned to give praise to God except this foreigner?" (vv. 17-18). The questions are not rhetorical frustration — they are an invitation to notice something about human nature.</p>
+
+<p>The nine were not ungrateful in any obvious way. They may have been thrilled. They had their lives back. They were rushing to their families, to show the priests, to resume everything leprosy had taken from them. The gift so consumed their attention that they forgot the Giver. The miracle carried them away from the Miracle-Worker.</p>
+
+<p>This is the ordinary shape of ingratitude. It is rarely malicious. It is usually just distraction — the blessing becomes the focus, and the one who gave it fades into background.</p>
+
+<h2>Your Faith Has Made You Well</h2>
+
+<p>To the one who returned, Jesus says something different than what He said to the ten: "Rise and go; your faith has made you well" (v. 19). The Greek word is <em>sozo</em> — the same word used for salvation throughout the New Testament. All ten received physical healing. This one received something more. His return — his act of gratitude, his posture of worship at Jesus's feet — had opened him to a deeper wholeness.</p>
+
+<p>Gratitude is not merely a social nicety or a spiritual discipline. It is a posture of the soul that keeps us in relationship with the one we have received from. It is the act that resists the natural drift of taking things for granted and returns our attention to the Source.</p>
+
+<h2>The Return We Are All Invited to Make</h2>
+
+<p>We have all been the nine. We have received — health, provision, answered prayer, unexpected grace — and moved forward without turning back. The invitation of this story is not guilt but reorientation: turn around. Come back. Throw yourself at His feet. Praise God in a loud voice for what He has done.</p>
+
+<p>The Giver is still there. He is still noticing. And those who return to give thanks — the one-in-ten who refuses to let gratitude get swept away in the momentum of daily life — discover that they have received more than they came for.</p>
+    `.trim(),
+  },
+
+  // ── 32 ─────────────────────────────────────────────────────────────────────
+  {
+    slug: "moses-red-sea-when-the-way-is-impossible",
+    title: "Moses at the Red Sea: When the Way Forward Is Impossible",
+    subtitle: "Pharaoh's army behind. The sea ahead. And God says: move forward.",
+    category: "Hope & Perseverance",
+    author: "Scripture Lives",
+    publishedAt: "2026-02-12",
+    readingTimeMin: 5,
+    coverEmoji: "🌊",
+    keyVerse: "Moses answered the people, 'Do not be afraid. Stand firm and you will see the deliverance the Lord will bring you today.'",
+    keyVerseRef: "Exodus 14:13 (NIV)",
+    excerpt: "Every possible direction was wrong. The sea was ahead. The army was behind. The desert was on either side. Yet God's instruction was not to turn back or escape — it was to go forward, into the water.",
+    tags: ["Exodus 14", "Red Sea", "Moses", "deliverance", "faith", "impossible situations"],
+    content: `
+<p>The scene in Exodus 14 is one of the most viscerally desperate in the entire Bible. The Israelites have just left Egypt. They are camped beside the Red Sea. And then Pharaoh — who had released them — changes his mind. He comes after them with six hundred of his best chariots and the entire Egyptian army.</p>
+
+<p>The Israelites look up and see the army approaching. The sea is in front of them. They are trapped. And they respond exactly as you would expect people to respond when trapped: they cry out in terror and turn on Moses. "Was it because there were no graves in Egypt that you brought us to the desert to die?" (v. 11). Their fear is understandable. Their logic is not wrong. Humanly speaking, they are finished.</p>
+
+<h2>Moses's Response</h2>
+
+<p>Moses says something remarkable in verse 13: "Do not be afraid. Stand firm and you will see the deliverance the Lord will bring you today. The Egyptians you see today you will never see again. The Lord will fight for you; you need only to be still."</p>
+
+<p>Stand firm. Be still. The Lord will fight. This is not passivity dressed up as faith — it is the specific instruction appropriate to this specific moment. There was nothing the Israelites could do about Pharaoh's army. Their only job was not to collapse in panic, not to rush back to Egypt, not to scatter into the desert. Hold your ground. Watch. The salvation belongs to God.</p>
+
+<h2>But Then God Changes the Command</h2>
+
+<p>Immediately after Moses tells them to be still, God tells Moses: "Why are you crying out to me? Tell the Israelites to move on. Raise your staff and stretch out your hand over the sea to divide the water" (vv. 15-16).</p>
+
+<p>There is a beautiful tension here. Moses had just told the people to stand still and watch God work. Now God says: move. The stillness was for a moment — the moment of panic, of regrouping, of realigning trust. But the calling in this story was always forward, into the impossible sea. "Be still" was the command for the heart. "Move on" was the command for the feet.</p>
+
+<h2>Into the Sea, While It Was Still Water</h2>
+
+<p>The sea did not part first, and then the Israelites walked through on dry ground. According to Exodus 14, Moses stretched out his hand, and throughout the night a strong east wind drove the water back. The people moved forward through the night into a path that was being made as they walked.</p>
+
+<p>They had to step toward the sea before they could see what God was doing with it. The parting was not a precondition of their obedience — it was the result of it. They moved, and the water moved with them.</p>
+
+<h2>The Army That Pursued Into the Sea</h2>
+
+<p>Pharaoh's army followed them in. And when the last Israelite reached the other shore, Moses stretched out his hand again and the water returned. The army was destroyed. "Not one of them survived" (v. 28).</p>
+
+<p>The very thing that had been the means of Israel's deliverance became the means of Egypt's destruction. The same sea. The same water. One people passed through to life; the ones pursuing them were swallowed. What God opens as a door for His people becomes a wall for those who chase them.</p>
+
+<h2>Your Red Sea Moment</h2>
+
+<p>Most of us will face our own version of this scene — the impossible situation where every visible exit is closed, the thing we fear is closing in from behind, and the only option that remains seems unnavigable. The Red Sea moment is not a metaphor for minor inconvenience. It is the existential crisis, the situation that has no human solution.</p>
+
+<p>The word for that moment is: don't panic. Stand firm long enough to hear the next instruction. And when the instruction comes — even if it asks you to walk toward the thing that looks impassable — step forward. The sea has to meet you before it will move. The path is made in the walking.</p>
+
+<p>The Lord who parted the sea has not retired. He is still making ways through the impossible for those who belong to Him.</p>
+    `.trim(),
+  },
+
+  // ── 33 ─────────────────────────────────────────────────────────────────────
+  {
+    slug: "who-do-you-say-i-am-the-question-that-matters",
+    title: "'Who Do You Say I Am?' — The Question That Still Demands an Answer",
+    subtitle: "Jesus asked it of Peter on a dusty road. He has been asking it ever since.",
+    category: "Identity in Christ",
+    author: "Scripture Lives",
+    publishedAt: "2026-02-19",
+    readingTimeMin: 5,
+    coverEmoji: "❓",
+    keyVerse: "'But what about you?' he asked. 'Who do you say I am?' Simon Peter answered, 'You are the Messiah, the Son of the living God.'",
+    keyVerseRef: "Matthew 16:15-16 (NIV)",
+    excerpt: "Jesus did not ask Peter what the crowds were saying to be informed. He already knew. He asked because He wanted Peter — and everyone who has ever read this passage — to arrive at their own answer.",
+    tags: ["Matthew 16", "Peter", "who is Jesus", "Messiah", "confession of faith", "Christology"],
+    content: `
+<p>Jesus and His disciples were walking through the region of Caesarea Philippi — a pagan city built around a large rock face, dotted with shrines to various gods — when He asked a question that seemed almost academic: "Who do people say the Son of Man is?" (Matthew 16:13).</p>
+
+<p>The disciples gave Him the current public opinion. John the Baptist. Elijah. Jeremiah. One of the prophets. Respectable answers all — each one placing Jesus in a category of greatness, each one missing the point entirely.</p>
+
+<p>Then Jesus narrowed the question: "But what about you? Who do you say I am?"</p>
+
+<h2>The Question Behind the Question</h2>
+
+<p>He was not asking for information. He is the Son of God — He does not need a disciple's report to know who He is. He was asking because the answer matters enormously for the person giving it. What you believe about Jesus is not an abstract theological opinion. It is the most consequential conclusion a human being can reach. It shapes how you relate to God, how you understand your own life, how you face death, and what you do with everything in between.</p>
+
+<p>The location was intentional. Caesarea Philippi was a place of competing gods — Pan's shrine was built into the rock face, and Herod Philip had built a temple to Caesar Augustus nearby. The question "Who is Jesus?" was asked in a landscape of multiple answers, multiple loyalties, multiple claims to ultimate authority. In that context, it was not a classroom exercise. It was a declaration of allegiance.</p>
+
+<h2>Peter's Answer</h2>
+
+<p>"You are the Messiah, the Son of the living God" (v. 16). Two claims, both enormous. The Messiah — the long-awaited anointed one, the deliverer Israel had been expecting for centuries, the fulfillment of the entire arc of Old Testament promise. And the Son of the living God — not a teacher, not a prophet, not a moral reformer, but uniquely, ontologically, the Son of the God who is actually alive, as opposed to the dead stone idols surrounding them.</p>
+
+<p>Jesus's response is ecstatic: "Blessed are you, Simon son of Jonah, for this was not revealed to you by flesh and blood, but by my Father in heaven" (v. 17). This was not human reasoning. Peter had not argued his way to this conclusion. It was revealed — a gift of perception from God, not a product of Peter's intelligence. True knowledge of who Jesus is always has this character: it arrives as gift, not as achievement.</p>
+
+<h2>C.S. Lewis's Trilemma</h2>
+
+<p>The twentieth-century writer and former atheist C.S. Lewis put the question this way: a man who claimed to be the Son of God and the forgiver of sins was either a liar, a lunatic, or exactly who He said He was. Lewis's point was that "great moral teacher" is not a stable position — the claims Jesus made do not permit mild admiration. You have to conclude one of the three.</p>
+
+<p>The crowds at Caesarea Philippi were in the "great prophet" category. Peter had pushed through to the third option — the one that demanded everything if it was true, and the one that was, in fact, true.</p>
+
+<h2>The Same Question Now</h2>
+
+<p>What the crowds say is still varied. A great teacher. A historical figure. A moral example. An enlightened man. A myth. A revolutionary. Jesus receives all these answers today as He received them then — with the same follow-up question: "But what about you?"</p>
+
+<p>You cannot anchor your life on what others say about Jesus. The question is personal. It requires your own answer, drawn from your own encounter with the Gospel, the Scripture, the Spirit's witness. And the stakes are the same as they were on that road to Caesarea Philippi: the answer you give determines everything that comes after it.</p>
+
+<p>Who do you say He is?</p>
+    `.trim(),
+  },
+
+  // ── 34 ─────────────────────────────────────────────────────────────────────
+  {
+    slug: "gideon-least-in-my-family-strength-in-weakness",
+    title: "Gideon: God Chooses the Least Expected",
+    subtitle: "When God's call finds you hiding and calls you a mighty warrior, there may be something He knows that you don't",
+    category: "Purpose & Calling",
+    author: "Scripture Lives",
+    publishedAt: "2026-02-26",
+    readingTimeMin: 5,
+    coverEmoji: "⚔️",
+    keyVerse: "'Pardon me, my lord,' Gideon replied, 'but how can I save Israel? My clan is the weakest in Manasseh, and I am the least in my family.'",
+    keyVerseRef: "Judges 6:15 (NIV)",
+    excerpt: "The angel of the Lord found Gideon hiding in a winepress, threshing wheat in secret. The angel's greeting — 'The Lord is with you, mighty warrior' — must have sounded like a cruel joke. It wasn't.",
+    tags: ["Judges 6-7", "Gideon", "calling", "weakness", "God's strength", "fleece"],
+    content: `
+<p>Israel had been terrorized for seven years. The Midianites swept through at harvest time like locusts, taking everything — crops, sheep, cattle, donkeys — leaving nothing. The people were reduced to hiding their produce in mountain clefts, in dens, in strongholds. Which is exactly where we find Gideon: down in a winepress, threshing wheat in secret, trying not to be seen.</p>
+
+<p>And the angel of the Lord comes to him there — in the pit, in the hiding place — and says: "The Lord is with you, mighty warrior" (Judges 6:12).</p>
+
+<p>Gideon's response is not inspirational. It is honest: "Pardon me, my lord, but if the Lord is with us, why has all this happened to us?" (v. 13). He is not wrong to ask. The gap between "the Lord is with you" and "your nation has been under devastating oppression for seven years" is significant. Gideon is a man of genuine theological confusion, not shallow faith.</p>
+
+<h2>The Gap Between the Call and the Self-Assessment</h2>
+
+<p>When God tells Gideon to go and save Israel, Gideon's response is a complete audit of his disqualifications: "Pardon me, my lord, but how can I save Israel? My clan is the weakest in Manasseh, and I am the least in my family" (v. 15). Tribe, clan, birth order — he works through every layer of his social insignificance. He is not being falsely humble. He is being accurate about the human data.</p>
+
+<p>God's response does not address any of the data: "I will be with you, and you will strike down all the Midianites, leaving none alive" (v. 16). God does not argue with Gideon's assessment of his own smallness. He simply places Himself alongside it. The weakest clan plus God is a majority. The least in the family plus the Lord of hosts is a decisive force. The math works differently when you factor in the variable Gideon keeps leaving out of his calculations.</p>
+
+<h2>The Fleece — and What It Really Shows</h2>
+
+<p>Gideon is famously tentative. He asks for signs twice — fleece wet while the ground is dry, then fleece dry while the ground is wet — to confirm that God is really calling him. We sometimes read this as a model: "put out a fleece" before making a decision. But the text presents it more as faith in process than faith to be imitated.</p>
+
+<p>God was patient with Gideon's uncertainty. He accommodated the request both times. Not because Gideon's doubt was ideal, but because God was committed to the calling He had placed on this reluctant man — and was willing to work with him through his hesitation. This is good news: God does not abandon us because we need reassurance. He tends to us in our uncertainty while simultaneously moving us forward.</p>
+
+<h2>Three Hundred Men Against 135,000</h2>
+
+<p>God whittled Gideon's army from 32,000 to 300 men. The reason is stated explicitly: "In order that Israel may not boast against me that her own strength has saved her" (7:2). God engineered the numbers to make the victory undeniable in its source. Three hundred men with torches, clay jars, and trumpets, against a combined Midianite force of 135,000 soldiers. The battle was not won by military strategy. It was won by the panic God sent into the enemy camp (7:22).</p>
+
+<p>The weakest clan. The least in the family. 300 men with jars and torches. The victory belonged to no one else.</p>
+
+<h2>The One Who Calls the Hidden</h2>
+
+<p>God still goes looking in winepresses. He finds the people who have good reasons not to be called — too small, too weak, too broken, too unknown — and greets them with what they will become, not what they currently feel like. "Mighty warrior." "Woman of great valor." "Servant, well done."</p>
+
+<p>If you have been hiding your harvest in the pit, if the gap between what God seems to be saying about you and what you know about yourself seems absurd — you are in good company. The angel went to a winepress first. And the God who found Gideon there has not changed His recruiting strategy.</p>
+    `.trim(),
+  },
+
+  // ── 35 ─────────────────────────────────────────────────────────────────────
+  {
+    slug: "the-prodigal-sons-older-brother",
+    title: "The Other Son: The Forgotten Lesson of Luke 15",
+    subtitle: "The parable of the prodigal son has a second movement that most of us prefer to skip",
+    category: "Grace & Forgiveness",
+    author: "Scripture Lives",
+    publishedAt: "2026-03-05",
+    readingTimeMin: 6,
+    coverEmoji: "🏠",
+    keyVerse: "The older brother became angry and refused to go in. So his father went out and pleaded with him.",
+    keyVerseRef: "Luke 15:28 (NIV)",
+    excerpt: "The younger son got the party and the robe and the ring. The older son got a lecture and an invitation he refused. Jesus never tells us whether he went in. That unfinished ending might be intentional.",
+    tags: ["Luke 15", "prodigal son", "older brother", "grace", "resentment", "Pharisees"],
+    content: `
+<p>Most of us know the story of the prodigal son. The younger son takes his inheritance early — essentially wishing his father dead — and squanders it on wild living. He ends up feeding pigs in a foreign country, eating their food. He comes to his senses, rehearses a speech, and starts the journey home.</p>
+
+<p>The father sees him coming from far away. He runs. He restores his son before the speech is finished — robe, ring, sandals, fatted calf, celebration. The grace is overwhelming. The party is thrown. And it is a beautiful picture of God's heart for the returning wanderer.</p>
+
+<p>But Jesus does not stop there. The parable has a second movement. And the second son is far more uncomfortable to sit with — because most of us recognize ourselves in him.</p>
+
+<h2>The Elder Son's Complaint</h2>
+
+<p>The older brother comes in from the field, hears the music and dancing, and when he finds out what has happened, he refuses to go in. His father comes out to plead with him. And what comes out of the older son's mouth is a masterpiece of barely contained resentment:</p>
+
+<p>"Look! All these years I've been slaving for you and never disobeyed your orders. Yet you never gave me even a young goat so I could celebrate with my friends. But when this son of yours who has squandered your property with prostitutes comes home, you kill the fattened calf for him!" (vv. 29-30).</p>
+
+<p>Count the grievances: years of faithful service unrewarded. No party for me. That son of <em>yours</em> (notably not "my brother") — implying disgrace by association. And the added detail about prostitutes, which we were not told in the original story — either he knows something, or he is embellishing his indignation.</p>
+
+<h2>The Heart Behind the Good Behavior</h2>
+
+<p>What the older son reveals in his complaint is that his obedience was transactional. He had been "slaving" — the Greek word is <em>douleuō</em>, the word used for a servant — not serving. He had been working for rewards that were not coming. The years of faithfulness had built up resentment, not joy, because he had been keeping score. He had expected the economy of earned favor, and his brother's unearned restoration broke the formula.</p>
+
+<p>The Pharisees and teachers of the law were the audience Jesus was speaking to in Luke 15 — the ones muttering about Jesus eating with sinners. They were the older brothers. Outwardly obedient. Inwardly seething at grace offered to the undeserving. Their years of law-keeping had not made them more like the father — it had made them more watchful of who deserved the fatted calf.</p>
+
+<h2>The Father's Response</h2>
+
+<p>"My son," the father says — he does not let the resentment redefine the relationship — "you are always with me, and everything I have is yours" (v. 31). He does not invalidate the older son's faithfulness. He simply reframes it: you were not slaving. You were with me. The father's company and his resources have always been yours. You never needed to earn what was already given.</p>
+
+<p>The elder son had been living in the father's house as if he were a hired hand. He had the access. He had the inheritance. He had the relationship. But he had been performing faithfulness for wages rather than living in sonship. And he could not rejoice at his brother's return because he had never understood what it meant to be a son himself.</p>
+
+<h2>The Unfinished Ending</h2>
+
+<p>Jesus ends the parable without telling us whether the older son goes in. We never find out if he accepts the father's words, lets go of the resentment, and joins the party. The story simply stops.</p>
+
+<p>It is possible that the open ending is directed at the Pharisees in the crowd — the door to the party is still open, the father has come out to plead, the invitation stands. Will they come in, or keep standing in the yard? But it is also possible the open ending is directed at us — at anyone who finds the grace offered to returning prodigals slightly offensive, who has been keeping score, who does good things partly to make sure God notices.</p>
+
+<p>The father is still outside. His invitation is still open. The party is still going on inside. Whatever has kept you from coming in — the resentment, the score-keeping, the performance of earned favor — you can let it go tonight. The father is not interested in the ledger. He just wants both his sons at the table.</p>
+    `.trim(),
+  },
+
+  // ── 36 ─────────────────────────────────────────────────────────────────────
+  {
+    slug: "mary-magdalene-first-witness-resurrection",
+    title: "Mary Magdalene: The First Witness of the Resurrection",
+    subtitle: "Why God chose a weeping woman to carry the most important news in history",
+    category: "Devotional",
+    author: "Scripture Lives",
+    publishedAt: "2026-03-12",
+    readingTimeMin: 5,
+    coverEmoji: "🌅",
+    keyVerse: "Jesus said to her, 'Mary.' She turned toward him and cried out in Aramaic, 'Rabboni!' (which means Teacher).",
+    keyVerseRef: "John 20:16 (NIV)",
+    excerpt: "Mary came to the tomb to grieve. She was the last to leave and the first to return. And when the risen Christ appeared to anyone for the first time, He chose her — calling her by name in the garden.",
+    tags: ["John 20", "Mary Magdalene", "resurrection", "Easter", "called by name", "witness"],
+    content: `
+<p>She had been there at the cross, watching. She was there when He was laid in the tomb. And she was first at the tomb before the sun was fully up on the first day of the week, while it was still dark (John 20:1). Whatever else could be said about Mary Magdalene, she was consistently, stubbornly present when others had gone home.</p>
+
+<p>She sees the stone removed. She runs to Peter and John. They come, inspect the empty tomb, see the burial cloths lying there, and — the text says — they went home (v. 10). But Mary stayed. She stood outside the tomb, weeping.</p>
+
+<h2>The Question From the Angels</h2>
+
+<p>She stoops to look inside and sees two angels in white sitting where Jesus had been. "Woman, why are you crying?" they ask (v. 13). Her answer is heartbreaking in its simplicity: "They have taken my Lord away, and I don't know where they have put him." She is not looking for the risen Christ. She is looking for a body. She wants to finish grieving properly. She cannot even do that because He is gone.</p>
+
+<p>She turns around and sees Jesus standing there — "but she did not realize that it was Jesus" (v. 14). He asks the same question the angels asked: "Woman, why are you crying? Who is it you are looking for?" She, thinking he is the gardener, asks if he knows where the body has been moved.</p>
+
+<h2>One Word That Changed Everything</h2>
+
+<p>Then Jesus says one word: "Mary." And she knows.</p>
+
+<p>He had not changed the question. He had not explained the resurrection. He had not given her a theological lecture about what had happened. He called her by name — and that was enough. She recognized Him not by His face or His wounds but by the way He said her name.</p>
+
+<p>This is the shepherd of John 10 in action: "He calls his own sheep by name... and his sheep follow him because they know his voice" (John 10:3-4). The risen Christ's first word to the first witness of the resurrection was not a proclamation. It was a name. Her name. The God who knows you by name.</p>
+
+<h2>Why Mary?</h2>
+
+<p>In first-century Jewish culture, a woman's testimony was not considered legally valid. This is perhaps the most apologetically striking detail of the resurrection accounts — all four Gospels agree that women were the first witnesses, and that the disciples initially disbelieved them (Luke 24:11). If the early church had been fabricating the story, they would not have invented female witnesses. Their culture gave them no reason to. The women appear in the story because the women were actually there.</p>
+
+<p>But beyond the apologetics, there is a theological statement in God's choice of Mary as first witness. He could have appeared first to Peter, the natural leader. Or to John, the beloved disciple. Or to all eleven at once for maximum impact. He appeared first to a weeping woman who had come to tend a body. The first carrier of the most important news in history was someone who had simply refused to leave.</p>
+
+<h2>She Went and Told</h2>
+
+<p>Jesus instructs her: "Go to my brothers and tell them, 'I am ascending to my Father and your Father, to my God and your God'" (v. 17). And so Mary Magdalene goes to the disciples and announces: "I have seen the Lord!" (v. 18). The first Easter sermon, delivered by the one who stayed.</p>
+
+<p>If you are in a season of weeping — standing at an empty tomb, grieving what has been taken, unable even to find the body of what you lost — the risen Christ may be closer than you know. He tends to find the ones who stay. He still calls names. And the word He speaks when He finds you will be enough for you to recognize Him.</p>
+    `.trim(),
+  },
+
+  // ── 37 ─────────────────────────────────────────────────────────────────────
+  {
+    slug: "what-does-it-mean-to-fear-the-lord",
+    title: "What Does It Mean to Fear the Lord?",
+    subtitle: "The phrase appears hundreds of times in Scripture. Most of us misread it.",
+    category: "Bible Study",
+    author: "Scripture Lives",
+    publishedAt: "2026-03-19",
+    readingTimeMin: 6,
+    coverEmoji: "🕊️",
+    keyVerse: "The fear of the Lord is the beginning of wisdom, and knowledge of the Holy One is understanding.",
+    keyVerseRef: "Proverbs 9:10 (NIV)",
+    excerpt: "To fear God is not the same as being afraid of God. The difference is not subtle — it is the difference between running from a relationship and running into one.",
+    tags: ["fear of the Lord", "Proverbs", "wisdom", "reverence", "worship", "awe"],
+    content: `
+<p>The phrase "fear of the Lord" appears more than 150 times in the Old Testament and is echoed throughout the New. It is called the beginning of wisdom (Proverbs 9:10), the foundation of knowledge (Proverbs 1:7), and a clean, enduring thing (Psalm 19:9). Yet for many believers — particularly those raised with a strong emphasis on God's love — the phrase sits uncomfortably. Doesn't perfect love drive out fear? (1 John 4:18). How can we be told to fear a God who loves us perfectly?</p>
+
+<p>The confusion often comes from conflating two different kinds of fear. Understanding the difference is not a minor theological point. It fundamentally shapes how we approach God and how we live before Him.</p>
+
+<h2>The Fear That Drives Away</h2>
+
+<p>When Adam and Eve sinned in the garden, they hid from God (Genesis 3:8). This is one kind of fear — the fear of punishment, of exposure, of a wrathful judge who will condemn. It is the terror of the guilty before the all-knowing. This fear drives away from God, into hiding, into performance, into religious behavior designed to manage the threat.</p>
+
+<p>The apostle John addresses this fear in 1 John 4:18: "There is no fear in love. But perfect love drives out fear, because fear has to do with punishment." He is talking about this specific kind — the cowering, punitive dread of one who has not yet understood the full scope of God's mercy in Christ. This fear is incompatible with mature faith and is driven out as we receive the love God has for us.</p>
+
+<h2>The Fear That Draws Near</h2>
+
+<p>But Proverbs 9:10 and its many parallel texts are talking about something different. The Hebrew word is <em>yir'ah</em>, which includes reverence, awe, and a deep respect born of understanding who God actually is. It is the response of a creature standing before the Creator — not terror but profound, sober recognition of greatness, holiness, and power that is beyond comprehension.</p>
+
+<p>Think of standing at the edge of the Grand Canyon for the first time, or watching the ocean from a cliff in a storm. There is fear — a visceral awareness of your own smallness and the vastness before you — but it is not the fear that drives you to run away. It is the fear that makes you stand still, that arrests your breath, that demands your full attention. It has more in common with awe and wonder than with dread.</p>
+
+<p>This is what the Scripture means by "fear of the Lord." It is the posture of standing before infinite holiness and being sobered by it. It is knowing that you are not the largest thing in the universe — that the God before whom you bow is genuinely, absolutely, incomparably great.</p>
+
+<h2>What the Fear of the Lord Produces</h2>
+
+<p>Proverbs connects the fear of the Lord to wisdom repeatedly — not incidentally, but as cause and effect. To fear God rightly is to begin to see reality correctly. When God is in proper perspective — awesome, holy, sovereign, just — then every other thing falls into proper perspective. Money is a tool, not an ultimate. Death is a doorway, not a final word. Human approval is real but not ultimate. Suffering has weight but not the last word.</p>
+
+<p>The person who fears the Lord has calibrated their values around what is actually largest. And that calibration is the beginning of wisdom — seeing truly, choosing well, living in alignment with what is real.</p>
+
+<h2>Jesus as the Perfect Expression of Both</h2>
+
+<p>In Jesus, we see both truths held together. He is the one John says we should "love" (1 John 3:23) — the one who has driven out punitive dread through His perfect sacrifice. And He is the one before whom every knee will bow and every tongue confess (Philippians 2:10-11) — the Lord before whom appropriate reverence and awe are the only proper responses.</p>
+
+<p>Loving Jesus and fearing God are not contradictory. They are the two hands of mature faith. We approach the throne of grace with confidence (Hebrews 4:16) because the fear that condemned us has been addressed by the cross. And we approach it still in reverence, because the one seated there is not merely a kind friend — He is the King of all kings, the Holy One of Israel, before whom the angels cover their faces and cry "Holy, holy, holy."</p>
+
+<p>The fear of the Lord is not the beginning of religion. It is the beginning of wisdom — seeing things as they are, starting with the God who is actually there.</p>
+    `.trim(),
+  },
+
+  // ── 38 ─────────────────────────────────────────────────────────────────────
+  {
+    slug: "prayer-without-ceasing-what-paul-meant",
+    title: "'Pray Without Ceasing': What Paul Actually Meant",
+    subtitle: "Three words that have confused and convicted Christians for two thousand years — and how to live them",
+    category: "Prayer",
+    author: "Scripture Lives",
+    publishedAt: "2026-03-26",
+    readingTimeMin: 5,
+    coverEmoji: "✉️",
+    keyVerse: "Pray continually.",
+    keyVerseRef: "1 Thessalonians 5:17 (NIV)",
+    excerpt: "Paul writes 'pray without ceasing' and most of us read it as the world's most unkeepable commandment. But that interpretation misses what Paul was describing — a quality of life, not a quantity of minutes on your knees.",
+    tags: ["1 Thessalonians 5:17", "prayer", "Paul", "continual prayer", "spiritual life", "presence of God"],
+    content: `
+<p>Three words. Two in the original Greek: <em>adialeiptos proseuchesthe</em> — pray without ceasing, pray continually. It is one of the shortest instructions in all of Paul's letters, and one of the most frequently misread. On the surface it sounds like an impossibility: pray all the time, without stopping. Take no break. Never cease. How could anyone do this while also working, sleeping, parenting, driving, and going about the ordinary business of human life?</p>
+
+<p>If "pray without ceasing" means "be on your knees in formal prayer every moment," Paul is commanding something not even the most devoted monastic has achieved. And that interpretation would make the command not inspiring but discouraging — a permanent reminder of failure.</p>
+
+<p>But Paul was describing something far more liveable and far more rich.</p>
+
+<h2>What the Greek Word Means</h2>
+
+<p>The Greek word <em>adialeiptos</em> was used in Paul's time to describe a persistent cough — a cough that keeps returning, that doesn't fully go away between episodes. It was used for a recurring fever. It did not mean constant, uninterrupted, no-pause. It meant regularly recurring, always returning, not finally abandoned.</p>
+
+<p>In the same way, "pray without ceasing" describes a life in which prayer is the returning posture — not a formal, unbroken verbalization, but a continuous orientation of the heart toward God. You go to work. You come back to prayer. You have a conversation. You return to prayer. You sleep. You wake and pray again. Prayer is the home base to which the heart keeps returning.</p>
+
+<h2>The Difference Between a Session and an Orientation</h2>
+
+<p>Most of us think of prayer as an activity — a session we schedule and then complete. We pray in the morning, or before bed, or in a crisis. Between the sessions, we live our "regular" life. Paul seems to be describing something different: a life in which the distinction between the prayer session and the regular life gradually blurs, because the heart has learned to live in ongoing conversation with God.</p>
+
+<p>Brother Lawrence, a seventeenth-century Carmelite monk, described this as "practicing the presence of God." He worked in the monastery kitchen — peeling vegetables, washing pots — and maintained a running, unceasing interior conversation with God through all of it. Not mystical ecstasy. Just the ordinary work of the day done in continual awareness of the God alongside whom he worked. He found this possible, and reported it as more fulfilling than any isolated period of formal prayer.</p>
+
+<h2>The Posture, Not the Volume</h2>
+
+<p>"Pray without ceasing" is not primarily about frequency of formal prayers. It is about the posture of the heart — whether it is turned toward God or turned away. A person can pray for three hours in the morning and spend the rest of the day functionally godless. A person can mutter a thirty-second prayer before breakfast and spend the rest of the day in an interior orientation of dependence, gratitude, and submission that Paul would recognize as praying without ceasing.</p>
+
+<p>The command invites us to let prayer spill out of its dedicated time slot into the rest of our lives — the commute, the meeting, the difficult conversation, the unexpected news. To develop the habit of a quick upward glance: "Lord, I need you here." "Thank you for that." "I don't understand this but you do." "Please go ahead of me in this."</p>
+
+<h2>Three Commands, One Life</h2>
+
+<p>Paul sets "pray without ceasing" between two companions in 1 Thessalonians 5: "Rejoice always" (v. 16) and "give thanks in all circumstances" (v. 18). Together they describe not a checklist of spiritual disciplines but a quality of life — a life turned toward God in joy, conversation, and gratitude, regardless of circumstances.</p>
+
+<p>You can begin today. Not by adding more prayer sessions to your calendar — though that is a good thing to do. But by softening the wall between your "prayer time" and the rest of your hours. Talk to God while you make breakfast. Thank Him while you drive. Ask Him into the meeting. Tell Him what you're thinking in the grocery store. Let the cough keep returning, throughout the day, until it becomes the rhythm you breathe by.</p>
+
+<p>This is what it means to pray without ceasing — and it is more possible than you may have been told.</p>
+    `.trim(),
+  },
+
+  // ── 39 ─────────────────────────────────────────────────────────────────────
+  {
+    slug: "good-friday-why-the-cross-matters",
+    title: "Why the Cross Still Matters: The Heart of the Gospel",
+    subtitle: "The cross is the most important event in human history — not despite its violence, but because of what that violence accomplished",
+    category: "Devotional",
+    author: "Scripture Lives",
+    publishedAt: "2026-04-02",
+    readingTimeMin: 7,
+    coverEmoji: "✝️",
+    keyVerse: "For the message of the cross is foolishness to those who are perishing, but to us who are being saved it is the power of God.",
+    keyVerseRef: "1 Corinthians 1:18 (NIV)",
+    excerpt: "Roman crucifixion was designed to maximize shame as much as pain. The cross was a symbol of utter defeat. That God chose this as His means of redemption is either the greatest scandal or the greatest wisdom ever conceived.",
+    tags: ["cross", "Good Friday", "atonement", "crucifixion", "salvation", "gospel"],
+    content: `
+<p>The Romans perfected crucifixion as an instrument not just of execution but of humiliation. The condemned was stripped, displayed in public, left to struggle for every breath, unable to protect any bodily dignity. Death could take hours or days. Crucifixion was reserved for the lowest — slaves, enemy soldiers, insurgents. A crucified man was considered utterly cursed, beyond social redemption. In the Jewish tradition, a hanged man was "under God's curse" (Deuteronomy 21:23).</p>
+
+<p>This is what Paul means when he calls the cross "foolishness" (1 Corinthians 1:18). In every cultural framework of the first century — Roman, Greek, or Jewish — a crucified Messiah was a contradiction in terms. The cross was the opposite of triumph. It was the public, humiliating proof that a man was not who he claimed to be.</p>
+
+<p>And yet Paul calls it "the power of God." He says he is determined to "know nothing... except Jesus Christ and him crucified" (1 Corinthians 2:2). The Apostle builds his entire theology around the event that, by all social logic, should have ended the movement and discredited its founder.</p>
+
+<h2>What Was Actually Happening at Calvary</h2>
+
+<p>The soldiers saw a condemned criminal dying. The crowds saw a failed prophet. The disciples saw their hopes collapsing. But behind the visible — in the invisible architecture of cosmic reality — something else entirely was happening.</p>
+
+<p>Paul writes in 2 Corinthians 5:21: "God made him who had no sin to be sin for us, so that in him we might become the righteousness of God." The sinless one absorbed the full weight of human sin — not symbolically, but actually. Peter describes it as Christ "bearing our sins in his body on the cross" (1 Peter 2:24). Isaiah had foretold it seven hundred years earlier: "He was pierced for our transgressions, he was crushed for our iniquities" (Isaiah 53:5).</p>
+
+<p>The cross was not an accident, a tragedy, or a martyrdom. It was the predetermined plan of a God who, having loved a world that could not save itself, chose to step inside the problem and absorb its consequences. "God demonstrates his own love for us in this: while we were still sinners, Christ died for us" (Romans 5:8).</p>
+
+<h2>The Three Hours of Darkness</h2>
+
+<p>From noon until three in the afternoon on that Friday, darkness covered the land (Matthew 27:45). Something was happening beyond the biological death of a Jewish teacher. The Son of God — fully divine, in eternal communion with the Father — was bearing the full weight of separation from God that human sin deserves. It was the one moment of abandonment in the eternal relationship of the Trinity. Which is why His cry is so shattering: "My God, my God, why have you forsaken me?" (v. 46).</p>
+
+<p>He was forsaken so that we would never have to be. He entered the darkness so that the darkness would be exhausted on Him rather than fall on us. The punishment that belonged to the whole guilty human race was placed on the one person who did not deserve it — and He accepted it, willingly, in love.</p>
+
+<h2>It Is Finished</h2>
+
+<p>His last words, according to John, were: "It is finished" (John 19:30). The Greek is <em>Tetelestai</em> — a single word meaning "paid in full." It was stamped on debt receipts in the ancient world to indicate complete payment. The debt of sin — the accumulated moral weight of humanity's rebellion against a holy God — was marked "paid in full" at three o'clock on a Friday afternoon on a hill called the Skull.</p>
+
+<p>The Temple curtain that separated the Holy of Holies from human access tore in two, from top to bottom (Matthew 27:51). God tore it — not from the bottom up as a human hand would, but from the top down. The barrier was removed from the divine side. Access was granted. The cross was not only a payment — it was an opening.</p>
+
+<h2>The Wisdom the World Calls Foolishness</h2>
+
+<p>The cross is still foolishness to many. A God who saves through weakness rather than power. A victory achieved through apparent defeat. Grace offered freely to those who deserve only judgment. None of it follows the logic of human achievement or earthly power structures.</p>
+
+<p>But it is the power of God. And two thousand years of human lives changed at the foot of this cross — broken people finding forgiveness, hopeless people finding direction, guilty people finding pardon, lonely people finding that the God who hung on a cross will never abandon them — stands as the evidence.</p>
+
+<p>Come back to the cross. Come back to the <em>tetelestai</em>. Let the foolishness of it wash over you again. And let the power that defeated death itself be the power you stand on today.</p>
     `.trim(),
   },
 ];
