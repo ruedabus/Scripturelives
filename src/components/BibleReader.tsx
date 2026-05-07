@@ -32,6 +32,9 @@ import LexiconPanel from "@/components/LexiconPanel";
 import BiblicalTimeline from "@/components/BiblicalTimeline";
 import CommentaryPanel from "@/components/CommentaryPanel";
 import PassagePresenter from "@/components/PassagePresenter";
+import ChristianNews from "@/components/ChristianNews";
+import StudyNotes from "@/components/StudyNotes";
+import GospelCard from "@/components/GospelCard";
 import {
   Home, Feather, BookOpen, Library, Layers, BookText, BookMarked,
   ScrollText, Landmark, Globe, Star, ClipboardList, FileText,
@@ -747,9 +750,10 @@ export default function BibleReader() {
       onClick={() => setLeftPanelTab(tab)}
       className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition ${
         leftPanelTab === tab
-          ? "bg-amber-500 text-stone-900"
-          : "text-stone-400 hover:bg-stone-800 hover:text-white"
+          ? "text-white"
+          : "hover:bg-amber-50"
       }`}
+      style={leftPanelTab === tab ? { background: "#C9952A", color: "white" } : { color: "#374151" }}
     >
       <span className="shrink-0">{icon}</span>
       <span>{label}</span>
@@ -792,20 +796,20 @@ export default function BibleReader() {
       <div className="xl:flex xl:min-h-screen print:block">
 
         {/* ── LEFT SIDEBAR (desktop) ───────────────────────────────────────── */}
-        <nav className="hidden xl:flex flex-col w-56 shrink-0 bg-stone-900 text-white sticky top-0 h-screen overflow-y-auto print:hidden">
+        <nav className="hidden xl:flex flex-col w-56 shrink-0 bg-white sticky top-0 h-screen overflow-y-auto print:hidden" style={{ borderRight: "1px solid #ede8de" }}>
           {/* Logo */}
-          <div className="px-4 py-5 border-b border-stone-800">
+          <div className="px-4 py-5" style={{ borderBottom: "1px solid #ede8de" }}>
             <div className="flex items-center gap-2.5">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/Hand-painted cross_logo.png"
                 alt="Scripture Lives"
-                className="h-14 w-14 rounded-lg object-contain shrink-0"
+                className="h-12 w-12 rounded-lg object-contain shrink-0"
                 onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
               />
               <div>
-                <p className="text-sm font-bold text-amber-300 leading-tight">Scripture Lives</p>
-                <p className="text-xs text-stone-500 mt-0.5">Bible Study Platform</p>
+                <p className="text-sm font-bold leading-tight" style={{ color: "#1a2640" }}>Scripture Lives</p>
+                <p className="text-xs mt-0.5" style={{ color: "#9ca3af" }}>Bible Study Platform</p>
               </div>
             </div>
           </div>
@@ -813,7 +817,7 @@ export default function BibleReader() {
           {/* Nav sections */}
           <div className="flex-1 py-5 px-3 space-y-6 overflow-y-auto">
             <div>
-              <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-widest text-stone-500">Read</p>
+              <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-widest" style={{ color: "#C9952A" }}>Read</p>
               {sideNavBtn("home",          <Home size={16} />,         "Home")}
               {sideNavBtn("devotional",    <Feather size={16} />,      "Daily Devotional")}
               {sideNavBtn("audio",         <Headphones size={16} />,   "Audio Bible")}
@@ -824,7 +828,7 @@ export default function BibleReader() {
               {sideNavBtn("prayer_journal",<Heart size={16} />,        "Prayer Journal")}
             </div>
             <div>
-              <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-widest text-stone-500">Study</p>
+              <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-widest" style={{ color: "#C9952A" }}>Study</p>
               {sideNavBtn("timeline",      <Layers size={16} />,       "Timeline")}
               {sideNavBtn("commentary",    <BookText size={16} />,     "Commentary")}
               {sideNavBtn("dictionary",    <BookMarked size={16} />,   "Dictionary")}
@@ -834,27 +838,28 @@ export default function BibleReader() {
               {sideNavBtn("verse_image",   <Sparkles size={16} />,     "Verse Image Cards")}
             </div>
             <div>
-              <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-widest text-stone-500">Explore</p>
+              <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-widest" style={{ color: "#C9952A" }}>Explore</p>
               {sideNavBtn("ancient_world", <Landmark size={16} />,     "Ancient Places")}
               {sideNavBtn("atlas",         <Globe size={16} />,        "Bible Atlas")}
               {sideNavBtn("characters",    <Users size={16} />,        "Character Profiles")}
               {sideNavBtn("quiz",          <Trophy size={16} />,       "Bible Quiz")}
             </div>
             <div>
-              <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-widest text-stone-500">My Library</p>
+              <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-widest" style={{ color: "#C9952A" }}>My Library</p>
               {sideNavBtn("bookmarks",       <Star size={16} />,         "Bookmarks")}
               {sideNavBtn("sessions",        <ClipboardList size={16} />, "Sessions")}
-              {sideNavBtn("study_sheet",     <FileText size={16} />,     "Study Sheet")}
+              {sideNavBtn("study_sheet",     <FileText size={16} />,     "Study Notes")}
               {sideNavBtn("reading_progress",<BarChart2 size={16} />,    "Reading Progress")}
             </div>
             <div>
-              <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-widest text-stone-500">Community</p>
+              <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-widest" style={{ color: "#C9952A" }}>Community</p>
               {sideNavBtn("testimonials",  <HeartHandshake size={16} />, "Testimonials")}
               {sideNavBtn("resources",     <ExternalLink size={16} />, "More Resources")}
               {sideNavBtn("books",         <BookHeart size={16} />,    "Christian Books")}
               <a
                 href="/devotionals"
-                className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-stone-300 hover:bg-stone-800 hover:text-white transition-colors"
+                className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium hover:bg-amber-50 transition-colors"
+              style={{ color: "#374151" }}
               >
                 <ScrollText size={16} />
                 <span>Devotional Articles</span>
@@ -862,7 +867,8 @@ export default function BibleReader() {
               </a>
               <a
                 href="/tournament"
-                className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium text-stone-300 hover:bg-stone-800 hover:text-white transition-colors"
+                className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium hover:bg-amber-50 transition-colors"
+              style={{ color: "#374151" }}
               >
                 <Trophy size={16} />
                 <span>Bible Bowl</span>
@@ -872,14 +878,15 @@ export default function BibleReader() {
           </div>
 
           {/* Sidebar footer links */}
-          <div className="shrink-0 border-t border-stone-800 px-4 py-4 space-y-1">
+          <div className="shrink-0 px-4 py-4 space-y-1" style={{ borderTop: "1px solid #ede8de" }}>
 
             {/* YouTube channel */}
             <a
               href="https://www.youtube.com/@FaithTails"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2.5 rounded-lg px-2 py-2 text-xs font-medium text-stone-300 hover:bg-stone-800 hover:text-white transition group"
+              className="flex items-center gap-2.5 rounded-lg px-2 py-2 text-xs font-medium hover:bg-amber-50 transition group"
+              style={{ color: "#374151" }}
             >
               {/* YouTube brandmark SVG */}
               <span className="shrink-0 flex items-center justify-center w-6 h-6 rounded bg-[#FF0000] group-hover:bg-[#cc0000] transition">
@@ -890,16 +897,32 @@ export default function BibleReader() {
               <span>Faith Tails on YouTube</span>
             </a>
 
-            <a href="/donate" className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-xs text-amber-400 hover:bg-stone-800 transition">
+            {/* Facebook page */}
+            <a
+              href="https://www.facebook.com/ScriptureLives"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2.5 rounded-lg px-2 py-2 text-xs font-medium hover:bg-amber-50 transition group"
+              style={{ color: "#374151" }}
+            >
+              <span className="shrink-0 flex items-center justify-center w-6 h-6 rounded bg-[#1877F2] group-hover:bg-[#1464d3] transition">
+                <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 fill-white" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.887v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/>
+                </svg>
+              </span>
+              <span>Scripture Lives on Facebook</span>
+            </a>
+
+            <a href="/donate" className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-xs font-semibold hover:bg-amber-50 transition" style={{ color: "#C9952A" }}>
               <HandCoins size={14} /> Support Scripture Lives
             </a>
-            <a href="/about" className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-xs text-stone-400 hover:bg-stone-800 hover:text-stone-200 transition">
+            <a href="/about" className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-xs hover:bg-amber-50 transition" style={{ color: "#6b7280" }}>
               About Us
             </a>
-            <a href="/terms" className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-xs text-stone-400 hover:bg-stone-800 hover:text-stone-200 transition">
+            <a href="/terms" className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-xs hover:bg-amber-50 transition" style={{ color: "#6b7280" }}>
               Terms &amp; Conditions
             </a>
-            <a href="/privacy" className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-xs text-stone-400 hover:bg-stone-800 hover:text-stone-200 transition">
+            <a href="/privacy" className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-xs hover:bg-amber-50 transition" style={{ color: "#6b7280" }}>
               Privacy Policy
             </a>
           </div>
@@ -909,7 +932,7 @@ export default function BibleReader() {
         <div className="flex-1 xl:grid xl:grid-cols-[1fr_400px] min-h-screen print:block">
 
           {/* CENTER — main content */}
-          <section className="bg-gray-50 p-4 xl:p-6 min-h-screen pb-24 xl:pb-6 print:border-none print:bg-white print:p-0 print:shadow-none">
+          <section className="p-4 xl:p-6 min-h-screen pb-24 xl:pb-6 print:border-none print:bg-white print:p-0 print:shadow-none" style={{ background: "#faf8f3" }}>
 
             {/* Mobile: no inline nav strip — replaced by fixed bottom bar below */}
 
@@ -918,33 +941,33 @@ export default function BibleReader() {
               <div className="space-y-8 print:hidden">
 
                 {/* Hero search */}
-                <div className="relative rounded-xl bg-gradient-to-br from-stone-950 to-stone-800 px-7 py-9 overflow-hidden">
-                  {/* Bible image — layered behind content, top-right */}
+                <div className="relative rounded-2xl overflow-hidden" style={{ background: "#1a2640" }}>
+                  {/* Bible image — faded right side */}
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src="/bible-hero.jpg"
                     alt=""
                     aria-hidden="true"
-                    className="absolute right-8 -top-4 h-52 w-80 object-cover object-center opacity-50 pointer-events-none select-none"
-                    style={{ maskImage: "linear-gradient(to left, black 40%, transparent 100%)", WebkitMaskImage: "linear-gradient(to left, black 40%, transparent 100%)" }}
+                    className="absolute right-0 top-0 h-full w-1/2 object-cover object-center opacity-30 pointer-events-none select-none"
+                    style={{ maskImage: "linear-gradient(to left, black 30%, transparent 100%)", WebkitMaskImage: "linear-gradient(to left, black 30%, transparent 100%)" }}
                     onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
                   />
                   {/* Content */}
-                  <div className="relative z-10">
-                    <div className="flex items-center gap-4 mb-2">
+                  <div className="relative z-10 px-7 py-8">
+                    <div className="flex items-center gap-4 mb-5">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src="/Hand-painted cross_logo.png"
                         alt="Scripture Lives"
-                        className="h-20 w-20 rounded-xl object-contain shrink-0"
+                        className="h-16 w-16 rounded-xl object-contain shrink-0"
                         onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
                       />
                       <div>
-                        <h1 className="text-2xl font-bold text-amber-400">Scripture Lives</h1>
-                        <p className="text-sm text-stone-400">Explore, study, and present the living Word of God</p>
+                        <h1 className="text-2xl font-bold leading-tight" style={{ color: "#C9952A" }}>Scripture Lives</h1>
+                        <p className="text-sm mt-0.5" style={{ color: "#94a3b8" }}>Explore, study, and present the living Word of God</p>
                       </div>
                     </div>
-                    <div className="mt-5 flex gap-2">
+                    <div className="flex gap-2">
                       <input
                         type="text"
                         value={homeQuery}
@@ -955,12 +978,14 @@ export default function BibleReader() {
                           }
                         }}
                         placeholder="Search a verse, passage, or keyword…"
-                        className="flex-1 rounded-xl border-0 bg-stone-700/80 px-4 py-3 text-sm text-white placeholder:text-stone-400 outline-none focus:ring-2 focus:ring-amber-400"
+                        className="flex-1 rounded-xl border-0 px-4 py-3 text-sm text-white placeholder:text-slate-400 outline-none focus:ring-2"
+                        style={{ background: "rgba(255,255,255,0.1)", focusRingColor: "#C9952A" } as React.CSSProperties}
                       />
                       <button
                         type="button"
                         onClick={() => { if (homeQuery.trim()) setLeftPanelTab("reader"); }}
-                        className="rounded-xl bg-amber-500 px-5 py-3 text-sm font-semibold text-stone-900 hover:bg-amber-400 transition"
+                        className="rounded-xl px-5 py-3 text-sm font-semibold transition hover:brightness-110"
+                        style={{ background: "#C9952A", color: "white" }}
                       >
                         Search
                       </button>
@@ -970,12 +995,12 @@ export default function BibleReader() {
 
                 {/* Dog-ear — Continue Reading banner */}
                 {lastRead && (
-                  <div className="rounded-xl border border-blue-200 bg-blue-50 px-5 py-4 flex items-center justify-between gap-4">
+                  <div className="rounded-xl px-5 py-4 flex items-center justify-between gap-4 bg-white" style={{ border: "1px solid #dde8f5", boxShadow: "0 1px 8px rgba(0,0,0,0.05)" }}>
                     <div className="flex items-center gap-3 min-w-0">
                       <span className="text-2xl shrink-0">🔖</span>
                       <div className="min-w-0">
-                        <p className="text-xs font-bold uppercase tracking-widest text-blue-600">Continue Reading</p>
-                        <p className="text-sm font-semibold text-blue-800 mt-0.5">
+                        <p className="text-xs font-bold uppercase tracking-widest" style={{ color: "#C9952A" }}>Continue Reading</p>
+                        <p className="text-sm font-semibold mt-0.5" style={{ color: "#1a2640" }}>
                           {lastRead.book} — Chapter {lastRead.chapter}
                           {lastRead.verse ? `, verse ${lastRead.verse}` : ""}
                         </p>
@@ -986,49 +1011,94 @@ export default function BibleReader() {
                       onClick={() => {
                         setLeftPanelTab("reader");
                       }}
-                      className="shrink-0 rounded-xl bg-blue-600 px-4 py-2 text-xs font-semibold text-white hover:bg-blue-700 transition"
+                      className="shrink-0 rounded-xl px-4 py-2 text-xs font-semibold text-white transition hover:brightness-110"
+                      style={{ background: "#C9952A" }}
                     >
                       Resume →
                     </button>
                   </div>
                 )}
 
+                {/* Do You Know Jesus — Gospel Card */}
+                <GospelCard />
+
                 {/* Verse of the Day */}
-                <div className="rounded-xl border border-amber-200 bg-amber-50 px-6 py-5">
-                  <div className="flex items-center justify-between gap-4 mb-3">
-                    <p className="text-xs font-bold uppercase tracking-widest text-amber-600">✦ Verse of the Day</p>
-                    <div className="flex items-center gap-3">
-                      <button
-                        type="button"
-                        onClick={() => shareVerse(verseOfDay.reference, verseOfDay.text)}
-                        title="Share on Facebook"
-                        className="flex items-center gap-1.5 rounded-lg bg-[#1877F2] px-3 py-1 text-xs font-semibold text-white hover:bg-[#1464d3] transition"
-                      >
-                        <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.887v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
-                        Share
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setFullBibleNav({ version: "KJV", book: verseOfDay.book, chapter: verseOfDay.chapter });
-                          setLeftPanelTab("bible");
-                        }}
-                        className="text-xs text-amber-600 hover:text-amber-800 transition"
-                      >
-                        Read chapter →
-                      </button>
-                    </div>
+                <div className="rounded-2xl bg-white px-6 pt-6 pb-5 text-center" style={{ border: "1px solid #f0e6cc", boxShadow: "0 2px 16px rgba(201,149,42,0.10)" }}>
+                  {/* Sun icon */}
+                  <div className="flex justify-center mb-3">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C9952A" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                      <circle cx="12" cy="12" r="4"/>
+                      <line x1="12" y1="2" x2="12" y2="4"/>
+                      <line x1="12" y1="20" x2="12" y2="22"/>
+                      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                      <line x1="2" y1="12" x2="4" y2="12"/>
+                      <line x1="20" y1="12" x2="22" y2="12"/>
+                      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                    </svg>
                   </div>
-                  <p className="text-base font-semibold text-amber-800 italic leading-7">"{verseOfDay.text}"</p>
-                  <p className="mt-2 text-sm font-medium text-amber-600">— {verseOfDay.reference} (KJV)</p>
+
+                  {/* Label with decorative lines */}
+                  <div className="flex items-center justify-center gap-3 mb-5">
+                    <div className="h-px flex-1" style={{ background: "#f0e6cc" }} />
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] shrink-0" style={{ color: "#C9952A" }}>Verse of the Day</p>
+                    <div className="h-px flex-1" style={{ background: "#f0e6cc" }} />
+                  </div>
+
+                  {/* Big opening quote */}
+                  <div className="text-left mb-1">
+                    <span className="text-6xl font-black leading-none" style={{ color: "#f0e6cc", lineHeight: "0.8", display: "block", marginBottom: "-12px" }}>&ldquo;</span>
+                  </div>
+
+                  {/* Verse text */}
+                  <p className="text-base font-semibold leading-7 px-2" style={{ color: "#1a2640" }}>
+                    {verseOfDay.text}
+                  </p>
+
+                  {/* Reference */}
+                  <p className="mt-4 text-[11px] font-black uppercase tracking-widest" style={{ color: "#C9952A" }}>
+                    {verseOfDay.reference}
+                  </p>
+
+                  {/* Divider */}
+                  <div className="my-4 h-px" style={{ background: "#f0e6cc" }} />
+
+                  {/* Bottom actions */}
+                  <div className="flex items-center justify-between">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setFullBibleNav({ version: "KJV", book: verseOfDay.book, chapter: verseOfDay.chapter });
+                        setLeftPanelTab("bible");
+                      }}
+                      className="flex items-center gap-2 text-xs font-semibold transition hover:opacity-70"
+                      style={{ color: "#6b7280" }}
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                      </svg>
+                      Read the full chapter
+                      <span style={{ color: "#C9952A" }}>›</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => shareVerse(verseOfDay.reference, verseOfDay.text)}
+                      title="Share on Facebook"
+                      className="flex items-center gap-1.5 rounded-lg bg-[#1877F2] px-2.5 py-1 text-xs font-semibold text-white hover:bg-[#1464d3] transition"
+                    >
+                      <svg className="w-3 h-3 fill-current" viewBox="0 0 24 24"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.887v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
+                      Share
+                    </button>
+                  </div>
                 </div>
 
                 {/* Daily Devotional preview card */}
-                <div className="rounded-xl border border-indigo-200 bg-gradient-to-br from-indigo-50 to-purple-50 px-6 py-5">
+                <div className="rounded-xl bg-white px-6 py-5" style={{ border: "1px solid #e8e0f5", boxShadow: "0 1px 8px rgba(0,0,0,0.05)" }}>
                   <div className="flex items-center justify-between gap-3 mb-3">
                     <div className="flex items-center gap-2">
                       <span className="text-lg">{devotional.icon}</span>
-                      <p className="text-xs font-bold uppercase tracking-widest text-indigo-600">Daily Devotional</p>
+                      <p className="text-xs font-bold uppercase tracking-widest" style={{ color: "#C9952A" }}>Daily Devotional</p>
                     </div>
                     <div className="flex items-center gap-2">
                       <button
@@ -1046,16 +1116,17 @@ export default function BibleReader() {
                       <button
                         type="button"
                         onClick={() => setLeftPanelTab("devotional")}
-                        className="text-xs text-indigo-600 hover:text-indigo-800 transition"
+                        className="text-xs font-semibold transition hover:opacity-70"
+                        style={{ color: "#C9952A" }}
                       >
                         Read full →
                       </button>
                     </div>
                   </div>
-                  <p className="text-sm font-bold text-indigo-800 mb-1">{devotional.title}</p>
-                  <p className="text-sm font-semibold text-indigo-700 italic mb-2">"{devotional.verse}"</p>
-                  <p className="text-xs text-indigo-500 font-medium mb-3">— {devotional.reference}</p>
-                  <p className="text-sm text-indigo-900 leading-relaxed line-clamp-3">{devotional.reflection}</p>
+                  <p className="text-sm font-bold mb-1" style={{ color: "#1a2640" }}>{devotional.title}</p>
+                  <p className="text-sm font-semibold italic mb-2" style={{ color: "#374151" }}>"{devotional.verse}"</p>
+                  <p className="text-xs font-medium mb-3" style={{ color: "#C9952A" }}>— {devotional.reference}</p>
+                  <p className="text-sm leading-relaxed line-clamp-3 text-gray-600">{devotional.reflection}</p>
                 </div>
 
                 {/* Quick-access feature cards */}
@@ -1080,12 +1151,13 @@ export default function BibleReader() {
                       key={card.tab}
                       type="button"
                       onClick={() => setLeftPanelTab(card.tab)}
-                      className={`group relative rounded-xl bg-gradient-to-br ${card.gradient} p-4 text-left ring-1 ring-gray-200 ${card.ring} transition-all duration-200 hover:shadow-md hover:-translate-y-0.5`}
+                      className="group relative rounded-xl bg-white p-4 text-left transition-all duration-200 hover:shadow-md hover:-translate-y-0.5"
+                      style={{ border: "1px solid #ede8de" }}
                     >
-                      <div className={`inline-flex items-center justify-center rounded-xl ${card.iconBg} p-2.5 mb-3`}>
+                      <div className="inline-flex items-center justify-center rounded-xl p-2.5 mb-3" style={{ background: "#C9952A18" }}>
                         <card.Icon size={20} className={card.iconColor} />
                       </div>
-                      <p className="text-sm font-semibold text-gray-800 leading-snug">{card.label}</p>
+                      <p className="text-sm font-semibold leading-snug" style={{ color: "#1a2640" }}>{card.label}</p>
                       <p className="mt-0.5 text-xs text-gray-400 leading-snug">{card.desc}</p>
                     </button>
                   ))}
@@ -1122,16 +1194,16 @@ export default function BibleReader() {
 
                   {/* Old Testament */}
                   <div>
-                    <div className="mb-4 flex items-center gap-3">
-                      <div className="h-0.5 w-5 bg-amber-500 rounded-full" />
-                      <h2 className="text-xs font-bold uppercase tracking-widest text-gray-600">Old Testament</h2>
-                      <div className="h-px flex-1 bg-gray-200" />
+                    <div className="mb-5 flex items-center gap-3">
+                      <div className="h-0.5 w-5 rounded-full" style={{ background: "#C9952A" }} />
+                      <h2 className="text-xs font-black uppercase tracking-widest" style={{ color: "#1a2640" }}>Old Testament</h2>
+                      <div className="h-px flex-1" style={{ background: "#ede8de" }} />
                     </div>
-                    <div className="space-y-4">
+                    <div className="space-y-5">
                       {OT_SECTIONS.map(section => (
                         <div key={section.label}>
-                          <p className="mb-2 text-[10px] font-bold uppercase tracking-widest text-amber-600">{section.label}</p>
-                          <div className="flex flex-wrap gap-1.5">
+                          <p className="mb-2 text-[10px] font-black uppercase tracking-widest" style={{ color: "#C9952A" }}>{section.label}</p>
+                          <div className="flex flex-wrap gap-x-4 gap-y-1.5">
                             {section.books.map(book => (
                               <button
                                 key={book}
@@ -1140,7 +1212,10 @@ export default function BibleReader() {
                                   setFullBibleNav({ version: "KJV", book, chapter: 1 });
                                   setLeftPanelTab("bible");
                                 }}
-                                className="rounded-lg border border-gray-200 bg-white px-2.5 py-1.5 text-xs font-medium text-gray-700 transition hover:border-amber-400 hover:bg-amber-50 hover:text-amber-700"
+                                className="text-sm font-medium transition-colors hover:underline"
+                                style={{ color: "#374151" }}
+                                onMouseEnter={e => (e.currentTarget.style.color = "#C9952A")}
+                                onMouseLeave={e => (e.currentTarget.style.color = "#374151")}
                               >
                                 {book}
                               </button>
@@ -1153,16 +1228,16 @@ export default function BibleReader() {
 
                   {/* New Testament */}
                   <div>
-                    <div className="mb-4 flex items-center gap-3">
-                      <div className="h-0.5 w-5 bg-blue-500 rounded-full" />
-                      <h2 className="text-xs font-bold uppercase tracking-widest text-gray-600">New Testament</h2>
-                      <div className="h-px flex-1 bg-gray-200" />
+                    <div className="mb-5 flex items-center gap-3">
+                      <div className="h-0.5 w-5 rounded-full" style={{ background: "#1a2640" }} />
+                      <h2 className="text-xs font-black uppercase tracking-widest" style={{ color: "#1a2640" }}>New Testament</h2>
+                      <div className="h-px flex-1" style={{ background: "#ede8de" }} />
                     </div>
-                    <div className="space-y-4">
+                    <div className="space-y-5">
                       {NT_SECTIONS.map(section => (
                         <div key={section.label}>
-                          <p className="mb-2 text-[10px] font-bold uppercase tracking-widest text-blue-600">{section.label}</p>
-                          <div className="flex flex-wrap gap-1.5">
+                          <p className="mb-2 text-[10px] font-black uppercase tracking-widest" style={{ color: "#1a2640" }}>{section.label}</p>
+                          <div className="flex flex-wrap gap-x-4 gap-y-1.5">
                             {section.books.map(book => (
                               <button
                                 key={book}
@@ -1171,7 +1246,10 @@ export default function BibleReader() {
                                   setFullBibleNav({ version: "KJV", book, chapter: 1 });
                                   setLeftPanelTab("bible");
                                 }}
-                                className="rounded-lg border border-gray-200 bg-white px-2.5 py-1.5 text-xs font-medium text-gray-700 transition hover:border-blue-400 hover:bg-blue-50 hover:text-blue-700"
+                                className="text-sm font-medium transition-colors hover:underline"
+                                style={{ color: "#374151" }}
+                                onMouseEnter={e => (e.currentTarget.style.color = "#C9952A")}
+                                onMouseLeave={e => (e.currentTarget.style.color = "#374151")}
                               >
                                 {book}
                               </button>
@@ -1188,77 +1266,116 @@ export default function BibleReader() {
 
             {/* ── Daily Devotional tab ───────────────────────────────────── */}
             {leftPanelTab === "devotional" && (
-              <div className="space-y-6">
-                {/* Header */}
-                <div className="rounded-xl bg-gradient-to-br from-indigo-900 to-purple-900 px-7 py-8 text-white">
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <p className="text-xs font-bold uppercase tracking-widest text-indigo-300 mb-1">
+              <div className="space-y-5">
+
+                {/* ── Title card (mockup style) ── */}
+                <div className="relative rounded-2xl overflow-hidden" style={{ minHeight: 180 }}>
+                  {/* Background: bible-hero photo with dark navy overlay */}
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="/bible-hero.jpg"
+                    alt=""
+                    aria-hidden="true"
+                    className="absolute inset-0 w-full h-full object-cover object-center"
+                    style={{ filter: "brightness(0.45)" }}
+                    onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
+                  />
+                  {/* Gradient overlay for readability */}
+                  <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, rgba(26,36,64,0.82) 0%, rgba(26,36,64,0.5) 100%)" }} />
+
+                  {/* Content */}
+                  <div className="relative z-10 px-7 py-8 flex flex-col justify-between h-full">
+                    {/* Date + category */}
+                    <div className="flex items-center gap-2 mb-4">
+                      <span className="text-[10px] font-black uppercase tracking-[0.2em] px-2.5 py-1 rounded-full" style={{ background: "rgba(201,149,42,0.25)", color: "#C9952A", border: "1px solid rgba(201,149,42,0.4)" }}>
+                        Daily Devotional
+                      </span>
+                      <span className="text-xs font-medium text-white/60">
                         {new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
-                      </p>
-                      <h2 className="text-2xl font-bold text-white leading-snug">
-                        {devotional.icon} {devotional.title}
-                      </h2>
+                      </span>
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => setPostPreview(buildDevotionalPost(devotional))}
-                      className="shrink-0 flex items-center gap-2 rounded-xl bg-[#1877F2] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#1464d3] transition"
-                    >
-                      <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.887v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
-                      Share to Facebook
-                    </button>
+
+                    {/* Decorative line */}
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="h-px w-8" style={{ background: "#C9952A" }} />
+                      <span style={{ color: "#C9952A" }}>✝</span>
+                      <div className="h-px flex-1" style={{ background: "rgba(201,149,42,0.3)" }} />
+                    </div>
+
+                    {/* Title */}
+                    <h2 className="text-2xl font-black text-white leading-snug mb-1">
+                      {devotional.icon} {devotional.title}
+                    </h2>
+
+                    {/* Short verse teaser */}
+                    <p className="text-sm text-white/70 mt-2 leading-relaxed line-clamp-2 italic">
+                      &ldquo;{devotional.verse.slice(0, 90)}{devotional.verse.length > 90 ? "…" : ""}&rdquo;
+                    </p>
                   </div>
+
+                  {/* Share button — top right */}
+                  <button
+                    type="button"
+                    onClick={() => setPostPreview(buildDevotionalPost(devotional))}
+                    className="absolute top-4 right-4 z-20 flex items-center gap-2 rounded-xl bg-[#1877F2] px-3 py-2 text-xs font-semibold text-white hover:bg-[#1464d3] transition"
+                  >
+                    <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.887v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
+                    Share
+                  </button>
                 </div>
 
-                {/* Scripture */}
-                <div className="rounded-xl border border-indigo-200 bg-indigo-50 px-6 py-5">
-                  <p className="text-xs font-bold uppercase tracking-widest text-indigo-500 mb-3">Today&apos;s Scripture</p>
-                  <blockquote className="text-lg font-semibold text-indigo-900 italic leading-8 border-l-4 border-indigo-400 pl-4">
+                {/* ── Today's Scripture ── */}
+                <div className="rounded-2xl bg-white px-6 py-5" style={{ border: "1px solid #f0e6cc" }}>
+                  <p className="text-[10px] font-black uppercase tracking-widest mb-3" style={{ color: "#C9952A" }}>Today&apos;s Scripture</p>
+                  <blockquote className="text-base font-semibold italic leading-8 pl-4" style={{ color: "#1a2640", borderLeft: `3px solid #C9952A` }}>
                     &ldquo;{devotional.verse}&rdquo;
                   </blockquote>
                   <div className="mt-3 flex items-center justify-between">
-                    <p className="text-sm font-medium text-indigo-600">— {devotional.reference} (KJV)</p>
+                    <p className="text-sm font-semibold" style={{ color: "#C9952A" }}>— {devotional.reference} (KJV)</p>
                     <button
                       type="button"
                       onClick={() => {
                         setFullBibleNav({ version: "KJV", book: devotional.book, chapter: devotional.chapter });
                         setLeftPanelTab("bible");
                       }}
-                      className="text-xs text-indigo-500 hover:text-indigo-800 transition"
+                      className="text-xs font-semibold transition hover:opacity-70"
+                      style={{ color: "#6b7280" }}
                     >
                       Read full chapter →
                     </button>
                   </div>
                 </div>
 
-                {/* Reflection */}
-                <div className="rounded-xl border border-gray-200 bg-white px-6 py-5">
-                  <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-3">Reflection</p>
-                  <p className="text-base text-gray-800 leading-8">{devotional.reflection}</p>
+                {/* ── Reflection ── */}
+                <div className="rounded-2xl bg-white px-6 py-5" style={{ border: "1px solid #ede8de" }}>
+                  <p className="text-[10px] font-black uppercase tracking-widest mb-3" style={{ color: "#9ca3af" }}>Reflection</p>
+                  <p className="text-base leading-8" style={{ color: "#374151" }}>{devotional.reflection}</p>
                 </div>
 
-                {/* Prayer */}
-                <div className="rounded-xl border border-purple-200 bg-purple-50 px-6 py-5">
-                  <p className="text-xs font-bold uppercase tracking-widest text-purple-500 mb-3 flex items-center gap-1.5"><HeartHandshake size={13} /> Today&apos;s Prayer</p>
-                  <p className="text-base font-medium text-purple-900 italic leading-7">{devotional.prayer}</p>
+                {/* ── Today's Prayer ── */}
+                <div className="rounded-2xl px-6 py-5" style={{ background: "#fdf6e8", border: "1px solid #f0e6cc" }}>
+                  <p className="text-[10px] font-black uppercase tracking-widest mb-3 flex items-center gap-1.5" style={{ color: "#C9952A" }}>
+                    <HeartHandshake size={13} /> Today&apos;s Prayer
+                  </p>
+                  <p className="text-base font-medium italic leading-7" style={{ color: "#78350f" }}>{devotional.prayer}</p>
                 </div>
 
-                {/* Share CTA */}
-                <div className="rounded-xl border border-[#1877F2]/30 bg-[#1877F2]/5 px-6 py-5 flex items-center justify-between gap-4">
+                {/* ── Share CTA ── */}
+                <div className="rounded-2xl px-6 py-4 flex items-center justify-between gap-4" style={{ background: "#1a2640" }}>
                   <div>
-                    <p className="text-sm font-semibold text-gray-800">Share today&apos;s devotional</p>
-                    <p className="text-xs text-gray-500 mt-0.5">Encourage someone on Facebook with today&apos;s message</p>
+                    <p className="text-sm font-bold text-white">Share today&apos;s devotional</p>
+                    <p className="text-xs mt-0.5" style={{ color: "#94a3b8" }}>Encourage someone on Facebook with today&apos;s message</p>
                   </div>
                   <button
                     type="button"
                     onClick={() => setPostPreview(buildDevotionalPost(devotional))}
-                    className="shrink-0 flex items-center gap-2 rounded-xl bg-[#1877F2] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#1464d3] transition"
+                    className="shrink-0 flex items-center gap-2 rounded-xl bg-[#1877F2] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#1464d3] transition"
                   >
                     <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.887v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
                     Share to Facebook
                   </button>
                 </div>
+
               </div>
             )}
 
@@ -2258,94 +2375,7 @@ export default function BibleReader() {
             )}
 
             {leftPanelTab === "study_sheet" && (
-              <div className="text-gray-900 print:text-black">
-                <div className="mb-6 flex items-start justify-between gap-4 print:hidden">
-                  <div>
-                    <h2 className="text-2xl font-semibold">Study Sheet</h2>
-                    <p className="mt-1 text-sm text-gray-500">
-                      Print this page or save it as a PDF from your browser.
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => window.print()}
-                    className="rounded-lg border border-amber-500 bg-amber-500 px-4 py-2 text-sm font-medium text-gray-900 transition hover:opacity-90"
-                  >
-                    Print / Save PDF
-                  </button>
-                </div>
-
-                <div className="hidden print:block print:mb-8">
-                  <h1 className="text-3xl font-bold">Scripture Lives Study Sheet</h1>
-                  <p className="mt-2 text-sm">Generated {new Date().toLocaleString()}</p>
-                </div>
-
-                {bookmarkedPlaces.length === 0 ? (
-                  <div className="rounded-xl border border-dashed border-gray-300 p-6 text-sm text-gray-500 print:border-gray-300 print:text-black">
-                    No bookmarked places yet. Save a few places first, then return here to print a study sheet.
-                  </div>
-                ) : (
-                  <div className="space-y-6">
-                    {bookmarkedPlaces.map((item, index) => (
-                      <article
-                        key={item.name}
-                        className="rounded-xl border border-gray-200 bg-white p-6 print:break-inside-avoid print:border-gray-300 print:bg-white"
-                      >
-                        <div className="flex items-start justify-between gap-4">
-                          <div>
-                            <div className="text-sm font-semibold uppercase tracking-wide text-amber-700 print:text-black">
-                              Place {index + 1}
-                            </div>
-                            <h3 className="mt-1 text-2xl font-bold text-amber-600 print:text-black">
-                              {item.name}
-                            </h3>
-                            <p className="mt-2 text-sm text-gray-500 print:text-black">
-                              Source Verse: {item.sourceReference}
-                            </p>
-                          </div>
-
-                          <div className="print:hidden">
-                            <EraBadge label={item.place.era} />
-                          </div>
-                          <div className="hidden print:block text-sm">Era: {item.place.era}</div>
-                        </div>
-
-                        <div className="mt-5 space-y-4">
-                          <div>
-                            <h4 className="text-sm font-semibold uppercase tracking-wide text-gray-500 print:text-black">
-                              Summary
-                            </h4>
-                            <p className="mt-1 text-gray-800 print:text-black">{item.place.description}</p>
-                          </div>
-
-                          <div>
-                            <h4 className="text-sm font-semibold uppercase tracking-wide text-gray-500 print:text-black">
-                              Ancient Context
-                            </h4>
-                            <p className="mt-1 text-gray-800 print:text-black">{item.place.ancientDescription}</p>
-                          </div>
-
-                          <div>
-                            <h4 className="text-sm font-semibold uppercase tracking-wide text-gray-500 print:text-black">
-                              Biblical Significance
-                            </h4>
-                            <p className="mt-1 text-gray-800 print:text-black">{item.place.biblicalSignificance}</p>
-                          </div>
-
-                          <div>
-                            <h4 className="text-sm font-semibold uppercase tracking-wide text-gray-500 print:text-black">
-                              Study Note
-                            </h4>
-                            <div className="mt-1 rounded-xl border border-gray-200 bg-gray-50 p-4 text-gray-800 print:border-gray-300 print:bg-white print:text-black">
-                              {notes[item.name] ? notes[item.name] : "No note saved yet."}
-                            </div>
-                          </div>
-                        </div>
-                      </article>
-                    ))}
-                  </div>
-                )}
-              </div>
+              <StudyNotes />
             )}
 
             {/* ── TESTIMONIALS TAB ─────────────────────────────────────────── */}
@@ -2513,7 +2543,7 @@ export default function BibleReader() {
           </section>
 
           {/* RIGHT PANEL */}
-          <aside className="bg-white border-l border-gray-200 p-5 space-y-6 print:hidden">
+          <aside className="p-5 space-y-6 print:hidden" style={{ background: "#faf8f3", borderLeft: "1px solid #ede8de" }}>
 
             {/* Share current verse */}
             {(presenterRef || selectedVerse) && (() => {
@@ -2521,10 +2551,10 @@ export default function BibleReader() {
               const text = presenterRef?.text       ?? selectedVerse?.translations?.KJV ?? "";
               if (!ref || !text) return null;
               return (
-                <div className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 flex items-start justify-between gap-3">
+                <div className="rounded-xl bg-white px-4 py-3 flex items-start justify-between gap-3" style={{ border: "1px solid #ede8de" }}>
                   <div className="min-w-0">
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">Current Verse</p>
-                    <p className="text-xs font-semibold text-amber-700 truncate">{ref}</p>
+                    <p className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: "#C9952A" }}>Current Verse</p>
+                    <p className="text-xs font-semibold truncate" style={{ color: "#1a2640" }}>{ref}</p>
                     <p className="text-xs text-gray-500 mt-0.5 line-clamp-2 italic">"{text}"</p>
                   </div>
                   <button
@@ -2557,6 +2587,9 @@ export default function BibleReader() {
                 onClear={() => setVisualQuery(null)}
               />
             )}
+
+            {/* ── Today in Christian News ── */}
+            <ChristianNews />
 
           </aside>
         </div>{/* end center+right grid */}
@@ -2722,7 +2755,7 @@ export default function BibleReader() {
             {drawerBtn("reading_progress", <BarChart2 size={16} />,  "Reading Progress")}
             {drawerBtn("bookmarks",        <Star size={16} />,       "Bookmarks")}
             {drawerBtn("sessions",         <ClipboardList size={16} />, "Study Sessions")}
-            {drawerBtn("study_sheet",      <FileText size={16} />,   "Study Sheet")}
+            {drawerBtn("study_sheet",      <FileText size={16} />,   "Study Notes")}
           </div>
 
           {/* Community */}

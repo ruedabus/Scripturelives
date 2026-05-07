@@ -605,6 +605,366 @@ export const blogPosts: BlogPost[] = [
 <p>The eagle moments will come. The running seasons will come. And on the days when all you can do is walk without fainting — that, too, will be sustained. Wait for it.</p>
     `.trim(),
   },
+  // ── 11 ─────────────────────────────────────────────────────────────────────
+  {
+    slug: "joseph-pit-to-palace-purpose-in-pain",
+    title: "From the Pit to the Palace: Joseph and the Purpose Hidden in Pain",
+    subtitle: "How God weaves betrayal, suffering, and waiting into something far greater than we can see",
+    category: "Faith & Trust",
+    author: "Scripture Lives",
+    publishedAt: "2026-01-10",
+    readingTimeMin: 7,
+    coverEmoji: "👑",
+    keyVerse: "You intended to harm me, but God intended it for good to accomplish what is now being done, the saving of many lives.",
+    keyVerseRef: "Genesis 50:20 (NIV)",
+    excerpt: "Joseph was thrown into a pit by his own brothers, sold into slavery, and falsely imprisoned — yet every injustice became a stepping stone to the most improbable rescue in Israel's history.",
+    tags: ["Joseph", "suffering", "purpose", "Genesis", "faith", "forgiveness"],
+    content: `
+<p>Few stories in the Bible are as emotionally honest as the life of Joseph. It does not give us a sanitized hero who trusted God without flinching. It gives us a young man stripped of his coat, thrown into a pit, sold for twenty pieces of silver, and hauled off to a country where no one knew his name. And it dares to insist that God was in all of it.</p>
+
+<h2>The Dreamer in the Pit</h2>
+<p>Joseph's story begins with dreams — two of them, both suggesting that his brothers and parents would one day bow before him (Genesis 37:6-9). He made the mistake of sharing these dreams with the very people they threatened. His brothers' jealousy, already simmering, boiled over. They seized him, stripped him of his ornamented robe, and threw him into an empty cistern.</p>
+<p>Genesis 37:24 contains one of the most desolate details in all of Scripture: <em>"the cistern was empty; there was no water in it."</em> Just dust, darkness, and the sound of his brothers sitting down to eat their meal while he cried (v. 25). There is no mention of God in this chapter. That silence is not an oversight — it is the texture of the experience. From inside the pit, it did not feel like providence. It felt like abandonment.</p>
+
+<h2>The Long Middle</h2>
+<p>What follows is a decade of injustice piled on injustice. Sold to Potiphar. Falsely accused by Potiphar's wife. Thrown into prison. His one connection to the outside world — the cupbearer whose dream he interpreted — forgot him for two full years (Genesis 40:23). The text never shows Joseph losing his integrity. But it also does not pretend the waiting was easy.</p>
+<p>If you are in a long middle right now — a season where the promise seems impossibly far from the present reality — Joseph's story is written for you. The waiting was not wasted. Every injustice was shaping something. Potiphar's house taught him administration. Prison taught him people. The pit taught him that no human hand, however cruel, is the final word on a life God has claimed.</p>
+
+<h2>The Moment Everything Turns</h2>
+<p>When Pharaoh dreams of seven fat cows devoured by seven lean ones, the cupbearer finally remembers the young Hebrew in the prison who interprets dreams. Joseph is summoned, shaved, dressed, and brought before the most powerful man in the world — not because he networked or forced his way out, but because the time God had appointed finally arrived.</p>
+<p>His interpretation of Pharaoh's dream — seven years of abundance followed by seven years of famine — leads to the most improbable promotion in history: the former slave becomes second only to Pharaoh himself (Genesis 41:40). And when famine strikes the known world and his brothers come to Egypt looking for grain, Joseph recognizes them immediately. They do not recognize him.</p>
+
+<h2>The Most Important Words in the Story</h2>
+<p>After their father Jacob dies, Joseph's brothers fear that his forgiveness was conditional on their father's life. They fall before him. And Joseph — who had every right to bitterness, every reason for revenge — says the words that are the theological center of the entire narrative:</p>
+<p><em>"You intended to harm me, but God intended it for good."</em></p>
+<p>This is not naïve optimism. This is not a man who has forgotten what was done to him. This is a man who has spent years watching God turn poison into medicine. The betrayal was real. The suffering was real. And God's purpose running through all of it was also real.</p>
+
+<h2>What Joseph Teaches Us</h2>
+<p>Joseph's story does not promise that God will prevent suffering. It promises something more durable: that God will not waste it. The pit is never the end of the story for a life surrendered to God. The prison is not the final chapter. What others mean for harm, God is quietly working into something redemptive — often something that saves more people than you could have imagined from inside the cistern.</p>
+<p>Wait. Serve where you are. Keep your integrity when no one is watching. The palace may be further away than you think — and closer than you fear.</p>
+    `.trim(),
+  },
+
+  // ── 12 ─────────────────────────────────────────────────────────────────────
+  {
+    slug: "the-beatitudes-inside-out-kingdom",
+    title: "Blessed Are the… What? The Beatitudes and God's Upside-Down Kingdom",
+    subtitle: "Jesus opens the Sermon on the Mount by declaring the 'wrong' people happy — and redefining everything we think we know about blessing",
+    category: "Bible Study",
+    author: "Scripture Lives",
+    publishedAt: "2026-01-17",
+    readingTimeMin: 8,
+    coverEmoji: "⛰️",
+    keyVerse: "Blessed are the poor in spirit, for theirs is the kingdom of heaven.",
+    keyVerseRef: "Matthew 5:3 (NIV)",
+    excerpt: "The Beatitudes are not a list of virtues to achieve — they are a description of the kind of people God surprises with His kingdom. And every one of them runs counter to what the world calls blessed.",
+    tags: ["Beatitudes", "Sermon on the Mount", "Matthew 5", "kingdom", "blessing"],
+    content: `
+<p>When Jesus sat down on the mountainside in Matthew 5 and opened His mouth, the people listening expected a certain kind of rabbi's address. What they got must have felt like the world being turned on its head. He called the poor in spirit blessed. The mourning. The meek. He pointed to the grieving and the persecuted and said: <em>theirs</em> is the kingdom.</p>
+
+<h2>What "Blessed" Actually Means</h2>
+<p>The Greek word translated "blessed" — <em>makarios</em> — carries a sense of deep inner well-being that external circumstances cannot disturb. It is not "happy" in the sense of a passing emotional state. It is closer to what we mean when we say someone is truly flourishing — secure, whole, anchored. Jesus is not describing how these people feel. He is declaring their actual status before God.</p>
+
+<h2>Poor in Spirit</h2>
+<p>The first beatitude is the hinge on which all the others swing. To be "poor in spirit" is to have no pretensions about one's spiritual resources — to come to God utterly empty-handed, knowing you have nothing to commend yourself. This is the opposite of the spiritual pride that Jesus later criticizes in the Pharisees (Matthew 23). The person who knows they have nothing is the first to receive everything: "theirs is the kingdom of heaven."</p>
+
+<h2>Those Who Mourn</h2>
+<p>Grief is not usually what we associate with blessedness. But Jesus is pointing to a specific mourning — the mourning that comes from seeing clearly: seeing one's own sin, seeing the brokenness of the world, feeling the weight of what has been lost in the fall of humanity. This mourning is not cynicism. It is care. And Jesus promises it will be answered: <em>they will be comforted</em> (v. 4).</p>
+
+<h2>The Meek</h2>
+<p>In Greek culture, the meek man was a figure of contempt — weak, ineffectual, easily dismissed. But the Hebrew concept behind meekness (<em>anaw</em>) carries a different meaning: controlled strength, submitted to God. Moses was described as the meekest man on earth (Numbers 12:3) — and Moses was no pushover. Meekness is not weakness; it is power that has found its proper master. And Jesus says the meek will inherit the earth — the very thing the powerful are striving to seize by force.</p>
+
+<h2>Hunger and Thirst for Righteousness</h2>
+<p>The fourth beatitude describes intensity of desire. Not a polite preference for justice, but a physical craving — the kind that wakes you at night. To hunger and thirst for righteousness is to be deeply dissatisfied with the world as it is, and to long for God's order to break through. Jesus says this longing will be satisfied — not left as a permanent ache, but filled.</p>
+
+<h2>The Pattern</h2>
+<p>Every beatitude follows the same arc: a person who, by the world's standards, has nothing to commend them — and a divine reversal that gives them everything that matters. The kingdom belongs to the empty. Comfort comes to the grief-stricken. The earth goes to the gentle. God sees from the bottom up. He gravitates toward the broken, the hungry, the pure-hearted who have no agenda to protect.</p>
+<p>The Beatitudes are not a ladder to climb. They are a portrait of the people Jesus is building His kingdom with. Look at the list again and ask: which one describes where I am right now? That may be exactly where the blessing is hiding.</p>
+    `.trim(),
+  },
+
+  // ── 13 ─────────────────────────────────────────────────────────────────────
+  {
+    slug: "esther-for-such-a-time-as-this",
+    title: "For Such a Time as This: Esther and the Courage of Purpose",
+    subtitle: "A young Jewish woman becomes queen of Persia — and faces a choice between comfort and calling",
+    category: "Purpose & Calling",
+    author: "Scripture Lives",
+    publishedAt: "2026-01-24",
+    readingTimeMin: 6,
+    coverEmoji: "👸",
+    keyVerse: "And who knows but that you have come to your royal position for such a time as this?",
+    keyVerseRef: "Esther 4:14 (NIV)",
+    excerpt: "Esther's story is one of the most dramatic in Scripture — an orphan girl who becomes queen, and then risks everything to save her people. Her story asks us: what position has God placed you in, and what is it for?",
+    tags: ["Esther", "courage", "calling", "purpose", "faith", "obedience"],
+    content: `
+<p>The book of Esther is unusual in the Bible: God is never mentioned by name in it. Not once. Yet His fingerprints are on every page — in the timing, in the reversals, in the way danger is always one step ahead of destruction. It is a book about a young woman who discovers that her position was not an accident, and that comfort was never the point.</p>
+
+<h2>The Orphan Who Became Queen</h2>
+<p>Esther (Hebrew name: Hadassah) was raised by her older cousin Mordecai after her parents died. She was Jewish — part of a minority community in the Persian empire. When King Ahasuerus (Xerxes) held his famous search for a new queen, Esther was brought to the palace, and through a combination of beauty, character, and the favor of everyone who met her, she became queen of the most powerful empire in the world.</p>
+<p>Notice what the text does not say: it does not say she sought this position. She did not campaign for it. The doors opened around her. This is not because Esther was passive — the story will soon show she is anything but. It is because God was placing a piece on the board for a move that had not yet been revealed.</p>
+
+<h2>The Crisis</h2>
+<p>Haman, the king's chief official, conceived a plan to exterminate every Jewish person in the empire — all because Mordecai, Esther's cousin, refused to bow before him (Esther 3:5-6). The decree was signed, sealed, and sent. The Jewish community mourned in sackcloth and ashes. And Mordecai came to Esther with the terrible news — and a challenge she could not ignore.</p>
+
+<h2>The Moment of Choice</h2>
+<p>Approaching the king without being summoned was punishable by death — even for the queen. Esther sent word to Mordecai explaining the risk. His reply is one of the most penetrating speeches in the entire Bible: "Do not think that because you are in the king's house you alone of all the Jews will escape. For if you remain silent at this time, relief and deliverance for the Jews will arise from another place, but you and your father's family will perish. And who knows but that you have come to your royal position for such a time as this?" (Esther 4:13-14).</p>
+<p>Two things Mordecai refuses to do: he refuses to let her believe that comfort is safety, and he refuses to let her believe she is indispensable. God will save His people. The question is whether Esther will be part of the story — or whether He will write around her.</p>
+
+<h2>The Courage of "If I Perish, I Perish"</h2>
+<p>Esther's response is one of the great moments of resolve in all of Scripture: "Go, gather together all the Jews who are in Susa, and fast for me. Do not eat or drink for three days, night or day. I and my attendants will fast as well. When this is done, I will go to the king, even though it is against the law. And if I perish, I perish" (Esther 4:16). She does not minimize the risk. She does not pretend she is not afraid. She simply decides that her calling is worth more than her comfort.</p>
+
+<h2>The Question for Us</h2>
+<p>Mordecai's question echoes across every generation: <em>Who knows but that you have come to your position for such a time as this?</em> Every believer is Esther. We have been placed — in our family, our workplace, our neighborhood, our moment in history — not by accident, but by a God who is working a story larger than our individual comfort. The question is not whether we have influence. The question is whether we will use it. Comfort is not the goal. Presence with purpose is.</p>
+    `.trim(),
+  },
+
+  // ── 14 ─────────────────────────────────────────────────────────────────────
+  {
+    slug: "forgiveness-releasing-the-debt",
+    title: "Forgiveness: Releasing the Debt You Did Not Deserve to Carry",
+    subtitle: "Why forgiveness is not excusing the wrong — and how Jesus makes it possible to lay down the weight of bitterness",
+    category: "Grace & Forgiveness",
+    author: "Scripture Lives",
+    publishedAt: "2026-01-31",
+    readingTimeMin: 7,
+    coverEmoji: "🕊️",
+    keyVerse: "Bear with each other and forgive one another if any of you has a grievance against someone. Forgive as the Lord forgave you.",
+    keyVerseRef: "Colossians 3:13 (NIV)",
+    excerpt: "Forgiveness is one of the most misunderstood commands in Scripture. It is not pretending the wrong did not happen. It is not immediate trust. It is releasing a debt — and it begins not with feelings, but with a decision.",
+    tags: ["forgiveness", "grace", "bitterness", "Colossians", "healing", "freedom"],
+    content: `
+<p>Of all the things Jesus taught, forgiveness may be the hardest. Not because it is confusing, but because it costs something real. When someone has wounded you — betrayed your trust, spoken words that cannot be unspoken, taken something from you that cannot be returned — the idea of forgiveness can feel like being asked to pretend it didn't matter. It did matter. It does. And Jesus does not ask us to pretend otherwise.</p>
+
+<h2>What Forgiveness Is Not</h2>
+<p>Before we can understand what forgiveness is, we need to clear away what it is not. Forgiveness is not the same as reconciliation — you can forgive someone who is unrepentant, or who is no longer in your life. Forgiveness is not excusing the wrong — it does not say "what happened was okay." Forgiveness is not forgetting — the memory may remain. And forgiveness is not the same as trust — trust is rebuilt over time through demonstrated change; forgiveness can happen in a moment of decision.</p>
+
+<h2>The Debt Image</h2>
+<p>The most powerful image Jesus uses for forgiveness is the cancellation of a debt (Matthew 18:21-35). When someone wrongs you, they owe you something — an apology, a restored reputation, the years they took, the peace of mind that is now gone. Forgiveness means releasing the claim. Not because the debt was not real, but because you are choosing to absorb the loss rather than continue demanding payment from someone who may never pay.</p>
+<p>This is costly. That is the whole point. Forgiveness is expensive — and that is exactly why it mirrors the cross. When God forgave us in Christ, He did not wave away the debt of sin. He paid it Himself (Romans 3:25). The cost was real. The payment was real. And the release was total.</p>
+
+<h2>The Ground of Forgiveness: What Was Done for Us</h2>
+<p>Paul's instruction in Colossians 3:13 is not simply "forgive because it's the right thing to do." It is: <em>forgive as the Lord forgave you.</em> The pattern is the cross. We forgive from a position of having been forgiven an unimaginable debt. Jesus makes this explicit in the parable of the unmerciful servant (Matthew 18): the man forgiven millions refuses to forgive a few dollars. The absurdity of it is the point. Whatever has been done to us is real — and it is smaller than what we have been forgiven.</p>
+
+<h2>The Freedom That Comes</h2>
+<p>Here is something the world often misses: forgiveness is not primarily for the person who wronged you. It is for you. Bitterness is a prison. It keeps the wound open. It gives the person who hurt you continued power over your emotional life, your sleep, your capacity to be present with the people you love. Forgiveness is not releasing them from consequences — it is releasing yourself from the prison of rehearsing the wrong.</p>
+
+<h2>Beginning the Process</h2>
+<p>Forgiveness rarely happens in a single surge of emotion. It often begins as a decision made before the feelings follow. You say to God: "I release this debt. I stop requiring payment. I surrender my right to revenge." And then — because the feelings will return, because old wounds ache in cold weather — you make the decision again. And again. Until the day you notice the weight is no longer there.</p>
+<p>You may not be able to forgive in your own strength. That is exactly why Paul grounds it in the forgiveness already given to you. Go back to the cross. Sit with what God absorbed on your behalf. Let that love work its way from your head down into your hands — the ones that need to open and let go.</p>
+    `.trim(),
+  },
+
+  // ── 15 ─────────────────────────────────────────────────────────────────────
+  {
+    slug: "elijah-under-the-juniper-tree",
+    title: "Under the Juniper Tree: When Faith Hits the Wall",
+    subtitle: "The prophet who called fire from heaven asked God to let him die — and what God did next tells us everything about how He treats the burned out",
+    category: "Faith & Trust",
+    author: "Scripture Lives",
+    publishedAt: "2026-02-07",
+    readingTimeMin: 6,
+    coverEmoji: "🌿",
+    keyVerse: "I have had enough, Lord. Take my life; I am no better than my ancestors.",
+    keyVerseRef: "1 Kings 19:4 (NIV)",
+    excerpt: "One day after the greatest victory of his ministry, Elijah collapsed under a tree and asked God to let him die. His story is one of the most honest portraits of spiritual burnout in all of Scripture — and God's response is full of unexpected gentleness.",
+    tags: ["Elijah", "burnout", "depression", "1 Kings 19", "rest", "renewal"],
+    content: `
+<p>The day before, Elijah had stood on Mount Carmel and called fire down from heaven. He had faced down 450 prophets of Baal. He had seen the most dramatic display of divine power in a generation. And then Queen Jezebel sent him a message: "By this time tomorrow, you will be dead."</p>
+<p>And Elijah ran. He ran into the wilderness, sat under a broom tree, and prayed to die.</p>
+
+<h2>The Anatomy of Collapse</h2>
+<p>It is important not to rush past what is happening here. This is not a small crisis of faith. This is total depletion — body, mind, and spirit. First Kings 19:3 says simply: "Elijah was afraid." After all the fire and thunder, fear. After all the victory, despair. After feeling like the only faithful person left, isolation: "I am the only one" (v. 10, 14).</p>
+<p>The pattern is familiar to anyone who has lived it: intense spiritual effort, followed by the strange darkness that sometimes arrives after the mountain-top. The adrenaline is gone. The crowd has dispersed. The enemy seems stronger than ever. And the soul, stretched to its limit, simply breaks.</p>
+
+<h2>What God Does Not Do</h2>
+<p>Notice what God does not do. He does not rebuke Elijah. He does not give a speech about how Elijah should be stronger. He does not remind him of the miracle on Carmel or tell him to get back to work. What does God do instead? He lets Elijah sleep. And then He sends an angel — not with a sermon, but with food and water.</p>
+<p>"Get up and eat," the angel says (v. 5). A cake baked on hot coals. A jar of water. Again. "Get up and eat, for the journey is too great for you" (v. 7). The theology embedded in this moment is astonishing: God's first response to Elijah's burnout is not correction. It is care. Before the still small voice comes the meal, the rest, the simple acknowledgment that the body matters and the journey is long.</p>
+
+<h2>The Still Small Voice</h2>
+<p>Eventually, strengthened by food and rest, Elijah travels forty days to Horeb — the mountain of God. There, God sends wind and earthquake and fire (perhaps echoing Carmel — the kinds of power Elijah was accustomed to). But God was not in the wind, the earthquake, or the fire. After the fire, a still small voice — <em>qol demamah daqah</em> in Hebrew, literally "a sound of gentle stillness." And it is in that whisper that God speaks.</p>
+<p>God meets the burned-out prophet not in spectacle but in quiet. The word for burnout is often silence — the inability to hear anything but the noise of exhaustion. And God, who could have appeared in thunder, stoops to a whisper so small it requires stillness to hear.</p>
+
+<h2>For the Burned Out</h2>
+<p>If you are under the juniper tree today — depleted, asking hard questions, wondering if you have anything left — Elijah's story is written for you. God does not disqualify the exhausted. He feeds them. He lets them rest. He asks gently, <em>"What are you doing here?"</em> — not as accusation, but as invitation to honesty. He gives a new assignment at the right time. And He corrects the lie: "You are not alone. I have seven thousand who have not bowed to Baal" (v. 18).</p>
+<p>Rest is not failure. Eating is not faithlessness. The journey ahead may be long, and God knows you need strength for it. Let Him feed you before He sends you on.</p>
+    `.trim(),
+  },
+
+  // ── 16 ─────────────────────────────────────────────────────────────────────
+  {
+    slug: "the-armor-of-god-ephesians-6",
+    title: "The Armor of God: What Spiritual Battle Actually Looks Like",
+    subtitle: "Paul's famous passage in Ephesians 6 is not a call to aggression — it's a call to stand firm in what has already been won",
+    category: "Bible Study",
+    author: "Scripture Lives",
+    publishedAt: "2026-02-14",
+    readingTimeMin: 7,
+    coverEmoji: "🛡️",
+    keyVerse: "Put on the full armor of God, so that you can take your stand against the devil's schemes.",
+    keyVerseRef: "Ephesians 6:11 (NIV)",
+    excerpt: "Ephesians 6's armor imagery is often read as a battle cry. But look closely at what Paul actually commands — not to advance, but to stand. The battle belongs to God; our job is to not be moved.",
+    tags: ["Ephesians 6", "armor of God", "spiritual warfare", "Paul", "prayer", "truth"],
+    content: `
+<p>Paul wrote Ephesians from prison, most likely in Rome, chained to a soldier. He had stared at Roman military equipment long enough to see something — not a recruitment poster, but a spiritual metaphor. The armor he describes piece by piece is not romantic. It is practical. And the command that frames the entire passage is not "charge" or "conquer." It is, three times over: <em>stand</em> (vv. 11, 13, 14).</p>
+
+<h2>The Nature of the Battle</h2>
+<p>"For our struggle is not against flesh and blood, but against the rulers, against the authorities, against the powers of this dark world and against the spiritual forces of evil in the heavenly realms" (v. 12). This verse is both clarifying and sobering. Clarifying, because it reframes who the real enemy is — not the difficult coworker, not the political opponent, not the struggling family member. Sobering, because the forces Paul describes are not visible, not bound by geography, and not fighting by rules we easily recognize.</p>
+<p>The Christian life is not primarily a moral self-improvement project. It is engagement with a spiritual reality, and Paul insists on taking it seriously.</p>
+
+<h2>The Belt of Truth</h2>
+<p>Truth — <em>aletheia</em> — is the first piece of armor because it is the foundation of everything else. The Roman soldier's belt held everything together and allowed him to move freely. Truth functions the same way: a life not anchored in what is real will be destabilized by every lie the enemy whispers. The schemes of the devil (v. 11) are almost always deceptive — half-truths about your identity, your worth, God's character, or the permanence of your present struggle.</p>
+
+<h2>The Breastplate of Righteousness</h2>
+<p>This is not our earned righteousness but the righteousness of Christ credited to us — the "not guilty" verdict that protects the heart. Accusation is one of the enemy's primary weapons (Revelation 12:10 calls him "the accuser of our brothers and sisters"). The breastplate is the settled knowledge that we stand before God not on the basis of our performance, but on the basis of Christ's.</p>
+
+<h2>The Shoes of Peace, the Shield of Faith</h2>
+<p>The shoes are the gospel of peace — the readiness to carry good news. The shield is faith — the large, body-length Roman shield that soldiers locked together to form a wall against flaming arrows. Faith here is not a feeling; it is a posture. We hold up what we believe about God in the face of what we feel in the moment, and the arrows are extinguished.</p>
+
+<h2>The Helmet and the Sword</h2>
+<p>Salvation as a helmet protects the mind — the place where doubt, fear, and despair most often attack. The sword of the Spirit — the word of God — is the one offensive weapon in the list. When Jesus was tempted in the wilderness, He used it three times: "It is written" (Matthew 4:4, 7, 10). The Word is not merely a comfort; it is a weapon with an edge.</p>
+
+<h2>And Pray</h2>
+<p>Paul ends not with a piece of equipment but with prayer — "on all occasions, with all kinds of prayers and requests" (v. 18). This is the air the armor breathes. You can be correctly dressed for spiritual battle and still be relying entirely on your own strength. Prayer is the admission that the armor was never designed to be worn in self-reliance. It was designed to clothe people who know they need God.</p>
+<p>Stand firm. Not by your own strength, but in His. The battle was won at the cross. Your job is not to achieve victory. Your job is to not be moved from the victory already won.</p>
+    `.trim(),
+  },
+
+  // ── 17 ─────────────────────────────────────────────────────────────────────
+  {
+    slug: "waiting-on-god-when-the-answer-does-not-come",
+    title: "Waiting on God: Faith in the Silence Between the Promise and the Fulfillment",
+    subtitle: "Abraham waited 25 years. The disciples waited in the upper room. What Scripture teaches about the holiness of waiting",
+    category: "Faith & Trust",
+    author: "Scripture Lives",
+    publishedAt: "2026-02-21",
+    readingTimeMin: 6,
+    coverEmoji: "⏳",
+    keyVerse: "Wait for the Lord; be strong and take heart and wait for the Lord.",
+    keyVerseRef: "Psalm 27:14 (NIV)",
+    excerpt: "Waiting is one of the most repeated commands in the Psalms — and one of the hardest to obey. But Scripture insists that the waiting season is not empty. God is working in it, and through it.",
+    tags: ["waiting", "faith", "Psalm 27", "Abraham", "promise", "patience"],
+    content: `
+<p>We live in a world designed to eliminate waiting. We stream instead of scheduling. We skip intros. We refresh pages. We track packages in real time. And into this culture of instant, God says: <em>wait.</em> Not as punishment. Not as indifference. But as invitation to a kind of formation that only happens in the hallway between the promise and its fulfillment.</p>
+
+<h2>The Waiting Room of Scripture</h2>
+<p>The Bible is full of waiting rooms. Abraham received the promise of a son at age 75 and held it for twenty-five years before Isaac was born (Genesis 12:4; 21:5). Joseph was given dreams of elevation and then spent more than a decade in slavery and prison. David was anointed king years before he sat on the throne. Mary and the disciples spent three days of incomprehensible grief between the crucifixion and the empty tomb. Acts 1:4 records Jesus telling His followers to wait in Jerusalem — not to go, not to strategize, but to wait for the promise of the Father.</p>
+<p>Waiting is not an exception in the life of faith. It is one of its primary textures.</p>
+
+<h2>What Waiting Is Not</h2>
+<p>Waiting on God is not passive resignation. The Hebrew word most often used — <em>qavah</em> — carries the image of a rope being twisted and strengthened under tension. It is active expectation, not passive sitting. The person who waits on God is not giving up; they are holding a posture of confident trust that God will act in His time. They continue to pray, to serve, to obey. They do not manufacture their own solution out of impatience (as Abraham did with Hagar — a shortcut that created pain for generations).</p>
+
+<h2>Why God Makes Us Wait</h2>
+<p>We can speculate, and Scripture gives us some clues. Sometimes the waiting is for our preparation — we are not yet ready for what we are praying for. Sometimes it is for the preparation of circumstances — God is arranging things we cannot see. Sometimes the waiting is itself the formation — patience, dependence, and trust are not virtues that develop in the fast lane. They are grown in the long middle.</p>
+<p>James 1:4 says that patience "must finish its work so that you may be mature and complete, not lacking anything." The waiting is not wasted. It is doing something in us that the answer, arriving too early, could not do.</p>
+
+<h2>The Psalm of the Waiting Person</h2>
+<p>Psalm 27 ends with two lines that frame waiting as an act of spiritual courage: "Wait for the Lord; be strong and take heart and wait for the Lord." The repetition is intentional — this is hard. It requires strength and courage. But the person who can wait for God rather than running ahead is someone who has deeply internalized that God is trustworthy even when He is quiet.</p>
+<p>If you are in a waiting season today — waiting for healing, for direction, for restoration, for provision — you are in good company. The hallway is not empty. God is in it with you, and He is not idle. Wait with open hands. Hold the hope. The answer is coming.</p>
+    `.trim(),
+  },
+
+  // ── 18 ─────────────────────────────────────────────────────────────────────
+  {
+    slug: "mary-and-martha-choosing-the-good-part",
+    title: "Mary and Martha: Choosing the One Thing That Cannot Be Taken Away",
+    subtitle: "Two sisters, one guest, and a gentle rebuke that reorders our whole understanding of what matters",
+    category: "Devotional",
+    author: "Scripture Lives",
+    publishedAt: "2026-02-28",
+    readingTimeMin: 5,
+    coverEmoji: "🏡",
+    keyVerse: "Mary has chosen what is better, and it will not be taken away from her.",
+    keyVerseRef: "Luke 10:42 (NIV)",
+    excerpt: "The story of Mary and Martha is not an argument against hard work. It is a call to discern what work matters most — and a warning that urgent things can crowd out important ones.",
+    tags: ["Mary", "Martha", "Luke 10", "priorities", "presence", "devotion"],
+    content: `
+<p>Jesus is coming to dinner. Martha throws herself into the preparations — and there is nothing wrong with that. Hospitality mattered in the ancient world. Feeding guests was an act of honor. Martha is not doing something bad. She is doing something good. And then the text says something uncomfortable: "She was distracted by all the preparations" (Luke 10:40). Distracted. The word in Greek — <em>perispao</em> — means to be dragged around, pulled in different directions. The service that began as a gift became an anxiety.</p>
+
+<h2>The Complaint</h2>
+<p>Martha comes to Jesus and says: "Lord, don't you care that my sister has left me to do the work by myself? Tell her to help me!" (v. 40). Notice the layers here. She is accusing Jesus of not caring. She is demanding that He redirect Mary. She is framing her busyness as the self-evidently correct choice and Mary's stillness as irresponsible. And underneath all of it is the exhaustion of someone who has been serving alone and does not feel seen.</p>
+<p>Jesus does not rebuke her harshly. He calls her by name — twice. "Martha, Martha." The repetition is tender, not scolding. But He does not agree with her assessment.</p>
+
+<h2>The Better Thing</h2>
+<p>"You are worried and upset about many things, but few things are needed — or indeed only one. Mary has chosen what is better, and it will not be taken away from her" (vv. 41-42). Jesus does not say the preparations were worthless. He says they were <em>many</em> — and only <em>one</em> thing is truly necessary. Mary chose presence over production. She chose to be with Jesus rather than to do things for Him. And that one thing cannot be taken away.</p>
+<p>What Martha was preparing would be eaten and forgotten. What Mary was receiving would become part of her forever.</p>
+
+<h2>The Pattern We All Know</h2>
+<p>Most of us are more Martha than Mary. We fill our lives with genuinely good things — work, family, ministry, service — and then wonder why we feel empty. The problem is rarely that we are doing bad things. The problem is that we have let the doing crowd out the being. We are distracted by many things when only one thing is needed: to be present with the One who is present with us.</p>
+<p>There is a place for service. Jesus loved being served. But the service that flows from sitting at His feet looks different from the service that substitutes for it. One is motivated by love and overflow; the other is driven by anxiety and the need to prove worth. Jesus invites us to choose first the thing that will last — and to let the preparations flow from that.</p>
+    `.trim(),
+  },
+
+  // ── 19 ─────────────────────────────────────────────────────────────────────
+  {
+    slug: "walking-in-the-spirit-galatians-5",
+    title: "Walking in the Spirit: What the Fruit of the Spirit Actually Looks Like in Daily Life",
+    subtitle: "Love, joy, peace — these are not achievements to strain toward. They are the natural growth of a life connected to the right source.",
+    category: "Bible Study",
+    author: "Scripture Lives",
+    publishedAt: "2026-03-07",
+    readingTimeMin: 8,
+    coverEmoji: "🌱",
+    keyVerse: "But the fruit of the Spirit is love, joy, peace, forbearance, kindness, goodness, faithfulness, gentleness and self-control.",
+    keyVerseRef: "Galatians 5:22-23 (NIV)",
+    excerpt: "Paul doesn't call these the works of the Spirit or the disciplines of the Spirit — he calls them fruit. Fruit is not forced. It grows from what the tree is connected to. That distinction changes everything.",
+    tags: ["fruit of the Spirit", "Galatians 5", "Holy Spirit", "character", "sanctification", "love"],
+    content: `
+<p>Paul's list of the fruit of the Spirit in Galatians 5 is one of the most quoted passages in the New Testament — and one of the most misunderstood. It is often read as a checklist of virtues Christians should work harder to produce. Be more loving. Try to have more joy. Force yourself to be more patient. But notice the word Paul uses: <em>fruit</em>. Not works. Not disciplines. Not achievements. Fruit.</p>
+
+<h2>Fruit Does Not Strain</h2>
+<p>An apple tree does not strain to produce apples. It grows them naturally — not from effort, but from connection. Its roots draw water from the soil. The sun feeds the leaves. The apples appear because the tree is healthy and connected to its source. If you cut the tree off from water and sun, no amount of willing will produce fruit. The connection is everything.</p>
+<p>This is Paul's point. The fruit of the Spirit is not produced by trying harder to be loving or more patient. It is the natural overflow of a life genuinely connected to the Holy Spirit — abiding, listening, surrendering, staying. Jesus used the same metaphor in John 15: "I am the vine; you are the branches. If you remain in me and I in you, you will bear much fruit; apart from me you can do nothing" (v. 5).</p>
+
+<h2>Love: The First and Foundation</h2>
+<p>Paul lists nine qualities, but they are better understood as one integrated reality with nine facets than as nine separate things to work on. Love — <em>agape</em> — is first, and arguably contains all the others. The love Paul means is not affection or sentiment; it is the deliberate, other-centered, costly love that chooses the good of another regardless of feeling. It is the love of the cross — not romance, but sacrifice.</p>
+
+<h2>Joy and Peace</h2>
+<p>Joy here is not happiness dependent on circumstances. The New Testament writers describe joy in the middle of imprisonment (Philippians 4:4), persecution (James 1:2), and loss. It is the deep assurance that God is good and His purposes are secure — an anchor that holds when surface conditions are rough. Peace — <em>shalom</em> — is similar: not the absence of conflict, but the wholeness and settledness that comes from being right with God.</p>
+
+<h2>Patience, Kindness, Goodness</h2>
+<p><em>Makrothumia</em> — patience — literally means "long-tempered": the ability to endure a long time without snapping. Kindness is the warm, practical orientation toward others that makes you easy to be around. Goodness is moral integrity — doing right even when it costs something. These three often show up together in how we treat people who test us.</p>
+
+<h2>Faithfulness, Gentleness, Self-Control</h2>
+<p>Faithfulness is reliability — being the same person tomorrow as you were today. Gentleness is the meekness we saw in the Beatitudes — power under control, strength that knows when to be soft. Self-control — <em>enkrateia</em> — is the mastery of appetite, the ability to choose the long-term good over the short-term desire. It is the last fruit listed, and perhaps the one that holds all the others together.</p>
+
+<h2>The One Practice</h2>
+<p>If the fruit of the Spirit is grown rather than forced, the question is not: how do I try harder? The question is: am I staying connected? Daily time in God's Word. Honest prayer. Quick repentance when sin is exposed. Community with other believers. Worship that reorients the heart. These are not the fruit — they are the conditions in which fruit grows. Stay in the vine. The rest will follow.</p>
+    `.trim(),
+  },
+
+  // ── 20 ─────────────────────────────────────────────────────────────────────
+  {
+    slug: "the-rich-young-ruler-one-thing-lacking",
+    title: "One Thing You Lack: The Rich Young Ruler and the Cost of Following Jesus",
+    subtitle: "He came running, knelt, and asked the right question — and then walked away sad. What can his story teach us about what holds us back?",
+    category: "Purpose & Calling",
+    author: "Scripture Lives",
+    publishedAt: "2026-03-14",
+    readingTimeMin: 6,
+    coverEmoji: "💰",
+    keyVerse: "One thing you lack. Go, sell everything you have and give to the poor, and you will have treasure in heaven. Then come, follow me.",
+    keyVerseRef: "Mark 10:21 (NIV)",
+    excerpt: "The rich young ruler did everything right — right question, right posture, right sincerity. But Jesus put His finger on the one thing this man had given a higher place than God. He walked away. But the story doesn't have to end there for us.",
+    tags: ["rich young ruler", "Mark 10", "discipleship", "wealth", "calling", "surrender"],
+    content: `
+<p>He came running. That detail matters. Rich young rulers in the ancient world did not run — it was undignified, a loss of status. But this one ran. And he knelt before Jesus in the dirt, which was even more extraordinary. "Good teacher," he asked, "what must I do to inherit eternal life?" (Mark 10:17). This is not a trick question. He is genuinely seeking. And Jesus, in the next verse, does something remarkable: He looks at this man and loves him (v. 21).</p>
+
+<h2>The Dialogue</h2>
+<p>Jesus answers the question indirectly at first: "You know the commandments." He recites the second table of the law — the commandments about human relationships. The man's answer is immediate and, apparently, sincere: "All these I have kept since I was a boy" (v. 20). There is no record of Jesus challenging this claim. He takes it at face value. This is a genuinely moral, sincere, religious person. And Jesus loves him.</p>
+<p>Then: "One thing you lack." One thing. Not a character flaw or a moral failure — the man had kept the law. One thing: the willingness to let go of what he had built his identity around, and follow a rabbi with no possessions and an uncertain future.</p>
+
+<h2>The Thing That Has Us</h2>
+<p>It would be a mistake to read this story only as a lesson about money. Jesus was not declaring that all wealthy people must sell everything — Zacchaeus gave half his wealth and was affirmed (Luke 19:8-9). Abraham and Job were wealthy. The issue was not the money. The issue was that the money had him. When Jesus named the one thing, "his face fell. He went away sad, because he had great wealth" (v. 22). He was more attached to what he had than to who Jesus was.</p>
+<p>The "one thing you lack" is different for each of us. For some it is money or status. For others it is a relationship, a plan, a need for control, a reputation. Jesus has a way of finding the thing we have placed above Him — not to be harsh, but because He knows that whatever has the throne of our life is directing its course. He is not content to be one priority among several. He wants the center.</p>
+
+<h2>The Disciples' Confusion</h2>
+<p>What happens next is almost comical. The disciples are astonished and ask: "Who then can be saved?" (v. 26). They had assumed wealth was a sign of God's favor — if a blessed, moral, wealthy man can't make it, who can? Jesus' answer reorients everything: "With man this is impossible, but not with God; all things are possible with God" (v. 27). Salvation is not a human achievement. It never was. The man's problem was not that he was too rich. It was that he was trying to add Jesus to an already-full life rather than letting Jesus reorganize everything.</p>
+
+<h2>The Invitation That Remains Open</h2>
+<p>The story ends with him walking away sad. But it does not say he never came back. And for us, the story does not have to end the same way. Jesus still looks at us with love — knowing exactly what the "one thing" is, and asking for it anyway. Not because He wants to take it from us, but because He knows that until that thing is on the altar, it is holding us back from the life He is offering. What is the one thing for you? Name it. Then consider what it would mean to open your hands.</p>
+    `.trim(),
+  },
 ];
 
 // ── Helpers ────────────────────────────────────────────────────────────────

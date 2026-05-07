@@ -24,14 +24,15 @@ const securityHeaders = [
     key: "Content-Security-Policy",
     value: [
       "default-src 'self'",
-      // Scripts: self + Google Analytics/Tag Manager (no unsafe-eval)
-      "script-src 'self' 'unsafe-inline' https://pagead2.googlesyndication.com https://www.googletagmanager.com https://www.google-analytics.com",
-      // Styles: self + inline (Next.js uses inline styles)
-      "style-src 'self' 'unsafe-inline'",
-      // Images: self + Wikipedia/Wikimedia + YouTube thumbs + data/blob URIs
-      "img-src 'self' data: blob: https://*.wikimedia.org https://*.wikipedia.org https://i.ytimg.com https://yt3.ggpht.com https://www.youtube.com https://*.tile.openstreetmap.org https://*.basemaps.cartocdn.com https://tile.openstreetmap.org",
-      // Fonts: self only
-      "font-src 'self'",
+      // Scripts: self + Google Analytics/Tag Manager
+      // 'unsafe-eval' required by React in dev mode (hot reload, source maps); omitted in prod
+      `script-src 'self' 'unsafe-inline'${isProd ? "" : " 'unsafe-eval'"} https://pagead2.googlesyndication.com https://www.googletagmanager.com https://www.google-analytics.com`,
+      // Styles: self + inline + Google Fonts
+      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+      // Images: self + Wikipedia/Wikimedia + YouTube thumbs + Unsplash + data/blob URIs
+      "img-src 'self' data: blob: https://*.wikimedia.org https://*.wikipedia.org https://i.ytimg.com https://yt3.ggpht.com https://www.youtube.com https://*.tile.openstreetmap.org https://*.basemaps.cartocdn.com https://tile.openstreetmap.org https://images.unsplash.com",
+      // Fonts: self + Google Fonts
+      "font-src 'self' https://fonts.gstatic.com",
       // Frames: YouTube embeds only
       "frame-src https://www.youtube.com https://www.youtube-nocookie.com",
       // Fetch / XHR / API calls
