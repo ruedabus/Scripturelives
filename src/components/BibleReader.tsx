@@ -80,7 +80,8 @@ type LeftPanelTab =
   | "characters"
   | "verse_image"
   | "quiz"
-  | "audio";
+  | "audio"
+  | "christian_news";
 
 // ── Bible book lists ──────────────────────────────────────────────────────
 const OT_SECTIONS = [
@@ -769,10 +770,11 @@ export default function BibleReader() {
         : "text-gray-600 hover:bg-gray-100"
     }`;
 
-  // Mobile nav helper — navigate and close drawer
+  // Mobile nav helper — navigate, close drawer, scroll to top
   const mobileNav = (tab: LeftPanelTab) => {
     setLeftPanelTab(tab);
     setMobileDrawerOpen(false);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   // Drawer row button
@@ -2544,10 +2546,15 @@ export default function BibleReader() {
               <AudioBiblePlayer />
             )}
 
+            {/* ── CHRISTIAN NEWS (mobile tab) ─────────────────────────────────── */}
+            {leftPanelTab === "christian_news" && (
+              <ChristianNews />
+            )}
+
           </section>
 
-          {/* RIGHT PANEL */}
-          <aside className="p-5 space-y-6 print:hidden" style={{ background: "#faf8f3", borderLeft: "1px solid #ede8de" }}>
+          {/* RIGHT PANEL — hidden on mobile, visible on xl+ */}
+          <aside className="hidden xl:block p-5 space-y-6 print:hidden" style={{ background: "#faf8f3", borderLeft: "1px solid #ede8de" }}>
 
             {/* Share current verse */}
             {(presenterRef || selectedVerse) && (() => {
@@ -2732,8 +2739,9 @@ export default function BibleReader() {
             {drawerBtn("characters",    <Users size={16} />,        "Character Profiles")}
             {drawerBtn("quiz",          <Trophy size={16} />,       "Bible Quiz")}
             {drawerBtn("audio",         <Headphones size={16} />,   "Audio Bible")}
-            {drawerBtn("resources",     <ExternalLink size={16} />, "Resources")}
-            {drawerBtn("books",         <BookHeart size={16} />,    "Christian Books")}
+            {drawerBtn("resources",       <ExternalLink size={16} />, "Resources")}
+            {drawerBtn("books",           <BookHeart size={16} />,    "Christian Books")}
+            {drawerBtn("christian_news",  <ScrollText size={16} />,   "Today in Christian News")}
             <a
               href="/devotionals"
               className="flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium text-gray-600 hover:bg-amber-50 hover:text-amber-700 transition-colors"
