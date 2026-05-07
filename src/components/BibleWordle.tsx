@@ -418,20 +418,20 @@ export default function BibleWordle() {
       )}
 
       {/* ── Virtual keyboard ────────────────────────────────────────────────── */}
-      <div className="w-full max-w-sm flex flex-col gap-1.5 items-center">
+      <div className="w-full max-w-md px-1 flex flex-col gap-1">
         {KEYBOARD_ROWS.map((row, ri) => (
-          <div key={ri} className="flex gap-1.5 justify-center">
+          <div key={ri} className="flex gap-1">
             {row.map((key) => {
               const isWide = key === "ENTER" || key === "⌫";
               return (
                 <button
                   key={key}
                   onClick={() => handleKey(key)}
-                  className="flex items-center justify-center rounded-lg font-bold text-xs transition-all active:scale-95 select-none"
+                  className="flex items-center justify-center rounded-md font-bold transition-all active:scale-95 select-none min-w-0"
                   style={{
-                    width: isWide ? 56 : 34,
-                    height: 46,
-                    fontSize: key === "ENTER" ? 10 : 14,
+                    flex: isWide ? 1.55 : 1,
+                    height: 42,
+                    fontSize: key === "ENTER" ? 9 : 13,
                     ...keyStyle(keyStates[key]),
                     cursor: status !== "playing" ? "default" : "pointer",
                   }}
