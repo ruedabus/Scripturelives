@@ -12,8 +12,9 @@ import {
 const GOLD   = "#C9952A";
 const NAVY   = "#1a2640";
 const CREAM  = "#faf8f3";
-const MAX_GUESSES = 6;
-const WORD_LENGTH = 5;
+const MAX_GUESSES  = 6;
+const WORD_LENGTH  = 5;
+const HINT_UNLOCKS_AT = 2; // wrong guesses needed to unlock hint
 
 // ── Tile state type ────────────────────────────────────────────────────────────
 type TileState = "correct" | "present" | "absent" | "empty" | "active";
@@ -38,8 +39,8 @@ function evaluateGuess(guess: string, answer: string): TileState[] {
     if (guessArr[i] === "*") continue;
     const idx = answerArr.indexOf(guessArr[i]);
     if (idx !== -1) {
-      result[i]       = "present";
-      answerArr[idx]  = "#";
+      result[i]      = "present";
+      answerArr[idx] = "#";
     }
   }
 
@@ -58,7 +59,6 @@ function buildKeyStates(
       const letter = guess[i];
       const cur    = states[letter];
       const next   = eval_[i];
-      // Priority: correct > present > absent
       if (cur === "correct") continue;
       if (cur === "present" && next !== "correct") continue;
       states[letter] = next;
@@ -106,8 +106,9 @@ export default function BibleWordle() {
   const [current,      setCurrent]      = useState("");
   const [status,       setStatus]       = useState<"playing" | "won" | "lost">("playing");
   const [shake,        setShake]        = useState(false);
-  const [reveal,       setReveal]       = useState<number | null>(null); // row being revealed
-  const [showHint,     setShowHint]     = useState(true);
+  const [reveal,       setReveal]       = useState<number | null>(null);
+  const [showHint,     setShowHint]     = useState(false);
+  const [hintJustUnlocked, setHintJustUnlocked] = useState(false);
   const [notification, setNotification] = useState("");
 
   // Load daily word + saved state
@@ -128,6 +129,12 @@ export default function BibleWordle() {
     saveWordleState({ date: "", guesses, status });
   }, [guesses, status, entry]);
 
+  // Count wrong guesses (guesses that didn't win)
+  const wrongGuesses = entry
+    ? guesses.filter(g => g !== entry.word).length
+    : 0;
+  const hintUnlocked = wrongGuesses >= HINT_UNLOCKS_AT || status !== "playing";
+
   // Flash notification helper
   const notify = (msg: string, duration = 2000) => {
     setNotification(msg);
@@ -143,15 +150,26 @@ export default function BibleWordle() {
       return;
     }
 
-    const newGuesses = [...guesses, current];
-    const rowIndex   = guesses.length;
+    const newGuesses  = [...guesses, current];
+    const rowIndex    = guesses.length;
+    const isCorrect   = current === entry.word;
+    const newWrong    = isCorrect ? wrongGuesses : wrongGuesses + 1;
+
     setReveal(rowIndex);
     setTimeout(() => setReveal(null), WORD_LENGTH * 350 + 100);
-
     setGuesses(newGuesses);
     setCurrent("");
 
-    if (current === entry.word) {
+    // Check if hint just unlocked on this guess
+    if (!isCorrect && newWrong === HINT_UNLOCKS_AT) {
+      setTimeout(() => {
+        setHintJustUnlocked(true);
+        notify("📖 Scripture Hint unlocked!", 2500);
+        setTimeout(() => setHintJustUnlocked(false), 2500);
+      }, WORD_LENGTH * 350 + 300);
+    }
+
+    if (isCorrect) {
       setTimeout(() => {
         setStatus("won");
         const msgs = ["Amazing! 🎉", "Blessed! 🙏", "Well done! ✨", "Glory to God! 🌟", "Wonderful! 🕊️"];
@@ -163,7 +181,7 @@ export default function BibleWordle() {
         notify(`The word was ${entry.word}`, 5000);
       }, WORD_LENGTH * 350 + 200);
     }
-  }, [entry, status, current, guesses]);
+  }, [entry, status, current, guesses, wrongGuesses]);
 
   const handleKey = useCallback((key: string) => {
     if (!entry || status !== "playing") return;
@@ -197,45 +215,13 @@ export default function BibleWordle() {
 
   const keyStates = buildKeyStates(guesses, entry.word);
 
-  // Build grid rows (6 rows, 5 cols)
-  const rows: { letter: string; state: TileState; revealed: boolean }[][] = [];
-  for (let r = 0; r < MAX_GUESSES; r++) {
-    const guess   = guesses[r] ?? "";
-    const isFuture = r > guesses.length;
-    const isCurrent = r === guesses.length && status === "playing";
-    const displayWord = isCurrent ? current : guess;
-    const evaluated   = guess ? evaluateGuess(guess, entry.word) : null;
-    const isRevealing = reveal === r;
-
-    const row = [];
-    for (let c = 0; c < WORD_LENGTH; c++) {
-      const letter  = displayWord[c] ?? "";
-      let state: TileState = "empty";
-      if (evaluated) {
-        state = evaluated[c];
-      } else if (isCurrent && letter) {
-        state = "active";
-      } else if (isFuture || !letter) {
-        state = "empty";
-      }
-
-      row.push({
-        letter,
-        state,
-        revealed: !!evaluated && !isRevealing ? true : isRevealing && c < (Date.now() % 1000) / 350 ? true : !!evaluated && !isRevealing,
-      });
-    }
-    rows.push(row);
-  }
-
-  // Simplified: reveal is just whether the row has been guessed
   const buildRows = () => {
     const result = [];
     for (let r = 0; r < MAX_GUESSES; r++) {
-      const guess       = guesses[r] ?? "";
-      const isCurrent   = r === guesses.length && status === "playing";
-      const displayWord = isCurrent ? current : guess;
-      const evaluated   = guess ? evaluateGuess(guess, entry.word) : null;
+      const guess        = guesses[r] ?? "";
+      const isCurrent    = r === guesses.length && status === "playing";
+      const displayWord  = isCurrent ? current : guess;
+      const evaluated    = guess ? evaluateGuess(guess, entry.word) : null;
       const isThisReveal = reveal === r;
 
       result.push(
@@ -247,13 +233,9 @@ export default function BibleWordle() {
           {Array.from({ length: WORD_LENGTH }, (_, c) => {
             const letter = displayWord[c] ?? "";
             let tileState: TileState = "empty";
-            if (evaluated) {
-              tileState = evaluated[c];
-            } else if (isCurrent && letter) {
-              tileState = "active";
-            }
+            if (evaluated)               tileState = evaluated[c];
+            else if (isCurrent && letter) tileState = "active";
 
-            // Tile reveal: tiles in a completed row flip one by one
             const revealDelay = isThisReveal ? c * 350 : 0;
             const isRevealed  = !!evaluated && !isThisReveal;
 
@@ -283,6 +265,9 @@ export default function BibleWordle() {
     return result;
   };
 
+  // Progress dots for hint unlock (shown while locked)
+  const guessesLeft = HINT_UNLOCKS_AT - wrongGuesses;
+
   return (
     <div className="min-h-screen flex flex-col items-center px-4 py-6" style={{ background: CREAM }}>
 
@@ -307,26 +292,71 @@ export default function BibleWordle() {
         </p>
       </div>
 
-      {/* ── Verse hint card ─────────────────────────────────────────────────── */}
-      <div className="w-full max-w-md mb-5 rounded-2xl overflow-hidden"
-        style={{ border: "1px solid #e8d5b0", boxShadow: "0 2px 12px rgba(201,149,42,0.10)" }}>
+      {/* ── Scripture Hint card ─────────────────────────────────────────────── */}
+      <div
+        className="w-full max-w-md mb-5 rounded-2xl overflow-hidden transition-all"
+        style={{
+          border: `1px solid ${hintUnlocked ? "#e8d5b0" : "#d1c9b8"}`,
+          boxShadow: hintUnlocked
+            ? "0 2px 12px rgba(201,149,42,0.15)"
+            : "0 1px 4px rgba(0,0,0,0.06)",
+          animation: hintJustUnlocked ? "hintPulse 0.6s ease" : undefined,
+        }}
+      >
+        {/* Header */}
         <button
-          className="w-full flex items-center justify-between px-4 py-3 text-left"
-          style={{ background: "linear-gradient(135deg, #1a2640 0%, #2a3a5c 100%)" }}
-          onClick={() => setShowHint(h => !h)}
+          className="w-full flex items-center justify-between px-4 py-3 text-left transition-opacity"
+          style={{
+            background: hintUnlocked
+              ? "linear-gradient(135deg, #1a2640 0%, #2a3a5c 100%)"
+              : "linear-gradient(135deg, #374151 0%, #4b5563 100%)",
+            cursor: hintUnlocked ? "pointer" : "default",
+            opacity: hintUnlocked ? 1 : 0.75,
+          }}
+          onClick={() => hintUnlocked && setShowHint(h => !h)}
+          disabled={!hintUnlocked}
         >
           <div className="flex items-center gap-2">
-            <span className="text-base">📖</span>
-            <span className="text-xs font-black uppercase tracking-widest" style={{ color: GOLD }}>
-              Scripture Hint
-            </span>
+            <span className="text-base">{hintUnlocked ? "📖" : "🔒"}</span>
+            <div>
+              <span className="text-xs font-black uppercase tracking-widest" style={{ color: hintUnlocked ? GOLD : "#9ca3af" }}>
+                Scripture Hint
+              </span>
+              {!hintUnlocked && (
+                <p className="text-[10px] mt-0.5" style={{ color: "rgba(255,255,255,0.4)" }}>
+                  Unlocks after {guessesLeft} more wrong {guessesLeft === 1 ? "guess" : "guesses"}
+                </p>
+              )}
+            </div>
           </div>
-          <span className="text-xs" style={{ color: "rgba(255,255,255,0.5)" }}>
-            {showHint ? "▲ hide" : "▼ show"}
-          </span>
+
+          <div className="flex items-center gap-2">
+            {/* Progress pips */}
+            {!hintUnlocked && (
+              <div className="flex gap-1">
+                {Array.from({ length: HINT_UNLOCKS_AT }, (_, i) => (
+                  <div
+                    key={i}
+                    className="w-2 h-2 rounded-full transition-all"
+                    style={{
+                      background: i < wrongGuesses
+                        ? GOLD
+                        : "rgba(255,255,255,0.2)",
+                    }}
+                  />
+                ))}
+              </div>
+            )}
+            {hintUnlocked && (
+              <span className="text-xs" style={{ color: "rgba(255,255,255,0.5)" }}>
+                {showHint ? "▲ hide" : "▼ show"}
+              </span>
+            )}
+          </div>
         </button>
 
-        {showHint && (
+        {/* Hint body — only when unlocked and expanded */}
+        {hintUnlocked && showHint && (
           <div className="px-4 py-4 bg-white">
             <p className="text-sm leading-relaxed italic mb-2" style={{ color: "#374151" }}>
               &ldquo;{entry.hint}&rdquo;
@@ -334,6 +364,28 @@ export default function BibleWordle() {
             <p className="text-xs font-semibold text-right" style={{ color: GOLD }}>
               — {entry.ref}
             </p>
+          </div>
+        )}
+
+        {/* Locked placeholder body */}
+        {!hintUnlocked && (
+          <div className="px-4 py-3 flex items-center justify-center gap-2" style={{ background: "#f9f9f9" }}>
+            <div className="flex gap-1">
+              {Array.from({ length: HINT_UNLOCKS_AT }, (_, i) => (
+                <div
+                  key={i}
+                  className="rounded-sm transition-all"
+                  style={{
+                    width: i < wrongGuesses ? 20 : 60,
+                    height: 8,
+                    background: i < wrongGuesses ? GOLD : "#e5e7eb",
+                  }}
+                />
+              ))}
+            </div>
+            <span className="text-xs" style={{ color: "#9ca3af" }}>
+              {wrongGuesses}/{HINT_UNLOCKS_AT} wrong guesses
+            </span>
           </div>
         )}
       </div>
@@ -430,6 +482,11 @@ export default function BibleWordle() {
           0%   { transform: scale(1); }
           50%  { transform: scale(1.12); }
           100% { transform: scale(1); }
+        }
+        @keyframes hintPulse {
+          0%   { box-shadow: 0 0 0 0 rgba(201,149,42,0.6); }
+          50%  { box-shadow: 0 0 0 8px rgba(201,149,42,0.15); }
+          100% { box-shadow: 0 0 0 0 rgba(201,149,42,0); }
         }
       `}</style>
     </div>
