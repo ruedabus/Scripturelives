@@ -61,55 +61,73 @@ export default function EchoTVCard() {
           className="block rounded-xl overflow-hidden mb-4 group"
           style={{ textDecoration: "none" }}
         >
-          {/* Dark thumbnail with play button overlay */}
           <div
-            className="relative flex items-center justify-center"
+            className="relative flex flex-col items-center justify-center"
             style={{
-              background: `linear-gradient(135deg, ${NAVY} 0%, #0f1a30 100%)`,
+              background: `linear-gradient(150deg, #0d1a2e 0%, #1a2e50 50%, #0d1a2e 100%)`,
               aspectRatio: "16/9",
             }}
           >
-            {/* Decorative cross / glow */}
-            <div
-              className="absolute inset-0 flex items-center justify-center opacity-10"
-              aria-hidden="true"
-            >
-              <svg width="180" height="180" viewBox="0 0 100 100" fill="none">
-                <rect x="44" y="5"  width="12" height="90" rx="4" fill="white"/>
-                <rect x="5"  y="34" width="90" height="12" rx="4" fill="white"/>
+            {/* Subtle star field dots */}
+            {[
+              [12,18],[88,14],[25,72],[70,65],[45,88],[92,50],[6,45],[80,30],
+              [55,10],[35,55],[65,80],[18,35],[95,78],[50,40],
+            ].map(([x,y], i) => (
+              <div key={i} className="absolute rounded-full"
+                style={{ left:`${x}%`, top:`${y}%`, width: i % 3 === 0 ? 2 : 1, height: i % 3 === 0 ? 2 : 1, background:"rgba(255,255,255,0.35)" }} />
+            ))}
+
+            {/* Gold radial glow */}
+            <div className="absolute inset-0 opacity-25"
+              style={{ background: `radial-gradient(ellipse at 50% 55%, ${GOLD} 0%, transparent 65%)` }} />
+
+            {/* Cross shape */}
+            <div className="absolute opacity-[0.07]" aria-hidden="true">
+              <svg width="220" height="220" viewBox="0 0 100 100" fill="white">
+                <rect x="43" y="4"  width="14" height="92" rx="5"/>
+                <rect x="4"  y="33" width="92" height="14" rx="5"/>
               </svg>
             </div>
 
-            {/* Gold rays */}
-            <div
-              className="absolute inset-0 opacity-20"
-              style={{
-                background: `radial-gradient(ellipse at center, ${GOLD} 0%, transparent 70%)`,
-              }}
-            />
+            {/* Branding block */}
+            <div className="relative z-10 flex flex-col items-center gap-2 px-6 text-center">
+              {/* TV icon */}
+              <div className="w-11 h-11 rounded-2xl flex items-center justify-center mb-1"
+                style={{ background: "rgba(201,149,42,0.20)", border: "1px solid rgba(201,149,42,0.40)" }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={GOLD} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="2" y="7" width="20" height="15" rx="2" ry="2"/>
+                  <polyline points="17 2 12 7 7 2"/>
+                </svg>
+              </div>
 
-            {/* Play button */}
-            <div
-              className="relative z-10 w-16 h-16 rounded-full flex items-center justify-center transition group-hover:scale-110"
-              style={{
-                background: GOLD,
-                boxShadow: "0 6px 30px rgba(201,149,42,0.6)",
-              }}
-            >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="white" style={{ marginLeft: "3px" }}>
-                <polygon points="5 3 19 12 5 21 5 3"/>
-              </svg>
+              {/* Logo text */}
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-[0.3em] mb-0.5" style={{ color: GOLD }}>
+                  Echo TV Studios
+                </p>
+                <div className="flex items-center gap-2 justify-center">
+                  <div className="h-px w-10" style={{ background: "rgba(201,149,42,0.4)" }} />
+                  <p className="text-[9px] uppercase tracking-widest" style={{ color: "rgba(255,255,255,0.45)" }}>
+                    Christian Television
+                  </p>
+                  <div className="h-px w-10" style={{ background: "rgba(201,149,42,0.4)" }} />
+                </div>
+              </div>
+
+              {/* Play button */}
+              <div className="mt-2 w-12 h-12 rounded-full flex items-center justify-center transition group-hover:scale-110"
+                style={{ background: GOLD, boxShadow: "0 4px 20px rgba(201,149,42,0.55)" }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="white" style={{ marginLeft: "2px" }}>
+                  <polygon points="5 3 19 12 5 21 5 3"/>
+                </svg>
+              </div>
             </div>
 
-            {/* "Watch episode" label at bottom */}
-            <div
-              className="absolute bottom-0 left-0 right-0 px-4 py-3 flex items-center justify-between"
-              style={{ background: "linear-gradient(to top, rgba(10,16,30,0.85) 0%, transparent 100%)" }}
-            >
-              <span className="text-xs font-black text-white">Featured Episode</span>
-              <span className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: GOLD }}>
-                Watch Now →
-              </span>
+            {/* Bottom bar */}
+            <div className="absolute bottom-0 left-0 right-0 px-4 py-2.5 flex items-center justify-between"
+              style={{ background: "linear-gradient(to top, rgba(8,14,26,0.90) 0%, transparent 100%)" }}>
+              <span className="text-[10px] font-black text-white tracking-wide">Featured Episode</span>
+              <span className="text-[9px] font-semibold uppercase tracking-wider" style={{ color: GOLD }}>Watch Now →</span>
             </div>
           </div>
         </a>
