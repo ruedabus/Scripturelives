@@ -17,9 +17,13 @@ const CATEGORY_PHOTO: Record<BlogCategory, string> = {
   "Devotional":          "https://images.unsplash.com/photo-1476820865390-c52aeebb9891?w=640&q=75",
   "Bible Study":         "https://images.unsplash.com/photo-1504052434569-70ad5836ab65?w=640&q=75",
   "Prayer":              "https://images.unsplash.com/photo-1529070538774-1843cb3265df?w=640&q=75",
-  "Faith & Trust":       "https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=640&q=75",
-  "Grace & Forgiveness": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=640&q=75",
-  "Purpose & Calling":   "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=640&q=75",
+  "Faith & Trust":          "https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=640&q=75",
+  "Grace & Forgiveness":    "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=640&q=75",
+  "Purpose & Calling":      "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=640&q=75",
+  "Hope & Perseverance":    "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=640&q=75",
+  "Courage & Strength":     "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=640&q=75",
+  "Identity in Christ":     "https://images.unsplash.com/photo-1504052434569-70ad5836ab65?w=640&q=75",
+  "Healing & Restoration":  "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=640&q=75",
 };
 
 // ── Category badge colour ─────────────────────────────────────────────────────
@@ -28,8 +32,12 @@ const BADGE: Record<BlogCategory, { bg: string; text: string }> = {
   "Bible Study":         { bg: "rgba(59,130,246,0.15)",  text: "#1e40af" },
   "Prayer":              { bg: "rgba(16,185,129,0.15)",  text: "#065f46" },
   "Faith & Trust":       { bg: "rgba(139,92,246,0.15)",  text: "#5b21b6" },
-  "Grace & Forgiveness": { bg: "rgba(236,72,153,0.15)",  text: "#9d174d" },
-  "Purpose & Calling":   { bg: "rgba(245,158,11,0.15)",  text: "#92400e" },
+  "Grace & Forgiveness":    { bg: "rgba(236,72,153,0.15)",  text: "#9d174d" },
+  "Purpose & Calling":      { bg: "rgba(245,158,11,0.15)",  text: "#92400e" },
+  "Hope & Perseverance":    { bg: "rgba(16,185,129,0.15)",  text: "#065f46" },
+  "Courage & Strength":     { bg: "rgba(239,68,68,0.15)",   text: "#991b1b" },
+  "Identity in Christ":     { bg: "rgba(59,130,246,0.15)",  text: "#1e40af" },
+  "Healing & Restoration":  { bg: "rgba(139,92,246,0.15)",  text: "#5b21b6" },
 };
 
 // ── Article card ──────────────────────────────────────────────────────────────
