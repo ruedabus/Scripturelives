@@ -34,7 +34,7 @@ const securityHeaders = [
       // Fonts: self + Google Fonts
       "font-src 'self' https://fonts.gstatic.com",
       // Frames: YouTube embeds only
-      "frame-src https://www.youtube.com https://www.youtube-nocookie.com",
+      "frame-src https://www.youtube.com https://www.youtube-nocookie.com https://echotvstudios.com https://www.echotvstudios.com",
       // Fetch / XHR / API calls
       "connect-src 'self' https://rest.api.bible https://api.openai.com https://en.wikipedia.org https://en.m.wikipedia.org https://www.googleapis.com https://*.supabase.co",
       // Media

@@ -35,6 +35,7 @@ import PassagePresenter from "@/components/PassagePresenter";
 import ChristianNews from "@/components/ChristianNews";
 import StudyNotes from "@/components/StudyNotes";
 import GospelCard from "@/components/GospelCard";
+import EchoTVCard from "@/components/EchoTVCard";
 import {
   Home, Feather, BookOpen, Library, Layers, BookText, BookMarked,
   ScrollText, Landmark, Globe, Star, ClipboardList, FileText,
@@ -1018,6 +1019,9 @@ export default function BibleReader() {
                     </button>
                   </div>
                 )}
+
+                {/* Echo TV Studios — Featured Episode */}
+                <EchoTVCard />
 
                 {/* Do You Know Jesus — Gospel Card */}
                 <GospelCard />
