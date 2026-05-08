@@ -53,10 +53,27 @@ function fmt(seconds: number): string {
 
 const SPEEDS = [0.75, 1, 1.25, 1.5, 1.75, 2];
 
+// ── Persistence ────────────────────────────────────────────────────────────
+const AUDIO_LAST_READ_KEY = "scripture-lives-audio-last-read";
+
+function readAudioLastRead(): { book: string; chapter: number } | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.localStorage.getItem(AUDIO_LAST_READ_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (typeof parsed.book !== "string" || !ALL_BOOKS.includes(parsed.book)) return null;
+    if (typeof parsed.chapter !== "number" || parsed.chapter < 1) return null;
+    const maxChapter = BOOK_CHAPTERS[parsed.book] ?? 1;
+    return { book: parsed.book, chapter: Math.min(parsed.chapter, maxChapter) };
+  } catch { return null; }
+}
+
 // ── Component ──────────────────────────────────────────────────────────────
 export default function AudioBiblePlayer() {
-  const [book,    setBook]    = useState("John");
-  const [chapter, setChapter] = useState(3);
+  const _saved = useRef(readAudioLastRead());
+  const [book,    setBook]    = useState(_saved.current?.book    ?? "John");
+  const [chapter, setChapter] = useState(_saved.current?.chapter ?? 3);
   const [playing, setPlaying] = useState(false);
   const [current, setCurrent] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -86,6 +103,13 @@ export default function AudioBiblePlayer() {
     if (!el) return;
     el.playbackRate = speed;
   }, [speed]);
+
+  // ── Persist last-read position ────────────────────────────────────────
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(AUDIO_LAST_READ_KEY, JSON.stringify({ book, chapter }));
+    } catch { /* ignore */ }
+  }, [book, chapter]);
 
   // ── Reset player when passage changes ─────────────────────────────────
   useEffect(() => {
