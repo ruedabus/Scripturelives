@@ -104,6 +104,7 @@ function searchLocal(
   if (ref) {
     return bible
       .filter((v) =>
+        CANONICAL_BOOKS.includes(v.book) &&
         v.book === ref.book &&
         v.chapter === ref.chapter &&
         (ref.verse === undefined || v.verse === ref.verse)
@@ -115,7 +116,7 @@ function searchLocal(
   // Full-text keyword search — every word must appear in the verse
   const words = q.split(/\s+/).filter(Boolean);
   return bible
-    .filter((v) => words.every((w) => v.text.toLowerCase().includes(w)))
+    .filter((v) => CANONICAL_BOOKS.includes(v.book) && words.every((w) => v.text.toLowerCase().includes(w)))
     .sort((a, b) => {
       const ai = CANONICAL_BOOKS.indexOf(a.book);
       const bi = CANONICAL_BOOKS.indexOf(b.book);
