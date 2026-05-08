@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { blogPosts, type BlogCategory } from "@/data/blogPosts";
+import DevotionalSignup from "@/components/DevotionalSignup";
 
 export const metadata: Metadata = {
   title: "Devotionals & Bible Studies | Scripture Lives",
@@ -205,6 +206,11 @@ export default function DevotionalsPage() {
           ))}
         </div>
       </main>
+
+      {/* ── Daily devotional signup ── */}
+      <div className="mt-12 max-w-2xl mx-auto px-2">
+        <DevotionalSignup variant="banner" />
+      </div>
 
       {/* ── Footer ── */}
       <footer className="bg-white px-5 py-8 text-center mt-4" style={{ borderTop: "1px solid #ede8de" }}>

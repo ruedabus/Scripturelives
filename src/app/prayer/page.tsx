@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import DevotionalSignup from "@/components/DevotionalSignup";
 
 // ── Design tokens ─────────────────────────────────────────────────────────────
 const GOLD   = "#C9952A";
@@ -440,6 +441,9 @@ export default function PrayerPage() {
             </div>
           )}
         </section>
+
+        {/* ── Daily devotional signup ── */}
+        <DevotionalSignup variant="compact" />
 
         {/* Footer scripture */}
         <div className="text-center pb-6">
