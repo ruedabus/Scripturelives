@@ -198,27 +198,6 @@ export default function PrayerPage() {
           }}
         />
 
-        {/* praying-hands — portrait, anchored to far right */}
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/praying-hands.png"
-          alt=""
-          aria-hidden="true"
-          style={{
-            position: "absolute",
-            bottom: 0,
-            right: "20%",
-            height: "120%",
-            width: "auto",
-            objectFit: "cover",
-            objectPosition: "top",
-            opacity: 0.8,
-            pointerEvents: "none",
-            userSelect: "none",
-            maskImage: "linear-gradient(to left, rgba(0,0,0,1) 30%, transparent 85%)",
-            WebkitMaskImage: "linear-gradient(to left, rgba(0,0,0,1) 30%, transparent 85%)",
-          }}
-        />
 
         {/* Text content */}
         <div className="relative z-10 px-6 py-14 max-w-lg">
