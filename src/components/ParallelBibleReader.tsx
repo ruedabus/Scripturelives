@@ -51,6 +51,40 @@ const VERSION_COLORS: Record<BibleVersion, { bg: string; text: string; border: s
 
 const DEFAULT_VERSIONS: BibleVersion[] = ["KJV", "NIV"];
 
+// ── Persistence ────────────────────────────────────────────────────────────
+const PARALLEL_LAST_READ_KEY = "scripture-lives-parallel-last-read";
+
+type SavedParallelState = {
+  book: string;
+  chapter: number;
+  versions: BibleVersion[];
+};
+
+function readParallelLastRead(): SavedParallelState | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.localStorage.getItem(PARALLEL_LAST_READ_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as SavedParallelState;
+    // Validate: book must be a non-empty string, chapter must be a positive number
+    if (typeof parsed.book !== "string" || !parsed.book) return null;
+    if (typeof parsed.chapter !== "number" || parsed.chapter < 1) return null;
+    // Validate versions array — filter out any unknown entries
+    if (Array.isArray(parsed.versions)) {
+      const valid = parsed.versions.filter((v) =>
+        (ALL_VERSIONS as string[]).includes(v)
+      ) as BibleVersion[];
+      if (valid.length >= 2) parsed.versions = valid;
+      else parsed.versions = DEFAULT_VERSIONS;
+    } else {
+      parsed.versions = DEFAULT_VERSIONS;
+    }
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
 // ── Helpers ────────────────────────────────────────────────────────────────
 async function fetchBooks(): Promise<BookInfo[]> {
   const res = await fetch("/api/bible?version=KJV");
@@ -74,11 +108,12 @@ async function fetchVerses(version: BibleVersion, book: string, chapter: number)
 
 // ── Main component ──────────────────────────────────────────────────────────
 export default function ParallelBibleReader() {
+  const _saved = useRef(readParallelLastRead());
   const [books, setBooks] = useState<BookInfo[]>([]);
-  const [selectedBook, setSelectedBook] = useState<string>("John");
-  const [selectedChapter, setSelectedChapter] = useState<number>(3);
+  const [selectedBook, setSelectedBook] = useState<string>(_saved.current?.book ?? "John");
+  const [selectedChapter, setSelectedChapter] = useState<number>(_saved.current?.chapter ?? 3);
   const [totalChapters, setTotalChapters] = useState<number>(1);
-  const [activeVersions, setActiveVersions] = useState<BibleVersion[]>(DEFAULT_VERSIONS);
+  const [activeVersions, setActiveVersions] = useState<BibleVersion[]>(_saved.current?.versions ?? DEFAULT_VERSIONS);
   const [verses, setVerses] = useState<Record<BibleVersion, BibleVerse[]>>({} as Record<BibleVersion, BibleVerse[]>);
   const [loading, setLoading] = useState<Record<BibleVersion, boolean>>({} as Record<BibleVersion, boolean>);
   const [errors, setErrors] = useState<Record<BibleVersion, string>>({} as Record<BibleVersion, string>);
@@ -86,14 +121,16 @@ export default function ParallelBibleReader() {
   const [fontSize, setFontSize] = useState<"sm" | "base" | "lg">("sm");
   const loadingRef = useRef<Record<string, boolean>>({});
 
-  // Load book list
+  // Load book list — resolve totalChapters for the currently selected book
   useEffect(() => {
     fetchBooks().then((b) => {
       setBooks(b);
-      const john = b.find((x) => x.name === "John");
-      if (john) setTotalChapters(john.chapters);
+      // Use the restored (or default) book, not always "John"
+      const current = b.find((x) => x.name === selectedBook);
+      if (current) setTotalChapters(current.chapters);
     });
-  }, []);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // intentionally run once; selectedBook is stable from the ref on mount
 
   // Update total chapters when book changes
   useEffect(() => {
@@ -143,6 +180,16 @@ export default function ParallelBibleReader() {
   useEffect(() => {
     loadVerses();
   }, [loadVerses]);
+
+  // ── Persist reading position whenever it changes ───────────────────────────
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(
+        PARALLEL_LAST_READ_KEY,
+        JSON.stringify({ book: selectedBook, chapter: selectedChapter, versions: activeVersions })
+      );
+    } catch { /* ignore — storage full or unavailable */ }
+  }, [selectedBook, selectedChapter, activeVersions]);
 
   const toggleVersion = (v: BibleVersion) => {
     setActiveVersions((prev) => {
