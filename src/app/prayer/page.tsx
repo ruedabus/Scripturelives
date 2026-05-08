@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
 import DevotionalSignup from "@/components/DevotionalSignup";
 
 // ── Design tokens ─────────────────────────────────────────────────────────────
@@ -169,27 +168,57 @@ export default function PrayerPage() {
         className="relative overflow-hidden border-b"
         style={{ background: NAVY, borderColor: "#0f1a30", minHeight: 320 }}
       >
-        {/* Praying hands image — right-anchored, fades into the navy */}
-        <div
-          className="absolute inset-y-0 right-0 w-56 sm:w-72 md:w-80 pointer-events-none select-none"
+        {/* prayer-warriors — landscape, wide fade across the right half */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/prayer-warriors.png"
+          alt=""
           aria-hidden="true"
-        >
-          <Image
-            src="/praying-hands.png"
-            alt=""
-            fill
-            className="object-cover object-top"
-            style={{ opacity: 0.22 }}
-            priority
-          />
-          {/* Gradient mask so image blends into the navy on the left */}
-          <div
-            className="absolute inset-0"
-            style={{
-              background: `linear-gradient(to right, ${NAVY} 0%, transparent 45%)`,
-            }}
-          />
-        </div>
+          style={{
+            position: "absolute",
+            inset: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            objectPosition: "center",
+            opacity: 0.18,
+            pointerEvents: "none",
+            userSelect: "none",
+          }}
+        />
+
+        {/* Left-to-right gradient so text side stays dark and readable */}
+        <div
+          aria-hidden="true"
+          style={{
+            position: "absolute",
+            inset: 0,
+            background: `linear-gradient(to right, ${NAVY} 40%, transparent 80%)`,
+            pointerEvents: "none",
+          }}
+        />
+
+        {/* praying-hands — portrait, anchored to far right */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/praying-hands.png"
+          alt=""
+          aria-hidden="true"
+          style={{
+            position: "absolute",
+            bottom: 0,
+            right: 0,
+            height: "115%",
+            width: "auto",
+            objectFit: "cover",
+            objectPosition: "top",
+            opacity: 0.55,
+            pointerEvents: "none",
+            userSelect: "none",
+            maskImage: "linear-gradient(to left, rgba(0,0,0,0.9) 0%, transparent 70%)",
+            WebkitMaskImage: "linear-gradient(to left, rgba(0,0,0,0.9) 0%, transparent 70%)",
+          }}
+        />
 
         {/* Text content */}
         <div className="relative z-10 px-6 py-14 max-w-lg">
@@ -222,8 +251,9 @@ export default function PrayerPage() {
           </blockquote>
         </div>
 
-        {/* Subtle gold bottom border glow */}
+        {/* Gold shimmer line at the bottom */}
         <div
+          aria-hidden="true"
           className="absolute bottom-0 left-0 right-0 h-px"
           style={{ background: `linear-gradient(to right, transparent, ${GOLD}66, transparent)` }}
         />
