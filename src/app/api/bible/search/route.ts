@@ -165,10 +165,14 @@ async function searchRemote(version: string, query: string, limit: number): Prom
   const data = await res.json();
 
   return ((data.data?.verses ?? []) as Array<{ id: string; reference: string; text: string }>)
+    .filter((v) => {
+      const usfm = v.id.split(".")[0];
+      return usfm in USFM_TO_BOOK; // drop apocryphal / deuterocanonical books
+    })
     .map((v) => {
       const [usfm, ch, vs] = v.id.split(".");
       return {
-        book:      USFM_TO_BOOK[usfm] ?? usfm,
+        book:      USFM_TO_BOOK[usfm],
         chapter:   parseInt(ch, 10),
         verse:     parseInt(vs, 10),
         reference: v.reference,
