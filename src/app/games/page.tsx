@@ -1,17 +1,24 @@
-import type { Metadata } from "next";
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
 import BibleWordle from "@/components/BibleWordle";
+import BibleWordSearch from "@/components/BibleWordSearch";
 
-export const metadata: Metadata = {
-  title: "Bible Games · Scripture Lives",
-  description: "Play Bible-themed word games including Bible Wordle — guess the daily Bible word in 6 tries.",
-};
-
-const GOLD = "#C9952A";
-const NAVY = "#1a2640";
+const GOLD  = "#C9952A";
+const NAVY  = "#1a2640";
 const CREAM = "#faf8f3";
 
+type Tab = "wordle" | "wordsearch";
+
+const TABS: { id: Tab; label: string; emoji: string }[] = [
+  { id: "wordle",     label: "Bible Wordle",  emoji: "✝️" },
+  { id: "wordsearch", label: "Word Search",   emoji: "🔠" },
+];
+
 export default function GamesPage() {
+  const [tab, setTab] = useState<Tab>("wordle");
+
   return (
     <div className="min-h-screen flex flex-col" style={{ background: CREAM }}>
 
@@ -43,18 +50,26 @@ export default function GamesPage() {
         <div style={{ width: 120 }} /> {/* spacer to center title */}
       </header>
 
-      {/* ── Game tabs (future-proof for more games) ───────────────────────── */}
+      {/* ── Game tabs ─────────────────────────────────────────────────────────── */}
       <div
         className="sticky top-[53px] z-20 flex items-center gap-1 px-4 py-2 overflow-x-auto shrink-0"
         style={{ background: CREAM, borderBottom: "1px solid #ede8de" }}
       >
-        <button
-          className="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-black transition whitespace-nowrap"
-          style={{ background: NAVY, color: "#fff" }}
-        >
-          ✝️ Bible Wordle
-        </button>
-        {/* More games can be added here */}
+        {TABS.map(({ id, label, emoji }) => (
+          <button
+            key={id}
+            onClick={() => setTab(id)}
+            className="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-black transition whitespace-nowrap"
+            style={
+              tab === id
+                ? { background: NAVY, color: "#fff" }
+                : { background: "#e8e0d4", color: NAVY, opacity: 0.65 }
+            }
+          >
+            {emoji} {label}
+          </button>
+        ))}
+        {/* Placeholder for future game */}
         <span
           className="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-medium whitespace-nowrap opacity-40 cursor-not-allowed select-none"
           style={{ background: "#e8e0d4", color: NAVY }}
@@ -65,7 +80,8 @@ export default function GamesPage() {
 
       {/* ── Game content ─────────────────────────────────────────────────────── */}
       <main className="flex-1">
-        <BibleWordle />
+        {tab === "wordle"     && <BibleWordle />}
+        {tab === "wordsearch" && <BibleWordSearch />}
       </main>
 
       {/* ── Footer ──────────────────────────────────────────────────────────── */}
@@ -73,7 +89,7 @@ export default function GamesPage() {
         className="text-center text-xs py-4 shrink-0"
         style={{ color: "#9ca3af", borderTop: "1px solid #ede8de" }}
       >
-        Scripture Lives · Bible Wordle · New word every day at midnight
+        Scripture Lives · Bible Games · New puzzles every day at midnight
       </footer>
     </div>
   );
