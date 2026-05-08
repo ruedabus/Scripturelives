@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 
 // ── Design tokens ─────────────────────────────────────────────────────────────
 const GOLD   = "#C9952A";
@@ -162,27 +163,69 @@ export default function PrayerPage() {
   return (
     <main className="min-h-screen" style={{ background: CREAM }}>
 
-      {/* ── Hero header ── */}
+      {/* ── Hero banner ── */}
       <div
-        className="px-6 py-14 text-center border-b"
-        style={{ background: NAVY, borderColor: "#0f1a30" }}
+        className="relative overflow-hidden border-b"
+        style={{ background: NAVY, borderColor: "#0f1a30", minHeight: 320 }}
       >
-        <div className="text-5xl mb-4">🙏</div>
-        <h1 className="text-3xl font-bold text-white mb-3">Prayer Wall</h1>
-        <p className="text-base max-w-md mx-auto" style={{ color: "#c7d2e0" }}>
-          Share your heart with God and this community. You don't need to leave your name —
-          every prayer is heard.
-        </p>
-        <blockquote className="mt-6 text-sm italic max-w-sm mx-auto" style={{ color: GOLD }}>
-          "Do not be anxious about anything, but in every situation, by prayer and
-          petition, with thanksgiving, present your requests to God." — Phil. 4:6
-        </blockquote>
-        <a
-          href="/"
-          className="mt-6 inline-block text-xs text-gray-400 hover:text-white transition"
+        {/* Praying hands image — right-anchored, fades into the navy */}
+        <div
+          className="absolute inset-y-0 right-0 w-56 sm:w-72 md:w-80 pointer-events-none select-none"
+          aria-hidden="true"
         >
-          ← Back to Scripture Lives
-        </a>
+          <Image
+            src="/praying-hands.png"
+            alt=""
+            fill
+            className="object-cover object-top"
+            style={{ opacity: 0.22 }}
+            priority
+          />
+          {/* Gradient mask so image blends into the navy on the left */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: `linear-gradient(to right, ${NAVY} 0%, transparent 45%)`,
+            }}
+          />
+        </div>
+
+        {/* Text content */}
+        <div className="relative z-10 px-6 py-14 max-w-lg">
+          <a
+            href="/"
+            className="inline-block text-xs mb-6 transition"
+            style={{ color: "#6b7f99" }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "#ffffff"; }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "#6b7f99"; }}
+          >
+            ← Back to Scripture Lives
+          </a>
+          <h1 className="text-3xl sm:text-4xl font-bold text-white mb-4 leading-tight">
+            Prayer Wall
+          </h1>
+          <p className="text-base leading-relaxed" style={{ color: "#c7d2e0" }}>
+            Share your heart with God and this community. You don't need to leave
+            your name — every prayer is heard.
+          </p>
+          <blockquote
+            className="mt-6 text-sm italic border-l-2 pl-4"
+            style={{ color: GOLD, borderColor: `${GOLD}88` }}
+          >
+            "Do not be anxious about anything, but in every situation, by prayer
+            and petition, with thanksgiving, present your requests to God."
+            <br />
+            <span className="not-italic font-semibold text-xs" style={{ color: `${GOLD}cc` }}>
+              — Philippians 4:6
+            </span>
+          </blockquote>
+        </div>
+
+        {/* Subtle gold bottom border glow */}
+        <div
+          className="absolute bottom-0 left-0 right-0 h-px"
+          style={{ background: `linear-gradient(to right, transparent, ${GOLD}66, transparent)` }}
+        />
       </div>
 
       <div className="max-w-2xl mx-auto px-4 py-10 space-y-10">
