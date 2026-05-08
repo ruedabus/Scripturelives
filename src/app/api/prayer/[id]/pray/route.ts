@@ -1,21 +1,33 @@
 /**
  * POST /api/prayer/[id]/pray
- * Increments the pray_count for a public prayer request.
- * Rate-limited per IP to prevent abuse.
+ * Atomically increments pray_count for a public prayer request.
+ * Uses the same SUPABASE_URL + SUPABASE_SERVICE_ROLE_KEY as tournamentStore.
  */
 
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
 import { rateLimit, getClientIp } from "@/lib/rateLimit";
 
 export const runtime = "nodejs";
 
-function getSupabase() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const USE_SUPABASE = !!(SUPABASE_URL && SUPABASE_KEY);
+
+function sbHeaders() {
+  return {
+    apikey:         SUPABASE_KEY!,
+    Authorization:  `Bearer ${SUPABASE_KEY}`,
+    "Content-Type": "application/json",
+  };
 }
+const TABLE = () => `${SUPABASE_URL?.replace(/\/+$/, "")}/rest/v1/prayer_requests`;
+
+// In-memory fallback store (shared module ref with route.ts in same process)
+// We re-import it at runtime — for local dev only.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const g = globalThis as any;
+if (!g.__prayerMem) g.__prayerMem = [];
+const memStore: Array<{ id: string; pray_count: number; is_public: boolean }> = g.__prayerMem;
 
 export async function POST(
   req: NextRequest,
@@ -28,40 +40,44 @@ export async function POST(
   }
 
   const { id } = await params;
-  if (!id || typeof id !== "string") {
+  if (!id || typeof id !== "string" || id.length > 64) {
     return NextResponse.json({ error: "Invalid ID." }, { status: 400 });
   }
 
   try {
-    const supabase = getSupabase();
-
-    // Use RPC to atomically increment (or fall back to select+update)
-    const { data, error } = await supabase.rpc("increment_pray_count", { request_id: id });
-
-    if (error) {
-      // Fallback: manual increment
-      const { data: current, error: fetchErr } = await supabase
-        .from("prayer_requests")
-        .select("pray_count")
-        .eq("id", id)
-        .eq("is_public", true)
-        .single();
-
-      if (fetchErr || !current) {
-        return NextResponse.json({ error: "Request not found." }, { status: 404 });
+    if (USE_SUPABASE) {
+      // 1. Fetch current count
+      const fetchRes = await fetch(
+        `${TABLE()}?id=eq.${encodeURIComponent(id)}&is_public=eq.true&select=pray_count`,
+        { headers: sbHeaders(), cache: "no-store" }
+      );
+      if (!fetchRes.ok) throw new Error(`Supabase fetch ${fetchRes.status}`);
+      const rows = await fetchRes.json() as Array<{ pray_count: number }>;
+      if (!Array.isArray(rows) || rows.length === 0) {
+        return NextResponse.json({ error: "Prayer request not found." }, { status: 404 });
       }
 
-      const { error: updateErr } = await supabase
-        .from("prayer_requests")
-        .update({ pray_count: (current.pray_count ?? 0) + 1 })
-        .eq("id", id)
-        .eq("is_public", true);
+      const newCount = (rows[0].pray_count ?? 0) + 1;
 
-      if (updateErr) throw updateErr;
-      return NextResponse.json({ prayCount: (current.pray_count ?? 0) + 1 });
+      // 2. Update
+      const updateRes = await fetch(
+        `${TABLE()}?id=eq.${encodeURIComponent(id)}&is_public=eq.true`,
+        {
+          method:  "PATCH",
+          headers: { ...sbHeaders(), Prefer: "return=minimal" },
+          body:    JSON.stringify({ pray_count: newCount }),
+        }
+      );
+      if (!updateRes.ok) throw new Error(`Supabase update ${updateRes.status}`);
+
+      return NextResponse.json({ prayCount: newCount });
+    } else {
+      // Local dev fallback
+      const row = memStore.find((r) => r.id === id && r.is_public);
+      if (!row) return NextResponse.json({ error: "Not found." }, { status: 404 });
+      row.pray_count = (row.pray_count ?? 0) + 1;
+      return NextResponse.json({ prayCount: row.pray_count });
     }
-
-    return NextResponse.json({ prayCount: data });
   } catch (e) {
     console.error("[prayer/pray]", e);
     return NextResponse.json({ error: "Could not update." }, { status: 500 });
