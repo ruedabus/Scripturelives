@@ -181,7 +181,7 @@ export default function PrayerPage() {
             height: "100%",
             objectFit: "cover",
             objectPosition: "center",
-            opacity: 0.18,
+            opacity: 0.38,
             pointerEvents: "none",
             userSelect: "none",
           }}
@@ -207,16 +207,16 @@ export default function PrayerPage() {
           style={{
             position: "absolute",
             bottom: 0,
-            right: 0,
-            height: "115%",
+            right: "20%",
+            height: "120%",
             width: "auto",
             objectFit: "cover",
             objectPosition: "top",
-            opacity: 0.55,
+            opacity: 0.8,
             pointerEvents: "none",
             userSelect: "none",
-            maskImage: "linear-gradient(to left, rgba(0,0,0,0.9) 0%, transparent 70%)",
-            WebkitMaskImage: "linear-gradient(to left, rgba(0,0,0,0.9) 0%, transparent 70%)",
+            maskImage: "linear-gradient(to left, rgba(0,0,0,1) 30%, transparent 85%)",
+            WebkitMaskImage: "linear-gradient(to left, rgba(0,0,0,1) 30%, transparent 85%)",
           }}
         />
 
