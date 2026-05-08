@@ -11,6 +11,12 @@ type BibleVersion = "KJV" | "ASV" | "WEB" | "NIV" | "NLT" | "AMP";
 
 const LOCAL_VERSIONS: BibleVersion[] = ["KJV", "ASV", "WEB"];
 const CLOUD_VERSIONS: BibleVersion[] = ["NIV", "NLT", "AMP"];
+const ALL_VERSIONS: BibleVersion[] = [...LOCAL_VERSIONS, ...CLOUD_VERSIONS];
+
+/** Sanitize any stored/incoming version string — fall back to KJV if unrecognised */
+function safeVersion(v: string | undefined | null): BibleVersion {
+  return (ALL_VERSIONS as string[]).includes(v ?? "") ? (v as BibleVersion) : "KJV";
+}
 const VERSION_LABELS: Record<BibleVersion, string> = {
   KJV: "King James Version",
   ASV: "American Standard Version",
@@ -331,7 +337,7 @@ export default function PassagePresenter({
     setPresentBook(r.book);
     setPresentChapter(r.chapter);
     setPresentVerse(r.verse);
-    setVersion(r.version);
+    setVersion(safeVersion(r.version));
     setQuery("");
     setSearchResults([]);
     setActiveTab("search");
@@ -342,7 +348,7 @@ export default function PassagePresenter({
     setPresentBook(entry.book);
     setPresentChapter(entry.chapter);
     setPresentVerse(entry.verse ?? null);
-    setVersion(entry.version);
+    setVersion(safeVersion(entry.version));
     setActivePlanId(entry.id);
   }, []);
 
@@ -490,7 +496,7 @@ export default function PassagePresenter({
                 {/* Version selector */}
                 <select
                   value={version}
-                  onChange={(e) => setVersion(e.target.value as BibleVersion)}
+                  onChange={(e) => setVersion(safeVersion(e.target.value))}
                   className="rounded-lg border border-gray-300 bg-white px-2 py-1.5 text-xs text-gray-700 outline-none focus:border-amber-400"
                   title={VERSION_LABELS[version]}
                 >
