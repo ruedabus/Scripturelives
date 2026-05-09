@@ -34,15 +34,15 @@ const BOOKS = [
   },
   {
     slug:        "coming-soon-1",
-    title:       "Coming Soon",
-    subtitle:    "Another Faith Tails Adventure",
+    title:       "Mav, Moony & the Mummy's Curse",
+    subtitle:    "Coming Soon — May 15, 2026",
     description: "Mav and Moony's next faith-filled adventure is on its way. Subscribe to Faith Tails on YouTube to be the first to know!",
     scripture:   "",
     ages:        "Ages 4–12",
     pages:       "",
     theme:       "",
     coverEmoji:  "📖",
-    coverImage:  "",
+    coverImage:  "/ebook2-thumbnail.png",
     coverBg:     "linear-gradient(135deg, #1a2640 0%, #2d3f5e 100%)",
     accentColor: "#C9952A",
     downloadUrl: "",
@@ -90,12 +90,24 @@ function BookCard({ book }: { book: (typeof BOOKS)[number] }) {
         )}
 
         {book.coverImage ? (
-          <img
-            src={book.coverImage}
-            alt={book.title}
-            className="w-full h-full"
-            style={{ objectFit: "cover", objectPosition: "center top", display: "block" }}
-          />
+          <div className="relative w-full h-full">
+            <img
+              src={book.coverImage}
+              alt={book.title}
+              className="w-full h-full"
+              style={{ objectFit: "cover", objectPosition: "center top", display: "block" }}
+            />
+            {/* Coming soon overlay with date */}
+            {!book.downloadUrl && (
+              <div
+                className="absolute inset-x-0 bottom-0 flex flex-col items-center justify-center py-3"
+                style={{ background: "linear-gradient(to top, rgba(0,0,0,0.82) 0%, transparent 100%)" }}
+              >
+                <span className="text-white font-black text-sm tracking-wide">Coming Soon</span>
+                <span className="text-xs font-semibold mt-0.5" style={{ color: GOLD }}>May 15, 2026</span>
+              </div>
+            )}
+          </div>
         ) : (
           <>
             <span style={{ fontSize: 72, lineHeight: 1 }}>{book.coverEmoji}</span>
