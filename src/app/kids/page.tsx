@@ -164,14 +164,32 @@ function BookCard({ book }: { book: (typeof BOOKS)[number] }) {
               <span>🔔</span> Subscribe to be notified
             </a>
           ) : (
-            <a
-              href={book.downloadUrl}
-              download
-              className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-bold text-white transition hover:opacity-90 active:scale-95"
-              style={{ background: `linear-gradient(135deg, ${GOLD}, #e6a830)` }}
-            >
-              <span>📥</span> Read Free eBook
-            </a>
+            <div className="flex gap-2">
+              {/* Read Online — opens PDF in browser tab */}
+              <a
+                href={book.downloadUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex flex-1 items-center justify-center gap-1.5 py-3 rounded-xl text-sm font-bold text-white transition hover:opacity-90 active:scale-95"
+                style={{ background: `linear-gradient(135deg, ${GOLD}, #e6a830)` }}
+              >
+                <span>📖</span> Read
+              </a>
+              {/* Download — saves the file */}
+              <a
+                href={book.downloadUrl}
+                download
+                className="flex items-center justify-center gap-1.5 px-4 py-3 rounded-xl text-sm font-bold transition hover:opacity-90 active:scale-95"
+                style={{
+                  background: "rgba(201,149,42,0.1)",
+                  color: GOLD,
+                  border: `1px solid rgba(201,149,42,0.35)`,
+                }}
+                title="Download eBook"
+              >
+                <span>📥</span>
+              </a>
+            </div>
           )}
         </div>
       </div>
