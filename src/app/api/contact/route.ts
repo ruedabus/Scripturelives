@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 
-const TO_EMAIL   = "info@scripturelives.com";
-const FROM_EMAIL = "contact@scripturelives.com"; // must be a verified Resend sender domain
+const TO_EMAIL   = process.env.EMAIL_TO   || "ruedabus1@yahoo.com";
+const FROM_EMAIL = process.env.EMAIL_FROM || "contact@scripturelives.com";
 const RESEND_URL = "https://api.resend.com/emails";
 
 export async function POST(req: NextRequest) {
