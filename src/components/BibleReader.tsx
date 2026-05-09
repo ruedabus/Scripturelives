@@ -2829,6 +2829,27 @@ export default function BibleReader() {
               <span>Prayer Wall</span>
               <span className="ml-auto text-[10px] font-bold" style={{ color: "#C9952A" }}>New</span>
             </a>
+            <a
+              href="/kids"
+              className="flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium text-gray-600 hover:bg-amber-50 hover:text-amber-700 transition-colors"
+            >
+              <span className="text-sm leading-none">🐾</span>
+              <span>Faith Tails Kids</span>
+              <span className="ml-auto text-[10px] font-bold" style={{ color: "#C9952A" }}>New</span>
+            </a>
+            <a
+              href="https://www.youtube.com/@FaithTails"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium text-gray-600 hover:bg-amber-50 hover:text-amber-700 transition-colors"
+            >
+              <span className="shrink-0 flex items-center justify-center w-5 h-5 rounded bg-[#FF0000]">
+                <svg viewBox="0 0 24 24" className="w-3 h-3 fill-white" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                </svg>
+              </span>
+              <span>Faith Tails on YouTube</span>
+            </a>
           </div>
 
           {/* My Library */}
