@@ -53,8 +53,8 @@ function memId() {
 }
 
 // ── Resend email ──────────────────────────────────────────────────────────────
-const TO_EMAIL   = "ruedabus1@yahoo.com";
-const FROM_EMAIL = "prayer@scripturelives.com";
+const TO_EMAIL   = process.env.EMAIL_TO || "info@scripturelives.com";
+const FROM_EMAIL = process.env.EMAIL_FROM || "prayer@scripturelives.com";
 const RESEND_URL = "https://api.resend.com/emails";
 
 async function sendPrayerEmail(data: {

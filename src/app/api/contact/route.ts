@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 
-const TO_EMAIL   = process.env.EMAIL_TO   || "ruedabus1@yahoo.com";
+const TO_EMAIL   = process.env.EMAIL_TO   || "info@scripturelives.com";
 const FROM_EMAIL = process.env.EMAIL_FROM || "contact@scripturelives.com";
 const RESEND_URL = "https://api.resend.com/emails";
 
