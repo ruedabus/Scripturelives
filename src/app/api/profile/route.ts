@@ -7,8 +7,12 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { getAuthUser, getProfile, getProfileByUsername, upsertProfile, getMatchHistory } from "@/lib/auth";
+import { rateLimit, getClientIp } from "@/lib/rateLimit";
 
 export async function GET(req: NextRequest) {
+  const rl = rateLimit(getClientIp(req), { limit: 30, windowMs: 60_000 });
+  if (!rl.allowed) return NextResponse.json({ error: "Too many requests." }, { status: 429 });
+
   try {
     const { searchParams } = new URL(req.url);
     const id          = searchParams.get("id");
@@ -37,7 +41,8 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ error: "Missing id or username" }, { status: 400 });
   } catch (e) {
-    return NextResponse.json({ error: String(e) }, { status: 500 });
+    console.error("[profile]", e);
+    return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
   }
 }
 
@@ -68,6 +73,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(profile);
   } catch (e) {
-    return NextResponse.json({ error: String(e) }, { status: 500 });
+    console.error("[profile]", e);
+    return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
   }
 }

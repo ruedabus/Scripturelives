@@ -5,8 +5,12 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { getLeaderboard, getChurchLeaderboard } from "@/lib/auth";
+import { rateLimit, getClientIp } from "@/lib/rateLimit";
 
 export async function GET(req: NextRequest) {
+  const rl = rateLimit(getClientIp(req), { limit: 30, windowMs: 60_000 });
+  if (!rl.allowed) return NextResponse.json({ error: "Too many requests." }, { status: 429 });
+
   try {
     const { searchParams } = new URL(req.url);
     const type   = searchParams.get("type") ?? "global";
@@ -21,6 +25,7 @@ export async function GET(req: NextRequest) {
     const data = await getLeaderboard(limit, offset);
     return NextResponse.json(data, { headers: { "Cache-Control": "no-store" } });
   } catch (e) {
-    return NextResponse.json({ error: String(e) }, { status: 500 });
+    console.error("[leaderboard]", e);
+    return NextResponse.json({ error: "Something went wrong. Please try again." }, { status: 500 });
   }
 }
