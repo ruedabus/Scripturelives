@@ -186,7 +186,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Fire-and-forget email
-    sendPrayerEmail({ name, email, message, isPublic });
+    await sendPrayerEmail({ name, email, message, isPublic });
 
     return NextResponse.json({ success: true });
   } catch (e) {

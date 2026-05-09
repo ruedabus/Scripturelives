@@ -179,9 +179,11 @@ export async function POST(req: NextRequest) {
       memEmails.add(email);
     }
 
-    // Fire-and-forget: welcome email to subscriber + admin notification
-    sendConfirmation(name, email);
-    sendAdminNotification(name, email);
+    // Await both emails so Vercel doesn't shut down before they complete
+    await Promise.all([
+      sendConfirmation(name, email),
+      sendAdminNotification(name, email),
+    ]);
 
     return NextResponse.json({ success: true });
   } catch (e) {
