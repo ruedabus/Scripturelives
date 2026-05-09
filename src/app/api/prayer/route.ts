@@ -73,7 +73,7 @@ async function sendPrayerEmail(data: {
     method: "POST",
     headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
     body: JSON.stringify({
-      from:    `Scripture Lives Prayer Wall <${FROM_EMAIL}>`,
+      from:    "Scripture Lives — Prayer Wall <prayer@scripturelives.com>",
       to:      [TO_EMAIL],
       replyTo: data.email?.trim() || undefined,
       subject: `🙏 New Prayer Request from ${displayName} — Scripture Lives`,

@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 
-const TO_EMAIL   = process.env.EMAIL_TO   || "info@scripturelives.com";
-const FROM_EMAIL = process.env.EMAIL_FROM || "contact@scripturelives.com";
+const TO_EMAIL   = process.env.EMAIL_TO || "info@scripturelives.com";
+const FROM_EMAIL = "contact@scripturelives.com";
 const RESEND_URL = "https://api.resend.com/emails";
 
 export async function POST(req: NextRequest) {
@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
         "Content-Type":  "application/json",
       },
       body: JSON.stringify({
-        from:    `Scripture Lives Contact <${FROM_EMAIL}>`,
+        from:    "Scripture Lives — Contact Form <contact@scripturelives.com>",
         to:      [TO_EMAIL],
         replyTo: email.trim(),
         subject: `New message from ${name.trim()} — Scripture Lives`,

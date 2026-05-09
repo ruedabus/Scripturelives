@@ -55,7 +55,7 @@ async function sendConfirmation(name: string | null, email: string) {
     method: "POST",
     headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
     body: JSON.stringify({
-      from:    `Scripture Lives <${FROM_EMAIL}>`,
+      from:    "Scripture Lives — Devotionals <devotionals@scripturelives.com>",
       to:      [email],
       subject: "You're subscribed to Daily Devotionals 📖",
       html: `
@@ -108,7 +108,7 @@ async function sendAdminNotification(name: string | null, email: string) {
     method: "POST",
     headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
     body: JSON.stringify({
-      from:    `Scripture Lives <${FROM_EMAIL}>`,
+      from:    "Scripture Lives — Devotionals <devotionals@scripturelives.com>",
       to:      [ADMIN_EMAIL],
       subject: `📬 New Devotional Subscriber — ${displayName}`,
       html: `
