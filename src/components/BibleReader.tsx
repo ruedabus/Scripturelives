@@ -887,6 +887,15 @@ export default function BibleReader() {
                 <span className="ml-auto text-[10px] font-bold" style={{ color: "#C9952A" }}>New</span>
               </a>
               <a
+                href="/kids"
+                className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium hover:bg-amber-50 transition-colors"
+                style={{ color: "#374151" }}
+              >
+                <span className="text-sm leading-none">🐾</span>
+                <span>Faith Tails Kids</span>
+                <span className="ml-auto text-[10px] font-bold" style={{ color: "#C9952A" }}>New</span>
+              </a>
+              <a
                 href="/prayer"
                 className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium hover:bg-amber-50 transition-colors"
                 style={{ color: "#374151" }}
