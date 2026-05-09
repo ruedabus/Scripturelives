@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import ThemeSongPlayer from "@/components/ThemeSongPlayer";
 
 export const metadata: Metadata = {
   title: "Faith Tails Kids | Scripture Lives",
@@ -314,6 +315,11 @@ export default function KidsPage() {
           </div>
         </div>
       </section>
+
+      {/* ── Theme Song Player ─────────────────────────────────────────────────── */}
+      <div style={{ background: NAVY, marginTop: -1 }}>
+        <ThemeSongPlayer />
+      </div>
 
       {/* ── YouTube Feature ───────────────────────────────────────────────────── */}
       <section className="max-w-4xl mx-auto w-full px-4 py-12">
