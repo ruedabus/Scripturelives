@@ -40,9 +40,10 @@ const g = globalThis as any;
 if (!g.__subMem) g.__subMem = new Set<string>();
 const memEmails: Set<string> = g.__subMem;
 
-// ── Resend confirmation email ─────────────────────────────────────────────────
-const FROM_EMAIL = "devotionals@scripturelives.com";
-const RESEND_URL = "https://api.resend.com/emails";
+// ── Resend emails ─────────────────────────────────────────────────────────────
+const FROM_EMAIL  = "devotionals@scripturelives.com";
+const ADMIN_EMAIL = process.env.EMAIL_TO || "info@scripturelives.com";
+const RESEND_URL  = "https://api.resend.com/emails";
 
 async function sendConfirmation(name: string | null, email: string) {
   const apiKey = process.env.RESEND_API_KEY;
@@ -99,6 +100,43 @@ async function sendConfirmation(name: string | null, email: string) {
   }).catch((err) => console.error("[subscribe] Resend error:", err));
 }
 
+async function sendAdminNotification(name: string | null, email: string) {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) return;
+  const displayName = name?.trim() || "Anonymous";
+  await fetch(RESEND_URL, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+    body: JSON.stringify({
+      from:    `Scripture Lives <${FROM_EMAIL}>`,
+      to:      [ADMIN_EMAIL],
+      subject: `📬 New Devotional Subscriber — ${displayName}`,
+      html: `
+        <div style="font-family:sans-serif;max-width:520px;margin:auto;padding:32px;background:#faf8f3;border-radius:12px;border:1px solid #ede8de">
+          <div style="text-align:center;margin-bottom:24px">
+            <p style="font-size:36px;margin:0">📬</p>
+            <h1 style="color:#1a2640;font-size:20px;margin:10px 0 4px">New Subscriber!</h1>
+            <p style="color:#C9952A;font-size:11px;letter-spacing:0.15em;text-transform:uppercase;margin:0">Scripture Lives — Daily Devotionals</p>
+          </div>
+          <table style="width:100%;border-collapse:collapse">
+            <tr>
+              <td style="padding:8px 0;color:#9ca3af;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;width:70px">Name</td>
+              <td style="padding:8px 0;color:#1a2640;font-weight:600">${displayName}</td>
+            </tr>
+            <tr>
+              <td style="padding:8px 0;color:#9ca3af;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em">Email</td>
+              <td style="padding:8px 0"><a href="mailto:${email}" style="color:#C9952A">${email}</a></td>
+            </tr>
+          </table>
+          <p style="color:#9ca3af;font-size:11px;text-align:center;margin-top:24px">
+            Received via scripturelives.com/devotionals
+          </p>
+        </div>
+      `,
+    }),
+  }).catch((err) => console.error("[subscribe] Admin notification error:", err));
+}
+
 // ── POST handler ──────────────────────────────────────────────────────────────
 export async function POST(req: NextRequest) {
   const ip = getClientIp(req);
@@ -141,8 +179,9 @@ export async function POST(req: NextRequest) {
       memEmails.add(email);
     }
 
-    // Fire-and-forget confirmation email
+    // Fire-and-forget: welcome email to subscriber + admin notification
     sendConfirmation(name, email);
+    sendAdminNotification(name, email);
 
     return NextResponse.json({ success: true });
   } catch (e) {
