@@ -156,7 +156,12 @@ export default function DevotionalsPage() {
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-4 py-12">
+      {/* ── Daily devotional signup — prominent, right below hero ── */}
+      <div className="max-w-2xl mx-auto px-4 py-10">
+        <DevotionalSignup variant="banner" />
+      </div>
+
+      <main className="max-w-6xl mx-auto px-4 pb-12">
 
         {/* ── Featured article (first / newest) ── */}
         {featured && (
@@ -206,11 +211,6 @@ export default function DevotionalsPage() {
           ))}
         </div>
       </main>
-
-      {/* ── Daily devotional signup ── */}
-      <div className="mt-12 max-w-2xl mx-auto px-2">
-        <DevotionalSignup variant="banner" />
-      </div>
 
       {/* ── Footer ── */}
       <footer className="bg-white px-5 py-8 text-center mt-4" style={{ borderTop: "1px solid #ede8de" }}>
