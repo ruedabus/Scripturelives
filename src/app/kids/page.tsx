@@ -25,6 +25,7 @@ const BOOKS = [
     pages:       "10 pages",
     theme:       "Courage & Faith",
     coverEmoji:  "🚀",
+    coverImage:  "/ebook1-thumbnail.png",
     coverBg:     "linear-gradient(135deg, #0f1f3d 0%, #1a3a6b 50%, #2d5a9e 100%)",
     accentColor: "#60a5fa",
     downloadUrl: "/books/mav-moony-moon-adventure.pdf",
@@ -40,6 +41,7 @@ const BOOKS = [
     pages:       "",
     theme:       "",
     coverEmoji:  "📖",
+    coverImage:  "",
     coverBg:     "linear-gradient(135deg, #1a2640 0%, #2d3f5e 100%)",
     accentColor: "#C9952A",
     downloadUrl: "",
@@ -69,13 +71,13 @@ function BookCard({ book }: { book: (typeof BOOKS)[number] }) {
     >
       {/* Cover */}
       <div
-        className="relative flex flex-col items-center justify-center"
-        style={{ background: book.coverBg, height: 220, padding: "2rem 1.5rem" }}
+        className="relative flex flex-col items-center justify-center overflow-hidden"
+        style={{ background: book.coverBg, height: book.coverImage ? 280 : 220, padding: book.coverImage ? 0 : "2rem 1.5rem" }}
       >
         {/* Badge */}
         {book.badge && (
           <span
-            className="absolute top-3 right-3 text-xs font-black px-2 py-1 rounded-full"
+            className="absolute top-3 right-3 z-10 text-xs font-black px-2 py-1 rounded-full"
             style={{
               background: book.badge === "NEW" ? "#22c55e" : "rgba(255,255,255,0.2)",
               color: book.badge === "NEW" ? "#fff" : "rgba(255,255,255,0.8)",
@@ -86,16 +88,27 @@ function BookCard({ book }: { book: (typeof BOOKS)[number] }) {
           </span>
         )}
 
-        <span style={{ fontSize: 72, lineHeight: 1 }}>{book.coverEmoji}</span>
-        <h3
-          className="text-center font-black mt-3 text-xl leading-tight"
-          style={{ color: book.accentColor }}
-        >
-          {book.title}
-        </h3>
-        <p className="text-center text-sm mt-1" style={{ color: "rgba(255,255,255,0.75)" }}>
-          {book.subtitle}
-        </p>
+        {book.coverImage ? (
+          <img
+            src={book.coverImage}
+            alt={book.title}
+            className="w-full h-full"
+            style={{ objectFit: "cover", objectPosition: "center top", display: "block" }}
+          />
+        ) : (
+          <>
+            <span style={{ fontSize: 72, lineHeight: 1 }}>{book.coverEmoji}</span>
+            <h3
+              className="text-center font-black mt-3 text-xl leading-tight"
+              style={{ color: book.accentColor }}
+            >
+              {book.title}
+            </h3>
+            <p className="text-center text-sm mt-1" style={{ color: "rgba(255,255,255,0.75)" }}>
+              {book.subtitle}
+            </p>
+          </>
+        )}
       </div>
 
       {/* Info */}
