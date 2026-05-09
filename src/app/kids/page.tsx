@@ -237,18 +237,11 @@ export default function KidsPage() {
 
         <div className="relative z-10 max-w-2xl mx-auto text-center flex flex-col items-center gap-4">
           {/* Logo / Brand */}
-          <div
-            className="flex items-center justify-center rounded-2xl"
-            style={{
-              width: 80,
-              height: 80,
-              background: "rgba(255,255,255,0.08)",
-              border: "1px solid rgba(255,255,255,0.15)",
-              fontSize: 42,
-            }}
-          >
-            🐾
-          </div>
+          <img
+            src="/FT_logo.png"
+            alt="Faith Tails logo"
+            style={{ width: 100, height: 100, objectFit: "contain", borderRadius: 20 }}
+          />
 
           <div>
             <h1 className="text-4xl font-black text-white" style={{ letterSpacing: "-0.02em" }}>
@@ -320,45 +313,40 @@ export default function KidsPage() {
             />
           </div>
         ) : (
-          /* Channel card when no video ID set */
+          /* Channel banner poster when no video ID set */
           <a
             href={CHANNEL_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex flex-col items-center justify-center gap-4 rounded-2xl p-10 transition hover:opacity-90"
+            className="relative block rounded-2xl overflow-hidden transition hover:opacity-90 group"
             style={{
-              background: `linear-gradient(135deg, ${NAVY} 0%, #0f3460 100%)`,
-              boxShadow: "0 8px 32px rgba(0,0,0,0.15)",
-              border: "1px solid rgba(201,149,42,0.3)",
+              boxShadow: "0 8px 32px rgba(0,0,0,0.2)",
               textDecoration: "none",
             }}
           >
-            {/* YouTube play button */}
+            <img
+              src="/FT-poster.png"
+              alt="Faith Tails — Watch on YouTube"
+              className="w-full block"
+              style={{ display: "block", maxHeight: 420, objectFit: "cover", objectPosition: "center top" }}
+            />
+            {/* Play button overlay */}
             <div
-              className="flex items-center justify-center rounded-2xl"
-              style={{
-                width: 80,
-                height: 80,
-                background: "#ff0000",
-                boxShadow: "0 4px 20px rgba(255,0,0,0.4)",
-              }}
+              className="absolute inset-0 flex flex-col items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity"
+              style={{ background: "rgba(0,0,0,0.45)" }}
             >
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
-                <polygon points="9.75,15.02 15.5,12 9.75,8.98" />
-              </svg>
+              <div
+                className="flex items-center justify-center rounded-full"
+                style={{ width: 72, height: 72, background: "#ff0000", boxShadow: "0 4px 24px rgba(255,0,0,0.5)" }}
+              >
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="white">
+                  <polygon points="9.75,15.02 15.5,12 9.75,8.98" />
+                </svg>
+              </div>
+              <span className="text-white font-bold text-sm px-5 py-2 rounded-xl" style={{ background: "#ff0000" }}>
+                Visit Our Channel →
+              </span>
             </div>
-            <div className="text-center">
-              <p className="text-xl font-black text-white">Faith Tails</p>
-              <p className="text-sm mt-1" style={{ color: "rgba(255,255,255,0.65)" }}>
-                {CHANNEL_HANDLE} on YouTube
-              </p>
-            </div>
-            <span
-              className="px-5 py-2.5 rounded-xl font-bold text-white text-sm"
-              style={{ background: "#ff0000" }}
-            >
-              Visit Our Channel →
-            </span>
           </a>
         )}
 
