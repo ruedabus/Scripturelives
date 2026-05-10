@@ -1262,7 +1262,7 @@ export default function BibleReader() {
                         backgroundImage: "url('/law-prophets.png')",
                         backgroundSize: "cover",
                         backgroundPosition: "center",
-                        opacity: 0.07,
+                        opacity: 0.13,
                       }}
                     />
                     <div className="relative z-10">
@@ -1308,7 +1308,7 @@ export default function BibleReader() {
                         backgroundImage: "url('/grace.png')",
                         backgroundSize: "cover",
                         backgroundPosition: "center",
-                        opacity: 0.07,
+                        opacity: 0.13,
                       }}
                     />
                     <div className="relative z-10">
