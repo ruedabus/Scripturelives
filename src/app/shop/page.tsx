@@ -26,7 +26,7 @@ const PRODUCTS = [
     name: "Faith Tails — Mav & Moony Tee",
     description: "Mav and Moony suited up and ready for adventure. Perfect for kids and families.",
     price: "From $24.99",
-    image: "/FT-T-shirtfront.png",
+    image: "/FT-Tshirtfront.png",
     badge: "FAN FAVORITE",
     colors: ["#ffffff"],
     href: STORE_URL,
