@@ -28,7 +28,7 @@ const PRODUCTS = [
     price: "From $24.50",
     image: "/FT-Tshirtfront.png",
     badge: "FAN FAVORITE",
-    colors: ["#ffffff"],
+    colors: ["#1c1c1c", "#2c2c2c", "#1f3a5c", "#6b6b52", "#808080", "#c0c0c0", "#f5f5f5"],
     href: STORE_URL,
   },
 ];
