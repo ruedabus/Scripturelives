@@ -1254,7 +1254,18 @@ export default function BibleReader() {
                 <div className="grid gap-8 lg:grid-cols-2">
 
                   {/* Old Testament */}
-                  <div>
+                  <div className="relative overflow-hidden rounded-2xl p-5" style={{ background: "rgba(250,248,243,0.6)" }}>
+                    {/* Faint watermark */}
+                    <div
+                      className="pointer-events-none absolute inset-0 rounded-2xl"
+                      style={{
+                        backgroundImage: "url('/law-prophets.png')",
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                        opacity: 0.07,
+                      }}
+                    />
+                    <div className="relative z-10">
                     <div className="mb-5 flex items-center gap-3">
                       <div className="h-0.5 w-5 rounded-full" style={{ background: "#C9952A" }} />
                       <h2 className="text-xs font-black uppercase tracking-widest" style={{ color: "#1a2640" }}>Old Testament</h2>
@@ -1285,10 +1296,22 @@ export default function BibleReader() {
                         </div>
                       ))}
                     </div>
+                    </div> {/* end relative z-10 */}
                   </div>
 
                   {/* New Testament */}
-                  <div>
+                  <div className="relative overflow-hidden rounded-2xl p-5" style={{ background: "rgba(250,248,243,0.6)" }}>
+                    {/* Faint watermark */}
+                    <div
+                      className="pointer-events-none absolute inset-0 rounded-2xl"
+                      style={{
+                        backgroundImage: "url('/grace.png')",
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                        opacity: 0.07,
+                      }}
+                    />
+                    <div className="relative z-10">
                     <div className="mb-5 flex items-center gap-3">
                       <div className="h-0.5 w-5 rounded-full" style={{ background: "#1a2640" }} />
                       <h2 className="text-xs font-black uppercase tracking-widest" style={{ color: "#1a2640" }}>New Testament</h2>
@@ -1319,6 +1342,7 @@ export default function BibleReader() {
                         </div>
                       ))}
                     </div>
+                    </div> {/* end relative z-10 */}
                   </div>
 
                 </div>
