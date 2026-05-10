@@ -904,6 +904,15 @@ export default function BibleReader() {
                 <span>Prayer Wall</span>
                 <span className="ml-auto text-[10px] font-bold" style={{ color: "#C9952A" }}>New</span>
               </a>
+              <a
+                href="/shop"
+                className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium hover:bg-amber-50 transition-colors"
+                style={{ color: "#374151" }}
+              >
+                <span className="text-sm leading-none">👕</span>
+                <span>Shop</span>
+                <span className="ml-auto text-[10px] font-bold" style={{ color: "#C9952A" }}>New</span>
+              </a>
             </div>
           </div>
 
@@ -2859,6 +2868,14 @@ export default function BibleReader() {
             >
               <span className="text-sm leading-none">🐾</span>
               <span>Faith Tails Kids</span>
+              <span className="ml-auto text-[10px] font-bold" style={{ color: "#C9952A" }}>New</span>
+            </a>
+            <a
+              href="/shop"
+              className="flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium text-gray-600 hover:bg-amber-50 hover:text-amber-700 transition-colors"
+            >
+              <span className="text-sm leading-none">👕</span>
+              <span>Shop</span>
               <span className="ml-auto text-[10px] font-bold" style={{ color: "#C9952A" }}>New</span>
             </a>
             <a
