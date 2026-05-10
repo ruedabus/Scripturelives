@@ -464,7 +464,7 @@ export default function KidsPage() {
 
       {/* ── Footer ───────────────────────────────────────────────────────────── */}
       <footer
-        className="py-6 px-4 text-center text-xs"
+        className="py-8 px-4 text-center text-xs"
         style={{ color: "#9ca3af", borderTop: "1px solid #ede8de" }}
       >
         <p>
@@ -481,6 +481,14 @@ export default function KidsPage() {
             style={{ color: GOLD }}
           >
             {CHANNEL_HANDLE}
+          </a>
+        </p>
+        <p className="mt-3" style={{ color: "#c0b89a", fontSize: "0.65rem", letterSpacing: "0.04em" }}>
+          © 2026 Faith Tails. Mav and Moony are original characters of Faith Tails. All rights reserved.
+          <br />
+          Unauthorized reproduction or use of Faith Tails characters, stories, or music is prohibited.{" "}
+          <a href="mailto:info@scripturelives.com" className="underline hover:opacity-70" style={{ color: GOLD }}>
+            info@scripturelives.com
           </a>
         </p>
       </footer>
