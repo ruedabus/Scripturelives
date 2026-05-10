@@ -18,7 +18,7 @@ const PRODUCTS = [
     price: "From $29.99",
     image: "/scan-me-tshirt-frontv2-qr.png",
     badge: "NEW",
-    colors: ["#1c1c1c", "#505050", "#f5f5f5"],
+    colors: ["#1a1a1a", "#2c2c2c", "#1f3356", "#5c5840", "#707070", "#b0b0b0", "#f5f5f5"],
     href: STORE_URL,
   },
   {
@@ -178,13 +178,16 @@ function ProductCard({ product }: {
         </p>
 
         {/* Color swatches */}
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <span className="text-xs" style={{ color: "#9a8f80" }}>Colors:</span>
           {product.colors.map((c, i) => (
             <div
               key={i}
-              className="w-5 h-5 rounded-full border-2"
-              style={{ background: c, borderColor: GOLD }}
+              className="w-5 h-5 rounded-full border-2 flex-shrink-0"
+              style={{
+                background: c,
+                borderColor: c === "#f5f5f5" ? "#cccccc" : GOLD,
+              }}
             />
           ))}
         </div>
