@@ -171,10 +171,9 @@ export default function GospelPage() {
           <NextStep
             icon="⛪"
             title="Find a Church"
-            desc="Connect with a local Bible-believing church near you."
-            href="https://www.churchfinder.com"
-            label="Find a Church"
-            external
+            desc="Enter your zip code to find a Bible-believing church near you."
+            href="/find-a-church"
+            label="Search by Zip"
           />
         </div>
       </section>
