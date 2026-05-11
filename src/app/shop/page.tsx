@@ -43,6 +43,16 @@ const PRODUCTS = [
     imageBg: "#ffffff",
   },
   {
+    id: 5,
+    name: "Boricua for Jesus — Puerto Rican Pride Christian Tee",
+    description: "Represent your roots and your faith. Bold Puerto Rican character draped in the flag — for the Christian who's proud of where they come from and who they belong to.",
+    price: "From $24.50",
+    image: "/Boriqua-Tee-front.png",
+    badge: "NEW",
+    colors: ["#1c1c1c", "#2c2c2c", "#1f3a5c", "#6b6b52", "#808080", "#c0c0c0", "#f5f5f5"],
+    href: STORE_URL,
+  },
+  {
     id: 2,
     name: "Faith Tails — Mav & Moony Tee",
     description: "Mav and Moony suited up and ready for adventure. Perfect for kids and families.",
