@@ -32,6 +32,16 @@ const PRODUCTS = [
     href: STORE_URL,
   },
   {
+    id: 4,
+    name: "Be Ready to Give an Answer — Scripture Lives Dad Hat",
+    description: "Premium gold embroidery on black. Inspired by 1 Peter 3:15 — wear your faith everywhere you go.",
+    price: "$27.99",
+    image: "/SL-Hat-logo-printful.png",
+    badge: "NEW",
+    colors: ["#1c1c1c", "#f5f5f5"],
+    href: STORE_URL,
+  },
+  {
     id: 2,
     name: "Faith Tails — Mav & Moony Tee",
     description: "Mav and Moony suited up and ready for adventure. Perfect for kids and families.",
