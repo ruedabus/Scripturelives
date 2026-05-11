@@ -146,7 +146,7 @@ export default function GospelPage() {
         >
           What's Next
         </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <NextStep
             icon="📖"
             title="Read the Bible"
@@ -167,6 +167,14 @@ export default function GospelPage() {
             desc="Short daily encouragements delivered to your inbox."
             href="/devotionals"
             label="Sign Up Free"
+          />
+          <NextStep
+            icon="⛪"
+            title="Find a Church"
+            desc="Connect with a local Bible-believing church near you."
+            href="https://www.churchfinder.com"
+            label="Find a Church"
+            external
           />
         </div>
       </section>
@@ -254,12 +262,14 @@ function NextStep({
   desc,
   href,
   label,
+  external,
 }: {
   icon: string;
   title: string;
   desc: string;
   href: string;
   label: string;
+  external?: boolean;
 }) {
   return (
     <div
@@ -269,13 +279,25 @@ function NextStep({
       <span className="text-3xl">{icon}</span>
       <h4 className="font-black text-sm" style={{ color: NAVY }}>{title}</h4>
       <p className="text-xs leading-relaxed" style={{ color: "#7a6f60" }}>{desc}</p>
-      <Link
-        href={href}
-        className="mt-auto py-2 px-4 rounded-xl text-xs font-bold transition hover:opacity-90"
-        style={{ background: NAVY, color: "white" }}
-      >
-        {label}
-      </Link>
+      {external ? (
+        <a
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-auto py-2 px-4 rounded-xl text-xs font-bold transition hover:opacity-90"
+          style={{ background: NAVY, color: "white" }}
+        >
+          {label}
+        </a>
+      ) : (
+        <Link
+          href={href}
+          className="mt-auto py-2 px-4 rounded-xl text-xs font-bold transition hover:opacity-90"
+          style={{ background: NAVY, color: "white" }}
+        >
+          {label}
+        </Link>
+      )}
     </div>
   );
 }
