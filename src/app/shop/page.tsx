@@ -43,6 +43,17 @@ const PRODUCTS = [
     imageBg: "#ffffff",
   },
   {
+    id: 7,
+    name: "Faith Tails — Mav & Moony Discover the Earth Isn't Flat Tee",
+    description: "Detective Mav is on the case — and the verdict is in. NOT TRUE! A bold, fun Faith Tails graphic tee for kids and families who love adventure, truth, and a good laugh.",
+    price: "From $24.50",
+    image: "/FT-flatearth-tee.png",
+    badge: "FAN FAVORITE",
+    colors: ["#1c1c1c", "#2c2c2c", "#1f3a5c", "#6b6b52", "#808080", "#c0c0c0", "#f5f5f5"],
+    href: STORE_URL,
+    imageBg: "#ffffff",
+  },
+  {
     id: 6,
     name: "got Him? — Gospel QR Code Christian Tee",
     description: "Bold, minimal, and designed to start conversations. The front asks the question — the QR code gives the answer. One scan leads straight to the Gospel.",
