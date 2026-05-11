@@ -18,6 +18,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Scripture Lives",
   description: "Explore the Bible through passages, maps, journeys, lexicons, timelines, and study tools.",
+  verification: {
+    google: "dc71670d4075c41d",
+  },
 };
 
 export default function RootLayout({
