@@ -25,7 +25,7 @@ const PRODUCTS = [
     id: 3,
     name: "Don't Let Anyone Mislead You — Scripture Lives Tee",
     description: "Bold front graphic straight from Matthew 24:4. Back says 'Be ready to give an answer.' For the Christian who stands on the Word.",
-    price: "From $29.99",
+    price: "From $24.50",
     image: "/UFO-Tee-front.png",
     badge: "BOLD STATEMENT",
     colors: ["#1c1c1c", "#2c2c2c", "#1f3a5c", "#6b6b52", "#808080", "#c0c0c0", "#f5f5f5"],
