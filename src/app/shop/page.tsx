@@ -40,6 +40,7 @@ const PRODUCTS = [
     badge: "NEW",
     colors: ["#1c1c1c", "#f5f5f5"],
     href: STORE_URL,
+    imageBg: "#ffffff",
   },
   {
     id: 2,
@@ -164,6 +165,7 @@ function ProductCard({ product }: {
     badge: string;
     colors: string[];
     href: string;
+    imageBg?: string;
   }
 }) {
   return (
@@ -172,7 +174,7 @@ function ProductCard({ product }: {
       style={{ background: "white", boxShadow: "0 4px 24px rgba(0,0,0,0.08)" }}
     >
       {/* Image */}
-      <div className="relative w-full" style={{ background: "#1c1c1c", aspectRatio: "4/5" }}>
+      <div className="relative w-full" style={{ background: product.imageBg ?? "#1c1c1c", aspectRatio: "4/5" }}>
         <Image
           src={product.image}
           alt={product.name}
