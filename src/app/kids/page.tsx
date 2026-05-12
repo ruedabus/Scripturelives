@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import ThemeSongPlayer from "@/components/ThemeSongPlayer";
+import BiblePuzzle from "@/components/BiblePuzzle";
 
 export const metadata: Metadata = {
   title: "Faith Tails Kids | Scripture Lives",
@@ -435,6 +436,20 @@ export default function KidsPage() {
           {BOOKS.map((book) => (
             <BookCard key={book.slug} book={book} />
           ))}
+        </div>
+      </section>
+
+      {/* ── Puzzle Game ───────────────────────────────────────────────────────── */}
+      <section className="max-w-2xl mx-auto w-full px-4 pb-16">
+        <div className="flex flex-col items-center gap-2 text-center mb-6">
+          <span style={{ fontSize: 32 }}>🧩</span>
+          <h2 className="text-2xl font-black" style={{ color: NAVY }}>Mav & Moony Puzzle</h2>
+          <p className="text-sm max-w-sm" style={{ color: "#6b7280" }}>
+            Put the puzzle together! Pick a picture, choose your difficulty, and solve it piece by piece.
+          </p>
+        </div>
+        <div className="rounded-3xl overflow-hidden" style={{ background: "white", boxShadow: "0 4px 24px rgba(0,0,0,0.10)", border: "1px solid rgba(201,149,42,0.15)" }}>
+          <BiblePuzzle />
         </div>
       </section>
 

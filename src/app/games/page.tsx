@@ -4,18 +4,16 @@ import Link from "next/link";
 import { useState } from "react";
 import BibleWordle from "@/components/BibleWordle";
 import BibleWordSearch from "@/components/BibleWordSearch";
-import BiblePuzzle from "@/components/BiblePuzzle";
 
 const GOLD  = "#C9952A";
 const NAVY  = "#1a2640";
 const CREAM = "#faf8f3";
 
-type Tab = "wordle" | "wordsearch" | "puzzle";
+type Tab = "wordle" | "wordsearch";
 
 const TABS: { id: Tab; label: string; emoji: string }[] = [
   { id: "wordle",     label: "Bible Wordle",  emoji: "✝️" },
   { id: "wordsearch", label: "Word Search",   emoji: "🔠" },
-  { id: "puzzle",     label: "Mav & Moony Puzzle", emoji: "🧩" },
 ];
 
 export default function GamesPage() {
@@ -84,7 +82,6 @@ export default function GamesPage() {
       <main className="flex-1">
         {tab === "wordle"     && <BibleWordle />}
         {tab === "wordsearch" && <BibleWordSearch />}
-        {tab === "puzzle" && <BiblePuzzle />}
       </main>
 
       {/* ── Footer ──────────────────────────────────────────────────────────── */}
