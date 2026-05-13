@@ -75,6 +75,28 @@ const PRODUCTS = [
     href: STORE_URL,
   },
   {
+    id: 8,
+    name: "Disclosure… Not a New Idea — Christian Statement Tee",
+    description: "The truth has always been out there — you just have to open the right book. This bold statement tee puts the world's greatest disclosure front and center: the Holy Bible. For anyone who knows the real reveal happened 2,000 years ago.",
+    price: "From $24.50",
+    image: "/Disclosure-tee.png",
+    badge: "NEW",
+    colors: ["#1c1c1c", "#2c2c2c", "#1f3a5c", "#6b6b52", "#808080", "#c0c0c0", "#f5f5f5"],
+    href: STORE_URL,
+    imageBg: "#ffffff",
+  },
+  {
+    id: 9,
+    name: "Faith Tails Salutes America — 250 Years Limited Edition",
+    description: "Mav and Moony saddle up on stars-and-stripes motorcycles to salute 250 years of America. A bold, patriotic Faith Tails collector's tee — limited time only. Once it's gone, it's gone!",
+    price: "From $24.50",
+    image: "/FT-america250-tee.png",
+    badge: "LIMITED",
+    colors: ["#1c1c1c", "#2c2c2c", "#1f3a5c", "#6b6b52", "#808080", "#c0c0c0", "#f5f5f5"],
+    href: STORE_URL,
+    imageBg: "#ffffff",
+  },
+  {
     id: 2,
     name: "Faith Tails — Mav & Moony Tee",
     description: "Mav and Moony suited up and ready for adventure. Perfect for kids and families.",
@@ -216,7 +238,11 @@ function ProductCard({ product }: {
         {/* Badge */}
         <div
           className="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest"
-          style={{ background: GOLD, color: NAVY }}
+          style={
+            product.badge === "LIMITED"
+              ? { background: "#cc2222", color: "#ffffff" }
+              : { background: GOLD, color: NAVY }
+          }
         >
           {product.badge}
         </div>
