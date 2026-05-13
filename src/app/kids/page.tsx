@@ -37,7 +37,7 @@ const BOOKS = [
     slug:        "lions-den",
     title:       "Mav, Moony & the Lion's Den",
     subtitle:    "Standing Firm — Based on Daniel 6",
-    description: "Grandpa Martinez leads Mav and Moony deep into ancient Persia, where a brave man named Daniel refuses to stop praying — even when the king's lions are waiting. A story about courage, prayer, and trusting God when it gets scary.",
+    description: "When Grandpa Martinez is thrown into the lion's den for refusing to stop praying, it's up to Mav and Moony to trust God — even when things look impossible. A story about courage, prayer, and never giving up on faith.",
     scripture:   "Daniel 6:22",
     ages:        "Ages 4–12",
     pages:       "15 pages",
