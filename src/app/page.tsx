@@ -95,14 +95,14 @@ export default function WelcomePage() {
             alt=""
             aria-hidden="true"
             className="w-full h-full object-cover object-center"
-            style={{ opacity: 0.18 }}
+            style={{ opacity: 0.35 }}
           />
         </div>
         {/* Gradient overlay — heavier on left so text stays readable */}
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
-            background: `linear-gradient(to right, ${NAVY}f0 0%, ${NAVY}99 50%, ${NAVY}55 100%)`,
+            background: `linear-gradient(to right, ${NAVY}dd 0%, ${NAVY}88 50%, ${NAVY}44 100%)`,
           }}
         />
 
