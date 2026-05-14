@@ -4,9 +4,9 @@ import ThemeSongPlayer from "@/components/ThemeSongPlayer";
 import BiblePuzzle from "@/components/BiblePuzzle";
 
 export const metadata: Metadata = {
-  title: "Faith Tails Kids | Scripture Lives",
+  title: "Faith Tails Niños | Scripture Lives",
   description:
-    "Faith Tails — fun, faith-filled adventure stories and videos for kids! Follow Mav and Moony as they discover the Bible through exciting journeys. Watch on YouTube and read free ebooks.",
+    "Faith Tails — ¡historias de aventura llenas de fe para niños! Acompaña a Mav y Moony mientras descubren la Biblia a través de emocionantes aventuras. Mira en YouTube y lee ebooks gratis.",
 };
 
 // ── Design tokens ──────────────────────────────────────────────────────────────
@@ -14,48 +14,45 @@ const GOLD   = "#C9952A";
 const NAVY   = "#1a2640";
 const CREAM  = "#faf8f3";
 
-// ── Book library data ──────────────────────────────────────────────────────────
-// To add a new book: add an entry here. coverEmoji is shown when no image is available.
+// ── Book library data (Spanish) ────────────────────────────────────────────────
 const BOOKS = [
   {
     slug:        "moon-adventure",
-    title:       "Mission Moonrock",
-    subtitle:    "Mav, Moony & the Moon Giant",
-    description: "When a giant alien threatens the moon, it's up to the smallest member of the crew — Moony — to save the day. Based on the story of David and Goliath.",
+    title:       "Misión Piedra Lunar",
+    subtitle:    "Mav, Moony y el Gigante de la Luna",
+    description: "Cuando un gigante alienígena amenaza la luna, el miembro más pequeño de la tripulación — Moony — debe salvar el día. Basado en la historia de David y Goliat.",
     scripture:   "1 Samuel 17:37",
-    ages:        "Ages 10–12",
-    pages:       "10 pages",
-    theme:       "Courage & Faith",
+    ages:        "Edades 10–12",
+    pages:       "10 páginas",
+    theme:       "Valentía y Fe",
     coverEmoji:  "🚀",
     coverImage:  "/ebook1-thumbnail.png",
     coverBg:     "linear-gradient(135deg, #0f1f3d 0%, #1a3a6b 50%, #2d5a9e 100%)",
     accentColor: "#60a5fa",
     downloadUrl: "/books/mav-moony-moon-adventure.pdf",
-    badge:       "NEW",
+    badge:       "NUEVO",
   },
   {
     slug:        "lions-den",
-    title:       "Mav, Moony & the Lion's Den",
-    subtitle:    "Standing Firm — Based on Daniel 6",
-    description: "When Grandpa Martinez is thrown into the lion's den for refusing to stop praying, it's up to Mav and Moony to trust God — even when things look impossible. A story about courage, prayer, and never giving up on faith.",
+    title:       "Mav, Moony y el Foso de los Leones",
+    subtitle:    "Firmes en la Fe — Basado en Daniel 6",
+    description: "Cuando el Abuelo Martínez es lanzado al foso de los leones por negarse a dejar de orar, Mav y Moony deben confiar en Dios — incluso cuando todo parece imposible. Una historia de valentía, oración y fe inquebrantable.",
     scripture:   "Daniel 6:22",
-    ages:        "Ages 4–12",
-    pages:       "15 pages",
-    theme:       "Courage & Prayer",
+    ages:        "Edades 4–12",
+    pages:       "15 páginas",
+    theme:       "Valentía y Oración",
     coverEmoji:  "🦁",
     coverImage:  "/ebook2-thumbnail.png",
     coverBg:     "linear-gradient(135deg, #1a2640 0%, #3d2010 60%, #5c3010 100%)",
     accentColor: "#C9952A",
     downloadUrl: "/books/mav-moony-lions-den-ebook.pdf",
-    badge:       "NEW",
+    badge:       "NUEVO",
   },
 ];
 
-// ── YouTube featured video ─────────────────────────────────────────────────────
-// Replace VIDEO_ID with the YouTube video ID you want to feature (the part after ?v=)
-// e.g. for https://youtube.com/watch?v=dQw4w9WgXcQ → VIDEO_ID = "dQw4w9WgXcQ"
-const FEATURED_VIDEO_ID = ""; // ← paste your video ID here
-const CHANNEL_URL = "https://www.youtube.com/@FaithTails";
+// ── YouTube ────────────────────────────────────────────────────────────────────
+const FEATURED_VIDEO_ID = "";
+const CHANNEL_URL    = "https://www.youtube.com/@FaithTails";
 const CHANNEL_HANDLE = "@FaithTails";
 
 // ── Book card ──────────────────────────────────────────────────────────────────
@@ -76,13 +73,12 @@ function BookCard({ book }: { book: (typeof BOOKS)[number] }) {
         className="relative flex flex-col items-center justify-center overflow-hidden"
         style={{ background: book.coverBg, height: book.coverImage ? 280 : 220, padding: book.coverImage ? 0 : "2rem 1.5rem" }}
       >
-        {/* Badge */}
         {book.badge && (
           <span
             className="absolute top-3 right-3 z-10 text-xs font-black px-2 py-1 rounded-full"
             style={{
-              background: book.badge === "NEW" ? "#22c55e" : "rgba(255,255,255,0.2)",
-              color: book.badge === "NEW" ? "#fff" : "rgba(255,255,255,0.8)",
+              background: book.badge === "NUEVO" ? "#22c55e" : "rgba(255,255,255,0.2)",
+              color: book.badge === "NUEVO" ? "#fff" : "rgba(255,255,255,0.8)",
               letterSpacing: "0.08em",
             }}
           >
@@ -98,24 +94,20 @@ function BookCard({ book }: { book: (typeof BOOKS)[number] }) {
               className="w-full h-full"
               style={{ objectFit: "cover", objectPosition: "center top", display: "block" }}
             />
-            {/* Coming soon overlay with date */}
             {!book.downloadUrl && (
               <div
                 className="absolute inset-x-0 bottom-0 flex flex-col items-center justify-center py-3"
                 style={{ background: "linear-gradient(to top, rgba(0,0,0,0.82) 0%, transparent 100%)" }}
               >
-                <span className="text-white font-black text-sm tracking-wide">Coming Soon</span>
-                <span className="text-xs font-semibold mt-0.5" style={{ color: GOLD }}>May 15, 2026</span>
+                <span className="text-white font-black text-sm tracking-wide">Próximamente</span>
+                <span className="text-xs font-semibold mt-0.5" style={{ color: GOLD }}>Mayo 15, 2026</span>
               </div>
             )}
           </div>
         ) : (
           <>
             <span style={{ fontSize: 72, lineHeight: 1 }}>{book.coverEmoji}</span>
-            <h3
-              className="text-center font-black mt-3 text-xl leading-tight"
-              style={{ color: book.accentColor }}
-            >
+            <h3 className="text-center font-black mt-3 text-xl leading-tight" style={{ color: book.accentColor }}>
               {book.title}
             </h3>
             <p className="text-center text-sm mt-1" style={{ color: "rgba(255,255,255,0.75)" }}>
@@ -127,45 +119,30 @@ function BookCard({ book }: { book: (typeof BOOKS)[number] }) {
 
       {/* Info */}
       <div className="flex flex-col flex-1 p-5 gap-3">
-        {/* Tags */}
         <div className="flex flex-wrap gap-2">
           {book.ages && (
-            <span
-              className="text-xs font-semibold px-2.5 py-1 rounded-full"
-              style={{ background: "rgba(201,149,42,0.12)", color: "#92400e" }}
-            >
+            <span className="text-xs font-semibold px-2.5 py-1 rounded-full" style={{ background: "rgba(201,149,42,0.12)", color: "#92400e" }}>
               {book.ages}
             </span>
           )}
           {book.theme && (
-            <span
-              className="text-xs font-semibold px-2.5 py-1 rounded-full"
-              style={{ background: "rgba(59,130,246,0.1)", color: "#1e40af" }}
-            >
+            <span className="text-xs font-semibold px-2.5 py-1 rounded-full" style={{ background: "rgba(59,130,246,0.1)", color: "#1e40af" }}>
               {book.theme}
             </span>
           )}
           {book.pages && (
-            <span
-              className="text-xs font-semibold px-2.5 py-1 rounded-full"
-              style={{ background: "rgba(16,185,129,0.1)", color: "#065f46" }}
-            >
+            <span className="text-xs font-semibold px-2.5 py-1 rounded-full" style={{ background: "rgba(16,185,129,0.1)", color: "#065f46" }}>
               {book.pages}
             </span>
           )}
         </div>
 
-        <p className="text-sm leading-relaxed" style={{ color: "#4b5563" }}>
-          {book.description}
-        </p>
+        <p className="text-sm leading-relaxed" style={{ color: "#4b5563" }}>{book.description}</p>
 
         {book.scripture && (
-          <p className="text-xs italic font-medium" style={{ color: GOLD }}>
-            📖 {book.scripture}
-          </p>
+          <p className="text-xs italic font-medium" style={{ color: GOLD }}>📖 {book.scripture}</p>
         )}
 
-        {/* CTA */}
         <div className="mt-auto pt-2">
           {isComingSoon ? (
             <a
@@ -175,11 +152,10 @@ function BookCard({ book }: { book: (typeof BOOKS)[number] }) {
               className="flex items-center justify-center gap-2 w-full py-3 rounded-xl text-sm font-bold transition hover:opacity-80"
               style={{ background: "rgba(201,149,42,0.12)", color: GOLD }}
             >
-              <span>🔔</span> Subscribe to be notified
+              <span>🔔</span> Suscríbete para recibir notificaciones
             </a>
           ) : (
             <div className="flex gap-2">
-              {/* Read Online — opens PDF in browser tab */}
               <a
                 href={book.downloadUrl}
                 target="_blank"
@@ -187,19 +163,14 @@ function BookCard({ book }: { book: (typeof BOOKS)[number] }) {
                 className="flex flex-1 items-center justify-center gap-1.5 py-3 rounded-xl text-sm font-bold text-white transition hover:opacity-90 active:scale-95"
                 style={{ background: `linear-gradient(135deg, ${GOLD}, #e6a830)` }}
               >
-                <span>📖</span> Read
+                <span>📖</span> Leer
               </a>
-              {/* Download — saves the file */}
               <a
                 href={book.downloadUrl}
                 download
                 className="flex items-center justify-center gap-1.5 px-4 py-3 rounded-xl text-sm font-bold transition hover:opacity-90 active:scale-95"
-                style={{
-                  background: "rgba(201,149,42,0.1)",
-                  color: GOLD,
-                  border: `1px solid rgba(201,149,42,0.35)`,
-                }}
-                title="Download eBook"
+                style={{ background: "rgba(201,149,42,0.1)", color: GOLD, border: `1px solid rgba(201,149,42,0.35)` }}
+                title="Descargar eBook"
               >
                 <span>📥</span>
               </a>
@@ -212,7 +183,7 @@ function BookCard({ book }: { book: (typeof BOOKS)[number] }) {
 }
 
 // ── Page ───────────────────────────────────────────────────────────────────────
-export default function KidsPage() {
+export default function KidsPageES() {
   return (
     <div className="min-h-screen flex flex-col" style={{ background: CREAM }}>
 
@@ -239,16 +210,17 @@ export default function KidsPage() {
 
         <div className="flex items-center gap-2">
           <span style={{ fontSize: 18 }}>🐾</span>
-          <span className="text-sm font-black" style={{ color: NAVY }}>Faith Tails Kids</span>
+          <span className="text-sm font-black" style={{ color: NAVY }}>Faith Tails Niños</span>
         </div>
 
         <div className="flex items-center gap-2">
+          {/* Language toggle */}
           <Link
-            href="/es/kids"
+            href="/kids"
             className="text-xs font-bold px-2.5 py-1.5 rounded-full border transition hover:opacity-80"
             style={{ borderColor: "rgba(201,149,42,0.5)", color: GOLD }}
           >
-            🇪🇸 ES
+            🇺🇸 EN
           </Link>
           <a
             href={CHANNEL_URL}
@@ -261,7 +233,7 @@ export default function KidsPage() {
               <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8z"/>
               <polygon fill="white" points="9.75,15.02 15.5,12 9.75,8.98"/>
             </svg>
-            Subscribe
+            Suscribirse
           </a>
         </div>
       </header>
@@ -290,7 +262,6 @@ export default function KidsPage() {
         ))}
 
         <div className="relative z-10 max-w-2xl mx-auto text-center flex flex-col items-center gap-4">
-          {/* Logo / Brand */}
           <img
             src="/FT_logo.png"
             alt="Faith Tails logo"
@@ -302,17 +273,16 @@ export default function KidsPage() {
               Faith Tails
             </h1>
             <p className="text-lg font-semibold mt-1" style={{ color: GOLD }}>
-              Adventure Stories for Kids
+              Historias de Aventura para Niños
             </p>
           </div>
 
           <p className="text-base leading-relaxed max-w-lg" style={{ color: "rgba(255,255,255,0.75)" }}>
-            Join <strong style={{ color: "white" }}>Mav</strong> the big-hearted Bullmastiff and
-            {" "}<strong style={{ color: "white" }}>Moony</strong> the wise Dachshund on faith-filled
-            adventures inspired by real Bible stories. Watch on YouTube and read free below!
+            Acompaña a <strong style={{ color: "white" }}>Mav</strong> el Bullmastiff de gran corazón y
+            {" "}<strong style={{ color: "white" }}>Moony</strong> el sabio Dachshund en aventuras llenas
+            de fe inspiradas en historias reales de la Biblia. ¡Mira en YouTube y lee gratis abajo!
           </p>
 
-          {/* CTAs */}
           <div className="flex flex-wrap items-center justify-center gap-3 mt-2">
             <a
               href={CHANNEL_URL}
@@ -325,14 +295,14 @@ export default function KidsPage() {
                 <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2C0 8.1 0 12 0 12s0 3.9.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1c.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8z"/>
                 <polygon fill="white" points="9.75,15.02 15.5,12 9.75,8.98"/>
               </svg>
-              Watch on YouTube
+              Ver en YouTube
             </a>
             <a
               href="#books"
               className="flex items-center gap-2 px-5 py-3 rounded-xl font-bold transition hover:opacity-80"
               style={{ background: "rgba(255,255,255,0.1)", color: "white", border: "1px solid rgba(255,255,255,0.2)" }}
             >
-              📚 Read Free eBooks
+              📚 Leer eBooks Gratis
             </a>
           </div>
         </div>
@@ -347,24 +317,17 @@ export default function KidsPage() {
       <section className="max-w-4xl mx-auto w-full px-4 py-12">
         <div className="flex flex-col items-center gap-2 text-center mb-8">
           <span style={{ fontSize: 32 }}>📺</span>
-          <h2 className="text-2xl font-black" style={{ color: NAVY }}>Watch Faith Tails</h2>
+          <h2 className="text-2xl font-black" style={{ color: NAVY }}>Ver Faith Tails</h2>
           <p className="text-sm" style={{ color: "#6b7280" }}>
-            New adventures every week on our YouTube channel
+            Nuevas aventuras cada semana en nuestro canal de YouTube
           </p>
         </div>
 
         {FEATURED_VIDEO_ID ? (
-          /* Embedded video if ID is provided */
-          <div
-            className="rounded-2xl overflow-hidden w-full"
-            style={{
-              boxShadow: "0 8px 32px rgba(0,0,0,0.15)",
-              aspectRatio: "16/9",
-            }}
-          >
+          <div className="rounded-2xl overflow-hidden w-full" style={{ boxShadow: "0 8px 32px rgba(0,0,0,0.15)", aspectRatio: "16/9" }}>
             <iframe
               src={`https://www.youtube.com/embed/${FEATURED_VIDEO_ID}?rel=0&modestbranding=1`}
-              title="Faith Tails — Featured Video"
+              title="Faith Tails — Video Destacado"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
               className="w-full h-full"
@@ -372,24 +335,19 @@ export default function KidsPage() {
             />
           </div>
         ) : (
-          /* Channel banner poster when no video ID set */
           <a
             href={CHANNEL_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="relative block rounded-2xl overflow-hidden transition hover:opacity-90 group"
-            style={{
-              boxShadow: "0 8px 32px rgba(0,0,0,0.2)",
-              textDecoration: "none",
-            }}
+            style={{ boxShadow: "0 8px 32px rgba(0,0,0,0.2)", textDecoration: "none" }}
           >
             <img
               src="/FT-poster.png"
-              alt="Faith Tails — Watch on YouTube"
+              alt="Faith Tails — Ver en YouTube"
               className="w-full block"
               style={{ display: "block", maxHeight: 420, objectFit: "cover", objectPosition: "center top" }}
             />
-            {/* Play button overlay */}
             <div
               className="absolute inset-0 flex flex-col items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity"
               style={{ background: "rgba(0,0,0,0.45)" }}
@@ -403,22 +361,21 @@ export default function KidsPage() {
                 </svg>
               </div>
               <span className="text-white font-bold text-sm px-5 py-2 rounded-xl" style={{ background: "#ff0000" }}>
-                Visit Our Channel →
+                Visitar Nuestro Canal →
               </span>
             </div>
           </a>
         )}
 
-        {/* Channel stats / info strip */}
         <div
           className="flex flex-wrap items-center justify-center gap-6 mt-6 py-4 px-6 rounded-2xl"
           style={{ background: "rgba(201,149,42,0.08)", border: "1px solid rgba(201,149,42,0.2)" }}
         >
           {[
-            { icon: "🎬", label: "New episodes weekly" },
-            { icon: "📖", label: "Based on real Bible stories" },
-            { icon: "🐾", label: "Mav & Moony adventures" },
-            { icon: "✝️", label: "Faith messages for kids" },
+            { icon: "🎬", label: "Nuevos episodios cada semana" },
+            { icon: "📖", label: "Basado en historias reales de la Biblia" },
+            { icon: "🐾", label: "Aventuras de Mav y Moony" },
+            { icon: "✝️", label: "Mensajes de fe para niños" },
           ].map(({ icon, label }) => (
             <div key={label} className="flex items-center gap-2">
               <span style={{ fontSize: 18 }}>{icon}</span>
@@ -430,17 +387,15 @@ export default function KidsPage() {
 
       {/* ── Story Library ─────────────────────────────────────────────────────── */}
       <section id="books" className="max-w-4xl mx-auto w-full px-4 pb-16">
-        {/* Section header */}
         <div className="flex flex-col items-center gap-2 text-center mb-8">
           <span style={{ fontSize: 32 }}>📚</span>
-          <h2 className="text-2xl font-black" style={{ color: NAVY }}>Free Story eBooks</h2>
+          <h2 className="text-2xl font-black" style={{ color: NAVY }}>eBooks Gratis</h2>
           <p className="text-sm max-w-md" style={{ color: "#6b7280" }}>
-            Download and read Mav and Moony&apos;s adventures — completely free. Each story is inspired
-            by a Bible story and packed with laughs, heart, and faith.
+            Descarga y lee las aventuras de Mav y Moony — completamente gratis. Cada historia está
+            inspirada en un relato bíblico y está llena de risas, corazón y fe.
           </p>
         </div>
 
-        {/* Book grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           {BOOKS.map((book) => (
             <BookCard key={book.slug} book={book} />
@@ -452,9 +407,9 @@ export default function KidsPage() {
       <section className="max-w-2xl mx-auto w-full px-4 pb-16">
         <div className="flex flex-col items-center gap-2 text-center mb-6">
           <span style={{ fontSize: 32 }}>🧩</span>
-          <h2 className="text-2xl font-black" style={{ color: NAVY }}>Mav & Moony Puzzle</h2>
+          <h2 className="text-2xl font-black" style={{ color: NAVY }}>Rompecabezas de Mav y Moony</h2>
           <p className="text-sm max-w-sm" style={{ color: "#6b7280" }}>
-            Put the puzzle together! Pick a picture, choose your difficulty, and solve it piece by piece.
+            ¡Arma el rompecabezas! Elige una imagen, selecciona tu dificultad y resuélvelo pieza por pieza.
           </p>
         </div>
         <div className="rounded-3xl overflow-hidden" style={{ background: "white", boxShadow: "0 4px 24px rgba(0,0,0,0.10)", border: "1px solid rgba(201,149,42,0.15)" }}>
@@ -463,40 +418,33 @@ export default function KidsPage() {
       </section>
 
       {/* ── Faith Message Banner ──────────────────────────────────────────────── */}
-      <section
-        className="py-10 px-4"
-        style={{
-          background: `linear-gradient(135deg, ${GOLD} 0%, #e6a830 100%)`,
-        }}
-      >
+      <section className="py-10 px-4" style={{ background: `linear-gradient(135deg, ${GOLD} 0%, #e6a830 100%)` }}>
         <div className="max-w-2xl mx-auto text-center flex flex-col items-center gap-3">
           <span style={{ fontSize: 36 }}>✝️</span>
-          <h3 className="text-xl font-black text-white">Every Adventure Points to Jesus</h3>
+          <h3 className="text-xl font-black text-white">Cada Aventura Apunta a Jesús</h3>
           <p className="text-sm leading-relaxed text-white" style={{ opacity: 0.9 }}>
-            Faith Tails stories are built on real Scripture. Each adventure retells a Bible story in a
-            way kids can connect with — big courage, small heroes, and a God who is always with us.
+            Las historias de Faith Tails están basadas en las Escrituras reales. Cada aventura cuenta
+            una historia bíblica de una manera que los niños pueden entender — gran valentía, pequeños
+            héroes y un Dios que siempre está con nosotros.
           </p>
           <a
             href="/"
             className="mt-2 px-6 py-3 rounded-xl font-bold text-sm transition hover:opacity-90"
             style={{ background: NAVY, color: "white" }}
           >
-            Explore the Bible on Scripture Lives →
+            Explorar la Biblia en Scripture Lives →
           </a>
         </div>
       </section>
 
       {/* ── Footer ───────────────────────────────────────────────────────────── */}
-      <footer
-        className="py-8 px-4 text-center text-xs"
-        style={{ color: "#9ca3af", borderTop: "1px solid #ede8de" }}
-      >
+      <footer className="py-8 px-4 text-center text-xs" style={{ color: "#9ca3af", borderTop: "1px solid #ede8de" }}>
         <p>
-          Faith Tails is part of{" "}
+          Faith Tails es parte de{" "}
           <Link href="/" className="underline hover:opacity-70" style={{ color: GOLD }}>
             Scripture Lives
           </Link>
-          {" "}— a free Bible resource for everyone.{" "}
+          {" "}— un recurso bíblico gratuito para todos.{" "}
           <a
             href={CHANNEL_URL}
             target="_blank"
@@ -508,9 +456,9 @@ export default function KidsPage() {
           </a>
         </p>
         <p className="mt-3" style={{ color: "#c0b89a", fontSize: "0.65rem", letterSpacing: "0.04em" }}>
-          © 2026 Faith Tails. Mav and Moony are original characters of Faith Tails. All rights reserved.
+          © 2026 Faith Tails. Mav y Moony son personajes originales de Faith Tails. Todos los derechos reservados.
           <br />
-          Unauthorized reproduction or use of Faith Tails characters, stories, or music is prohibited.{" "}
+          La reproducción o uso no autorizado de los personajes, historias o música de Faith Tails está prohibido.{" "}
           <a href="mailto:info@scripturelives.com" className="underline hover:opacity-70" style={{ color: GOLD }}>
             info@scripturelives.com
           </a>
