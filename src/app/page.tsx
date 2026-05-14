@@ -13,7 +13,6 @@ const NAVY = "#1a2640";
 // ── Feature cards ─────────────────────────────────────────────────────────────
 const FEATURES = [
   {
-    icon: "📖",
     title: "Read the Bible",
     desc: "Explore any passage with multiple translations, commentary, Strong's concordance, and cross-references.",
     href: "/bible",
@@ -21,36 +20,32 @@ const FEATURES = [
     photo: "https://images.unsplash.com/photo-1504052434569-70ad5836ab65?w=640&q=75",
   },
   {
-    icon: "🌅",
     title: "Daily Devotionals",
     desc: "A short verse, reflection, and prayer delivered every morning — in English or Spanish.",
     href: "/devotionals",
     cta: "Read Today's",
-    photo: "https://images.unsplash.com/photo-1476820865390-c52aeebb9891?w=640&q=75",
+    photo: "/daily-devotional.png",
   },
   {
-    icon: "🙏",
     title: "Prayer Wall",
     desc: "Share your prayer requests and pray for others in our community wall.",
     href: "/prayer",
     cta: "Visit Prayer Wall",
-    photo: "https://images.unsplash.com/photo-1529070538774-1843cb3265df?w=640&q=75",
+    photo: "/prayer-wall.png",
   },
   {
-    icon: "📚",
     title: "Kids Stories",
     desc: "Faith Tails — beautifully illustrated Bible story books and videos for children.",
     href: "/kids",
     cta: "Explore for Kids",
-    photo: "https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=640&q=75",
+    photo: "/Kids-stories.png",
   },
   {
-    icon: "🎮",
     title: "Bible Games",
     desc: "Bible Bowl tournaments, Wordle, Word Search, and more — fun for the whole family.",
     href: "/games",
     cta: "Play Now",
-    photo: "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=640&q=75",
+    photo: "/Bible-games.png",
   },
 ];
 
@@ -190,7 +185,6 @@ export default function WelcomePage() {
                   className="absolute inset-0"
                   style={{ background: "linear-gradient(to top, rgba(26,36,64,0.75) 0%, transparent 60%)" }}
                 />
-                <span className="absolute top-4 left-4 text-3xl select-none">{f.icon}</span>
               </div>
 
               {/* Body */}
