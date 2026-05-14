@@ -305,5 +305,6 @@ export function getTodaysDevotional(): Devotional {
   const dayOfYear = Math.floor(
     (today.getTime() - start.getTime()) / 86_400_000
   );
-  return DEVOTIONALS[dayOfYear % DEVOTIONALS.length];
+  const idx = ((dayOfYear - 1) % DEVOTIONALS.length + DEVOTIONALS.length) % DEVOTIONALS.length;
+  return DEVOTIONALS[idx];
 }
