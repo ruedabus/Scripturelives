@@ -112,7 +112,7 @@ export default async function DevotionalArticlePage({
           ← All Devotionals
         </Link>
         <span className="text-gray-300">|</span>
-        <Link href="/" className="text-sm text-gray-400 hover:text-gray-600 transition-colors">
+        <Link href="/bible" className="text-sm text-gray-400 hover:text-gray-600 transition-colors">
           Bible Reader
         </Link>
       </nav>
@@ -218,7 +218,7 @@ export default async function DevotionalArticlePage({
           look up the original Greek and Hebrew.
         </p>
         <Link
-          href="/"
+          href="/bible"
           className="inline-block rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-sm font-semibold px-6 py-3 transition-colors"
         >
           Open the Bible Reader

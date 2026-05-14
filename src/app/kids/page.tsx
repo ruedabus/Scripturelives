@@ -226,7 +226,7 @@ export default function KidsPage() {
         }}
       >
         <Link
-          href="/"
+          href="/bible"
           className="flex items-center gap-2 text-sm font-semibold transition hover:opacity-70"
           style={{ color: NAVY }}
         >
@@ -477,7 +477,7 @@ export default function KidsPage() {
             way kids can connect with — big courage, small heroes, and a God who is always with us.
           </p>
           <a
-            href="/"
+            href="/bible"
             className="mt-2 px-6 py-3 rounded-xl font-bold text-sm transition hover:opacity-90"
             style={{ background: NAVY, color: "white" }}
           >

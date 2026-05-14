@@ -22,6 +22,27 @@ export default function GamesPage() {
   return (
     <div className="min-h-screen flex flex-col" style={{ background: CREAM }}>
 
+      {/* ── Language bar ── */}
+      <div
+        className="w-full flex items-center justify-center gap-3 py-2.5 px-4 text-sm font-semibold"
+        style={{ background: "#1a2640", borderBottom: "1px solid rgba(201,149,42,0.3)" }}
+      >
+        <span style={{ color: "rgba(255,255,255,0.6)" }}>🌐 Language:</span>
+        <span
+          className="px-3 py-1 rounded-full text-xs font-black"
+          style={{ background: "rgba(255,255,255,0.15)", color: "white" }}
+        >
+          🇺🇸 English
+        </span>
+        <Link
+          href="/es/gospel"
+          className="px-3 py-1 rounded-full text-xs font-black transition hover:opacity-80"
+          style={{ background: "#C9952A", color: "#1a2640" }}
+        >
+          🇪🇸 Español
+        </Link>
+      </div>
+
       {/* ── Top nav bar ──────────────────────────────────────────────────────── */}
       <header
         className="sticky top-0 z-30 flex items-center justify-between px-4 py-3 shrink-0"

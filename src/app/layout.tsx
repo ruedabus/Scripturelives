@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import WelcomeModal from "@/components/WelcomeModal";
 import MothersDayBanner from "@/components/MothersDayBanner";
+import MobileBottomNav from "@/components/MobileBottomNav";
 import { Analytics } from "@vercel/analytics/next";
 
 const geistSans = Geist({
@@ -42,10 +43,11 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
       </head>
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col pb-[56px] md:pb-0">
         <MothersDayBanner />
         <WelcomeModal />
         {children}
+        <MobileBottomNav />
         <Analytics />
       </body>
     </html>

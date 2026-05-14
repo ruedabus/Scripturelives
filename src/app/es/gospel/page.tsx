@@ -157,43 +157,107 @@ export default function GospelPageES() {
         </div>
       </section>
 
-      {/* ── Next Steps ────────────────────────────────────────────────────── */}
+      {/* ── Plan de 7 Días ────────────────────────────────────────────── */}
       <section className="w-full max-w-2xl px-6 pb-16">
-        <h3
-          className="text-xl font-black text-center mb-8 uppercase tracking-widest"
-          style={{ color: NAVY }}
-        >
-          ¿Qué Sigue?
-        </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <NextStep
-            icon="📖"
-            title="Lee la Biblia"
-            desc="Empieza por el Evangelio de Juan. Es una lectura perfecta para comenzar."
-            href="/"
-            label="Abrir la Biblia"
-          />
-          <NextStep
-            icon="🙏"
-            title="Habla con Dios"
-            desc="La oración es solo una conversación. Comparte lo que llevas en el corazón."
-            href="/es/prayer"
-            label="Muro de Oración"
-          />
-          <NextStep
-            icon="✉️"
-            title="Devocionales"
-            desc="Reflexiones bíblicas diarias para profundizar tu caminar con Cristo."
-            href="/es/devotionals"
-            label="Ver Devocionales"
-          />
-          <NextStep
-            icon="⛪"
-            title="Encuentra una Iglesia"
-            desc="Ingresa tu código postal para encontrar una iglesia bíblica cerca de ti."
-            href="/es/find-a-church"
-            label="Buscar por Código"
-          />
+        <div className="text-center mb-8">
+          <span className="text-3xl">🗓️</span>
+          <h3
+            className="text-xl font-black mt-3 mb-2"
+            style={{ color: NAVY }}
+          >
+            Tus Primeros 7 Días
+          </h3>
+          <p className="text-sm" style={{ color: "#7a6f60" }}>
+            Acabas de tomar la decisión más importante de tu vida. Aquí tienes un plan sencillo para comenzar.
+          </p>
+        </div>
+
+        <div className="flex flex-col gap-3">
+          {[
+            {
+              day: 1,
+              icon: "📖",
+              title: "Lee Juan 1",
+              desc: "Abre el Evangelio de Juan — fue escrito para que puedas conocer a Jesús personalmente. Lee solo un capítulo hoy.",
+              href: "/bible",
+              label: "Abrir la Biblia",
+            },
+            {
+              day: 2,
+              icon: "🙏",
+              title: "Habla con Dios",
+              desc: "La oración es solo una conversación — no se necesitan palabras especiales. Dile a Dios lo que tienes en el corazón.",
+              href: "/es/prayer",
+              label: "Muro de Oración",
+            },
+            {
+              day: 3,
+              icon: "🌅",
+              title: "Comienza un Devocional",
+              desc: "Suscríbete a un versículo diario, reflexión y oración enviados a tu correo cada mañana — gratis.",
+              href: "/es/devotionals",
+              label: "Ver Devocionales",
+            },
+            {
+              day: 4,
+              icon: "💬",
+              title: "Cuéntaselo a Alguien",
+              desc: "Busca una persona de confianza — un amigo, familiar o compañero — y cuéntales lo que pasó. La fe crece en comunidad.",
+              href: "/es/prayer",
+              label: "Compartir en el Muro",
+            },
+            {
+              day: 5,
+              icon: "⛪",
+              title: "Encuentra una Iglesia",
+              desc: "No estás destinado a hacer esto solo. Encuentra una iglesia bíblica cerca de ti — busca por código postal.",
+              href: "/es/find-a-church",
+              label: "Buscar una Iglesia",
+            },
+            {
+              day: 6,
+              icon: "📚",
+              title: "Comparte con tus Hijos",
+              desc: "Si tienes hijos, Faith Tails tiene hermosas historias bíblicas ilustradas que les encantarán.",
+              href: "/es/kids",
+              label: "Ver Cuentos para Niños",
+            },
+            {
+              day: 7,
+              icon: "🎉",
+              title: "Celebra y Sigue Adelante",
+              desc: "Completaste tu primera semana. El cielo está celebrando por ti (Lucas 15:7). ¡Sigue leyendo Juan — tiene 21 capítulos!",
+              href: "/bible",
+              label: "Seguir Leyendo",
+            },
+          ].map(({ day, icon, title, desc, href, label }) => (
+            <div
+              key={day}
+              className="flex items-start gap-4 rounded-2xl p-5 bg-white"
+              style={{ border: "1px solid #ede8de", boxShadow: "0 2px 10px rgba(0,0,0,0.05)" }}
+            >
+              <div
+                className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center font-black text-sm"
+                style={{ background: GOLD, color: NAVY }}
+              >
+                {day}
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-lg">{icon}</span>
+                  <h4 className="font-black text-sm" style={{ color: NAVY }}>{title}</h4>
+                </div>
+                <p className="text-xs leading-relaxed mb-3" style={{ color: "#7a6f60" }}>{desc}</p>
+                <Link
+                  href={href}
+                  className="inline-block text-xs font-black px-3 py-1.5 rounded-xl transition hover:opacity-80"
+                  style={{ background: NAVY, color: "white" }}
+                >
+                  {label} →
+                </Link>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 

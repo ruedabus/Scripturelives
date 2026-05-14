@@ -202,7 +202,7 @@ export default function DevotionalsESPage() {
           <span className="font-bold" style={{ color: GOLD }}>Scripture Lives</span>
         </p>
         <Link
-          href="/"
+          href="/bible"
           className="mt-2 inline-block text-sm font-bold hover:opacity-70 transition"
           style={{ color: NAVY }}
         >

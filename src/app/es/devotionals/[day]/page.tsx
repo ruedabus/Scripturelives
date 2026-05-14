@@ -91,7 +91,7 @@ export default async function DevotionalDayPage({
         </Link>
         <span style={{ color: "#ddd6c8" }}>|</span>
         <Link
-          href="/"
+          href="/bible"
           className="text-sm transition hover:opacity-60"
           style={{ color: "#9ca3af" }}
         >
@@ -280,7 +280,7 @@ export default async function DevotionalDayPage({
           comparar traducciones y estudiar el texto original.
         </p>
         <Link
-          href="/"
+          href="/bible"
           className="inline-block rounded-xl text-white text-sm font-semibold px-6 py-3 transition hover:opacity-90"
           style={{ background: GOLD }}
         >

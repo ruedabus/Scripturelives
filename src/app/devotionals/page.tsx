@@ -128,7 +128,7 @@ export default function DevotionalsPage() {
 
       {/* ── Nav ── */}
       <nav className="sticky top-0 z-10 bg-white px-5 py-3 flex items-center gap-3" style={{ borderBottom: "1px solid #ede8de" }}>
-        <Link href="/" className="text-sm font-semibold transition hover:opacity-70" style={{ color: GOLD }}>
+        <Link href="/bible" className="text-sm font-semibold transition hover:opacity-70" style={{ color: GOLD }}>
           ← Back
         </Link>
         <span style={{ color: "#ddd6c8" }}>|</span>
@@ -239,7 +239,7 @@ export default function DevotionalsPage() {
           All articles are original content by{" "}
           <span className="font-bold" style={{ color: GOLD }}>Scripture Lives</span>.
         </p>
-        <Link href="/" className="mt-2 inline-block text-sm font-bold hover:opacity-70 transition" style={{ color: NAVY }}>
+        <Link href="/bible" className="mt-2 inline-block text-sm font-bold hover:opacity-70 transition" style={{ color: NAVY }}>
           ← Back to Bible Reader
         </Link>
       </footer>
