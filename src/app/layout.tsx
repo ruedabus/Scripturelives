@@ -5,6 +5,7 @@ import WelcomeModal from "@/components/WelcomeModal";
 import MothersDayBanner from "@/components/MothersDayBanner";
 import MobileBottomNav from "@/components/MobileBottomNav";
 import MobileTopBar from "@/components/MobileTopBar";
+import BibleTeacherChat from "@/components/BibleTeacherChat";
 import { Analytics } from "@vercel/analytics/next";
 
 const geistSans = Geist({
@@ -50,6 +51,7 @@ export default function RootLayout({
         <WelcomeModal />
         {children}
         <MobileBottomNav />
+        <BibleTeacherChat />
         <Analytics />
       </body>
     </html>
