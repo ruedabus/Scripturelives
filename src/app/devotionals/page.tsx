@@ -4,6 +4,9 @@ import { blogPosts, type BlogCategory } from "@/data/blogPosts";
 import { DEVOTIONALS } from "@/data/devotionals";
 import DevotionalSignup from "@/components/DevotionalSignup";
 
+// Always render server-side so "today's" devotional reflects the actual current date
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Devotionals & Bible Studies | Scripture Lives",
   description:

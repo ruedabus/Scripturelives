@@ -3,6 +3,9 @@ import Link from "next/link";
 import { DEVOTIONALS_ES } from "@/data/devotionals-es";
 import DevotionalSignupES from "@/components/DevotionalSignupES";
 
+// Always render server-side so "today's" devotional reflects the actual current date
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Devocionales Diarios | Scripture Lives",
   description:
