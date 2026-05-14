@@ -183,9 +183,9 @@ export default function GospelPageES() {
           <NextStep
             icon="✉️"
             title="Devocionales"
-            desc="Palabras de aliento diarias enviadas a tu correo, completamente gratis."
-            href="/devotionals"
-            label="Suscríbete Gratis"
+            desc="Reflexiones bíblicas diarias para profundizar tu caminar con Cristo."
+            href="/es/devotionals"
+            label="Ver Devocionales"
           />
           <NextStep
             icon="⛪"
