@@ -5,7 +5,7 @@ import { useState, useRef, useEffect } from "react";
 const GOLD = "#C9952A";
 const NAVY = "#1a2640";
 
-type Message = { role: "user" | "assistant"; content: string };
+type Message = { role: "user" | "assistant"; content: string; id?: string };
 
 type View = "chat" | "pastor";
 
@@ -17,6 +17,7 @@ export default function BibleTeacherChat() {
   ]);
   const [input, setInput]       = useState("");
   const [loading, setLoading]   = useState(false);
+  const [flagged, setFlagged]   = useState<Record<number, boolean>>({});
 
   // Pastor form
   const [pName,     setPName]     = useState("");
@@ -26,7 +27,17 @@ export default function BibleTeacherChat() {
   const [pSent,     setPSent]     = useState(false);
   const [pError,    setPError]    = useState("");
 
-  const bottomRef = useRef<HTMLDivElement>(null);
+  const bottomRef  = useRef<HTMLDivElement>(null);
+  const sessionRef = useRef<string>("");
+
+  // Generate sessionId on mount
+  useEffect(() => {
+    try {
+      sessionRef.current = crypto.randomUUID();
+    } catch {
+      sessionRef.current = Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2);
+    }
+  }, []);
 
   useEffect(() => {
     if (open) bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -43,14 +54,33 @@ export default function BibleTeacherChat() {
       const res = await fetch("/api/ask", {
         method:  "POST",
         headers: { "Content-Type": "application/json" },
-        body:    JSON.stringify({ messages: next }),
+        body:    JSON.stringify({ messages: next, sessionId: sessionRef.current }),
       });
       const data = await res.json();
-      setMessages([...next, { role: "assistant", content: data.reply ?? "Sorry, something went wrong. Please try again." }]);
+      const assistantMsg: Message = {
+        role: "assistant",
+        content: data.reply ?? "Sorry, something went wrong. Please try again.",
+        id: data.messageId ?? undefined,
+      };
+      setMessages([...next, assistantMsg]);
     } catch {
       setMessages([...next, { role: "assistant", content: "Sorry, I couldn't connect. Please try again." }]);
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function flagMessage(index: number, messageId?: string) {
+    if (!messageId) return;
+    setFlagged((prev) => ({ ...prev, [index]: true }));
+    try {
+      await fetch("/api/flag-message", {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({ messageId, reason: "User flagged via chat UI" }),
+      });
+    } catch {
+      // silent — UI already shows "Reported"
     }
   }
 
@@ -180,15 +210,34 @@ export default function BibleTeacherChat() {
                         }}
                       />
                     )}
-                    <div
-                      className="max-w-[85%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed"
-                      style={
-                        m.role === "user"
-                          ? { background: NAVY, color: "white", borderBottomRightRadius: "4px" }
-                          : { background: "white", color: "#3a3025", border: "1px solid #ede8de", borderBottomLeftRadius: "4px" }
-                      }
-                    >
-                      {m.content}
+                    <div className="flex flex-col gap-1 max-w-[85%]">
+                      <div
+                        className="rounded-2xl px-4 py-2.5 text-sm leading-relaxed"
+                        style={
+                          m.role === "user"
+                            ? { background: NAVY, color: "white", borderBottomRightRadius: "4px" }
+                            : { background: "white", color: "#3a3025", border: "1px solid #ede8de", borderBottomLeftRadius: "4px" }
+                        }
+                      >
+                        {m.content}
+                      </div>
+                      {/* Flag button for assistant messages */}
+                      {m.role === "assistant" && m.id && (
+                        <div className="flex justify-start pl-1">
+                          {flagged[i] ? (
+                            <span className="text-[10px]" style={{ color: "#9ca3af" }}>Reported</span>
+                          ) : (
+                            <button
+                              onClick={() => flagMessage(i, m.id)}
+                              className="text-[11px] opacity-0 group-hover:opacity-100 transition-opacity hover:opacity-100"
+                              style={{ color: "#9ca3af" }}
+                              title="Report this message"
+                            >
+                              🚩
+                            </button>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -209,6 +258,9 @@ export default function BibleTeacherChat() {
 
               {/* Input */}
               <div className="shrink-0 px-3 py-3" style={{ borderTop: "1px solid #ede8de", background: "white" }}>
+                <p className="text-[10px] mb-2 text-center" style={{ color: "#9ca3af" }}>
+                  Conversations are saved to improve our service and ensure safety.
+                </p>
                 <div className="flex gap-2 items-center">
                   <input
                     type="text"
@@ -263,7 +315,7 @@ export default function BibleTeacherChat() {
                     Ask a Real Pastor
                   </p>
                   <p className="text-xs leading-relaxed" style={{ color: "#6b7280" }}>
-                    For personal questions, spiritual guidance, or anything you'd rather discuss one-on-one — a real pastor will respond to you by email.
+                    For personal questions, spiritual guidance, or anything you&apos;d rather discuss one-on-one — a real pastor will respond to you by email.
                   </p>
 
                   <input

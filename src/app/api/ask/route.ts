@@ -19,12 +19,42 @@ You CANNOT and will NOT:
 - Speculate beyond what Scripture and established biblical scholarship states
 - Discuss topics unrelated to the Bible
 
-If someone asks a personal question or seeks personal guidance, respond warmly but briefly:
-"That's a personal question that deserves a thoughtful, personal answer from a real pastor. Use the 'Ask a Pastor' button below and a pastor will respond to you directly."
+CRITICAL RULE — NO EXCEPTIONS: If the user asks ANYTHING that involves personal opinion, personal advice, relationships, finances, health, life decisions, emotional support, or personal guidance of any kind, you MUST respond with EXACTLY this message and nothing else:
+"That sounds like a personal question — please submit it to our Bible Teacher using the 'Ask a Pastor' button below. They'll respond to you personally by email."
+
+Do not elaborate, do not add Scripture, do not offer alternatives. Just that exact message.
 
 Always cite specific Bible verses (Book Chapter:Verse) when relevant. Keep answers clear and concise. Be warm and encouraging.`;
 
 type Message = { role: "user" | "assistant"; content: string };
+
+async function saveToChatLogs(
+  supabaseUrl: string,
+  serviceRoleKey: string,
+  sessionId: string,
+  role: "user" | "assistant",
+  content: string
+): Promise<string | null> {
+  try {
+    const res = await fetch(`${supabaseUrl}/rest/v1/chat_logs`, {
+      method: "POST",
+      headers: {
+        apikey: serviceRoleKey,
+        Authorization: `Bearer ${serviceRoleKey}`,
+        "Content-Type": "application/json",
+        Prefer: "return=representation",
+      },
+      body: JSON.stringify({ session_id: sessionId, role, content }),
+    });
+    if (res.ok) {
+      const rows = await res.json();
+      return rows?.[0]?.id ?? null;
+    }
+  } catch (err) {
+    console.error("[ask] Supabase save error:", err);
+  }
+  return null;
+}
 
 export async function POST(req: NextRequest) {
   const apiKey = process.env.OPENAI_API_KEY;
@@ -33,9 +63,11 @@ export async function POST(req: NextRequest) {
   }
 
   let messages: Message[];
+  let sessionId: string;
   try {
     const body = await req.json();
     messages = body.messages;
+    sessionId = body.sessionId ?? "unknown";
     if (!Array.isArray(messages) || messages.length === 0) throw new Error();
   } catch {
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
@@ -64,7 +96,37 @@ export async function POST(req: NextRequest) {
   }
 
   const data = await res.json();
-  const reply = data.choices?.[0]?.message?.content ?? "I'm sorry, I couldn't generate a response. Please try again.";
+  const reply =
+    data.choices?.[0]?.message?.content ??
+    "I'm sorry, I couldn't generate a response. Please try again.";
 
-  return NextResponse.json({ reply });
+  // Save to chat_logs if Supabase is configured
+  const supabaseUrl = process.env.SUPABASE_URL;
+  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  let assistantMessageId: string | null = null;
+
+  if (supabaseUrl && serviceRoleKey) {
+    // Save the last user message
+    const lastUserMessage = [...trimmed].reverse().find((m) => m.role === "user");
+    if (lastUserMessage) {
+      await saveToChatLogs(
+        supabaseUrl,
+        serviceRoleKey,
+        sessionId,
+        "user",
+        lastUserMessage.content
+      );
+    }
+    // Save the assistant reply and capture its ID
+    assistantMessageId = await saveToChatLogs(
+      supabaseUrl,
+      serviceRoleKey,
+      sessionId,
+      "assistant",
+      reply
+    );
+  }
+
+  return NextResponse.json({ reply, sessionId, messageId: assistantMessageId });
 }
