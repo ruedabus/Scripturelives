@@ -137,13 +137,13 @@ export default function WelcomePage() {
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-4">
-            <a
-              href="#features"
+            <Link
+              href="/bible"
               className="px-8 py-4 rounded-2xl font-black text-base transition hover:opacity-90 hover:scale-105 active:scale-95"
               style={{ background: GOLD, color: NAVY }}
             >
               ✨ Discover Scripture Lives
-            </a>
+            </Link>
             <Link
               href="/gospel"
               className="px-8 py-4 rounded-2xl font-black text-base transition hover:opacity-80 border"
