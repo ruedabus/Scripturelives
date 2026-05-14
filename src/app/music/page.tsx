@@ -12,6 +12,7 @@ const TABS = [
   { label: "Worship 3", videoId: "d8S4VuWPYto", playlistId: null },
   { label: "Worship 4", videoId: "endDbmXs-90", playlistId: null },
   { label: "Worship 5", videoId: "BjH4wNAkUgo", playlistId: null },
+  { label: "Worship 6", videoId: "dHlafdYL0SM", playlistId: null },
 ];
 
 export default function MusicPage() {
