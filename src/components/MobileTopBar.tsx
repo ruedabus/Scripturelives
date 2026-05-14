@@ -46,14 +46,18 @@ function getBack(pathname: string): string | null {
   return "/";
 }
 
-// ── Menu items ─────────────────────────────────────────────────────────────
+// ── Menu sections ──────────────────────────────────────────────────────────
 const MENU = [
+  { section: "Navigate" },
   { href: "/",              icon: "🏠", label: "Home"           },
-  { href: "/bible",         icon: "📖", label: "Bible Reader"   },
   { href: "/devotionals",   icon: "🌅", label: "Devotionals"    },
   { href: "/prayer",        icon: "🙏", label: "Prayer Wall"    },
   { href: "/kids",          icon: "📚", label: "Kids Stories"   },
   { href: "/games",         icon: "🎮", label: "Bible Games"    },
+  { section: "Bible" },
+  { href: "/bible",         icon: "📖", label: "Full Bible"     },
+  { href: "/bible?view=parallel", icon: "📑", label: "Parallel Bible" },
+  { section: "More" },
   { href: "/gospel",        icon: "✝️",  label: "The Gospel"     },
   { href: "/find-a-church", icon: "⛪", label: "Find a Church"  },
   { href: "/shop",          icon: "🛍️", label: "Shop"           },
@@ -61,16 +65,20 @@ const MENU = [
   { href: "/about",         icon: "ℹ️",  label: "About"          },
   { href: "/contact",       icon: "✉️",  label: "Contact"        },
   { href: "/es/gospel",     icon: "🇪🇸", label: "En Español"     },
-];
+] as ({ section: string } | { href: string; icon: string; label: string })[];
 
 export default function MobileTopBar() {
   const pathname = usePathname();
   const router   = useRouter();
-  const [open, setOpen]   = useState(false);
+  const [open, setOpen] = useState(false);
 
   const backHref = getBack(pathname);
   const title    = getTitle(pathname);
   const isHome   = pathname === "/";
+
+  function goBack() {
+    if (backHref) router.push(backHref);
+  }
 
   return (
     <>
@@ -94,14 +102,22 @@ export default function MobileTopBar() {
 
             {/* Nav links */}
             <nav className="flex flex-col py-3">
-              {MENU.map(({ href, icon, label }) => {
-                const active = pathname === href || (href !== "/" && pathname.startsWith(href));
+              {MENU.map((item, i) => {
+                if ("section" in item) {
+                  return (
+                    <p key={i} className="px-5 pt-4 pb-1 text-[10px] font-black uppercase tracking-widest" style={{ color: "rgba(201,149,42,0.6)" }}>
+                      {item.section}
+                    </p>
+                  );
+                }
+                const { href, icon, label } = item;
+                const active = pathname === href || (href !== "/" && !href.includes("?") && pathname.startsWith(href));
                 return (
                   <Link
                     key={href}
                     href={href}
                     onClick={() => setOpen(false)}
-                    className="flex items-center gap-4 px-5 py-3.5 transition-opacity hover:opacity-80"
+                    className="flex items-center gap-4 px-5 py-3 transition-opacity hover:opacity-80"
                     style={{
                       background: active ? "rgba(201,149,42,0.12)" : "transparent",
                       borderLeft: active ? `3px solid ${GOLD}` : "3px solid transparent",
@@ -132,7 +148,7 @@ export default function MobileTopBar() {
         <div style={{ width: 52 }}>
           {backHref ? (
             <button
-              onClick={() => router.back()}
+              onClick={goBack}
               className="flex items-center justify-center w-12 h-12 transition-opacity hover:opacity-70"
               aria-label="Go back"
             >

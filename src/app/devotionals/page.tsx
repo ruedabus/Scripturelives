@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { blogPosts, type BlogCategory } from "@/data/blogPosts";
+import { DEVOTIONALS } from "@/data/devotionals";
 import DevotionalSignup from "@/components/DevotionalSignup";
 
 export const metadata: Metadata = {
@@ -94,6 +95,15 @@ function ArticleCard({ post, featured = false }: { post: (typeof blogPosts)[numb
   );
 }
 
+// ── Today's devotional index (day-of-year rotation) ──────────────────────────
+function getTodayDevotional() {
+  const now = new Date();
+  const start = new Date(now.getFullYear(), 0, 0);
+  const dayOfYear = Math.floor((now.getTime() - start.getTime()) / 86_400_000);
+  const idx = ((dayOfYear - 1) % DEVOTIONALS.length + DEVOTIONALS.length) % DEVOTIONALS.length;
+  return { dev: DEVOTIONALS[idx], dayNum: idx + 1 };
+}
+
 // ── Page ──────────────────────────────────────────────────────────────────────
 export default function DevotionalsPage() {
   const sorted = [...blogPosts].sort(
@@ -101,6 +111,7 @@ export default function DevotionalsPage() {
   );
   const [featured, ...rest] = sorted;
   const categories = Array.from(new Set(blogPosts.map((p) => p.category))) as BlogCategory[];
+  const { dev: today, dayNum } = getTodayDevotional();
 
   return (
     <div className="min-h-screen" style={{ background: "#faf8f3" }}>
@@ -126,14 +137,40 @@ export default function DevotionalsPage() {
         </Link>
       </div>
 
-      {/* ── Nav ── */}
-      <nav className="sticky top-0 z-10 bg-white px-5 py-3 flex items-center gap-3" style={{ borderBottom: "1px solid #ede8de" }}>
-        <Link href="/bible" className="text-sm font-semibold transition hover:opacity-70" style={{ color: GOLD }}>
-          ← Back
+      {/* ── Nav (desktop only — mobile has global top bar) ── */}
+      <nav className="hidden md:flex sticky top-0 z-10 bg-white px-5 py-3 items-center gap-3" style={{ borderBottom: "1px solid #ede8de" }}>
+        <Link href="/" className="text-sm font-semibold transition hover:opacity-70" style={{ color: GOLD }}>
+          ← Home
         </Link>
         <span style={{ color: "#ddd6c8" }}>|</span>
         <span className="text-sm font-bold" style={{ color: NAVY }}>Devotionals</span>
       </nav>
+
+      {/* ── TODAY'S DEVOTIONAL ── */}
+      <section className="w-full max-w-2xl mx-auto px-4 pt-8 pb-2">
+        <p className="text-[10px] font-black uppercase tracking-widest mb-3" style={{ color: GOLD }}>
+          🌅 Today&apos;s Devotional
+        </p>
+        <Link
+          href={`/devotionals/day/${dayNum}`}
+          className="group flex flex-col sm:flex-row gap-5 rounded-2xl p-6 transition hover:opacity-95"
+          style={{ background: NAVY, border: `1px solid rgba(201,149,42,0.3)`, boxShadow: "0 4px 20px rgba(0,0,0,0.12)" }}
+        >
+          <div className="text-5xl select-none self-start">{today.icon}</div>
+          <div className="flex-1">
+            <p className="text-xs font-black uppercase tracking-widest mb-1" style={{ color: GOLD }}>{today.reference}</p>
+            <h2 className="text-lg font-black text-white mb-2">{today.title}</h2>
+            <p className="text-sm leading-relaxed line-clamp-2" style={{ color: "rgba(255,255,255,0.7)" }}>
+              &ldquo;{today.verse}&rdquo;
+            </p>
+          </div>
+          <div className="self-end sm:self-center shrink-0">
+            <span className="text-xs font-black px-4 py-2 rounded-xl" style={{ background: GOLD, color: NAVY }}>
+              Read →
+            </span>
+          </div>
+        </Link>
+      </section>
 
       {/* ── Hero header ── */}
       <header className="relative overflow-hidden" style={{ borderBottom: "1px solid #ede8de" }}>
