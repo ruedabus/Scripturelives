@@ -34,6 +34,13 @@ const FEATURES = [
     photo: "/prayer-wall.png",
   },
   {
+    title: "Worship Music",
+    desc: "Worship playlists to accompany your time in God's Word — sing along and draw closer to Christ.",
+    href: "/music",
+    cta: "Listen Now",
+    photo: "https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=640&q=75",
+  },
+  {
     title: "Kids Stories",
     desc: "Faith Tails — beautifully illustrated Bible story books and videos for children.",
     href: "/kids",
