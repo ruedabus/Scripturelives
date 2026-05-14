@@ -114,16 +114,14 @@ export default function WelcomePage() {
         {/* Content */}
         <div className="relative z-10 w-full max-w-4xl mx-auto px-6 py-16 sm:py-24 flex flex-col items-center text-center">
 
-          {/* Logo — contrast(2) pushes near-blacks to true black so screen blend fully removes them */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src="/Orange cross_logo.png"
+            src="/Hand-painted cross_logo.png"
             alt="Scripture Lives"
             className="mb-6 select-none"
             style={{
               width: "160px",
-              mixBlendMode: "screen",
-              filter: "contrast(2) brightness(1.15)",
+              filter: "drop-shadow(0 4px 16px rgba(201,149,42,0.45))",
             }}
           />
 
