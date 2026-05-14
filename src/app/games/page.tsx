@@ -90,13 +90,13 @@ export default function GamesPage() {
             {emoji} {label}
           </button>
         ))}
-        {/* Placeholder for future game */}
-        <span
-          className="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-medium whitespace-nowrap opacity-40 cursor-not-allowed select-none"
-          style={{ background: "#e8e0d4", color: NAVY }}
+        <Link
+          href="/tournament"
+          className="flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition hover:opacity-80"
+          style={{ background: NAVY, color: "white" }}
         >
-          📖 Bible Trivia — Coming soon
-        </span>
+          🏆 Bible Bowl
+        </Link>
       </div>
 
       {/* ── Game content ─────────────────────────────────────────────────────── */}

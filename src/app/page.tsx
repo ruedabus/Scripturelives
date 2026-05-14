@@ -47,7 +47,7 @@ const FEATURES = [
   {
     icon: "🎮",
     title: "Bible Games",
-    desc: "Test your Bible knowledge with Wordle, Word Search, Quiz Bowl, and more.",
+    desc: "Bible Bowl tournaments, Wordle, Word Search, and more — fun for the whole family.",
     href: "/games",
     cta: "Play Now",
     photo: "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=640&q=75",
