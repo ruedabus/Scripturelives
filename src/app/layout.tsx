@@ -17,8 +17,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Scripture Lives",
-  description: "Explore the Bible through passages, maps, journeys, lexicons, timelines, and study tools.",
+  title: "Scripture Lives — Free Bible Tools for Everyone",
+  description: "Read the Bible, get daily devotionals, pray with others, explore kids stories, and play Bible games — free, in English and Spanish.",
   verification: {
     google: "uLB8lcJZw1cUXG1VuAl4jjwNzjSm9LPc9iBgwn-5big",
   },
