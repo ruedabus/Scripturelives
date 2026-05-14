@@ -14,6 +14,27 @@ export default function GospelPageES() {
       className="min-h-screen flex flex-col items-center"
       style={{ background: "#f9f7f2", fontFamily: "Georgia, serif" }}
     >
+      {/* ── Language bar ──────────────────────────────────────────────────── */}
+      <div
+        className="w-full flex items-center justify-center gap-3 py-2.5 px-4 text-sm font-semibold"
+        style={{ background: NAVY, borderBottom: `1px solid rgba(201,149,42,0.3)` }}
+      >
+        <span style={{ color: "rgba(255,255,255,0.6)" }}>🌐 Idioma:</span>
+        <Link
+          href="/gospel"
+          className="px-3 py-1 rounded-full text-xs font-black transition hover:opacity-80"
+          style={{ background: "rgba(255,255,255,0.15)", color: "white" }}
+        >
+          🇺🇸 English
+        </Link>
+        <span
+          className="px-3 py-1 rounded-full text-xs font-black"
+          style={{ background: GOLD, color: NAVY }}
+        >
+          🇪🇸 Español
+        </span>
+      </div>
+
       {/* ── Hero ──────────────────────────────────────────────────────────── */}
       <section
         className="w-full flex flex-col items-center justify-center px-6 py-16 text-center"
@@ -21,17 +42,6 @@ export default function GospelPageES() {
           background: `linear-gradient(160deg, ${NAVY} 0%, #2d1f3d 60%, #1a2640 100%)`,
         }}
       >
-        {/* Language toggle */}
-        <div className="absolute top-4 right-4">
-          <Link
-            href="/gospel"
-            className="text-xs font-bold px-3 py-1.5 rounded-full border transition hover:opacity-80"
-            style={{ borderColor: "rgba(201,149,42,0.5)", color: GOLD }}
-          >
-            🇺🇸 English
-          </Link>
-        </div>
-
         {/* Cross icon */}
         <div className="mb-6 text-6xl select-none">✝</div>
 
