@@ -1,19 +1,26 @@
-import type { Metadata } from "next";
-import Link from "next/link";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Worship Music | Scripture Lives",
-  description:
-    "Worship music to accompany your time in God's Word — sing along, pray, and draw closer to Christ.",
-};
+import Link from "next/link";
+import { useState } from "react";
 
 const GOLD = "#C9952A";
 const NAVY = "#1a2640";
 
-const PLAYLIST_ID = "PLKUA473MWUv3VnK3E7ElYEqVN7eb7h92_";
-const FIRST_VIDEO  = "f2oxGYpuLkw";
+const TABS = [
+  { label: "Worship 1", videoId: "f2oxGYpuLkw", playlistId: "PLKUA473MWUv3VnK3E7ElYEqVN7eb7h92_" },
+  { label: "Worship 2", videoId: "dBrnm-Ku5IQ", playlistId: null },
+  { label: "Worship 3", videoId: "d8S4VuWPYto", playlistId: null },
+  { label: "Worship 4", videoId: "endDbmXs-90", playlistId: null },
+  { label: "Worship 5", videoId: "BjH4wNAkUgo", playlistId: null },
+];
 
 export default function MusicPage() {
+  const [active, setActive] = useState(0);
+  const tab = TABS[active];
+  const src = tab.playlistId
+    ? `https://www.youtube.com/embed/${tab.videoId}?list=${tab.playlistId}&rel=0&modestbranding=1`
+    : `https://www.youtube.com/embed/${tab.videoId}?rel=0&modestbranding=1`;
+
   return (
     <div className="min-h-screen" style={{ background: "#faf8f3" }}>
 
@@ -57,29 +64,46 @@ export default function MusicPage() {
       {/* ── Player ── */}
       <main className="w-full max-w-4xl mx-auto px-4 py-10 flex flex-col gap-6">
 
-        <p className="text-[10px] font-black uppercase tracking-widest" style={{ color: GOLD }}>
-          🎶 Now Playing — Worship Playlist
-        </p>
+        {/* Tabs */}
+        <div className="flex flex-wrap gap-2">
+          {TABS.map((t, i) => (
+            <button
+              key={i}
+              onClick={() => setActive(i)}
+              className="px-4 py-2 rounded-full text-xs font-black transition"
+              style={
+                active === i
+                  ? { background: GOLD, color: NAVY }
+                  : { background: "white", color: NAVY, border: "1px solid #ede8de" }
+              }
+            >
+              🎵 {t.label}
+            </button>
+          ))}
+        </div>
 
-        {/* YouTube embed */}
+        {/* Player */}
         <div
           className="w-full rounded-2xl overflow-hidden"
           style={{ boxShadow: "0 4px 24px rgba(0,0,0,0.14)", border: "1px solid #ede8de", aspectRatio: "16/9" }}
         >
           <iframe
+            key={active}
             width="100%"
             height="100%"
-            src={`https://www.youtube.com/embed/${FIRST_VIDEO}?list=${PLAYLIST_ID}&rel=0&modestbranding=1`}
-            title="Worship Music Playlist"
+            src={src}
+            title={tab.label}
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
             allowFullScreen
             style={{ display: "block", border: "none" }}
           />
         </div>
 
-        <p className="text-xs text-center" style={{ color: "#9ca3af" }}>
-          Use the playlist icon in the player to browse all songs.
-        </p>
+        {tab.playlistId && (
+          <p className="text-xs text-center" style={{ color: "#9ca3af" }}>
+            Use the playlist icon in the player to browse all songs.
+          </p>
+        )}
 
         {/* CTA row */}
         <div className="flex flex-wrap gap-3 justify-center pt-2">
@@ -88,7 +112,7 @@ export default function MusicPage() {
             className="px-6 py-3 rounded-2xl text-sm font-black transition hover:opacity-90"
             style={{ background: GOLD, color: NAVY }}
           >
-            🌅 Today's Devotional
+            🌅 Today&apos;s Devotional
           </Link>
           <Link
             href="/prayer"
