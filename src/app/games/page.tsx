@@ -43,9 +43,9 @@ export default function GamesPage() {
         </Link>
       </div>
 
-      {/* ── Top nav bar ──────────────────────────────────────────────────────── */}
+      {/* ── Top nav bar — desktop only (mobile uses global MobileTopBar) ── */}
       <header
-        className="sticky top-0 z-30 flex items-center justify-between px-4 py-3 shrink-0"
+        className="hidden md:flex sticky top-0 z-30 items-center justify-between px-4 py-3 shrink-0"
         style={{
           background: "rgba(250,248,243,0.92)",
           backdropFilter: "blur(10px)",
@@ -73,7 +73,7 @@ export default function GamesPage() {
 
       {/* ── Game tabs ─────────────────────────────────────────────────────────── */}
       <div
-        className="sticky top-[53px] z-20 flex items-center gap-1 px-4 py-2 overflow-x-auto shrink-0"
+        className="sticky top-0 md:top-[53px] z-20 flex items-center gap-1 px-4 py-2 overflow-x-auto shrink-0"
         style={{ background: CREAM, borderBottom: "1px solid #ede8de" }}
       >
         {TABS.map(({ id, label, emoji }) => (

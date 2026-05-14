@@ -4,6 +4,7 @@ import "./globals.css";
 import WelcomeModal from "@/components/WelcomeModal";
 import MothersDayBanner from "@/components/MothersDayBanner";
 import MobileBottomNav from "@/components/MobileBottomNav";
+import MobileTopBar from "@/components/MobileTopBar";
 import { Analytics } from "@vercel/analytics/next";
 
 const geistSans = Geist({
@@ -44,6 +45,7 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-full flex flex-col pb-[56px] md:pb-0">
+        <MobileTopBar />
         <MothersDayBanner />
         <WelcomeModal />
         {children}
