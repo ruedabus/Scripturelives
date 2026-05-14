@@ -121,7 +121,7 @@ export default function WelcomePage() {
             className="mb-6 select-none"
             style={{
               width: "160px",
-              filter: "drop-shadow(0 4px 16px rgba(201,149,42,0.45))",
+              filter: "drop-shadow(0 2px 6px rgba(201,149,42,0.18))",
             }}
           />
 
