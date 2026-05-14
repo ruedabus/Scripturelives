@@ -92,7 +92,7 @@ export default function BibleTeacherChat() {
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
-          src="/bible-teacher.png"
+          src="/Bible-teacher.png"
           alt="Bible Teacher"
           className="w-full h-full rounded-full object-cover"
           onError={(e) => {
@@ -129,7 +129,7 @@ export default function BibleTeacherChat() {
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/bible-teacher.png"
+              src="/Bible-teacher.png"
               alt=""
               className="w-9 h-9 rounded-full object-cover shrink-0"
               onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
@@ -172,7 +172,7 @@ export default function BibleTeacherChat() {
                     {m.role === "assistant" && (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
-                        src="/bible-teacher.png"
+                        src="/Bible-teacher.png"
                         alt=""
                         className="w-7 h-7 rounded-full object-cover shrink-0 self-end"
                         onError={(e) => {
