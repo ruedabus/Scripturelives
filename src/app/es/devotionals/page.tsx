@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { DEVOTIONALS_ES } from "@/data/devotionals-es";
 import DevotionalSignupES from "@/components/DevotionalSignupES";
+import TodayDevotionalES from "@/components/TodayDevotionalES";
 
 // Always render server-side so "today's" devotional reflects the actual current date
 export const dynamic = "force-dynamic";
@@ -124,8 +125,8 @@ export default function DevotionalsESPage() {
         <DevotionalSignupES variant="banner" />
       </div>
 
-      {/* ── Today's devotional highlight ── */}
-      <TodayHighlight />
+      {/* ── Today's devotional (client component — always uses browser date) ── */}
+      <TodayDevotionalES />
 
       {/* ── All 30 devotionals grid ── */}
       <main className="max-w-6xl mx-auto px-4 pb-16 pt-6">
@@ -216,68 +217,3 @@ export default function DevotionalsESPage() {
   );
 }
 
-// ── Today's highlight (server component, day calculated at render) ─────────────
-function TodayHighlight() {
-  const dayOfYear = Math.floor(
-    (Date.now() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86_400_000
-  );
-  const idx = ((dayOfYear - 1) % DEVOTIONALS_ES.length + DEVOTIONALS_ES.length) % DEVOTIONALS_ES.length;
-  const today = DEVOTIONALS_ES[idx];
-  const dayNum = idx + 1;
-
-  return (
-    <div className="max-w-2xl mx-auto px-4 py-10">
-      <p
-        className="text-[10px] font-black uppercase tracking-widest mb-4 text-center"
-        style={{ color: GOLD }}
-      >
-        ✦ Devocional de Hoy
-      </p>
-      <Link
-        href={`/es/devotionals/${dayNum}`}
-        className="group grid md:grid-cols-[auto_1fr] rounded-2xl overflow-hidden transition hover:-translate-y-0.5"
-        style={{
-          boxShadow: "0 4px 24px rgba(0,0,0,0.10)",
-          border: "1px solid #ede8de",
-          background: "white",
-        }}
-      >
-        {/* Icon panel */}
-        <div
-          className="flex items-center justify-center p-8 text-6xl"
-          style={{ background: `linear-gradient(160deg, ${NAVY} 0%, #2d1f3d 100%)` }}
-        >
-          {today.icon}
-        </div>
-
-        {/* Text */}
-        <div className="p-6 flex flex-col justify-center gap-3">
-          <span
-            className="self-start text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full"
-            style={{ background: "rgba(201,149,42,0.12)", color: "#92400e" }}
-          >
-            Día {dayNum} · Devocional
-          </span>
-          <h2
-            className="text-xl font-black leading-snug group-hover:opacity-75 transition"
-            style={{ color: NAVY }}
-          >
-            {today.title}
-          </h2>
-          <p className="text-xs italic leading-relaxed line-clamp-2" style={{ color: "#6b7280" }}>
-            "{today.verse}"
-          </p>
-          <p className="text-xs font-bold" style={{ color: GOLD }}>{today.reference}</p>
-          <div
-            className="flex items-center gap-4 mt-1 pt-4"
-            style={{ borderTop: "1px solid #f0ece3" }}
-          >
-            <span className="text-sm font-bold" style={{ color: GOLD }}>
-              Leer devoción de hoy →
-            </span>
-          </div>
-        </div>
-      </Link>
-    </div>
-  );
-}
