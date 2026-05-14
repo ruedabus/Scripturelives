@@ -12,10 +12,19 @@ export const metadata: Metadata = {
 const GOLD = "#C9952A";
 const NAVY = "#1a2640";
 
-// Category labels mapped from devotional themes
-const CATEGORY_COLORS: Record<string, { bg: string; text: string }> = {
-  default: { bg: "rgba(201,149,42,0.15)", text: "#92400e" },
-};
+// Rotating Unsplash photos — same pool as the English devotionals page
+const CARD_PHOTOS = [
+  "https://images.unsplash.com/photo-1476820865390-c52aeebb9891?w=640&q=75",
+  "https://images.unsplash.com/photo-1504052434569-70ad5836ab65?w=640&q=75",
+  "https://images.unsplash.com/photo-1529070538774-1843cb3265df?w=640&q=75",
+  "https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=640&q=75",
+  "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=640&q=75",
+  "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=640&q=75",
+  "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=640&q=75",
+  "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=640&q=75",
+  "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=640&q=75",
+  "https://images.unsplash.com/photo-1476820865390-c52aeebb9891?w=640&q=75",
+];
 
 export default function DevotionalsESPage() {
   return (
@@ -124,64 +133,58 @@ export default function DevotionalsESPage() {
           Los 30 devocionales
         </p>
 
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {DEVOTIONALS_ES.map((dev, idx) => (
             <Link
               key={idx}
               href={`/es/devotionals/${idx + 1}`}
               className="group flex flex-col bg-white rounded-2xl overflow-hidden transition hover:-translate-y-1"
-              style={{ boxShadow: "0 2px 16px rgba(0,0,0,0.07)", border: "1px solid #ede8de" }}
+              style={{ boxShadow: "0 2px 16px rgba(0,0,0,0.08)", border: "1px solid #ede8de" }}
             >
-              {/* Color banner */}
-              <div
-                className="h-2 w-full"
-                style={{ background: `linear-gradient(90deg, ${GOLD}, ${NAVY})` }}
-              />
+              {/* Photo header */}
+              <div className="relative h-40 overflow-hidden">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={CARD_PHOTOS[idx % CARD_PHOTOS.length]}
+                  alt=""
+                  aria-hidden="true"
+                  className="w-full h-full object-cover transition duration-500 group-hover:scale-105"
+                />
+                {/* Scrim */}
+                <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.4) 0%, transparent 60%)" }} />
+                {/* Day badge over photo */}
+                <span
+                  className="absolute bottom-3 left-3 text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full"
+                  style={{ background: "rgba(255,255,255,0.92)", color: GOLD }}
+                >
+                  Día {idx + 1}
+                </span>
+                {/* Icon over photo */}
+                <span className="absolute top-3 right-3 text-2xl select-none">{dev.icon}</span>
+              </div>
 
-              <div className="p-5 flex flex-col gap-3 flex-1">
-                {/* Icon + day */}
-                <div className="flex items-center justify-between">
-                  <span className="text-3xl">{dev.icon}</span>
-                  <span
-                    className="text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full"
-                    style={{ background: "rgba(201,149,42,0.12)", color: "#92400e" }}
-                  >
-                    Día {idx + 1}
-                  </span>
-                </div>
-
-                {/* Title */}
+              {/* Card body */}
+              <div className="flex flex-col flex-1 p-5 gap-2">
                 <h2
                   className="font-bold leading-snug transition-colors group-hover:opacity-75"
                   style={{ fontSize: "0.95rem", color: NAVY }}
                 >
                   {dev.title}
                 </h2>
-
-                {/* Reference */}
                 <p className="text-xs font-semibold" style={{ color: GOLD }}>
                   {dev.reference}
                 </p>
-
-                {/* Verse snippet */}
-                <p
-                  className="text-xs leading-relaxed italic line-clamp-2"
-                  style={{ color: "#6b7280" }}
-                >
+                <p className="text-xs leading-relaxed italic line-clamp-2" style={{ color: "#6b7280" }}>
                   "{dev.verse}"
                 </p>
 
                 {/* Footer */}
                 <div
-                  className="mt-auto pt-3 flex items-center justify-end"
+                  className="mt-auto pt-3 flex items-center justify-between"
                   style={{ borderTop: "1px solid #f0ece3" }}
                 >
-                  <span
-                    className="text-xs font-bold transition-opacity group-hover:opacity-60"
-                    style={{ color: GOLD }}
-                  >
-                    Leer →
-                  </span>
+                  <span className="text-xs" style={{ color: "#9ca3af" }}>Devocional</span>
+                  <span className="text-xs font-bold transition-opacity group-hover:opacity-60" style={{ color: GOLD }}>→</span>
                 </div>
               </div>
             </Link>
