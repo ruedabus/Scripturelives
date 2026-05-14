@@ -16,6 +16,7 @@ type Props = {
 export default function DevotionalSignup({ variant = "banner" }: Props) {
   const [name, setName]       = useState("");
   const [email, setEmail]     = useState("");
+  const [language, setLang]   = useState<"en" | "es">("en");
   const [status, setStatus]   = useState<"idle" | "loading" | "success" | "duplicate" | "error">("idle");
   const [errMsg, setErrMsg]   = useState("");
 
@@ -27,7 +28,7 @@ export default function DevotionalSignup({ variant = "banner" }: Props) {
       const res  = await fetch("/api/subscribe", {
         method:  "POST",
         headers: { "Content-Type": "application/json" },
-        body:    JSON.stringify({ email: email.trim(), name: name.trim() }),
+        body:    JSON.stringify({ email: email.trim(), name: name.trim(), language }),
       });
       const data = await res.json();
       if (data.alreadySubscribed) { setStatus("duplicate"); return; }
@@ -49,7 +50,7 @@ export default function DevotionalSignup({ variant = "banner" }: Props) {
         <p className="text-2xl mb-2">🎉</p>
         <p className="font-bold text-base mb-1" style={{ color: NAVY }}>You're subscribed!</p>
         <p className="text-sm text-gray-500">
-          Check your inbox for a welcome email. Your first devotional is on its way.
+          Check your inbox for a welcome email. Your first {language === "es" ? "Spanish" : "English"} devotional is on its way.
         </p>
       </div>
     );
@@ -91,12 +92,31 @@ export default function DevotionalSignup({ variant = "banner" }: Props) {
               A verse, a reflection, and a prayer — delivered every morning, free.
             </p>
           </div>
-          <span
-            className="shrink-0 self-start sm:self-auto text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full"
-            style={{ background: `${GOLD}33`, color: GOLD }}
-          >
-            Free
-          </span>
+          {/* Language toggle */}
+          <div className="flex items-center gap-2 shrink-0">
+            <button
+              type="button"
+              onClick={() => setLang("en")}
+              className="px-3 py-1 rounded-full text-xs font-black transition"
+              style={{
+                background: language === "en" ? "white" : "rgba(255,255,255,0.15)",
+                color:      language === "en" ? NAVY    : "rgba(255,255,255,0.7)",
+              }}
+            >
+              🇺🇸 EN
+            </button>
+            <button
+              type="button"
+              onClick={() => setLang("es")}
+              className="px-3 py-1 rounded-full text-xs font-black transition"
+              style={{
+                background: language === "es" ? GOLD                    : "rgba(255,255,255,0.15)",
+                color:      language === "es" ? NAVY                    : "rgba(255,255,255,0.7)",
+              }}
+            >
+              🇪🇸 ES
+            </button>
+          </div>
         </div>
 
         {/* Form */}
@@ -169,13 +189,38 @@ export default function DevotionalSignup({ variant = "banner" }: Props) {
     >
       <div className="flex items-start gap-3 mb-4">
         <span className="text-xl shrink-0">📖</span>
-        <div>
+        <div className="flex-1">
           <p className="text-sm font-bold" style={{ color: NAVY }}>
             Get Daily Devotionals
           </p>
           <p className="text-xs text-gray-400 mt-0.5">
             A verse and reflection delivered to your inbox every morning — free.
           </p>
+        </div>
+        {/* Language toggle */}
+        <div className="flex items-center gap-1 shrink-0">
+          <button
+            type="button"
+            onClick={() => setLang("en")}
+            className="px-2.5 py-1 rounded-full text-[10px] font-black transition"
+            style={{
+              background: language === "en" ? NAVY                    : "rgba(0,0,0,0.07)",
+              color:      language === "en" ? "white"                 : "#9ca3af",
+            }}
+          >
+            🇺🇸 EN
+          </button>
+          <button
+            type="button"
+            onClick={() => setLang("es")}
+            className="px-2.5 py-1 rounded-full text-[10px] font-black transition"
+            style={{
+              background: language === "es" ? GOLD   : "rgba(0,0,0,0.07)",
+              color:      language === "es" ? NAVY   : "#9ca3af",
+            }}
+          >
+            🇪🇸 ES
+          </button>
         </div>
       </div>
 
