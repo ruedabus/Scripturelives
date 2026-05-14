@@ -45,11 +45,92 @@ const FROM_EMAIL  = "devotionals@scripturelives.com";
 const ADMIN_EMAIL = process.env.EMAIL_TO || "info@scripturelives.com";
 const RESEND_URL  = "https://api.resend.com/emails";
 
-async function sendConfirmation(name: string | null, email: string) {
+async function sendConfirmation(name: string | null, email: string, language: string) {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) return;
 
-  const displayName = name?.trim() || "Friend";
+  const isES = language === "es";
+  const displayName = name?.trim() || (isES ? "Amigo" : "Friend");
+
+  const subject = isES
+    ? "Estás suscrito a los Devocionales Diarios 📖"
+    : "You're subscribed to Daily Devotionals 📖";
+
+  const html = isES ? `
+    <div style="font-family:sans-serif;max-width:560px;margin:auto;padding:40px 32px;background:#faf8f3;border-radius:12px;border:1px solid #ede8de">
+      <div style="text-align:center;margin-bottom:32px">
+        <p style="font-size:36px;margin:0">📖</p>
+        <h1 style="color:#1a2640;font-size:22px;margin:12px 0 4px">¡Bienvenido, ${displayName}!</h1>
+        <p style="color:#C9952A;font-size:11px;letter-spacing:0.15em;text-transform:uppercase;margin:0">Devocionales Diarios — Scripture Lives</p>
+      </div>
+
+      <p style="color:#1a2640;line-height:1.8;margin:0 0 20px">
+        ¡Gracias por suscribirte! Cada día te enviaremos un devocional breve para
+        alentar tu caminar con Dios — un versículo, una reflexión y una oración para comenzar tu mañana.
+      </p>
+
+      <div style="background:white;border-radius:10px;padding:20px 24px;border:1px solid #ede8de;border-left:4px solid #C9952A;margin-bottom:28px">
+        <p style="color:#9ca3af;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin:0 0 8px">Versículo de Hoy</p>
+        <p style="color:#1a2640;font-style:italic;line-height:1.7;margin:0">
+          "Lámpara es a mis pies tu palabra, y lumbrera a mi camino."
+        </p>
+        <p style="color:#C9952A;font-size:12px;font-weight:600;margin:8px 0 0">— Salmos 119:105</p>
+      </div>
+
+      <p style="color:#6b7280;font-size:13px;line-height:1.7;margin:0 0 28px">
+        Tu primer devocional llegará pronto. Mientras tanto, explora todos nuestros
+        devocionales en Scripture Lives.
+      </p>
+
+      <div style="text-align:center">
+        <a href="https://scripturelives.com/es/devotionals"
+           style="display:inline-block;background:#C9952A;color:white;text-decoration:none;font-weight:700;font-size:14px;padding:12px 28px;border-radius:10px">
+          Ver Devocionales →
+        </a>
+      </div>
+
+      <p style="color:#9ca3af;font-size:11px;text-align:center;margin-top:32px">
+        Puedes cancelar tu suscripción en cualquier momento · scripturelives.com
+      </p>
+    </div>
+  ` : `
+    <div style="font-family:sans-serif;max-width:560px;margin:auto;padding:40px 32px;background:#faf8f3;border-radius:12px;border:1px solid #ede8de">
+      <div style="text-align:center;margin-bottom:32px">
+        <p style="font-size:36px;margin:0">📖</p>
+        <h1 style="color:#1a2640;font-size:22px;margin:12px 0 4px">Welcome, ${displayName}!</h1>
+        <p style="color:#C9952A;font-size:11px;letter-spacing:0.15em;text-transform:uppercase;margin:0">Daily Devotionals — Scripture Lives</p>
+      </div>
+
+      <p style="color:#1a2640;line-height:1.8;margin:0 0 20px">
+        Thank you for signing up! Each day we'll send you a short devotional to
+        encourage your walk with God — a verse, a reflection, and a prayer to start your morning.
+      </p>
+
+      <div style="background:white;border-radius:10px;padding:20px 24px;border:1px solid #ede8de;border-left:4px solid #C9952A;margin-bottom:28px">
+        <p style="color:#9ca3af;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin:0 0 8px">Today's Verse</p>
+        <p style="color:#1a2640;font-style:italic;line-height:1.7;margin:0">
+          "Your word is a lamp to my feet and a light to my path."
+        </p>
+        <p style="color:#C9952A;font-size:12px;font-weight:600;margin:8px 0 0">— Psalm 119:105</p>
+      </div>
+
+      <p style="color:#6b7280;font-size:13px;line-height:1.7;margin:0 0 28px">
+        Your first devotional will arrive soon. In the meantime, explore our full
+        library of Bible studies and articles at Scripture Lives.
+      </p>
+
+      <div style="text-align:center">
+        <a href="https://scripturelives.com/devotionals"
+           style="display:inline-block;background:#C9952A;color:white;text-decoration:none;font-weight:700;font-size:14px;padding:12px 28px;border-radius:10px">
+          Browse Devotionals →
+        </a>
+      </div>
+
+      <p style="color:#9ca3af;font-size:11px;text-align:center;margin-top:32px">
+        You can unsubscribe at any time · scripturelives.com
+      </p>
+    </div>
+  `;
 
   await fetch(RESEND_URL, {
     method: "POST",
@@ -57,50 +138,13 @@ async function sendConfirmation(name: string | null, email: string) {
     body: JSON.stringify({
       from:    "Scripture Lives — Devotionals <devotionals@scripturelives.com>",
       to:      [email],
-      subject: "You're subscribed to Daily Devotionals 📖",
-      html: `
-        <div style="font-family:sans-serif;max-width:560px;margin:auto;padding:40px 32px;background:#faf8f3;border-radius:12px;border:1px solid #ede8de">
-          <div style="text-align:center;margin-bottom:32px">
-            <p style="font-size:36px;margin:0">📖</p>
-            <h1 style="color:#1a2640;font-size:22px;margin:12px 0 4px">Welcome, ${displayName}!</h1>
-            <p style="color:#C9952A;font-size:11px;letter-spacing:0.15em;text-transform:uppercase;margin:0">Daily Devotionals — Scripture Lives</p>
-          </div>
-
-          <p style="color:#1a2640;line-height:1.8;margin:0 0 20px">
-            Thank you for signing up! Each day we'll send you a short devotional to
-            encourage your walk with God — a verse, a reflection, and a prayer to start your morning.
-          </p>
-
-          <div style="background:white;border-radius:10px;padding:20px 24px;border:1px solid #ede8de;border-left:4px solid #C9952A;margin-bottom:28px">
-            <p style="color:#9ca3af;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;margin:0 0 8px">Today's Verse</p>
-            <p style="color:#1a2640;font-style:italic;line-height:1.7;margin:0">
-              "Your word is a lamp to my feet and a light to my path."
-            </p>
-            <p style="color:#C9952A;font-size:12px;font-weight:600;margin:8px 0 0">— Psalm 119:105</p>
-          </div>
-
-          <p style="color:#6b7280;font-size:13px;line-height:1.7;margin:0 0 28px">
-            Your first devotional will arrive soon. In the meantime, explore our full
-            library of Bible studies and articles at Scripture Lives.
-          </p>
-
-          <div style="text-align:center">
-            <a href="https://scripturelives.com/devotionals"
-               style="display:inline-block;background:#C9952A;color:white;text-decoration:none;font-weight:700;font-size:14px;padding:12px 28px;border-radius:10px">
-              Browse Devotionals →
-            </a>
-          </div>
-
-          <p style="color:#9ca3af;font-size:11px;text-align:center;margin-top:32px">
-            You can unsubscribe at any time · scripturelives.com
-          </p>
-        </div>
-      `,
+      subject,
+      html,
     }),
   }).catch((err) => console.error("[subscribe] Resend error:", err));
 }
 
-async function sendAdminNotification(name: string | null, email: string) {
+async function sendAdminNotification(name: string | null, email: string, language: string) {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) return;
   const displayName = name?.trim() || "Anonymous";
@@ -110,7 +154,7 @@ async function sendAdminNotification(name: string | null, email: string) {
     body: JSON.stringify({
       from:    "Scripture Lives — Devotionals <devotionals@scripturelives.com>",
       to:      [ADMIN_EMAIL],
-      subject: `📬 New Devotional Subscriber — ${displayName}`,
+      subject: `📬 New Devotional Subscriber (${language.toUpperCase()}) — ${displayName}`,
       html: `
         <div style="font-family:sans-serif;max-width:520px;margin:auto;padding:32px;background:#faf8f3;border-radius:12px;border:1px solid #ede8de">
           <div style="text-align:center;margin-bottom:24px">
@@ -145,12 +189,13 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Too many requests." }, { status: 429 });
   }
 
-  let body: { email?: string; name?: string };
+  let body: { email?: string; name?: string; language?: string };
   try { body = await req.json(); }
   catch { return NextResponse.json({ error: "Invalid request." }, { status: 400 }); }
 
-  const email = (body.email ?? "").trim().toLowerCase().slice(0, 254);
-  const name  = (body.name  ?? "").trim().slice(0, 80) || null;
+  const email    = (body.email    ?? "").trim().toLowerCase().slice(0, 254);
+  const name     = (body.name     ?? "").trim().slice(0, 80) || null;
+  const language = body.language === "es" ? "es" : "en";
 
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return NextResponse.json({ error: "Please enter a valid email address." }, { status: 400 });
@@ -161,7 +206,7 @@ export async function POST(req: NextRequest) {
       const res = await fetch(TABLE(), {
         method:  "POST",
         headers: { ...sbHeaders(), Prefer: "resolution=ignore-duplicates,return=minimal" },
-        body:    JSON.stringify({ email, name, active: true }),
+        body:    JSON.stringify({ email, name, language, active: true }),
       });
       if (!res.ok) {
         const err = await res.text().catch(() => "");
@@ -181,8 +226,8 @@ export async function POST(req: NextRequest) {
 
     // Await both emails so Vercel doesn't shut down before they complete
     await Promise.all([
-      sendConfirmation(name, email),
-      sendAdminNotification(name, email),
+      sendConfirmation(name, email, language),
+      sendAdminNotification(name, email, language),
     ]);
 
     return NextResponse.json({ success: true });

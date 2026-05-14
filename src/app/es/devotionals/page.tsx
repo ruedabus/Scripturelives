@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { DEVOTIONALS_ES } from "@/data/devotionals-es";
+import DevotionalSignupES from "@/components/DevotionalSignupES";
 
 export const metadata: Metadata = {
   title: "Devocionales Diarios | Scripture Lives",
@@ -93,6 +94,11 @@ export default function DevotionalsESPage() {
           </p>
         </div>
       </header>
+
+      {/* ── Email signup ── */}
+      <div className="max-w-2xl mx-auto px-4 pt-10 pb-2">
+        <DevotionalSignupES variant="banner" />
+      </div>
 
       {/* ── Today's devotional highlight ── */}
       <TodayHighlight />

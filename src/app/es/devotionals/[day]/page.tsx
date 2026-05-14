@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { DEVOTIONALS_ES } from "@/data/devotionals-es";
+import DevotionalSignupES from "@/components/DevotionalSignupES";
 
 const GOLD = "#C9952A";
 const NAVY = "#1a2640";
@@ -238,6 +239,11 @@ export default async function DevotionalDayPage({
           </Link>
         </div>
       </main>
+
+      {/* ── Email signup ── */}
+      <section className="max-w-3xl mx-auto px-4 pb-10">
+        <DevotionalSignupES variant="compact" />
+      </section>
 
       {/* ── CTA footer ── */}
       <footer
