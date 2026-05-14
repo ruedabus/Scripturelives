@@ -2394,9 +2394,9 @@ export default function BibleReader() {
             {leftPanelTab === "sessions" && (
               <div className="print:hidden">
                 <div className="mb-4">
-                  <h2 className="text-xl font-semibold">Study Sessions</h2>
+                  <h2 className="text-xl font-semibold">My Studies</h2>
                   <p className="mt-1 text-sm text-gray-500">
-                    Save your current bookmarks and notes as a named session.
+                    Save your current bookmarks and notes as a named study.
                   </p>
                 </div>
 
@@ -2406,7 +2406,7 @@ export default function BibleReader() {
                       type="text"
                       value={sessionName}
                       onChange={(event) => setSessionName(event.target.value)}
-                      placeholder="Session name..."
+                      placeholder="Study name..."
                       className="flex-1 rounded-xl border border-gray-300 bg-gray-50 px-4 py-2 text-sm text-gray-900 outline-none placeholder:text-gray-400 focus:border-amber-500"
                     />
                     <button
@@ -2414,14 +2414,14 @@ export default function BibleReader() {
                       onClick={handleSaveSession}
                       className="rounded-lg border border-amber-500 bg-amber-500 px-4 py-2 text-sm font-medium text-gray-900 transition hover:opacity-90"
                     >
-                      Save Session
+                      Save Study
                     </button>
                   </div>
                 </div>
 
                 {sessions.length === 0 ? (
                   <div className="rounded-xl border border-dashed border-gray-300 p-4 text-sm text-gray-500">
-                    No study sessions yet.
+                    No saved studies yet.
                   </div>
                 ) : (
                   <div className="space-y-3">
@@ -2899,7 +2899,7 @@ export default function BibleReader() {
             {drawerBtn("prayer_journal",   <Heart size={16} />,        "Prayer Journal")}
             {drawerBtn("reading_progress", <BarChart2 size={16} />,  "Reading Progress")}
             {drawerBtn("bookmarks",        <Star size={16} />,       "Bookmarks")}
-            {drawerBtn("sessions",         <ClipboardList size={16} />, "Study Sessions")}
+            {drawerBtn("sessions",         <ClipboardList size={16} />, "My Studies")}
             {drawerBtn("study_sheet",      <FileText size={16} />,   "Study Notes")}
           </div>
 

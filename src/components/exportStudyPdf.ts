@@ -54,7 +54,7 @@ export function exportStudyPdf(
       ? ""
       : `
   <div class="section-header">
-    <h2>Study Sessions</h2>
+    <h2>My Studies</h2>
     <hr class="divider" />
   </div>
   ${sessions
