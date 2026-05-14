@@ -89,58 +89,93 @@ export default function WelcomePage() {
 
       {/* ── Hero ── */}
       <section
-        className="relative w-full flex flex-col items-center justify-center px-6 py-20 text-center overflow-hidden"
+        className="relative w-full overflow-hidden"
         style={{ background: `linear-gradient(160deg, ${NAVY} 0%, #2d1f3d 55%, #1a2640 100%)` }}
       >
-        {/* Subtle cross watermark */}
-        <div
-          className="absolute inset-0 flex items-center justify-center select-none pointer-events-none"
-          style={{ fontSize: "28rem", opacity: 0.03, color: "white", lineHeight: 1 }}
-        >
-          ✝
+        {/* Open Bible — background atmosphere on mobile, right panel on desktop */}
+        <div className="absolute inset-0 md:left-1/2 pointer-events-none select-none">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/open-bible.png"
+            alt=""
+            aria-hidden="true"
+            className="w-full h-full object-cover object-center opacity-10 md:opacity-30"
+            style={{ maskImage: "linear-gradient(to right, transparent 0%, black 40%)" }}
+          />
         </div>
+        {/* Extra left-side fade so text stays readable */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{ background: `linear-gradient(to right, ${NAVY} 0%, ${NAVY}cc 40%, transparent 100%)` }}
+        />
 
-        <div className="relative z-10 flex flex-col items-center">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="h-px w-10" style={{ background: GOLD }} />
-            <span className="text-[10px] font-black uppercase tracking-[0.25em]" style={{ color: GOLD }}>
-              Scripture Lives
-            </span>
-            <div className="h-px w-10" style={{ background: GOLD }} />
+        {/* Content */}
+        <div className="relative z-10 w-full max-w-6xl mx-auto px-6 py-16 sm:py-20 flex flex-col md:flex-row items-center gap-10">
+
+          {/* ── Left: branding + text + CTAs ── */}
+          <div className="flex-1 flex flex-col items-center md:items-start text-center md:text-left">
+
+            {/* Logo */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/Orange cross_logo.png"
+              alt="Scripture Lives"
+              className="mb-4 select-none"
+              style={{
+                width: "140px",
+                mixBlendMode: "screen",
+                filter: "brightness(1.1)",
+              }}
+            />
+
+            <h1
+              className="text-4xl sm:text-5xl lg:text-6xl font-black leading-tight mb-5 text-white"
+              style={{ textShadow: `0 2px 30px rgba(201,149,42,0.3)` }}
+            >
+              God&apos;s Word,<br />
+              <span style={{ color: GOLD }}>For Everyone.</span>
+            </h1>
+
+            <p
+              className="text-base sm:text-lg max-w-lg leading-relaxed mb-10"
+              style={{ color: "rgba(255,255,255,0.75)" }}
+            >
+              Free Bible tools, daily devotionals, kids stories, prayer, and games —
+              all in one place, in English and Spanish.
+            </p>
+
+            <div className="flex flex-wrap items-center justify-center md:justify-start gap-4">
+              <Link
+                href="/bible"
+                className="px-8 py-4 rounded-2xl font-black text-base transition hover:opacity-90 hover:scale-105 active:scale-95"
+                style={{ background: GOLD, color: NAVY }}
+              >
+                📖 Open the Bible
+              </Link>
+              <Link
+                href="/gospel"
+                className="px-8 py-4 rounded-2xl font-black text-base transition hover:opacity-80 border"
+                style={{ borderColor: "rgba(201,149,42,0.5)", color: "white" }}
+              >
+                ✝ The Gospel
+              </Link>
+            </div>
           </div>
 
-          <h1
-            className="text-4xl sm:text-6xl font-black leading-tight mb-5 text-white"
-            style={{ textShadow: `0 2px 30px rgba(201,149,42,0.3)` }}
-          >
-            God's Word,<br />
-            <span style={{ color: GOLD }}>For Everyone.</span>
-          </h1>
-
-          <p
-            className="text-base sm:text-lg max-w-xl leading-relaxed mb-10"
-            style={{ color: "rgba(255,255,255,0.75)" }}
-          >
-            Free Bible tools, daily devotionals, kids stories, prayer, and games —
-            all in one place, in English and Spanish.
-          </p>
-
-          <div className="flex flex-wrap items-center justify-center gap-4">
-            <Link
-              href="/bible"
-              className="px-8 py-4 rounded-2xl font-black text-base transition hover:opacity-90 hover:scale-105 active:scale-95"
-              style={{ background: GOLD, color: NAVY }}
-            >
-              📖 Open the Bible
-            </Link>
-            <Link
-              href="/gospel"
-              className="px-8 py-4 rounded-2xl font-black text-base transition hover:opacity-80 border"
-              style={{ borderColor: "rgba(201,149,42,0.5)", color: "white" }}
-            >
-              ✝ The Gospel
-            </Link>
+          {/* ── Right: open Bible image (desktop only) ── */}
+          <div className="hidden md:flex flex-1 items-end justify-center pb-0">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/open-bible.png"
+              alt="Open Bible"
+              className="w-full max-w-lg drop-shadow-2xl select-none"
+              style={{
+                borderRadius: "16px 16px 0 0",
+                maskImage: "linear-gradient(to top, transparent 0%, black 25%)",
+              }}
+            />
           </div>
+
         </div>
       </section>
 
