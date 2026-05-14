@@ -6,7 +6,7 @@ import Link from "next/link";
 const GOLD = "#C9952A";
 const NAVY = "#1a2640";
 
-export default function GospelPage() {
+export default function GospelPageES() {
   const [prayed, setPrayed] = useState(false);
 
   return (
@@ -16,7 +16,7 @@ export default function GospelPage() {
     >
       {/* ── Hero ──────────────────────────────────────────────────────────── */}
       <section
-        className="relative w-full flex flex-col items-center justify-center px-6 py-16 text-center"
+        className="w-full flex flex-col items-center justify-center px-6 py-16 text-center"
         style={{
           background: `linear-gradient(160deg, ${NAVY} 0%, #2d1f3d 60%, #1a2640 100%)`,
         }}
@@ -24,11 +24,11 @@ export default function GospelPage() {
         {/* Language toggle */}
         <div className="absolute top-4 right-4">
           <Link
-            href="/es/gospel"
+            href="/gospel"
             className="text-xs font-bold px-3 py-1.5 rounded-full border transition hover:opacity-80"
             style={{ borderColor: "rgba(201,149,42,0.5)", color: GOLD }}
           >
-            🇪🇸 Español
+            🇺🇸 English
           </Link>
         </div>
 
@@ -39,20 +39,20 @@ export default function GospelPage() {
           className="text-4xl sm:text-5xl font-black leading-tight mb-4"
           style={{ color: "white", textShadow: `0 2px 20px rgba(201,149,42,0.4)` }}
         >
-          The Best News<br />
-          <span style={{ color: GOLD }}>You'll Ever Hear</span>
+          La Mejor Noticia<br />
+          <span style={{ color: GOLD }}>Que Jamás Escucharás</span>
         </h1>
 
         <p className="text-base sm:text-lg max-w-xl leading-relaxed mb-2" style={{ color: "rgba(255,255,255,0.85)" }}>
-          Someone wearing a shirt sent you here. That wasn't an accident.
+          Alguien con una camiseta te envió aquí. Eso no fue un accidente.
         </p>
         <p className="text-sm max-w-md leading-relaxed" style={{ color: "rgba(255,255,255,0.6)" }}>
-          Take two minutes. This message has changed billions of lives — including the person you just met.
+          Tómate dos minutos. Este mensaje ha cambiado miles de millones de vidas — incluyendo la de la persona que acabas de conocer.
         </p>
 
         {/* Scroll cue */}
         <div className="mt-10 flex flex-col items-center gap-1" style={{ color: GOLD }}>
-          <span className="text-xs uppercase tracking-widest font-bold">Keep Reading</span>
+          <span className="text-xs uppercase tracking-widest font-bold">Sigue Leyendo</span>
           <span className="text-2xl animate-bounce">↓</span>
         </div>
       </section>
@@ -60,47 +60,45 @@ export default function GospelPage() {
       {/* ── The Gospel ────────────────────────────────────────────────────── */}
       <section className="w-full max-w-2xl px-6 py-14 flex flex-col gap-12">
 
-        {/* Step 1 */}
+        {/* Paso 1 */}
         <GospelStep
           number="1"
-          title="God created you and loves you."
-          verse='"For God so loved the world that he gave his one and only Son, that whoever believes in him shall not perish but have eternal life."'
-          reference="John 3:16"
-          body="You weren't an accident. God made you on purpose, for a purpose. His love for you isn't based on what you've done — it's who He is."
+          title="Dios te creó y te ama."
+          verse='"Porque de tal manera amó Dios al mundo, que ha dado a su Hijo unigénito, para que todo aquel que en él cree, no se pierda, mas tenga vida eterna."'
+          reference="Juan 3:16"
+          body="No eres un accidente. Dios te hizo con un propósito, para un propósito. Su amor por ti no se basa en lo que has hecho — es parte de quién Él es."
         />
 
-        {/* Step 2 */}
+        {/* Paso 2 */}
         <GospelStep
           number="2"
-          title="We all have a problem — it's called sin."
-          verse='"For all have sinned and fall short of the glory of God."'
-          reference="Romans 3:23"
-          body="Sin is simply choosing our own way over God's way. Every one of us has done it. And that separation from God is the root of everything broken in our lives."
+          title="Todos tenemos un problema — se llama pecado."
+          verse='"Por cuanto todos pecaron, y están destituidos de la gloria de Dios."'
+          reference="Romanos 3:23"
+          body="El pecado es simplemente elegir nuestro propio camino en lugar del camino de Dios. Todos lo hemos hecho. Y esa separación de Dios es la raíz de todo lo que está roto en nuestras vidas."
         />
 
-        {/* Step 3 */}
+        {/* Paso 3 */}
         <GospelStep
           number="3"
-          title="The penalty for sin is death — but God paid it."
-          verse='"But God demonstrates his own love for us in this: While we were still sinners, Christ died for us."'
-          reference="Romans 5:8"
-          body="Jesus — God's own Son — took the punishment we deserved. He died on the cross, was buried, and rose from the dead three days later. That's not mythology. That's history — and it changes everything."
+          title="El precio del pecado es la muerte — pero Dios lo pagó."
+          verse='"Mas Dios muestra su amor para con nosotros, en que siendo aún pecadores, Cristo murió por nosotros."'
+          reference="Romanos 5:8"
+          body="Jesús — el propio Hijo de Dios — tomó el castigo que nosotros merecíamos. Murió en la cruz, fue sepultado y resucitó de entre los muertos tres días después. Eso no es mitología. Es historia — y lo cambia todo."
         />
 
-        {/* Step 4 */}
+        {/* Paso 4 */}
         <GospelStep
           number="4"
-          title="You can receive His gift right now."
-          verse={`"If you declare with your mouth, 'Jesus is Lord,' and believe in your heart that God raised him from the dead, you will be saved."`}
-          reference="Romans 10:9"
-          body="You don't have to earn it. You don't have to clean yourself up first. You just have to believe — and receive."
+          title="Puedes recibir Su regalo ahora mismo."
+          verse='"Que si confesares con tu boca que Jesús es el Señor, y creyeres en tu corazón que Dios le levantó de los muertos, serás salvo."'
+          reference="Romanos 10:9"
+          body="No tienes que ganártelo. No tienes que arreglarte primero. Solo tienes que creer — y recibir."
         />
       </section>
 
       {/* ── Prayer ────────────────────────────────────────────────────────── */}
-      <section
-        className="w-full max-w-2xl mx-auto px-6 pb-16"
-      >
+      <section className="w-full max-w-2xl mx-auto px-6 pb-16">
         <div
           className="rounded-3xl p-8 sm:p-10"
           style={{
@@ -110,9 +108,9 @@ export default function GospelPage() {
         >
           <div className="text-center mb-8">
             <span className="text-4xl">🙏</span>
-            <h2 className="text-2xl font-black mt-4 text-white">Ready to Pray?</h2>
+            <h2 className="text-2xl font-black mt-4 text-white">¿Listo para Orar?</h2>
             <p className="text-sm mt-2" style={{ color: "rgba(255,255,255,0.65)" }}>
-              This is a simple prayer. God hears the heart, not perfect words.
+              Esta es una oración sencilla. Dios escucha el corazón, no las palabras perfectas.
             </p>
           </div>
 
@@ -125,7 +123,7 @@ export default function GospelPage() {
             }}
           >
             <p>
-              "Lord Jesus, I believe You are the Son of God. I believe You died for my sins and rose from the dead. I turn away from my sin and I put my trust in You. Come into my life, forgive me, and make me new. I want to follow You from this day forward. Amen."
+              "Señor Jesús, creo que eres el Hijo de Dios. Creo que moriste por mis pecados y resucitaste de entre los muertos. Me aparto de mi pecado y pongo mi confianza en Ti. Entra en mi vida, perdóname y hazme nuevo. Quiero seguirte desde este día en adelante. Amén."
             </p>
           </div>
 
@@ -135,14 +133,14 @@ export default function GospelPage() {
               className="w-full py-4 rounded-2xl font-black text-base sm:text-lg transition hover:opacity-90 active:scale-95"
               style={{ background: GOLD, color: NAVY }}
             >
-              I prayed this prayer ✝
+              Oré esta oración ✝
             </button>
           ) : (
             <div className="text-center">
               <div className="text-5xl mb-4">🎉</div>
-              <p className="text-xl font-black text-white mb-2">Welcome to the family.</p>
+              <p className="text-xl font-black text-white mb-2">Bienvenido a la familia.</p>
               <p className="text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.75)" }}>
-                That decision just changed your eternity. Heaven is celebrating right now (Luke 15:7). Tell someone you trust — and keep reading below.
+                Esa decisión acaba de cambiar tu eternidad. El cielo está celebrando ahora mismo (Lucas 15:7). Cuéntaselo a alguien de confianza — y sigue leyendo abajo.
               </p>
             </div>
           )}
@@ -155,36 +153,36 @@ export default function GospelPage() {
           className="text-xl font-black text-center mb-8 uppercase tracking-widest"
           style={{ color: NAVY }}
         >
-          What's Next
+          ¿Qué Sigue?
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <NextStep
             icon="📖"
-            title="Read the Bible"
-            desc="Start in the Gospel of John. It's a perfect first read."
+            title="Lee la Biblia"
+            desc="Empieza por el Evangelio de Juan. Es una lectura perfecta para comenzar."
             href="/"
-            label="Open the Bible"
+            label="Abrir la Biblia"
           />
           <NextStep
             icon="🙏"
-            title="Talk to God"
-            desc="Prayer is just a conversation. Share what's on your heart."
+            title="Habla con Dios"
+            desc="La oración es solo una conversación. Comparte lo que llevas en el corazón."
             href="/prayer"
-            label="Prayer Wall"
+            label="Muro de Oración"
           />
           <NextStep
             icon="✉️"
-            title="Get Devotionals"
-            desc="Short daily encouragements delivered to your inbox."
+            title="Devocionales"
+            desc="Palabras de aliento diarias enviadas a tu correo, completamente gratis."
             href="/devotionals"
-            label="Sign Up Free"
+            label="Suscríbete Gratis"
           />
           <NextStep
             icon="⛪"
-            title="Find a Church"
-            desc="Enter your zip code to find a Bible-believing church near you."
+            title="Encuentra una Iglesia"
+            desc="Ingresa tu código postal para encontrar una iglesia bíblica cerca de ti."
             href="/find-a-church"
-            label="Search by Zip"
+            label="Buscar por Código"
           />
         </div>
       </section>
@@ -195,11 +193,11 @@ export default function GospelPage() {
         style={{ color: "#9ca3af", borderTop: "1px solid #ede8de" }}
       >
         <p>
-          This page is part of{" "}
+          Esta página es parte de{" "}
           <Link href="/" className="underline hover:opacity-70" style={{ color: GOLD }}>
             Scripture Lives
           </Link>
-          {" "}— a free Bible resource for everyone.
+          {" "}— un recurso bíblico gratuito para todos.
         </p>
         <p className="mt-2" style={{ color: "#c0b89a" }}>
           © 2026 Scripture Lives / Faith Tails &nbsp;·&nbsp; info@scripturelives.com
@@ -226,7 +224,6 @@ function GospelStep({
 }) {
   return (
     <div className="flex flex-col gap-4">
-      {/* Number + Title */}
       <div className="flex items-center gap-3">
         <div
           className="flex-shrink-0 w-9 h-9 rounded-full flex items-center justify-center font-black text-sm"
@@ -239,7 +236,6 @@ function GospelStep({
         </h2>
       </div>
 
-      {/* Verse */}
       <blockquote
         className="rounded-2xl p-5 italic text-sm leading-relaxed"
         style={{
@@ -258,7 +254,6 @@ function GospelStep({
         </cite>
       </blockquote>
 
-      {/* Body */}
       <p className="text-sm sm:text-base leading-relaxed" style={{ color: "#5a4f3e" }}>
         {body}
       </p>
