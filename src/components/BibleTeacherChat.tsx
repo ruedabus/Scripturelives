@@ -13,7 +13,7 @@ export default function BibleTeacherChat() {
   const [open, setOpen]         = useState(false);
   const [view, setView]         = useState<View>("chat");
   const [messages, setMessages] = useState<Message[]>([
-    { role: "assistant", content: "Hi! I'm your Bible Teacher 📖 Ask me anything about Scripture — verses on a topic, biblical history, facts, timelines, and more. For personal guidance, use the 'Ask a Pastor' button below." },
+    { role: "assistant", content: "Hi! I'm your Scripture Lives Assistant 📖 Ask me anything about Scripture — verses on a topic, biblical history, facts, timelines, and more. For personal guidance, use the 'Ask a Pastor' button below." },
   ]);
   const [input, setInput]       = useState("");
   const [loading, setLoading]   = useState(false);
@@ -78,7 +78,7 @@ export default function BibleTeacherChat() {
       {/* ── Floating button ── */}
       <button
         onClick={() => setOpen((o) => !o)}
-        aria-label="Ask the Bible Teacher"
+        aria-label="Ask the Scripture Lives Assistant"
         className="fixed z-50 flex items-center justify-center shadow-xl transition hover:scale-105 active:scale-95"
         style={{
           bottom:       "76px",   // above mobile bottom nav
@@ -93,7 +93,7 @@ export default function BibleTeacherChat() {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src="/Bible-teacher.png"
-          alt="Bible Teacher"
+          alt="Scripture Lives Assistant"
           className="w-full h-full rounded-full object-cover"
           onError={(e) => {
             (e.currentTarget as HTMLImageElement).style.display = "none";
@@ -135,7 +135,7 @@ export default function BibleTeacherChat() {
               onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
             />
             <div className="flex-1 min-w-0">
-              <p className="text-white font-black text-sm leading-tight">Bible Teacher</p>
+              <p className="text-white font-black text-sm leading-tight">Scripture Lives Assistant</p>
               <p className="text-xs" style={{ color: GOLD }}>Scripture Lives</p>
             </div>
             {/* Tab switcher */}
