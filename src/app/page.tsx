@@ -137,13 +137,13 @@ export default function WelcomePage() {
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-4">
-            <Link
-              href="/bible"
+            <a
+              href="#features"
               className="px-8 py-4 rounded-2xl font-black text-base transition hover:opacity-90 hover:scale-105 active:scale-95"
               style={{ background: GOLD, color: NAVY }}
             >
-              📖 Open the Bible
-            </Link>
+              ✨ Discover Scripture Lives
+            </a>
             <Link
               href="/gospel"
               className="px-8 py-4 rounded-2xl font-black text-base transition hover:opacity-80 border"
@@ -156,7 +156,7 @@ export default function WelcomePage() {
       </section>
 
       {/* ── Feature cards ── */}
-      <section className="w-full max-w-6xl mx-auto px-4 py-16">
+      <section id="features" className="w-full max-w-6xl mx-auto px-4 py-16">
         <p
           className="text-center text-[10px] font-black uppercase tracking-[0.25em] mb-10"
           style={{ color: GOLD }}
