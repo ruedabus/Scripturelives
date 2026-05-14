@@ -21,6 +21,27 @@ export default function DevotionalsESPage() {
   return (
     <div className="min-h-screen" style={{ background: "#faf8f3" }}>
 
+      {/* ── Language bar ── */}
+      <div
+        className="w-full flex items-center justify-center gap-3 py-2.5 px-4 text-sm font-semibold"
+        style={{ background: NAVY, borderBottom: `1px solid rgba(201,149,42,0.3)` }}
+      >
+        <span style={{ color: "rgba(255,255,255,0.6)" }}>🌐 Idioma:</span>
+        <Link
+          href="/devotionals"
+          className="px-3 py-1 rounded-full text-xs font-black transition hover:opacity-80"
+          style={{ background: "rgba(255,255,255,0.15)", color: "white" }}
+        >
+          🇺🇸 English
+        </Link>
+        <span
+          className="px-3 py-1 rounded-full text-xs font-black"
+          style={{ background: GOLD, color: NAVY }}
+        >
+          🇪🇸 Español
+        </span>
+      </div>
+
       {/* ── Nav ── */}
       <nav
         className="sticky top-0 z-10 bg-white px-5 py-3 flex items-center gap-3"
@@ -35,15 +56,6 @@ export default function DevotionalsESPage() {
         </Link>
         <span style={{ color: "#ddd6c8" }}>|</span>
         <span className="text-sm font-bold" style={{ color: NAVY }}>Devocionales</span>
-        <div className="ml-auto">
-          <Link
-            href="/devotionals"
-            className="text-xs font-bold px-3 py-1.5 rounded-full border transition hover:opacity-80"
-            style={{ borderColor: "rgba(201,149,42,0.5)", color: GOLD }}
-          >
-            🇺🇸 English
-          </Link>
-        </div>
       </nav>
 
       {/* ── Hero header ── */}

@@ -105,6 +105,27 @@ export default function DevotionalsPage() {
   return (
     <div className="min-h-screen" style={{ background: "#faf8f3" }}>
 
+      {/* ── Language bar ── */}
+      <div
+        className="w-full flex items-center justify-center gap-3 py-2.5 px-4 text-sm font-semibold"
+        style={{ background: NAVY, borderBottom: `1px solid rgba(201,149,42,0.3)` }}
+      >
+        <span style={{ color: "rgba(255,255,255,0.6)" }}>🌐 Language:</span>
+        <span
+          className="px-3 py-1 rounded-full text-xs font-black"
+          style={{ background: "rgba(255,255,255,0.15)", color: "white" }}
+        >
+          🇺🇸 English
+        </span>
+        <Link
+          href="/es/devotionals"
+          className="px-3 py-1 rounded-full text-xs font-black transition hover:opacity-80"
+          style={{ background: GOLD, color: NAVY }}
+        >
+          🇪🇸 Español
+        </Link>
+      </div>
+
       {/* ── Nav ── */}
       <nav className="sticky top-0 z-10 bg-white px-5 py-3 flex items-center gap-3" style={{ borderBottom: "1px solid #ede8de" }}>
         <Link href="/" className="text-sm font-semibold transition hover:opacity-70" style={{ color: GOLD }}>
