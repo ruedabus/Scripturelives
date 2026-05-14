@@ -15,7 +15,7 @@ const FEATURES = [
   {
     title: "Read the Bible",
     desc: "Explore any passage with multiple translations, commentary, Strong's concordance, and cross-references.",
-    href: "/bible",
+    href: "/bible?tab=bible",
     cta: "Open the Bible",
     photo: "https://images.unsplash.com/photo-1504052434569-70ad5836ab65?w=640&q=75",
   },
