@@ -52,6 +52,7 @@ const FEATURES = [
 // ── Quick links ───────────────────────────────────────────────────────────────
 const QUICK = [
   { icon: "✝", label: "The Gospel", href: "/gospel" },
+  { icon: "🎵", label: "Worship Music", href: "/music" },
   { icon: "⛪", label: "Find a Church", href: "/find-a-church" },
   { icon: "🛍️", label: "Shop", href: "/shop" },
   { icon: "🇪🇸", label: "En Español", href: "/es/gospel" },
