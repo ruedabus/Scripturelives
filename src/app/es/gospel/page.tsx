@@ -167,7 +167,7 @@ export default function GospelPageES() {
             icon="🙏"
             title="Habla con Dios"
             desc="La oración es solo una conversación. Comparte lo que llevas en el corazón."
-            href="/prayer"
+            href="/es/prayer"
             label="Muro de Oración"
           />
           <NextStep
@@ -181,7 +181,7 @@ export default function GospelPageES() {
             icon="⛪"
             title="Encuentra una Iglesia"
             desc="Ingresa tu código postal para encontrar una iglesia bíblica cerca de ti."
-            href="/find-a-church"
+            href="/es/find-a-church"
             label="Buscar por Código"
           />
         </div>

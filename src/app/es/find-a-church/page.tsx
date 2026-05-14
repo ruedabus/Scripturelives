@@ -6,7 +6,7 @@ import Link from "next/link";
 const GOLD = "#C9952A";
 const NAVY = "#1a2640";
 
-export default function FindAChurchPage() {
+export default function FindAChurchPageES() {
   const [zip, setZip] = useState("");
   const [searched, setSearched] = useState(false);
 
@@ -15,7 +15,7 @@ export default function FindAChurchPage() {
     if (!zip.trim()) return;
     setSearched(true);
     window.open(
-      `https://www.google.com/maps/search/Bible+believing+church+near+${encodeURIComponent(zip)}`,
+      `https://www.google.com/maps/search/Iglesia+cristiana+biblica+cerca+de+${encodeURIComponent(zip)}`,
       "_blank"
     );
   }
@@ -31,11 +31,11 @@ export default function FindAChurchPage() {
         {/* Language toggle */}
         <div className="absolute top-4 right-4">
           <Link
-            href="/es/find-a-church"
+            href="/find-a-church"
             className="text-xs font-bold px-3 py-1.5 rounded-full border transition hover:opacity-80"
             style={{ borderColor: "rgba(201,149,42,0.5)", color: GOLD }}
           >
-            🇪🇸 Español
+            🇺🇸 English
           </Link>
         </div>
 
@@ -44,10 +44,10 @@ export default function FindAChurchPage() {
           className="text-4xl sm:text-5xl font-black leading-tight mb-4 text-white"
           style={{ textShadow: `0 2px 20px rgba(201,149,42,0.4)` }}
         >
-          Find a <span style={{ color: GOLD }}>Church Near You</span>
+          Encuentra una <span style={{ color: GOLD }}>Iglesia Cerca de Ti</span>
         </h1>
         <p className="text-base sm:text-lg max-w-xl leading-relaxed" style={{ color: "rgba(255,255,255,0.8)" }}>
-          You don't have to walk this out alone. Enter your zip code and find a Bible-believing church in your area.
+          No tienes que caminar solo en esto. Ingresa tu código postal y encuentra una iglesia bíblica en tu área.
         </p>
       </section>
 
@@ -60,7 +60,7 @@ export default function FindAChurchPage() {
             className="text-sm font-black uppercase tracking-widest text-center"
             style={{ color: NAVY }}
           >
-            Enter Your Zip Code
+            Ingresa Tu Código Postal
           </label>
           <div className="flex gap-3">
             <input
@@ -68,27 +68,22 @@ export default function FindAChurchPage() {
               type="text"
               inputMode="numeric"
               maxLength={10}
-              placeholder="e.g. 90210"
+              placeholder="ej. 90210"
               value={zip}
               onChange={(e) => setZip(e.target.value)}
               className="flex-1 px-5 py-4 rounded-2xl text-lg font-bold border-2 outline-none transition focus:scale-[1.01]"
-              style={{
-                borderColor: GOLD,
-                color: NAVY,
-                background: "white",
-                fontFamily: "Georgia, serif",
-              }}
+              style={{ borderColor: GOLD, color: NAVY, background: "white", fontFamily: "Georgia, serif" }}
             />
             <button
               type="submit"
               className="px-6 py-4 rounded-2xl font-black text-base transition hover:opacity-90 hover:scale-105 active:scale-95"
               style={{ background: GOLD, color: NAVY, whiteSpace: "nowrap" }}
             >
-              Search →
+              Buscar →
             </button>
           </div>
           <p className="text-xs text-center" style={{ color: "#9a8f80" }}>
-            Opens Google Maps with churches near your location
+            Abre Google Maps con iglesias cerca de tu ubicación
           </p>
         </form>
 
@@ -99,15 +94,15 @@ export default function FindAChurchPage() {
             style={{ background: NAVY, border: `1px solid rgba(201,149,42,0.3)` }}
           >
             <p className="text-sm font-black uppercase tracking-widest text-center" style={{ color: GOLD }}>
-              Tips for Finding the Right Church
+              Consejos para Encontrar la Iglesia Correcta
             </p>
             <ul className="flex flex-col gap-3">
               {[
-                "Look for a church that preaches directly from the Bible",
-                "Visit a few times before deciding — it's okay to take your time",
-                "Look for genuine community, not just a big building",
-                "Ask if they have a new believers' class or small groups",
-                "Trust your gut — you'll know when it feels like home",
+                "Busca una iglesia que predique directamente de la Biblia",
+                "Visita varias veces antes de decidirte — está bien tomarte tu tiempo",
+                "Busca una comunidad genuina, no solo un edificio grande",
+                "Pregunta si tienen una clase para nuevos creyentes o grupos pequeños",
+                "Confía en tu corazón — sabrás cuando se sienta como hogar",
               ].map((tip, i) => (
                 <li key={i} className="flex items-start gap-3 text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.85)" }}>
                   <span className="mt-0.5 flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-xs font-black" style={{ background: GOLD, color: NAVY }}>
@@ -123,13 +118,13 @@ export default function FindAChurchPage() {
         {/* ── Also try ── */}
         <div className="flex flex-col gap-3">
           <p className="text-xs font-black uppercase tracking-widest text-center" style={{ color: "#9a8f80" }}>
-            Also try these directories
+            También prueba estos directorios
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             {[
-              { name: "Church Finder", url: "https://www.churchfinder.com", desc: "Large US church directory" },
-              { name: "Find a Church", url: "https://www.findachurch.com", desc: "Search by denomination" },
-              { name: "The Gospel Coalition", url: "https://www.thegospelcoalition.org/churches", desc: "Gospel-centered churches" },
+              { name: "Church Finder", url: "https://www.churchfinder.com", desc: "Gran directorio de iglesias en EE.UU." },
+              { name: "Find a Church", url: "https://www.findachurch.com", desc: "Busca por denominación" },
+              { name: "The Gospel Coalition", url: "https://www.thegospelcoalition.org/churches", desc: "Iglesias centradas en el Evangelio" },
             ].map((dir) => (
               <a
                 key={dir.name}
@@ -150,11 +145,11 @@ export default function FindAChurchPage() {
       {/* ── Back to Gospel ── */}
       <section className="pb-16 text-center">
         <Link
-          href="/gospel"
+          href="/es/gospel"
           className="text-sm font-bold underline hover:opacity-70 transition"
           style={{ color: NAVY }}
         >
-          ← Back to the Gospel
+          ← Volver al Evangelio
         </Link>
       </section>
 
