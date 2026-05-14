@@ -7,6 +7,15 @@ export const metadata: Metadata = {
     "Read the Bible in multiple translations, explore verse-by-verse commentary, Strong's concordance, cross-references, and more — free.",
 };
 
-export default function BiblePage() {
-  return <BibleReader />;
+const VALID_TABS = ["home", "bible", "reader", "parallel", "bookmarks", "sessions", "quiz", "atlas", "map", "timeline", "lexicon", "commentary"] as const;
+type ValidTab = typeof VALID_TABS[number];
+
+export default async function BiblePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ tab?: string }>;
+}) {
+  const { tab } = await searchParams;
+  const initialTab = VALID_TABS.includes(tab as ValidTab) ? (tab as ValidTab) : undefined;
+  return <BibleReader initialTab={initialTab} />;
 }

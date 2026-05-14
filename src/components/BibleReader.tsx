@@ -199,7 +199,7 @@ function buildStudyPost(reference: string, verseText: string, prompts: { title: 
   ].join("\n");
 }
 
-export default function BibleReader() {
+export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab }) {
   const [selectedPlace, setSelectedPlace] = useState<VersePlace | null>(null);
   const [selectedVerse, setSelectedVerse] = useState<Verse | null>(verses[0] ?? null);
   const [mapMode, setMapMode] = useState<"modern" | "ancient">("modern");
@@ -211,7 +211,7 @@ export default function BibleReader() {
   const [selectedAncientLocation, setSelectedAncientLocation] = useState<AncientLocation | null>(null);
   const [ancientLocationSearch, setAncientLocationSearch] = useState("");
   const [activeJourneyStop, setActiveJourneyStop] = useState<number | null>(null);
-  const [leftPanelTab, setLeftPanelTab] = useState<LeftPanelTab>("home");
+  const [leftPanelTab, setLeftPanelTab] = useState<LeftPanelTab>(initialTab ?? "home");
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const [homeQuery, setHomeQuery] = useState("");
   const [readerJumpRef, setReaderJumpRef] = useState<{ book: string; chapter: number; verse: number } | null>(null);
