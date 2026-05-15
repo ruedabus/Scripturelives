@@ -16,6 +16,7 @@ const TABS = [
   { label: "Spanish Worship", videoId: "OYsPEsB7oJU", playlistId: null },
   { label: "Salsa Cristiana", videoId: "videoseries", playlistId: "PL9IA2wt9WiE9X_3Dlh9aBBsvEogLgjyzw" },
   { label: "Daddy Yankee - Sonríele", videoId: "XtBXxnmPYwU", playlistId: null },
+  { label: "Cece Winans", videoId: "9sE5kEnitqE", playlistId: "RDEMUQZGwTuEetyAIyDHPT78Xw" },
 ];
 
 export default function MusicPage() {
