@@ -19,7 +19,8 @@ export default function BibleTeacherChat() {
   const [loading, setLoading]   = useState(false);
   const [flagged, setFlagged]   = useState<Record<number, boolean>>({});
   const [listening, setListening] = useState(false);
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const recognitionRef = useRef<any>(null);
 
   // Pastor form
   const [pName,     setPName]     = useState("");
@@ -104,7 +105,8 @@ export default function BibleTeacherChat() {
     recognition.interimResults = false;
     recognition.maxAlternatives = 1;
     recognitionRef.current = recognition;
-    recognition.onresult = (e: SpeechRecognitionEvent) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    recognition.onresult = (e: any) => {
       const transcript = e.results[0][0].transcript;
       setInput((prev) => (prev ? prev + " " + transcript : transcript));
     };
