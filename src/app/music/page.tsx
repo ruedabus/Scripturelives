@@ -14,6 +14,7 @@ const TABS = [
   { label: "Worship 5", videoId: "BjH4wNAkUgo", playlistId: null },
   { label: "Worship 6", videoId: "dHlafdYL0SM", playlistId: null },
   { label: "Spanish Worship", videoId: "OYsPEsB7oJU", playlistId: null },
+  { label: "Salsa Cristiana", videoId: "videoseries", playlistId: "PL9IA2wt9WiE9X_3Dlh9aBBsvEogLgjyzw" },
 ];
 
 export default function MusicPage() {
