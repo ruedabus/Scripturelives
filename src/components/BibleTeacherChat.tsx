@@ -88,9 +88,9 @@ export default function BibleTeacherChat() {
   }
 
   function toggleListening() {
-    const SR = (typeof window !== "undefined") &&
-      ((window as unknown as { SpeechRecognition?: typeof SpeechRecognition }).SpeechRecognition ||
-       (window as unknown as { webkitSpeechRecognition?: typeof SpeechRecognition }).webkitSpeechRecognition);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const w = typeof window !== "undefined" ? (window as any) : null;
+    const SR = w && (w.SpeechRecognition || w.webkitSpeechRecognition);
     if (!SR) {
       alert("Voice input isn't supported in this browser. Try Chrome or Edge.");
       return;
