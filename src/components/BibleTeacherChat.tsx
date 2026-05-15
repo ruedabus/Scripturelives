@@ -18,6 +18,8 @@ export default function BibleTeacherChat() {
   const [input, setInput]       = useState("");
   const [loading, setLoading]   = useState(false);
   const [flagged, setFlagged]   = useState<Record<number, boolean>>({});
+  const [listening, setListening] = useState(false);
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
 
   // Pastor form
   const [pName,     setPName]     = useState("");
@@ -82,6 +84,34 @@ export default function BibleTeacherChat() {
     } catch {
       // silent — UI already shows "Reported"
     }
+  }
+
+  function toggleListening() {
+    const SR = (typeof window !== "undefined") &&
+      ((window as unknown as { SpeechRecognition?: typeof SpeechRecognition }).SpeechRecognition ||
+       (window as unknown as { webkitSpeechRecognition?: typeof SpeechRecognition }).webkitSpeechRecognition);
+    if (!SR) {
+      alert("Voice input isn't supported in this browser. Try Chrome or Edge.");
+      return;
+    }
+    if (listening && recognitionRef.current) {
+      recognitionRef.current.stop();
+      setListening(false);
+      return;
+    }
+    const recognition = new SR();
+    recognition.lang = "en-US";
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+    recognitionRef.current = recognition;
+    recognition.onresult = (e: SpeechRecognitionEvent) => {
+      const transcript = e.results[0][0].transcript;
+      setInput((prev) => (prev ? prev + " " + transcript : transcript));
+    };
+    recognition.onend = () => setListening(false);
+    recognition.onerror = () => setListening(false);
+    recognition.start();
+    setListening(true);
   }
 
   async function sendPastorQuestion(e: React.FormEvent) {
@@ -262,14 +292,26 @@ export default function BibleTeacherChat() {
                   Conversations are saved to improve our service and ensure safety.
                 </p>
                 <div className="flex gap-2 items-center">
+                  <button
+                    onClick={toggleListening}
+                    title={listening ? "Stop listening" : "Speak your question"}
+                    className="px-2.5 py-2 rounded-xl text-sm transition shrink-0"
+                    style={{
+                      background: listening ? "#fee2e2" : "#f5f2ec",
+                      color:      listening ? "#dc2626" : "#9ca3af",
+                      border:     listening ? "1px solid #fca5a5" : "1px solid #ede8de",
+                    }}
+                  >
+                    {listening ? "⏹" : "🎤"}
+                  </button>
                   <input
                     type="text"
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-                    placeholder="Ask about Scripture…"
+                    placeholder={listening ? "Listening…" : "Ask about Scripture…"}
                     className="flex-1 text-sm px-3 py-2 rounded-xl outline-none"
-                    style={{ background: "#f5f2ec", color: "#3a3025", border: "1px solid #ede8de" }}
+                    style={{ background: "#f5f2ec", color: "#3a3025", border: `1px solid ${listening ? GOLD : "#ede8de"}` }}
                   />
                   <button
                     onClick={sendMessage}
