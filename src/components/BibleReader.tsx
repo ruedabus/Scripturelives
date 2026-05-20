@@ -199,7 +199,111 @@ function buildStudyPost(reference: string, verseText: string, prompts: { title: 
   ].join("\n");
 }
 
+// ── i18n translations ────────────────────────────────────────────────────────
+const T_EN = {
+  // Sidebar sections
+  sectionRead: "Read", sectionStudy: "Study", sectionExplore: "Explore",
+  sectionLibrary: "My Library", sectionCommunity: "Community",
+  // Sidebar nav items
+  navHome: "Home", navDailyDev: "Daily Devotional", navAudio: "Audio Bible",
+  navReader: "Passage Reader", navBible: "Full Bible", navParallel: "Parallel Bible",
+  navTopical: "Topical Bible", navPrayer: "Prayer Journal", navTimeline: "Timeline",
+  navCommentary: "Commentary", navDict: "Dictionary", navStudy: "Study Prompts",
+  navOutline: "Sermon Outlines", navFlash: "Memorization", navImage: "Verse Image Cards",
+  navAncient: "Ancient Places", navAtlas: "Bible Atlas", navChars: "Character Profiles",
+  navQuiz: "Bible Quiz", navBookmarks: "Bookmarks", navSessions: "Sessions",
+  navNotes: "Study Notes", navProgress: "Reading Progress", navTestimonials: "Testimonials",
+  navResources: "More Resources", navBooks: "Christian Books", navDevArticles: "Devotional Articles",
+  navBowl: "Bible Bowl", navWordle: "Bible Wordle", navKids: "Faith Tails Kids",
+  navPrayerWall: "Prayer Wall", navDictLex: "Dictionary / Lexicon",
+  navAncientMap: "Ancient World Map", navNews: "Today in Christian News", navDevotional: "Devotional",
+  // Sidebar footer
+  tagline: "Bible Study Platform", youTubeLink: "Faith Tails on YouTube",
+  fbLink: "Scripture Lives on Facebook", support: "Support Scripture Lives",
+  about: "About Us", terms: "Terms & Conditions", privacy: "Privacy Policy",
+  // Home panel
+  heroSubtitle: "Explore, study, and present the living Word of God",
+  searchPlaceholder: "Search a verse, passage, or keyword…",
+  searchBtn: "Search",
+  continueReading: "Continue Reading", chapterLabel: "Chapter", verseLabel: "verse",
+  resumeBtn: "Resume →",
+  votd: "Verse of the Day", readChapter: "Read the full chapter",
+  shareBtn: "Share", shareFb: "Share to Facebook",
+  dailyDev: "Daily Devotional", readFull: "Read full →",
+  // Feature card descriptions
+  descReader: "Search & present verses", descAncient: "Major locations & journeys",
+  descStudy: "Reflection & discussion", descTimeline: "Biblical history eras",
+  descParallel: "Compare 2–4 translations", descTopical: "Browse by topic & theme",
+  descPrayer: "Write & track your prayers", descOutline: "AI-generated study outlines",
+  descFlash: "Flashcards & spaced review", descProgress: "Track your Bible journey",
+  descChars: "Biographies of Bible figures", descImage: "Shareable quote cards for social",
+  descQuiz: "Trivia — 4 categories, 80 questions", descAudio: "Listen to ESV — full narration",
+  descDevArticles: "Original Bible studies & reflections",
+  descBowl: "Tournament trivia for youth groups", descWordle: "A new word every day",
+  descKids: "Illustrated Bible stories for kids",
+  // Right panel
+  currentVerse: "Current Verse",
+  // Post preview modal
+  postPreviewTitle: "Your Branded Post Preview",
+  postPreviewNote: "This is exactly what will appear in your Facebook post.",
+  copyOpenFb: "Copy & Open Facebook", sendSms: "Send as Text Message",
+  sendEmail: "Send as Email", copyOnly: "Copy Text Only", copied: "Copied!",
+  fbNote: "Facebook: post text is copied automatically — just paste it in.",
+  // Study prompts
+  shareStudy: "Share this study", shareStudyDesc: "Post a branded 'Grow Your Faith' study to Facebook",
+  new: "New",
+};
+
+const T_ES: typeof T_EN = {
+  sectionRead: "Leer", sectionStudy: "Estudiar", sectionExplore: "Explorar",
+  sectionLibrary: "Mi Biblioteca", sectionCommunity: "Comunidad",
+  navHome: "Inicio", navDailyDev: "Devocional Diario", navAudio: "Biblia en Audio",
+  navReader: "Lector de Pasajes", navBible: "Biblia Completa", navParallel: "Biblia Paralela",
+  navTopical: "Biblia Temática", navPrayer: "Diario de Oración", navTimeline: "Línea de Tiempo",
+  navCommentary: "Comentario", navDict: "Diccionario", navStudy: "Preguntas de Estudio",
+  navOutline: "Esquemas de Sermón", navFlash: "Memorización", navImage: "Tarjetas de Versículos",
+  navAncient: "Lugares Antiguos", navAtlas: "Atlas Bíblico", navChars: "Perfiles de Personajes",
+  navQuiz: "Quiz Bíblico", navBookmarks: "Marcadores", navSessions: "Sesiones",
+  navNotes: "Notas de Estudio", navProgress: "Progreso de Lectura", navTestimonials: "Testimonios",
+  navResources: "Más Recursos", navBooks: "Libros Cristianos", navDevArticles: "Artículos Devocionales",
+  navBowl: "Bible Bowl", navWordle: "Bible Wordle", navKids: "Faith Tails Niños",
+  navPrayerWall: "Muro de Oración", navDictLex: "Diccionario / Léxico",
+  navAncientMap: "Mapa del Mundo Antiguo", navNews: "Noticias Cristianas de Hoy", navDevotional: "Devocional",
+  tagline: "Plataforma de Estudio Bíblico", youTubeLink: "Faith Tails en YouTube",
+  fbLink: "Scripture Lives en Facebook", support: "Apoya Scripture Lives",
+  about: "Acerca de", terms: "Términos y Condiciones", privacy: "Política de Privacidad",
+  heroSubtitle: "Explora, estudia y presenta la Palabra viva de Dios",
+  searchPlaceholder: "Busca un versículo, pasaje o palabra clave…",
+  searchBtn: "Buscar",
+  continueReading: "Continuar Leyendo", chapterLabel: "Capítulo", verseLabel: "versículo",
+  resumeBtn: "Retomar →",
+  votd: "Versículo del Día", readChapter: "Leer el capítulo completo",
+  shareBtn: "Compartir", shareFb: "Compartir en Facebook",
+  dailyDev: "Devocional Diario", readFull: "Leer completo →",
+  descReader: "Busca y presenta versículos", descAncient: "Lugares y viajes importantes",
+  descStudy: "Reflexión y discusión", descTimeline: "Eras de la historia bíblica",
+  descParallel: "Compara 2–4 traducciones", descTopical: "Explora por tema",
+  descPrayer: "Escribe y registra tus oraciones", descOutline: "Esquemas de estudio con IA",
+  descFlash: "Tarjetas y repaso espaciado", descProgress: "Registra tu lectura bíblica",
+  descChars: "Biografías de personajes bíblicos", descImage: "Tarjetas de citas para redes",
+  descQuiz: "Trivia — 4 categorías, 80 preguntas", descAudio: "Escucha la Biblia — narración completa",
+  descDevArticles: "Estudios bíblicos y reflexiones originales",
+  descBowl: "Trivia para grupos juveniles", descWordle: "Una nueva palabra cada día",
+  descKids: "Historias bíblicas ilustradas para niños",
+  currentVerse: "Versículo Actual",
+  postPreviewTitle: "Vista Previa de tu Publicación",
+  postPreviewNote: "Esto es exactamente lo que aparecerá en tu publicación de Facebook.",
+  copyOpenFb: "Copiar y Abrir Facebook", sendSms: "Enviar como Mensaje de Texto",
+  sendEmail: "Enviar por Correo", copyOnly: "Copiar Solo Texto", copied: "¡Copiado!",
+  fbNote: "Facebook: el texto se copia automáticamente — solo pégalo.",
+  shareStudy: "Compartir este estudio", shareStudyDesc: "Publica un estudio en Facebook",
+  new: "Nuevo",
+};
+
 export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab }) {
+  const [lang, setLang] = useState<"en" | "es">("en");
+  const T = lang === "en" ? T_EN : T_ES;
+
   const [selectedPlace, setSelectedPlace] = useState<VersePlace | null>(null);
   const [selectedVerse, setSelectedVerse] = useState<Verse | null>(verses[0] ?? null);
   const [mapMode, setMapMode] = useState<"modern" | "ancient">("modern");
@@ -810,63 +914,86 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
                 className="h-12 w-12 rounded-lg object-contain shrink-0"
                 onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
               />
-              <div>
+              <div className="flex-1 min-w-0">
                 <p className="text-sm font-bold leading-tight" style={{ color: "#1a2640" }}>Scripture Lives</p>
-                <p className="text-xs mt-0.5" style={{ color: "#9ca3af" }}>Bible Study Platform</p>
+                <p className="text-xs mt-0.5" style={{ color: "#9ca3af" }}>{T.tagline}</p>
               </div>
+            </div>
+            {/* Language toggle */}
+            <div className="flex gap-1.5 mt-3">
+              <button
+                type="button"
+                onClick={() => setLang("en")}
+                className="flex-1 rounded-lg py-1 text-[11px] font-black transition"
+                style={lang === "en"
+                  ? { background: "#1a2640", color: "white" }
+                  : { background: "#f3f4f6", color: "#6b7280" }}
+              >
+                🇺🇸 EN
+              </button>
+              <button
+                type="button"
+                onClick={() => setLang("es")}
+                className="flex-1 rounded-lg py-1 text-[11px] font-black transition"
+                style={lang === "es"
+                  ? { background: "#C9952A", color: "#1a2640" }
+                  : { background: "#f3f4f6", color: "#6b7280" }}
+              >
+                🇪🇸 ES
+              </button>
             </div>
           </div>
 
           {/* Nav sections */}
           <div className="flex-1 py-5 px-3 space-y-6 overflow-y-auto">
             <div>
-              <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-widest" style={{ color: "#C9952A" }}>Read</p>
-              {sideNavBtn("home",          <Home size={16} />,         "Home")}
-              {sideNavBtn("devotional",    <Feather size={16} />,      "Daily Devotional")}
-              {sideNavBtn("audio",         <Headphones size={16} />,   "Audio Bible")}
-              {sideNavBtn("reader",        <BookOpen size={16} />,     "Passage Reader")}
-              {sideNavBtn("bible",         <Library size={16} />,      "Full Bible")}
-              {sideNavBtn("parallel",      <Columns3 size={16} />,     "Parallel Bible")}
-              {sideNavBtn("topical",       <BookText size={16} />,     "Topical Bible")}
-              {sideNavBtn("prayer_journal",<Heart size={16} />,        "Prayer Journal")}
+              <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-widest" style={{ color: "#C9952A" }}>{T.sectionRead}</p>
+              {sideNavBtn("home",          <Home size={16} />,         T.navHome)}
+              {sideNavBtn("devotional",    <Feather size={16} />,      T.navDailyDev)}
+              {sideNavBtn("audio",         <Headphones size={16} />,   T.navAudio)}
+              {sideNavBtn("reader",        <BookOpen size={16} />,     T.navReader)}
+              {sideNavBtn("bible",         <Library size={16} />,      T.navBible)}
+              {sideNavBtn("parallel",      <Columns3 size={16} />,     T.navParallel)}
+              {sideNavBtn("topical",       <BookText size={16} />,     T.navTopical)}
+              {sideNavBtn("prayer_journal",<Heart size={16} />,        T.navPrayer)}
             </div>
             <div>
-              <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-widest" style={{ color: "#C9952A" }}>Study</p>
-              {sideNavBtn("timeline",      <Layers size={16} />,       "Timeline")}
-              {sideNavBtn("commentary",    <BookText size={16} />,     "Commentary")}
-              {sideNavBtn("dictionary",    <BookMarked size={16} />,   "Dictionary")}
-              {sideNavBtn("study_prompts", <ScrollText size={16} />,   "Study Prompts")}
-              {sideNavBtn("outline",       <FileText size={16} />,     "Sermon Outlines")}
-              {sideNavBtn("flashcards",    <Brain size={16} />,        "Memorization")}
-              {sideNavBtn("verse_image",   <Sparkles size={16} />,     "Verse Image Cards")}
+              <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-widest" style={{ color: "#C9952A" }}>{T.sectionStudy}</p>
+              {sideNavBtn("timeline",      <Layers size={16} />,       T.navTimeline)}
+              {sideNavBtn("commentary",    <BookText size={16} />,     T.navCommentary)}
+              {sideNavBtn("dictionary",    <BookMarked size={16} />,   T.navDict)}
+              {sideNavBtn("study_prompts", <ScrollText size={16} />,   T.navStudy)}
+              {sideNavBtn("outline",       <FileText size={16} />,     T.navOutline)}
+              {sideNavBtn("flashcards",    <Brain size={16} />,        T.navFlash)}
+              {sideNavBtn("verse_image",   <Sparkles size={16} />,     T.navImage)}
             </div>
             <div>
-              <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-widest" style={{ color: "#C9952A" }}>Explore</p>
-              {sideNavBtn("ancient_world", <Landmark size={16} />,     "Ancient Places")}
-              {sideNavBtn("atlas",         <Globe size={16} />,        "Bible Atlas")}
-              {sideNavBtn("characters",    <Users size={16} />,        "Character Profiles")}
-              {sideNavBtn("quiz",          <Trophy size={16} />,       "Bible Quiz")}
+              <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-widest" style={{ color: "#C9952A" }}>{T.sectionExplore}</p>
+              {sideNavBtn("ancient_world", <Landmark size={16} />,     T.navAncient)}
+              {sideNavBtn("atlas",         <Globe size={16} />,        T.navAtlas)}
+              {sideNavBtn("characters",    <Users size={16} />,        T.navChars)}
+              {sideNavBtn("quiz",          <Trophy size={16} />,       T.navQuiz)}
             </div>
             <div>
-              <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-widest" style={{ color: "#C9952A" }}>My Library</p>
-              {sideNavBtn("bookmarks",       <Star size={16} />,         "Bookmarks")}
-              {sideNavBtn("sessions",        <ClipboardList size={16} />, "Sessions")}
-              {sideNavBtn("study_sheet",     <FileText size={16} />,     "Study Notes")}
-              {sideNavBtn("reading_progress",<BarChart2 size={16} />,    "Reading Progress")}
+              <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-widest" style={{ color: "#C9952A" }}>{T.sectionLibrary}</p>
+              {sideNavBtn("bookmarks",       <Star size={16} />,         T.navBookmarks)}
+              {sideNavBtn("sessions",        <ClipboardList size={16} />, T.navSessions)}
+              {sideNavBtn("study_sheet",     <FileText size={16} />,     T.navNotes)}
+              {sideNavBtn("reading_progress",<BarChart2 size={16} />,    T.navProgress)}
             </div>
             <div>
-              <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-widest" style={{ color: "#C9952A" }}>Community</p>
-              {sideNavBtn("testimonials",  <HeartHandshake size={16} />, "Testimonials")}
-              {sideNavBtn("resources",     <ExternalLink size={16} />, "More Resources")}
-              {sideNavBtn("books",         <BookHeart size={16} />,    "Christian Books")}
+              <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-widest" style={{ color: "#C9952A" }}>{T.sectionCommunity}</p>
+              {sideNavBtn("testimonials",  <HeartHandshake size={16} />, T.navTestimonials)}
+              {sideNavBtn("resources",     <ExternalLink size={16} />, T.navResources)}
+              {sideNavBtn("books",         <BookHeart size={16} />,    T.navBooks)}
               <a
                 href="/devotionals"
                 className="flex items-center gap-2.5 rounded-xl px-3 py-2 text-xs font-medium hover:bg-amber-50 transition-colors"
               style={{ color: "#374151" }}
               >
                 <ScrollText size={16} />
-                <span>Devotional Articles</span>
-                <span className="ml-auto text-[10px] text-indigo-400 font-bold">New</span>
+                <span>{T.navDevArticles}</span>
+                <span className="ml-auto text-[10px] text-indigo-400 font-bold">{T.new}</span>
               </a>
               <a
                 href="/tournament"
@@ -874,8 +1001,8 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
               style={{ color: "#374151" }}
               >
                 <Trophy size={16} />
-                <span>Bible Bowl</span>
-                <span className="ml-auto text-[10px] text-amber-400 font-bold">New</span>
+                <span>{T.navBowl}</span>
+                <span className="ml-auto text-[10px] text-amber-400 font-bold">{T.new}</span>
               </a>
               <a
                 href="/games"
@@ -883,8 +1010,8 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
               style={{ color: "#374151" }}
               >
                 <span className="text-sm leading-none">🎮</span>
-                <span>Bible Wordle</span>
-                <span className="ml-auto text-[10px] font-bold" style={{ color: "#C9952A" }}>New</span>
+                <span>{T.navWordle}</span>
+                <span className="ml-auto text-[10px] font-bold" style={{ color: "#C9952A" }}>{T.new}</span>
               </a>
               <a
                 href="/kids"
@@ -892,8 +1019,8 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
                 style={{ color: "#374151" }}
               >
                 <span className="text-sm leading-none">🐾</span>
-                <span>Faith Tails Kids</span>
-                <span className="ml-auto text-[10px] font-bold" style={{ color: "#C9952A" }}>New</span>
+                <span>{T.navKids}</span>
+                <span className="ml-auto text-[10px] font-bold" style={{ color: "#C9952A" }}>{T.new}</span>
               </a>
               <a
                 href="/prayer"
@@ -933,7 +1060,7 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
                   <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
                 </svg>
               </span>
-              <span>Faith Tails on YouTube</span>
+              <span>{T.youTubeLink}</span>
             </a>
 
             {/* Facebook page */}
@@ -949,20 +1076,20 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
                   <path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.887v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/>
                 </svg>
               </span>
-              <span>Scripture Lives on Facebook</span>
+              <span>{T.fbLink}</span>
             </a>
 
             <a href="/donate" className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-xs font-semibold hover:bg-amber-50 transition" style={{ color: "#C9952A" }}>
-              <HandCoins size={14} /> Support Scripture Lives
+              <HandCoins size={14} /> {T.support}
             </a>
             <a href="/about" className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-xs hover:bg-amber-50 transition" style={{ color: "#6b7280" }}>
-              About Us
+              {T.about}
             </a>
             <a href="/terms" className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-xs hover:bg-amber-50 transition" style={{ color: "#6b7280" }}>
-              Terms &amp; Conditions
+              {T.terms}
             </a>
             <a href="/privacy" className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-xs hover:bg-amber-50 transition" style={{ color: "#6b7280" }}>
-              Privacy Policy
+              {T.privacy}
             </a>
           </div>
         </nav>
@@ -1003,7 +1130,7 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
                       />
                       <div>
                         <h1 className="text-2xl font-bold leading-tight" style={{ color: "#C9952A" }}>Scripture Lives</h1>
-                        <p className="text-sm mt-0.5" style={{ color: "#94a3b8" }}>Explore, study, and present the living Word of God</p>
+                        <p className="text-sm mt-0.5" style={{ color: "#94a3b8" }}>{T.heroSubtitle}</p>
                       </div>
                     </div>
                     <div className="flex gap-2">
@@ -1016,7 +1143,7 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
                             setLeftPanelTab("reader");
                           }
                         }}
-                        placeholder="Search a verse, passage, or keyword…"
+                        placeholder={T.searchPlaceholder}
                         className="flex-1 rounded-xl border-0 px-4 py-3 text-sm text-white placeholder:text-slate-400 outline-none focus:ring-2"
                         style={{ background: "rgba(255,255,255,0.1)", focusRingColor: "#C9952A" } as React.CSSProperties}
                       />
@@ -1026,7 +1153,7 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
                         className="rounded-xl px-5 py-3 text-sm font-semibold transition hover:brightness-110"
                         style={{ background: "#C9952A", color: "white" }}
                       >
-                        Search
+                        {T.searchBtn}
                       </button>
                     </div>
                   </div>
@@ -1038,10 +1165,10 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
                     <div className="flex items-center gap-3 min-w-0">
                       <span className="text-2xl shrink-0">🔖</span>
                       <div className="min-w-0">
-                        <p className="text-xs font-bold uppercase tracking-widest" style={{ color: "#C9952A" }}>Continue Reading</p>
+                        <p className="text-xs font-bold uppercase tracking-widest" style={{ color: "#C9952A" }}>{T.continueReading}</p>
                         <p className="text-sm font-semibold mt-0.5" style={{ color: "#1a2640" }}>
-                          {lastRead.book} — Chapter {lastRead.chapter}
-                          {lastRead.verse ? `, verse ${lastRead.verse}` : ""}
+                          {lastRead.book} — {T.chapterLabel} {lastRead.chapter}
+                          {lastRead.verse ? `, ${T.verseLabel} ${lastRead.verse}` : ""}
                         </p>
                       </div>
                     </div>
@@ -1053,7 +1180,7 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
                       className="shrink-0 rounded-xl px-4 py-2 text-xs font-semibold text-white transition hover:brightness-110"
                       style={{ background: "#C9952A" }}
                     >
-                      Resume →
+                      {T.resumeBtn}
                     </button>
                   </div>
                 )}
@@ -1084,7 +1211,7 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
                   {/* Label with decorative lines */}
                   <div className="flex items-center justify-center gap-3 mb-5">
                     <div className="h-px flex-1" style={{ background: "#f0e6cc" }} />
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] shrink-0" style={{ color: "#C9952A" }}>Verse of the Day</p>
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] shrink-0" style={{ color: "#C9952A" }}>{T.votd}</p>
                     <div className="h-px flex-1" style={{ background: "#f0e6cc" }} />
                   </div>
 
@@ -1120,7 +1247,7 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
                       </svg>
-                      Read the full chapter
+                      {T.readChapter}
                       <span style={{ color: "#C9952A" }}>›</span>
                     </button>
                     <button
@@ -1140,7 +1267,7 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
                   <div className="flex items-center justify-between gap-3 mb-3">
                     <div className="flex items-center gap-2">
                       <span className="text-lg">{devotional.icon}</span>
-                      <p className="text-xs font-bold uppercase tracking-widest" style={{ color: "#C9952A" }}>Daily Devotional</p>
+                      <p className="text-xs font-bold uppercase tracking-widest" style={{ color: "#C9952A" }}>{T.dailyDev}</p>
                     </div>
                     <div className="flex items-center gap-2">
                       <button
@@ -1161,7 +1288,7 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
                         className="text-xs font-semibold transition hover:opacity-70"
                         style={{ color: "#C9952A" }}
                       >
-                        Read full →
+                        {T.readFull}
                       </button>
                     </div>
                   </div>
@@ -1174,20 +1301,20 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
                 {/* Quick-access feature cards */}
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                   {([
-                    { tab: "reader"       as LeftPanelTab, Icon: BookOpen,   label: "Passage Reader",  desc: "Search & present verses",    gradient: "from-amber-50 to-orange-50",   ring: "hover:ring-amber-300",   iconBg: "bg-amber-100",   iconColor: "text-amber-600"  },
-                    { tab: "ancient_world"as LeftPanelTab, Icon: Landmark,   label: "Ancient Places",  desc: "Major locations & journeys", gradient: "from-stone-50 to-amber-50",    ring: "hover:ring-stone-300",   iconBg: "bg-stone-100",   iconColor: "text-stone-600"  },
-                    { tab: "study_prompts"as LeftPanelTab, Icon: ScrollText, label: "Study Prompts",   desc: "Reflection & discussion",    gradient: "from-indigo-50 to-purple-50",  ring: "hover:ring-indigo-300",  iconBg: "bg-indigo-100",  iconColor: "text-indigo-600" },
-                    { tab: "timeline"     as LeftPanelTab, Icon: Layers,     label: "Timeline",        desc: "Biblical history eras",      gradient: "from-sky-50 to-blue-50",       ring: "hover:ring-sky-300",     iconBg: "bg-sky-100",     iconColor: "text-sky-600"    },
-                    { tab: "parallel"     as LeftPanelTab, Icon: Columns3,   label: "Parallel Bible",  desc: "Compare 2–4 translations",   gradient: "from-violet-50 to-purple-50",  ring: "hover:ring-violet-300",  iconBg: "bg-violet-100",  iconColor: "text-violet-600" },
-                    { tab: "topical"      as LeftPanelTab, Icon: BookText,   label: "Topical Bible",   desc: "Browse by topic & theme",    gradient: "from-emerald-50 to-teal-50",   ring: "hover:ring-emerald-300", iconBg: "bg-emerald-100", iconColor: "text-emerald-600"},
-                    { tab: "prayer_journal"   as LeftPanelTab, Icon: Heart,     label: "Prayer Journal",     desc: "Write & track your prayers",   gradient: "from-rose-50 to-pink-50",      ring: "hover:ring-rose-300",    iconBg: "bg-rose-100",    iconColor: "text-rose-600"    },
-                    { tab: "outline"          as LeftPanelTab, Icon: FileText,  label: "Sermon Outlines",    desc: "AI-generated study outlines",  gradient: "from-slate-50 to-gray-50",     ring: "hover:ring-slate-300",   iconBg: "bg-slate-100",   iconColor: "text-slate-600"   },
-                    { tab: "flashcards"       as LeftPanelTab, Icon: Brain,     label: "Memorization",       desc: "Flashcards & spaced review",   gradient: "from-fuchsia-50 to-purple-50", ring: "hover:ring-fuchsia-300",  iconBg: "bg-fuchsia-100", iconColor: "text-fuchsia-600" },
-                    { tab: "reading_progress" as LeftPanelTab, Icon: BarChart2, label: "Reading Progress",   desc: "Track your Bible journey",     gradient: "from-teal-50 to-cyan-50",      ring: "hover:ring-teal-300",    iconBg: "bg-teal-100",    iconColor: "text-teal-600"    },
-                    { tab: "characters"       as LeftPanelTab, Icon: Users,     label: "Character Profiles", desc: "Biographies of Bible figures",    gradient: "from-orange-50 to-amber-50",    ring: "hover:ring-orange-300",   iconBg: "bg-orange-100",   iconColor: "text-orange-600"   },
-                    { tab: "verse_image"      as LeftPanelTab, Icon: Sparkles,  label: "Verse Image Cards",  desc: "Shareable quote cards for social", gradient: "from-pink-50 to-rose-50",       ring: "hover:ring-pink-300",     iconBg: "bg-pink-100",     iconColor: "text-pink-600"     },
-                    { tab: "quiz"             as LeftPanelTab, Icon: Trophy,      label: "Bible Quiz",         desc: "Trivia — 4 categories, 80 questions", gradient: "from-yellow-50 to-amber-50",    ring: "hover:ring-yellow-300",   iconBg: "bg-yellow-100",    iconColor: "text-yellow-600"    },
-                    { tab: "audio"            as LeftPanelTab, Icon: Headphones, label: "Audio Bible",         desc: "Listen to ESV — full narration",      gradient: "from-indigo-50 to-purple-50",   ring: "hover:ring-indigo-300",   iconBg: "bg-indigo-100",    iconColor: "text-indigo-600"    },
+                    { tab: "reader"       as LeftPanelTab, Icon: BookOpen,   label: T.navReader,   desc: T.descReader,   gradient: "from-amber-50 to-orange-50",   ring: "hover:ring-amber-300",   iconBg: "bg-amber-100",   iconColor: "text-amber-600"  },
+                    { tab: "ancient_world"as LeftPanelTab, Icon: Landmark,   label: T.navAncient,  desc: T.descAncient,  gradient: "from-stone-50 to-amber-50",    ring: "hover:ring-stone-300",   iconBg: "bg-stone-100",   iconColor: "text-stone-600"  },
+                    { tab: "study_prompts"as LeftPanelTab, Icon: ScrollText, label: T.navStudy,    desc: T.descStudy,    gradient: "from-indigo-50 to-purple-50",  ring: "hover:ring-indigo-300",  iconBg: "bg-indigo-100",  iconColor: "text-indigo-600" },
+                    { tab: "timeline"     as LeftPanelTab, Icon: Layers,     label: T.navTimeline, desc: T.descTimeline, gradient: "from-sky-50 to-blue-50",       ring: "hover:ring-sky-300",     iconBg: "bg-sky-100",     iconColor: "text-sky-600"    },
+                    { tab: "parallel"     as LeftPanelTab, Icon: Columns3,   label: T.navParallel, desc: T.descParallel, gradient: "from-violet-50 to-purple-50",  ring: "hover:ring-violet-300",  iconBg: "bg-violet-100",  iconColor: "text-violet-600" },
+                    { tab: "topical"      as LeftPanelTab, Icon: BookText,   label: T.navTopical,  desc: T.descTopical,  gradient: "from-emerald-50 to-teal-50",   ring: "hover:ring-emerald-300", iconBg: "bg-emerald-100", iconColor: "text-emerald-600"},
+                    { tab: "prayer_journal"   as LeftPanelTab, Icon: Heart,     label: T.navPrayer,    desc: T.descPrayer,    gradient: "from-rose-50 to-pink-50",      ring: "hover:ring-rose-300",    iconBg: "bg-rose-100",    iconColor: "text-rose-600"    },
+                    { tab: "outline"          as LeftPanelTab, Icon: FileText,  label: T.navOutline,   desc: T.descOutline,   gradient: "from-slate-50 to-gray-50",     ring: "hover:ring-slate-300",   iconBg: "bg-slate-100",   iconColor: "text-slate-600"   },
+                    { tab: "flashcards"       as LeftPanelTab, Icon: Brain,     label: T.navFlash,     desc: T.descFlash,     gradient: "from-fuchsia-50 to-purple-50", ring: "hover:ring-fuchsia-300",  iconBg: "bg-fuchsia-100", iconColor: "text-fuchsia-600" },
+                    { tab: "reading_progress" as LeftPanelTab, Icon: BarChart2, label: T.navProgress,  desc: T.descProgress,  gradient: "from-teal-50 to-cyan-50",      ring: "hover:ring-teal-300",    iconBg: "bg-teal-100",    iconColor: "text-teal-600"    },
+                    { tab: "characters"       as LeftPanelTab, Icon: Users,     label: T.navChars,     desc: T.descChars,     gradient: "from-orange-50 to-amber-50",    ring: "hover:ring-orange-300",   iconBg: "bg-orange-100",   iconColor: "text-orange-600"   },
+                    { tab: "verse_image"      as LeftPanelTab, Icon: Sparkles,  label: T.navImage,     desc: T.descImage,     gradient: "from-pink-50 to-rose-50",       ring: "hover:ring-pink-300",     iconBg: "bg-pink-100",     iconColor: "text-pink-600"     },
+                    { tab: "quiz"             as LeftPanelTab, Icon: Trophy,    label: T.navQuiz,      desc: T.descQuiz,      gradient: "from-yellow-50 to-amber-50",    ring: "hover:ring-yellow-300",   iconBg: "bg-yellow-100",    iconColor: "text-yellow-600"    },
+                    { tab: "audio"            as LeftPanelTab, Icon: Headphones,label: T.navAudio,     desc: T.descAudio,     gradient: "from-indigo-50 to-purple-50",   ring: "hover:ring-indigo-300",   iconBg: "bg-indigo-100",    iconColor: "text-indigo-600"    },
                   ]).map(card => (
                     <button
                       key={card.tab}
@@ -1212,8 +1339,8 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
                     <div className="inline-flex items-center justify-center rounded-xl bg-indigo-100 p-2.5 mb-3">
                       <ScrollText size={20} className="text-indigo-600" />
                     </div>
-                    <p className="text-sm font-semibold text-gray-800 leading-snug">Devotional Articles</p>
-                    <p className="mt-0.5 text-xs text-gray-400 leading-snug">Original Bible studies & reflections</p>
+                    <p className="text-sm font-semibold text-gray-800 leading-snug">{T.navDevArticles}</p>
+                    <p className="mt-0.5 text-xs text-gray-400 leading-snug">{T.descDevArticles}</p>
                     <span className="absolute top-3 right-3 text-[10px] text-indigo-400 font-semibold">New ✦</span>
                   </a>
 
@@ -1225,8 +1352,8 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
                     <div className="inline-flex items-center justify-center rounded-xl bg-amber-100 p-2.5 mb-3">
                       <Trophy size={20} className="text-amber-600" />
                     </div>
-                    <p className="text-sm font-semibold text-gray-800 leading-snug">Bible Bowl</p>
-                    <p className="mt-0.5 text-xs text-gray-400 leading-snug">Tournament trivia for youth groups</p>
+                    <p className="text-sm font-semibold text-gray-800 leading-snug">{T.navBowl}</p>
+                    <p className="mt-0.5 text-xs text-gray-400 leading-snug">{T.descBowl}</p>
                     <span className="absolute top-3 right-3 text-[10px] text-amber-500 font-semibold">New ✦</span>
                   </a>
 
@@ -2652,7 +2779,7 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
               return (
                 <div className="rounded-xl bg-white px-4 py-3 flex items-start justify-between gap-3" style={{ border: "1px solid #ede8de" }}>
                   <div className="min-w-0">
-                    <p className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: "#C9952A" }}>Current Verse</p>
+                    <p className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: "#C9952A" }}>{T.currentVerse}</p>
                     <p className="text-xs font-semibold truncate" style={{ color: "#1a2640" }}>{ref}</p>
                     <p className="text-xs text-gray-500 mt-0.5 line-clamp-2 italic">"{text}"</p>
                   </div>
@@ -2708,7 +2835,7 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
             <div className="bg-[#1877F2] px-6 py-4 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <svg className="w-5 h-5 fill-white" viewBox="0 0 24 24"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.887v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
-                <span className="text-white font-bold text-sm">Your Branded Post Preview</span>
+                <span className="text-white font-bold text-sm">{T.postPreviewTitle}</span>
               </div>
               <button type="button" onClick={() => setPostPreview(null)} className="text-white/80 hover:text-white text-xl leading-none">✕</button>
             </div>
@@ -2718,7 +2845,7 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
               <div className="rounded-xl border border-gray-200 bg-gray-50 p-4 max-h-72 overflow-y-auto">
                 <pre className="text-sm text-gray-800 whitespace-pre-wrap font-sans leading-6">{postPreview}</pre>
               </div>
-              <p className="text-xs text-gray-400 mt-2">This is exactly what will appear in your Facebook post.</p>
+              <p className="text-xs text-gray-400 mt-2">{T.postPreviewNote}</p>
             </div>
 
             {/* Actions */}
@@ -2733,7 +2860,7 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
                 className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#1877F2] px-5 py-3 text-sm font-semibold text-white hover:bg-[#1464d3] transition"
               >
                 <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.887v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
-                Copy &amp; Open Facebook
+                {T.copyOpenFb}
               </a>
 
               {/* SMS */}
@@ -2742,7 +2869,7 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
                 className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#34C759] px-5 py-3 text-sm font-semibold text-white hover:bg-[#28a745] transition"
               >
                 <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg>
-                Send as Text Message
+                {T.sendSms}
               </a>
 
               {/* Email */}
@@ -2751,7 +2878,7 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
                 className="w-full flex items-center justify-center gap-2 rounded-xl bg-[#EA4335] px-5 py-3 text-sm font-semibold text-white hover:bg-[#c5352a] transition"
               >
                 <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/></svg>
-                Send as Email
+                {T.sendEmail}
               </a>
 
               {/* Copy */}
@@ -2764,11 +2891,11 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
                     : "border-gray-300 bg-white text-gray-800 hover:border-amber-400 hover:bg-amber-50"
                 }`}
               >
-                {postCopied ? <><Check size={14} className="inline mr-1" />Copied!</> : <><Copy size={14} className="inline mr-1" />Copy Text Only</>}
+                {postCopied ? <><Check size={14} className="inline mr-1" />{T.copied}</> : <><Copy size={14} className="inline mr-1" />{T.copyOnly}</>}
               </button>
 
               <p className="text-center text-xs text-gray-400">
-                Facebook: post text is copied automatically — just paste it in.
+                {T.fbNote}
               </p>
             </div>
           </div>
@@ -2799,76 +2926,76 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
 
           {/* Read */}
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 px-4 mb-1">Read</p>
-            {drawerBtn("reader",       <BookOpen size={16} />,      "Passage Reader")}
-            {drawerBtn("bible",        <Library size={16} />,       "Full Bible")}
-            {drawerBtn("parallel",     <Columns3 size={16} />,      "Parallel Bible")}
-            {drawerBtn("devotional",   <Feather size={16} />,       "Devotional")}
+            <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 px-4 mb-1">{T.sectionRead}</p>
+            {drawerBtn("reader",       <BookOpen size={16} />,      T.navReader)}
+            {drawerBtn("bible",        <Library size={16} />,       T.navBible)}
+            {drawerBtn("parallel",     <Columns3 size={16} />,      T.navParallel)}
+            {drawerBtn("devotional",   <Feather size={16} />,       T.navDevotional)}
           </div>
 
           {/* Study */}
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 px-4 mb-1">Study</p>
-            {drawerBtn("study_prompts", <ScrollText size={16} />,   "Study Prompts")}
-            {drawerBtn("topical",       <BookText size={16} />,     "Topical Bible")}
-            {drawerBtn("outline",       <FileText size={16} />,     "Sermon Outlines")}
-            {drawerBtn("flashcards",    <Brain size={16} />,        "Memorization")}
-            {drawerBtn("verse_image",   <Sparkles size={16} />,     "Verse Image Cards")}
-            {drawerBtn("commentary",    <BookText size={16} />,     "Commentary")}
-            {drawerBtn("dictionary",    <BookMarked size={16} />,   "Dictionary / Lexicon")}
-            {drawerBtn("timeline",      <Layers size={16} />,       "Timeline")}
+            <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 px-4 mb-1">{T.sectionStudy}</p>
+            {drawerBtn("study_prompts", <ScrollText size={16} />,   T.navStudy)}
+            {drawerBtn("topical",       <BookText size={16} />,     T.navTopical)}
+            {drawerBtn("outline",       <FileText size={16} />,     T.navOutline)}
+            {drawerBtn("flashcards",    <Brain size={16} />,        T.navFlash)}
+            {drawerBtn("verse_image",   <Sparkles size={16} />,     T.navImage)}
+            {drawerBtn("commentary",    <BookText size={16} />,     T.navCommentary)}
+            {drawerBtn("dictionary",    <BookMarked size={16} />,   T.navDictLex)}
+            {drawerBtn("timeline",      <Layers size={16} />,       T.navTimeline)}
           </div>
 
           {/* Explore */}
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 px-4 mb-1">Explore</p>
-            {drawerBtn("ancient_world", <Landmark size={16} />,     "Ancient World Map")}
-            {drawerBtn("atlas",         <Globe size={16} />,        "Atlas")}
-            {drawerBtn("characters",    <Users size={16} />,        "Character Profiles")}
-            {drawerBtn("quiz",          <Trophy size={16} />,       "Bible Quiz")}
-            {drawerBtn("audio",         <Headphones size={16} />,   "Audio Bible")}
-            {drawerBtn("resources",       <ExternalLink size={16} />, "Resources")}
-            {drawerBtn("books",           <BookHeart size={16} />,    "Christian Books")}
-            {drawerBtn("christian_news",  <ScrollText size={16} />,   "Today in Christian News")}
+            <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 px-4 mb-1">{T.sectionExplore}</p>
+            {drawerBtn("ancient_world", <Landmark size={16} />,     T.navAncientMap)}
+            {drawerBtn("atlas",         <Globe size={16} />,        T.navAtlas)}
+            {drawerBtn("characters",    <Users size={16} />,        T.navChars)}
+            {drawerBtn("quiz",          <Trophy size={16} />,       T.navQuiz)}
+            {drawerBtn("audio",         <Headphones size={16} />,   T.navAudio)}
+            {drawerBtn("resources",       <ExternalLink size={16} />, T.navResources)}
+            {drawerBtn("books",           <BookHeart size={16} />,    T.navBooks)}
+            {drawerBtn("christian_news",  <ScrollText size={16} />,   T.navNews)}
             <a
               href="/devotionals"
               className="flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium text-gray-600 hover:bg-amber-50 hover:text-amber-700 transition-colors"
             >
               <ScrollText size={16} />
-              <span>Devotional Articles</span>
-              <span className="ml-auto text-[10px] text-indigo-500 font-bold">New</span>
+              <span>{T.navDevArticles}</span>
+              <span className="ml-auto text-[10px] text-indigo-500 font-bold">{T.new}</span>
             </a>
             <a
               href="/tournament"
               className="flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium text-gray-600 hover:bg-amber-50 hover:text-amber-700 transition-colors"
             >
               <Trophy size={16} />
-              <span>Bible Bowl</span>
-              <span className="ml-auto text-[10px] text-amber-500 font-bold">New</span>
+              <span>{T.navBowl}</span>
+              <span className="ml-auto text-[10px] text-amber-500 font-bold">{T.new}</span>
             </a>
             <a
               href="/games"
               className="flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium text-gray-600 hover:bg-amber-50 hover:text-amber-700 transition-colors"
             >
               <span className="text-sm leading-none">🎮</span>
-              <span>Bible Wordle</span>
-              <span className="ml-auto text-[10px] font-bold" style={{ color: "#C9952A" }}>New</span>
+              <span>{T.navWordle}</span>
+              <span className="ml-auto text-[10px] font-bold" style={{ color: "#C9952A" }}>{T.new}</span>
             </a>
             <a
               href="/prayer"
               className="flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium text-gray-600 hover:bg-amber-50 hover:text-amber-700 transition-colors"
             >
               <span className="text-sm leading-none">🙏</span>
-              <span>Prayer Wall</span>
-              <span className="ml-auto text-[10px] font-bold" style={{ color: "#C9952A" }}>New</span>
+              <span>{T.navPrayerWall}</span>
+              <span className="ml-auto text-[10px] font-bold" style={{ color: "#C9952A" }}>{T.new}</span>
             </a>
             <a
               href="/kids"
               className="flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium text-gray-600 hover:bg-amber-50 hover:text-amber-700 transition-colors"
             >
               <span className="text-sm leading-none">🐾</span>
-              <span>Faith Tails Kids</span>
-              <span className="ml-auto text-[10px] font-bold" style={{ color: "#C9952A" }}>New</span>
+              <span>{T.navKids}</span>
+              <span className="ml-auto text-[10px] font-bold" style={{ color: "#C9952A" }}>{T.new}</span>
             </a>
             <a
               href="/shop"
@@ -2876,7 +3003,7 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
             >
               <span className="text-sm leading-none">👕</span>
               <span>Shop</span>
-              <span className="ml-auto text-[10px] font-bold" style={{ color: "#C9952A" }}>New</span>
+              <span className="ml-auto text-[10px] font-bold" style={{ color: "#C9952A" }}>{T.new}</span>
             </a>
             <a
               href="https://www.youtube.com/@FaithTails"
@@ -2889,24 +3016,24 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
                   <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
                 </svg>
               </span>
-              <span>Faith Tails on YouTube</span>
+              <span>{T.youTubeLink}</span>
             </a>
           </div>
 
           {/* My Library */}
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 px-4 mb-1">My Library</p>
-            {drawerBtn("prayer_journal",   <Heart size={16} />,        "Prayer Journal")}
-            {drawerBtn("reading_progress", <BarChart2 size={16} />,  "Reading Progress")}
-            {drawerBtn("bookmarks",        <Star size={16} />,       "Bookmarks")}
-            {drawerBtn("sessions",         <ClipboardList size={16} />, "My Studies")}
-            {drawerBtn("study_sheet",      <FileText size={16} />,   "Study Notes")}
+            <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 px-4 mb-1">{T.sectionLibrary}</p>
+            {drawerBtn("prayer_journal",   <Heart size={16} />,        T.navPrayer)}
+            {drawerBtn("reading_progress", <BarChart2 size={16} />,    T.navProgress)}
+            {drawerBtn("bookmarks",        <Star size={16} />,         T.navBookmarks)}
+            {drawerBtn("sessions",         <ClipboardList size={16} />, T.navSessions)}
+            {drawerBtn("study_sheet",      <FileText size={16} />,     T.navNotes)}
           </div>
 
           {/* Community */}
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 px-4 mb-1">Community</p>
-            {drawerBtn("testimonials",  <HeartHandshake size={16} />, "Testimonials")}
+            <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 px-4 mb-1">{T.sectionCommunity}</p>
+            {drawerBtn("testimonials",  <HeartHandshake size={16} />, T.navTestimonials)}
           </div>
 
         </div>

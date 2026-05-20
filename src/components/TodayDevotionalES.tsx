@@ -24,7 +24,7 @@ export default function TodayDevotionalES() {
         🌅 Devocional de Hoy — Día {dayNum}
       </p>
       <Link
-        href={`/es/devotionals/${dayNum}`}
+        href={`/es/devotionals/day/${dayNum}`}
         className="group flex flex-col sm:flex-row gap-5 rounded-2xl p-6 transition hover:opacity-95"
         style={{ background: NAVY, border: `1px solid rgba(201,149,42,0.3)`, boxShadow: "0 4px 20px rgba(0,0,0,0.12)" }}
       >

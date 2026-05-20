@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { DEVOTIONALS_ES } from "@/data/devotionals-es";
+import {
+  blogPostsES,
+  CATEGORY_COLORS_ES,
+  type BlogCategoryES,
+  type BlogPostES,
+} from "@/data/blogPosts-es";
 import DevotionalSignupES from "@/components/DevotionalSignupES";
 import TodayDevotionalES from "@/components/TodayDevotionalES";
 
@@ -8,29 +13,86 @@ import TodayDevotionalES from "@/components/TodayDevotionalES";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  title: "Devocionales Diarios | Scripture Lives",
+  title: "Devocionales y Estudios Bíblicos | Scripture Lives",
   description:
-    "Devocionales bíblicos diarios en español — reflexiones, versículos y oraciones para profundizar tu caminar con Cristo.",
+    "Artículos devocionales originales, estudios bíblicos versículo por versículo y reflexiones sobre la oración, la fe y la Palabra de Dios.",
 };
 
 const GOLD = "#C9952A";
 const NAVY = "#1a2640";
 
-// Rotating Unsplash photos — same pool as the English devotionals page
-const CARD_PHOTOS = [
-  "https://images.unsplash.com/photo-1476820865390-c52aeebb9891?w=640&q=75",
-  "https://images.unsplash.com/photo-1504052434569-70ad5836ab65?w=640&q=75",
-  "https://images.unsplash.com/photo-1529070538774-1843cb3265df?w=640&q=75",
-  "https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=640&q=75",
-  "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=640&q=75",
-  "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=640&q=75",
-  "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=640&q=75",
-  "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=640&q=75",
-  "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=640&q=75",
-  "https://images.unsplash.com/photo-1476820865390-c52aeebb9891?w=640&q=75",
-];
+// ── Photo per category ────────────────────────────────────────────────────────
+const CATEGORY_PHOTO: Record<BlogCategoryES, string> = {
+  "Devocional":                  "https://images.unsplash.com/photo-1476820865390-c52aeebb9891?w=640&q=75",
+  "Estudio Bíblico":             "https://images.unsplash.com/photo-1504052434569-70ad5836ab65?w=640&q=75",
+  "Oración":                     "https://images.unsplash.com/photo-1529070538774-1843cb3265df?w=640&q=75",
+  "Fe y Confianza":              "https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=640&q=75",
+  "Gracia y Perdón":             "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=640&q=75",
+  "Propósito y Llamado":         "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=640&q=75",
+  "Esperanza y Perseverancia":   "https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=640&q=75",
+  "Valentía y Fortaleza":        "https://images.unsplash.com/photo-1519681393784-d120267933ba?w=640&q=75",
+  "Identidad en Cristo":         "https://images.unsplash.com/photo-1504052434569-70ad5836ab65?w=640&q=75",
+  "Sanidad y Restauración":      "https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?w=640&q=75",
+};
 
+// ── Article card ──────────────────────────────────────────────────────────────
+function ArticleCard({ post, featured = false }: { post: BlogPostES; featured?: boolean }) {
+  const col   = CATEGORY_COLORS_ES[post.category as BlogCategoryES] ?? { bg: "rgba(0,0,0,0.08)", text: "#374151" };
+  const photo = CATEGORY_PHOTO[post.category as BlogCategoryES];
+
+  return (
+    <Link
+      href={`/es/devotionals/${post.slug}`}
+      className="group flex flex-col bg-white rounded-2xl overflow-hidden transition hover:-translate-y-1"
+      style={{ boxShadow: "0 2px 16px rgba(0,0,0,0.08)", border: "1px solid #ede8de" }}
+    >
+      {/* Photo */}
+      <div className={`relative overflow-hidden ${featured ? "h-52" : "h-40"}`}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={photo}
+          alt=""
+          aria-hidden="true"
+          className="w-full h-full object-cover transition duration-500 group-hover:scale-105"
+        />
+        <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.35) 0%, transparent 60%)" }} />
+        <span
+          className="absolute bottom-3 left-3 text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full"
+          style={{ background: "rgba(255,255,255,0.92)", color: GOLD }}
+        >
+          {post.category}
+        </span>
+      </div>
+
+      {/* Body */}
+      <div className="flex flex-col flex-1 p-5 gap-2">
+        <h2
+          className="font-bold leading-snug transition-colors group-hover:opacity-75"
+          style={{ fontSize: featured ? "1.1rem" : "0.95rem", color: NAVY }}
+        >
+          {post.title}
+        </h2>
+        <p className="text-sm leading-relaxed line-clamp-2" style={{ color: "#6b7280" }}>
+          {post.subtitle}
+        </p>
+
+        <div className="mt-auto pt-3 flex items-center justify-between" style={{ borderTop: "1px solid #f0ece3" }}>
+          <span className="text-xs" style={{ color: "#9ca3af" }}>{post.readingTimeMin} min de lectura</span>
+          <span className="text-xs font-bold transition-opacity group-hover:opacity-60" style={{ color: GOLD }}>→</span>
+        </div>
+      </div>
+    </Link>
+  );
+}
+
+// ── Page ──────────────────────────────────────────────────────────────────────
 export default function DevotionalsESPage() {
+  const sorted = [...blogPostsES].sort(
+    (a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
+  );
+  const [featured, ...rest] = sorted;
+  const categories = Array.from(new Set(blogPostsES.map((p) => p.category))) as BlogCategoryES[];
+
   return (
     <div className="min-h-screen" style={{ background: "#faf8f3" }}>
 
@@ -57,7 +119,7 @@ export default function DevotionalsESPage() {
 
       {/* ── Nav ── */}
       <nav
-        className="sticky top-0 z-10 bg-white px-5 py-3 flex items-center gap-3"
+        className="hidden md:flex sticky top-0 z-10 bg-white px-5 py-3 items-center gap-3"
         style={{ borderBottom: "1px solid #ede8de" }}
       >
         <Link
@@ -70,6 +132,9 @@ export default function DevotionalsESPage() {
         <span style={{ color: "#ddd6c8" }}>|</span>
         <span className="text-sm font-bold" style={{ color: NAVY }}>Devocionales</span>
       </nav>
+
+      {/* ── TODAY'S DEVOTIONAL ── */}
+      <TodayDevotionalES />
 
       {/* ── Hero header ── */}
       <header
@@ -102,96 +167,106 @@ export default function DevotionalsESPage() {
           </div>
 
           <h1 className="text-4xl md:text-5xl font-black text-white leading-tight mb-4">
-            Devocionales<br />
-            <span style={{ color: GOLD }}>Diarios</span>
+            Devocionales &amp;<br />
+            <span style={{ color: GOLD }}>Estudios Bíblicos</span>
           </h1>
 
           <p
             className="text-base leading-relaxed max-w-md mx-auto"
             style={{ color: "rgba(255,255,255,0.7)" }}
           >
-            Reflexiones originales para ayudarte a profundizar en la Palabra de Dios —
-            versículos clave, meditaciones y oraciones para cada día.
+            Artículos originales para ayudarte a profundizar en la Palabra de Dios — explorando
+            pasajes clave, personajes bíblicos y verdades eternas para la vida cotidiana.
           </p>
 
-          <p className="text-sm mt-4" style={{ color: "rgba(255,255,255,0.45)" }}>
-            30 devocionales · Ciclo diario rotativo
-          </p>
+          <div className="mt-8 flex flex-wrap justify-center gap-x-6 gap-y-2">
+            {categories.map((cat) => (
+              <span
+                key={cat}
+                className="text-xs font-semibold uppercase tracking-wider"
+                style={{ color: "rgba(255,255,255,0.5)" }}
+              >
+                {cat}
+              </span>
+            ))}
+          </div>
         </div>
       </header>
 
       {/* ── Email signup ── */}
-      <div className="max-w-2xl mx-auto px-4 pt-10 pb-2">
+      <div className="max-w-2xl mx-auto px-4 py-10">
         <DevotionalSignupES variant="banner" />
       </div>
 
-      {/* ── Today's devotional (client component — always uses browser date) ── */}
-      <TodayDevotionalES />
+      <main className="max-w-6xl mx-auto px-4 pb-12">
 
-      {/* ── All 30 devotionals grid ── */}
-      <main className="max-w-6xl mx-auto px-4 pb-16 pt-6">
-        <p
-          className="text-xs font-semibold mb-6 uppercase tracking-widest"
-          style={{ color: "#9ca3af" }}
-        >
-          Los 30 devocionales
-        </p>
-
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {DEVOTIONALS_ES.map((dev, idx) => (
-            <Link
-              key={idx}
-              href={`/es/devotionals/${idx + 1}`}
-              className="group flex flex-col bg-white rounded-2xl overflow-hidden transition hover:-translate-y-1"
-              style={{ boxShadow: "0 2px 16px rgba(0,0,0,0.08)", border: "1px solid #ede8de" }}
+        {/* ── Featured article ── */}
+        {featured && (
+          <div className="mb-10">
+            <p
+              className="text-[10px] font-black uppercase tracking-widest mb-4"
+              style={{ color: GOLD }}
             >
-              {/* Photo header */}
-              <div className="relative h-40 overflow-hidden">
+              Destacado
+            </p>
+            <Link
+              href={`/es/devotionals/${featured.slug}`}
+              className="group grid md:grid-cols-2 rounded-2xl overflow-hidden transition hover:-translate-y-0.5"
+              style={{ boxShadow: "0 4px 24px rgba(0,0,0,0.10)", border: "1px solid #ede8de" }}
+            >
+              {/* Photo */}
+              <div className="relative h-56 md:h-auto overflow-hidden">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={CARD_PHOTOS[idx % CARD_PHOTOS.length]}
+                  src={CATEGORY_PHOTO[featured.category as BlogCategoryES]}
                   alt=""
                   aria-hidden="true"
                   className="w-full h-full object-cover transition duration-500 group-hover:scale-105"
                 />
-                {/* Scrim */}
-                <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.4) 0%, transparent 60%)" }} />
-                {/* Day badge over photo */}
-                <span
-                  className="absolute bottom-3 left-3 text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full"
-                  style={{ background: "rgba(255,255,255,0.92)", color: GOLD }}
-                >
-                  Día {idx + 1}
-                </span>
-                {/* Icon over photo */}
-                <span className="absolute top-3 right-3 text-2xl select-none">{dev.icon}</span>
               </div>
-
-              {/* Card body */}
-              <div className="flex flex-col flex-1 p-5 gap-2">
-                <h2
-                  className="font-bold leading-snug transition-colors group-hover:opacity-75"
-                  style={{ fontSize: "0.95rem", color: NAVY }}
+              {/* Text */}
+              <div className="bg-white p-8 flex flex-col justify-center gap-3">
+                <span
+                  className="self-start text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full"
+                  style={{
+                    background: CATEGORY_COLORS_ES[featured.category as BlogCategoryES]?.bg,
+                    color: CATEGORY_COLORS_ES[featured.category as BlogCategoryES]?.text,
+                  }}
                 >
-                  {dev.title}
+                  {featured.category}
+                </span>
+                <h2
+                  className="text-2xl font-black leading-snug group-hover:opacity-75 transition"
+                  style={{ color: NAVY }}
+                >
+                  {featured.title}
                 </h2>
-                <p className="text-xs font-semibold" style={{ color: GOLD }}>
-                  {dev.reference}
+                <p className="text-sm leading-relaxed" style={{ color: "#6b7280" }}>
+                  {featured.subtitle}
                 </p>
-                <p className="text-xs leading-relaxed italic line-clamp-2" style={{ color: "#6b7280" }}>
-                  "{dev.verse}"
-                </p>
-
-                {/* Footer */}
                 <div
-                  className="mt-auto pt-3 flex items-center justify-between"
+                  className="flex items-center gap-4 mt-2 pt-4"
                   style={{ borderTop: "1px solid #f0ece3" }}
                 >
-                  <span className="text-xs" style={{ color: "#9ca3af" }}>Devocional</span>
-                  <span className="text-xs font-bold transition-opacity group-hover:opacity-60" style={{ color: GOLD }}>→</span>
+                  <span className="text-xs" style={{ color: "#9ca3af" }}>
+                    {featured.readingTimeMin} min de lectura
+                  </span>
+                  <span className="text-sm font-bold" style={{ color: GOLD }}>
+                    Leer artículo →
+                  </span>
                 </div>
               </div>
             </Link>
+          </div>
+        )}
+
+        {/* ── Grid ── */}
+        <p className="text-xs font-semibold mb-5" style={{ color: "#9ca3af" }}>
+          {rest.length} artículos más
+        </p>
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {rest.map((post) => (
+            <ArticleCard key={post.slug} post={post} />
           ))}
         </div>
       </main>
@@ -202,8 +277,8 @@ export default function DevotionalsESPage() {
         style={{ borderTop: "1px solid #ede8de" }}
       >
         <p className="text-sm" style={{ color: "#9ca3af" }}>
-          Devocionales originales por{" "}
-          <span className="font-bold" style={{ color: GOLD }}>Scripture Lives</span>
+          Todos los artículos son contenido original de{" "}
+          <span className="font-bold" style={{ color: GOLD }}>Scripture Lives</span>.
         </p>
         <Link
           href="/bible"
@@ -216,4 +291,3 @@ export default function DevotionalsESPage() {
     </div>
   );
 }
-
