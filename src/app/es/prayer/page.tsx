@@ -175,7 +175,7 @@ export default function PrayerPageES() {
         <div className="relative z-10 px-6 py-14 max-w-lg">
           {/* Language toggle */}
           <div className="flex items-center gap-3 mb-6">
-            <a href="/" className="text-xs transition" style={{ color: "#6b7f99" }}
+            <a href="/es" className="text-xs transition" style={{ color: "#6b7f99" }}
               onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = "#ffffff"; }}
               onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = "#6b7f99"; }}
             >

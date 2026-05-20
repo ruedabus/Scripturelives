@@ -213,7 +213,7 @@ export default function KidsPageES() {
         }}
       >
         <Link
-          href="/"
+          href="/es"
           className="flex items-center gap-2 text-sm font-semibold transition hover:opacity-70"
           style={{ color: NAVY }}
         >
@@ -444,7 +444,7 @@ export default function KidsPageES() {
             héroes y un Dios que siempre está con nosotros.
           </p>
           <a
-            href="/"
+            href="/bible"
             className="mt-2 px-6 py-3 rounded-xl font-bold text-sm transition hover:opacity-90"
             style={{ background: NAVY, color: "white" }}
           >
@@ -457,7 +457,7 @@ export default function KidsPageES() {
       <footer className="py-8 px-4 text-center text-xs" style={{ color: "#9ca3af", borderTop: "1px solid #ede8de" }}>
         <p>
           Faith Tails es parte de{" "}
-          <Link href="/" className="underline hover:opacity-70" style={{ color: GOLD }}>
+          <Link href="/es" className="underline hover:opacity-70" style={{ color: GOLD }}>
             Scripture Lives
           </Link>
           {" "}— un recurso bíblico gratuito para todos.{" "}

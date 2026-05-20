@@ -268,7 +268,7 @@ export default function GospelPageES() {
       >
         <p>
           Esta página es parte de{" "}
-          <Link href="/" className="underline hover:opacity-70" style={{ color: GOLD }}>
+          <Link href="/es" className="underline hover:opacity-70" style={{ color: GOLD }}>
             Scripture Lives
           </Link>
           {" "}— un recurso bíblico gratuito para todos.
