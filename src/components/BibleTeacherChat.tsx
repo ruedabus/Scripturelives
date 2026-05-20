@@ -9,11 +9,15 @@ type Message = { role: "user" | "assistant"; content: string; id?: string };
 
 type View = "chat" | "pastor";
 
+const GREETING_EN = "Hi! I'm your Scripture Lives Assistant 📖 Ask me anything about Scripture — verses on a topic, biblical history, facts, timelines, and more. For personal guidance, use the 'Ask a Pastor' button below.";
+const GREETING_ES = "¡Hola! Soy tu Asistente de Scripture Lives 📖 Pregúntame cualquier cosa sobre las Escrituras — versículos por tema, historia bíblica, datos, cronologías y más. Para orientación personal, usa el botón 'Preguntar al Pastor'.";
+
 export default function BibleTeacherChat() {
   const [open, setOpen]         = useState(false);
   const [view, setView]         = useState<View>("chat");
+  const [lang, setLang]         = useState<"en" | "es">("en");
   const [messages, setMessages] = useState<Message[]>([
-    { role: "assistant", content: "Hi! I'm your Scripture Lives Assistant 📖 Ask me anything about Scripture — verses on a topic, biblical history, facts, timelines, and more. For personal guidance, use the 'Ask a Pastor' button below." },
+    { role: "assistant", content: GREETING_EN },
   ]);
   const [input, setInput]       = useState("");
   const [loading, setLoading]   = useState(false);
@@ -57,7 +61,7 @@ export default function BibleTeacherChat() {
       const res = await fetch("/api/ask", {
         method:  "POST",
         headers: { "Content-Type": "application/json" },
-        body:    JSON.stringify({ messages: next, sessionId: sessionRef.current }),
+        body:    JSON.stringify({ messages: next, sessionId: sessionRef.current, lang }),
       });
       const data = await res.json();
       const assistantMsg: Message = {
@@ -101,7 +105,7 @@ export default function BibleTeacherChat() {
       return;
     }
     const recognition = new SR();
-    recognition.lang = "en-US";
+    recognition.lang = lang === "es" ? "es-ES" : "en-US";
     recognition.interimResults = false;
     recognition.maxAlternatives = 1;
     recognitionRef.current = recognition;
@@ -186,7 +190,7 @@ export default function BibleTeacherChat() {
         >
           {/* Header */}
           <div
-            className="flex items-center gap-3 px-4 py-3 shrink-0"
+            className="flex items-center gap-2 px-3 py-3 shrink-0"
             style={{ background: NAVY, borderBottom: `1px solid rgba(201,149,42,0.3)` }}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -197,17 +201,46 @@ export default function BibleTeacherChat() {
               onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
             />
             <div className="flex-1 min-w-0">
-              <p className="text-white font-black text-sm leading-tight">Scripture Lives Assistant</p>
+              <p className="text-white font-black text-sm leading-tight">
+                {lang === "es" ? "Asistente Scripture Lives" : "Scripture Lives Assistant"}
+              </p>
               <p className="text-xs" style={{ color: GOLD }}>Scripture Lives</p>
             </div>
+            {/* Lang switcher */}
+            <div className="flex gap-1 shrink-0">
+              <button
+                onClick={() => {
+                  setLang("en");
+                  setMessages([{ role: "assistant", content: GREETING_EN }]);
+                  setView("chat");
+                }}
+                className="text-[10px] font-black px-1.5 py-1 rounded-full transition"
+                style={lang === "en" ? { background: GOLD, color: NAVY } : { color: "rgba(255,255,255,0.5)" }}
+                title="English"
+              >
+                🇺🇸
+              </button>
+              <button
+                onClick={() => {
+                  setLang("es");
+                  setMessages([{ role: "assistant", content: GREETING_ES }]);
+                  setView("chat");
+                }}
+                className="text-[10px] font-black px-1.5 py-1 rounded-full transition"
+                style={lang === "es" ? { background: GOLD, color: NAVY } : { color: "rgba(255,255,255,0.5)" }}
+                title="Español"
+              >
+                🇪🇸
+              </button>
+            </div>
             {/* Tab switcher */}
-            <div className="flex gap-1">
+            <div className="flex gap-1 shrink-0">
               <button
                 onClick={() => setView("chat")}
                 className="text-[10px] font-black px-2 py-1 rounded-full transition"
                 style={view === "chat" ? { background: GOLD, color: NAVY } : { color: "rgba(255,255,255,0.6)" }}
               >
-                Ask
+                {lang === "es" ? "Chat" : "Ask"}
               </button>
               <button
                 onClick={() => setView("pastor")}
@@ -219,7 +252,7 @@ export default function BibleTeacherChat() {
             </div>
             <button
               onClick={() => setOpen(false)}
-              className="text-white opacity-60 hover:opacity-100 transition text-lg leading-none ml-1"
+              className="text-white opacity-60 hover:opacity-100 transition text-lg leading-none ml-1 shrink-0"
             >
               ✕
             </button>
@@ -291,12 +324,16 @@ export default function BibleTeacherChat() {
               {/* Input */}
               <div className="shrink-0 px-3 py-3" style={{ borderTop: "1px solid #ede8de", background: "white" }}>
                 <p className="text-[10px] mb-2 text-center" style={{ color: "#9ca3af" }}>
-                  Conversations are saved to improve our service and ensure safety.
+                  {lang === "es"
+                    ? "Las conversaciones se guardan para mejorar el servicio y garantizar la seguridad."
+                    : "Conversations are saved to improve our service and ensure safety."}
                 </p>
                 <div className="flex gap-2 items-center">
                   <button
                     onClick={toggleListening}
-                    title={listening ? "Stop listening" : "Speak your question"}
+                    title={listening
+                      ? (lang === "es" ? "Dejar de escuchar" : "Stop listening")
+                      : (lang === "es" ? "Habla tu pregunta" : "Speak your question")}
                     className="px-2.5 py-2 rounded-xl text-sm transition shrink-0"
                     style={{
                       background: listening ? "#fee2e2" : "#f5f2ec",
@@ -311,7 +348,11 @@ export default function BibleTeacherChat() {
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-                    placeholder={listening ? "Listening…" : "Ask about Scripture…"}
+                    placeholder={
+                      listening
+                        ? (lang === "es" ? "Escuchando…" : "Listening…")
+                        : (lang === "es" ? "Pregunta sobre las Escrituras…" : "Ask about Scripture…")
+                    }
                     className="flex-1 text-sm px-3 py-2 rounded-xl outline-none"
                     style={{ background: "#f5f2ec", color: "#3a3025", border: `1px solid ${listening ? GOLD : "#ede8de"}` }}
                   />
@@ -329,7 +370,9 @@ export default function BibleTeacherChat() {
                   className="w-full mt-2 text-center text-[11px] font-semibold transition hover:opacity-70"
                   style={{ color: "#9ca3af" }}
                 >
-                  Have a personal question? Ask a real Pastor →
+                  {lang === "es"
+                    ? "¿Tienes una pregunta personal? Pregunta a un Pastor →"
+                    : "Have a personal question? Ask a real Pastor →"}
                 </button>
               </div>
             </>
@@ -341,31 +384,37 @@ export default function BibleTeacherChat() {
               {pSent ? (
                 <div className="flex flex-col items-center justify-center h-full gap-4 text-center">
                   <span className="text-5xl">🙏</span>
-                  <p className="font-black text-lg" style={{ color: NAVY }}>Question Sent!</p>
+                  <p className="font-black text-lg" style={{ color: NAVY }}>
+                    {lang === "es" ? "¡Pregunta Enviada!" : "Question Sent!"}
+                  </p>
                   <p className="text-sm leading-relaxed" style={{ color: "#6b7280" }}>
-                    A pastor will reach out to you at <strong>{pEmail}</strong> personally.
+                    {lang === "es"
+                      ? <>Un pastor se comunicará contigo a <strong>{pEmail}</strong> personalmente.</>
+                      : <>A pastor will reach out to you at <strong>{pEmail}</strong> personally.</>}
                   </p>
                   <button
                     onClick={() => { setPSent(false); setPName(""); setPEmail(""); setPQuestion(""); setView("chat"); }}
                     className="px-5 py-2 rounded-xl text-sm font-black transition hover:opacity-90"
                     style={{ background: GOLD, color: NAVY }}
                   >
-                    Back to Chat
+                    {lang === "es" ? "Volver al Chat" : "Back to Chat"}
                   </button>
                 </div>
               ) : (
                 <form onSubmit={sendPastorQuestion} className="flex flex-col gap-3">
                   <p className="text-xs font-black uppercase tracking-widest mb-1" style={{ color: GOLD }}>
-                    Ask a Real Pastor
+                    {lang === "es" ? "Preguntar a un Pastor" : "Ask a Real Pastor"}
                   </p>
                   <p className="text-xs leading-relaxed" style={{ color: "#6b7280" }}>
-                    For personal questions, spiritual guidance, or anything you&apos;d rather discuss one-on-one — a real pastor will respond to you by email.
+                    {lang === "es"
+                      ? "Para preguntas personales, orientación espiritual, o cualquier cosa que prefieras tratar de forma privada — un pastor real te responderá por correo electrónico."
+                      : "For personal questions, spiritual guidance, or anything you'd rather discuss one-on-one — a real pastor will respond to you by email."}
                   </p>
 
                   <input
                     required
                     type="text"
-                    placeholder="Your name"
+                    placeholder={lang === "es" ? "Tu nombre" : "Your name"}
                     value={pName}
                     onChange={(e) => setPName(e.target.value)}
                     className="text-sm px-3 py-2.5 rounded-xl outline-none w-full"
@@ -374,7 +423,7 @@ export default function BibleTeacherChat() {
                   <input
                     required
                     type="email"
-                    placeholder="Your email"
+                    placeholder={lang === "es" ? "Tu correo electrónico" : "Your email"}
                     value={pEmail}
                     onChange={(e) => setPEmail(e.target.value)}
                     className="text-sm px-3 py-2.5 rounded-xl outline-none w-full"
@@ -382,21 +431,27 @@ export default function BibleTeacherChat() {
                   />
                   <textarea
                     required
-                    placeholder="What's on your heart?"
+                    placeholder={lang === "es" ? "¿Qué hay en tu corazón?" : "What's on your heart?"}
                     value={pQuestion}
                     onChange={(e) => setPQuestion(e.target.value)}
                     rows={4}
                     className="text-sm px-3 py-2.5 rounded-xl outline-none w-full resize-none"
                     style={{ background: "#f5f2ec", color: "#3a3025", border: "1px solid #ede8de" }}
                   />
-                  {pError && <p className="text-xs text-red-500">{pError}</p>}
+                  {pError && (
+                    <p className="text-xs text-red-500">
+                      {lang === "es" ? "Algo salió mal. Por favor intenta de nuevo." : pError}
+                    </p>
+                  )}
                   <button
                     type="submit"
                     disabled={pSending}
                     className="py-2.5 rounded-xl text-sm font-black transition hover:opacity-90 disabled:opacity-50"
                     style={{ background: NAVY, color: GOLD }}
                   >
-                    {pSending ? "Sending…" : "Send to Pastor →"}
+                    {pSending
+                      ? (lang === "es" ? "Enviando…" : "Sending…")
+                      : (lang === "es" ? "Enviar al Pastor →" : "Send to Pastor →")}
                   </button>
                 </form>
               )}
