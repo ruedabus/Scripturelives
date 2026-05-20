@@ -2,92 +2,92 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Scripture Lives — Free Bible Tools for Everyone",
+  title: "Scripture Lives — Herramientas Bíblicas Gratuitas para Todos",
   description:
-    "Read the Bible, get daily devotionals, pray with others, explore kids stories, and play Bible games — free, for everyone.",
+    "Lee la Biblia, recibe devocionales diarios, ora con otros, explora historias para niños y juega juegos bíblicos — gratis, para todos.",
 };
 
 const GOLD = "#C9952A";
 const NAVY = "#1a2640";
 
-// ── Feature cards ─────────────────────────────────────────────────────────────
+// ── Tarjetas de características ───────────────────────────────────────────────
 const FEATURES = [
   {
-    title: "Read the Bible",
-    desc: "Explore any passage with multiple translations, commentary, Strong's concordance, and cross-references.",
+    title: "Lee la Biblia",
+    desc: "Explora cualquier pasaje con múltiples traducciones, comentarios, concordancia Strong y referencias cruzadas.",
     href: "/bible?tab=bible",
-    cta: "Open the Bible",
+    cta: "Abrir la Biblia",
     photo: "https://images.unsplash.com/photo-1504052434569-70ad5836ab65?w=640&q=75",
   },
   {
-    title: "Daily Devotionals",
-    desc: "A short verse, reflection, and prayer delivered every morning — in English or Spanish.",
-    href: "/devotionals",
-    cta: "Read Today's",
+    title: "Devocionales Diarios",
+    desc: "Un versículo breve, reflexión y oración entregados cada mañana — en inglés o español.",
+    href: "/es/devotionals",
+    cta: "Leer el de Hoy",
     photo: "/daily-devotional.png",
   },
   {
-    title: "Prayer Wall",
-    desc: "Share your prayer requests and pray for others in our community wall.",
-    href: "/prayer",
-    cta: "Visit Prayer Wall",
+    title: "Muro de Oración",
+    desc: "Comparte tus peticiones de oración y ora por otros en nuestro muro comunitario.",
+    href: "/es/prayer",
+    cta: "Visitar el Muro",
     photo: "/prayer-wall.png",
   },
   {
-    title: "Worship Music",
-    desc: "Worship playlists to accompany your time in God's Word — sing along and draw closer to Christ.",
+    title: "Música de Adoración",
+    desc: "Listas de adoración para acompañar tu tiempo en la Palabra de Dios — canta y acércate más a Cristo.",
     href: "/music",
-    cta: "Listen Now",
+    cta: "Escuchar Ahora",
     photo: "/worship.png",
   },
   {
-    title: "Kids Stories",
-    desc: "Faith Tails — beautifully illustrated Bible story books and videos for children.",
-    href: "/kids",
-    cta: "Explore for Kids",
+    title: "Historias para Niños",
+    desc: "Faith Tails — hermosos libros de historias bíblicas ilustrados y videos para niños.",
+    href: "/es/kids",
+    cta: "Explorar para Niños",
     photo: "/Kids-stories.png",
   },
   {
-    title: "Bible Games",
-    desc: "Bible Bowl tournaments, Wordle, Word Search, and more — fun for the whole family.",
+    title: "Juegos Bíblicos",
+    desc: "Torneos de Bible Bowl, Wordle, Sopa de Letras y más — diversión para toda la familia.",
     href: "/games",
-    cta: "Play Now",
+    cta: "Jugar Ahora",
     photo: "/Bible-games.png",
   },
 ];
 
-// ── Quick links ───────────────────────────────────────────────────────────────
+// ── Enlaces rápidos ───────────────────────────────────────────────────────────
 const QUICK = [
-  { icon: "✝", label: "The Gospel", href: "/gospel" },
-  { icon: "🎵", label: "Worship Music", href: "/music" },
-  { icon: "⛪", label: "Find a Church", href: "/find-a-church" },
-  { icon: "🛍️", label: "Shop", href: "/shop" },
-  { icon: "🇪🇸", label: "En Español", href: "/es" },
+  { icon: "✝", label: "El Evangelio",       href: "/es/gospel" },
+  { icon: "🎵", label: "Música de Adoración", href: "/music" },
+  { icon: "⛪", label: "Encuentra una Iglesia", href: "/es/find-a-church" },
+  { icon: "🛍️", label: "Tienda",             href: "/shop" },
+  { icon: "🇺🇸", label: "In English",         href: "/" },
 ];
 
-export default function WelcomePage() {
+export default function SpanishHomePage() {
   return (
     <div className="min-h-screen flex flex-col" style={{ background: "#faf8f3", fontFamily: "Georgia, serif" }}>
 
-      {/* ── Language bar ── */}
+      {/* ── Barra de idioma ── */}
       <div
         className="w-full flex items-center justify-center gap-3 py-2.5 px-4 text-sm font-semibold"
         style={{ background: NAVY, borderBottom: `1px solid rgba(201,149,42,0.3)` }}
       >
-        <span style={{ color: "rgba(255,255,255,0.6)" }}>🌐 Language:</span>
-        <span
-          className="px-3 py-1 rounded-full text-xs font-black"
-          style={{ background: "rgba(255,255,255,0.15)", color: "white" }}
+        <span style={{ color: "rgba(255,255,255,0.6)" }}>🌐 Idioma:</span>
+        <Link
+          href="/"
+          className="px-3 py-1 rounded-full text-xs font-black transition hover:opacity-80"
+          style={{ background: "rgba(255,255,255,0.15)", color: "rgba(255,255,255,0.75)" }}
         >
           🇺🇸 English
-        </span>
-        <Link
-          href="/es"
-          className="px-3 py-1 rounded-full text-xs font-black transition hover:opacity-80"
+        </Link>
+        <span
+          className="px-3 py-1 rounded-full text-xs font-black"
           style={{ background: GOLD, color: NAVY }}
         >
           🇪🇸 Español
-        </Link>
+        </span>
       </div>
 
       {/* ── Hero ── */}
@@ -95,7 +95,7 @@ export default function WelcomePage() {
         className="relative w-full overflow-hidden"
         style={{ background: `linear-gradient(160deg, ${NAVY} 0%, #2d1f3d 55%, #1a2640 100%)` }}
       >
-        {/* Open Bible — full-width background */}
+        {/* Biblia abierta — fondo de ancho completo */}
         <div className="absolute inset-0 pointer-events-none select-none">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -106,7 +106,6 @@ export default function WelcomePage() {
             style={{ opacity: 0.35 }}
           />
         </div>
-        {/* Gradient overlay — heavier on left so text stays readable */}
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
@@ -114,7 +113,7 @@ export default function WelcomePage() {
           }}
         />
 
-        {/* Content */}
+        {/* Contenido */}
         <div className="relative z-10 w-full max-w-4xl mx-auto px-6 py-16 sm:py-24 flex flex-col items-center text-center">
 
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -132,16 +131,16 @@ export default function WelcomePage() {
             className="text-4xl sm:text-5xl lg:text-6xl font-black leading-tight mb-5 text-white"
             style={{ textShadow: `0 2px 30px rgba(201,149,42,0.35)` }}
           >
-            God&apos;s Word,<br />
-            <span style={{ color: GOLD }}>For Everyone.</span>
+            La Palabra de Dios,<br />
+            <span style={{ color: GOLD }}>Para Todos.</span>
           </h1>
 
           <p
             className="text-base sm:text-lg max-w-xl leading-relaxed mb-10"
             style={{ color: "rgba(255,255,255,0.78)" }}
           >
-            Free Bible tools, daily devotionals, kids stories, prayer, and games —
-            all in one place, in English and Spanish.
+            Herramientas bíblicas gratuitas, devocionales diarios, historias para niños,
+            oración y juegos — todo en un solo lugar, en inglés y español.
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-4">
@@ -150,26 +149,26 @@ export default function WelcomePage() {
               className="px-8 py-4 rounded-2xl font-black text-base transition hover:opacity-90 hover:scale-105 active:scale-95"
               style={{ background: GOLD, color: NAVY }}
             >
-              ✨ Discover Scripture Lives
+              ✨ Descubre Scripture Lives
             </Link>
             <Link
-              href="/gospel"
+              href="/es/gospel"
               className="px-8 py-4 rounded-2xl font-black text-base transition hover:opacity-80 border"
               style={{ borderColor: "rgba(201,149,42,0.5)", color: "white" }}
             >
-              ✝ The Gospel
+              ✝ El Evangelio
             </Link>
           </div>
         </div>
       </section>
 
-      {/* ── Feature cards ── */}
+      {/* ── Tarjetas de características ── */}
       <section id="features" className="w-full max-w-6xl mx-auto px-4 py-16">
         <p
           className="text-center text-[10px] font-black uppercase tracking-[0.25em] mb-10"
           style={{ color: GOLD }}
         >
-          Everything on Scripture Lives
+          Todo en Scripture Lives
         </p>
 
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -180,7 +179,7 @@ export default function WelcomePage() {
               className="group flex flex-col bg-white rounded-3xl overflow-hidden transition hover:-translate-y-1"
               style={{ boxShadow: "0 4px 24px rgba(0,0,0,0.08)", border: "1px solid #ede8de" }}
             >
-              {/* Photo */}
+              {/* Foto */}
               <div className="relative h-44 overflow-hidden">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
@@ -195,7 +194,7 @@ export default function WelcomePage() {
                 />
               </div>
 
-              {/* Body */}
+              {/* Cuerpo */}
               <div className="flex flex-col flex-1 p-6 gap-3">
                 <h2 className="text-lg font-black leading-snug" style={{ color: NAVY }}>
                   {f.title}
@@ -217,10 +216,10 @@ export default function WelcomePage() {
         </div>
       </section>
 
-      {/* ── Gospel CTA banner ── */}
+      {/* ── Banner del Evangelio ── */}
       <section className="w-full max-w-3xl mx-auto px-4 pb-12">
         <Link
-          href="/gospel"
+          href="/es/gospel"
           className="group flex flex-col sm:flex-row items-center gap-6 rounded-3xl p-8 transition hover:opacity-95"
           style={{
             background: `linear-gradient(135deg, ${NAVY} 0%, #2d1f3d 100%)`,
@@ -231,25 +230,25 @@ export default function WelcomePage() {
           <div className="text-5xl select-none">✝</div>
           <div className="flex-1 text-center sm:text-left">
             <p className="text-[10px] font-black uppercase tracking-widest mb-2" style={{ color: GOLD }}>
-              New Here?
+              ¿Nuevo Aquí?
             </p>
             <h3 className="text-xl font-black text-white mb-1">
-              Hear the Best News You'll Ever Hear
+              Escucha las Mejores Noticias que Jamás Escucharás
             </h3>
             <p className="text-sm" style={{ color: "rgba(255,255,255,0.65)" }}>
-              Two minutes that could change your life — and your eternity.
+              Dos minutos que pueden cambiar tu vida — y tu eternidad.
             </p>
           </div>
           <span
             className="shrink-0 px-6 py-3 rounded-2xl text-sm font-black transition group-hover:opacity-90"
             style={{ background: GOLD, color: NAVY }}
           >
-            Read the Gospel →
+            Lee el Evangelio →
           </span>
         </Link>
       </section>
 
-      {/* ── Quick links ── */}
+      {/* ── Enlaces rápidos ── */}
       <section className="w-full max-w-3xl mx-auto px-4 pb-16">
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {QUICK.map((q) => (
@@ -266,14 +265,14 @@ export default function WelcomePage() {
         </div>
       </section>
 
-      {/* ── Footer ── */}
+      {/* ── Pie de página ── */}
       <footer
         className="w-full py-8 px-6 text-center text-xs mt-auto"
         style={{ color: "#9ca3af", borderTop: "1px solid #ede8de" }}
       >
         <p>
           <span className="font-bold" style={{ color: GOLD }}>Scripture Lives</span>
-          {" "}— a free Bible resource for everyone.
+          {" "}— un recurso bíblico gratuito para todos.
         </p>
         <p className="mt-2" style={{ color: "#c0b89a" }}>
           © 2026 Scripture Lives / Faith Tails &nbsp;·&nbsp; info@scripturelives.com
