@@ -20,7 +20,7 @@ const PRODUCTS = [
     badge: "NEW",
     colors: ["#1c1c1c", "#1f3a5c", "#6b6b52", "#8b2020", "#808080"],
     href: STORE_URL,
-    imageBg: "#f0ebe3",
+    imageBg: "#1c1c1c",
   },
   {
     id: 12,
