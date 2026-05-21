@@ -12,6 +12,17 @@ export const metadata = {
 
 const PRODUCTS = [
   {
+    id: 12,
+    name: "Jeeps for Jesus — Off-Road Disciples Heavyweight Tee",
+    description: "Built for the trail. Driven by faith. Front: Jeeps for Jesus vintage illustration with cross, Jeep, sunset & mountains. Back: Off-Road Disciples bold tire-track typography.",
+    price: "From $35.00",
+    image: "/Jeep-tee.png",
+    badge: "NEW",
+    colors: ["#4a5240", "#3b3b3b", "#2f3640", "#1e3a2f", "#6b4c3b", "#6b8fa1", "#808080", "#c4613a", "#d0cdc8", "#f5f5f5"],
+    href: STORE_URL,
+    imageBg: "#f0ebe3",
+  },
+  {
     id: 10,
     name: "Member of the Ekklēsia — Christian Heavyweight Tee",
     description: "Not a religion. A family. Ekklēsia — the Greek word for the Church — means the called-out ones. Vintage collegiate typography. Distressed, worn-in feel. A conversation every time you wear it.",
