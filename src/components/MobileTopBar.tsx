@@ -60,6 +60,7 @@ const MENU = [
   { section: "Bible" },
   { href: "/bible?tab=bible",    icon: "📖", label: "Full Bible"     },
   { href: "/bible?tab=parallel", icon: "📑", label: "Parallel Bible" },
+  { href: "/bible?tab=audio",    icon: "🎧", label: "Audio Bible"    },
   { section: "More" },
   { href: "/music",         icon: "🎵", label: "Worship Music"  },
   { href: "/gospel",        icon: "✝️",  label: "The Gospel"     },
