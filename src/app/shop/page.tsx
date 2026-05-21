@@ -16,11 +16,11 @@ const PRODUCTS = [
     name: "Need an Ark? I Noah Guy — Christian Humor Raglan Tee",
     description: "Because sometimes the best way to share your faith is with a smile. Classic Bible humor meets bold vintage illustration — Noah himself, thumbs up, ready to help. Perfect for breaking the ice at church or anywhere life takes you.",
     price: "From $27.50",
-    image: "/noah-tee.png",
+    image: "/noah-tee-transparent.png",
     badge: "NEW",
     colors: ["#1c1c1c", "#1f3a5c", "#6b6b52", "#8b2020", "#808080"],
     href: STORE_URL,
-    imageBg: "#1c1c1c",
+    imageBg: "#f0ebe3",
   },
   {
     id: 12,
