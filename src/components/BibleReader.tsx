@@ -3165,6 +3165,54 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
         </div>
       )}
 
+      {/* ── MOBILE VISUAL REFERENCE SHEET ───────────────────────────────── */}
+      {visualQuery && (
+        <div className="xl:hidden fixed inset-0 z-50 flex flex-col justify-end print:hidden">
+          {/* Backdrop */}
+          <div
+            className="absolute inset-0 bg-black/50"
+            onClick={() => setVisualQuery(null)}
+          />
+          {/* Sheet */}
+          <div
+            className="relative w-full rounded-t-2xl shadow-2xl overflow-hidden flex flex-col"
+            style={{ background: "#faf8f3", maxHeight: "80vh", border: "1px solid #ede8de" }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div
+              className="flex items-center justify-between px-5 py-3 shrink-0"
+              style={{ background: "#1a2640", borderBottom: "1px solid rgba(201,149,42,0.3)" }}
+            >
+              <div className="flex items-center gap-2">
+                <span className="text-base">🖼️</span>
+                <p className="text-white font-black text-sm">Visual Reference</p>
+                <span
+                  className="text-xs font-bold px-2 py-0.5 rounded-full"
+                  style={{ background: "#C9952A", color: "#1a2640" }}
+                >
+                  {visualQuery}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setVisualQuery(null)}
+                className="text-white/70 hover:text-white text-lg leading-none"
+              >
+                ✕
+              </button>
+            </div>
+            {/* Scrollable body */}
+            <div className="flex-1 overflow-y-auto p-4">
+              <VisualReferencePanel
+                query={visualQuery}
+                onClear={() => setVisualQuery(null)}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ── MOBILE BOTTOM NAV BAR ────────────────────────────────────────── */}
       {/* Backdrop */}
       {mobileDrawerOpen && (
