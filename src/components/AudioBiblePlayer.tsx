@@ -200,7 +200,7 @@ export default function AudioBiblePlayer() {
   const pct = duration > 0 ? (current / duration) * 100 : 0;
 
   return (
-    <div className="flex flex-col h-full bg-white">
+    <div className="flex flex-col min-h-0 bg-white">
 
       {/* ── Header ────────────────────────────────────────────────── */}
       <div className="border-b border-gray-200 px-4 py-3 shrink-0">
@@ -261,7 +261,7 @@ export default function AudioBiblePlayer() {
       </div>
 
       {/* ── Now playing card ──────────────────────────────────────── */}
-      <div className="flex-1 flex flex-col items-center justify-center px-6 py-8 gap-6">
+      <div className="flex flex-col items-center px-6 py-8 gap-6">
 
         {/* Album art / passage display */}
         <div className="w-full max-w-xs rounded-2xl bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-100 px-6 py-8 text-center shadow-sm">
