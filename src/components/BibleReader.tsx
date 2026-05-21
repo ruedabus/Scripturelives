@@ -14,6 +14,7 @@ import getPlaceStudyPrompts, {
 } from "@/components/getPlaceStudyPrompts";
 import FullBibleReader from "@/components/FullBibleReader";
 import ParallelBibleReader from "@/components/ParallelBibleReader";
+import InterlinearReader from "@/components/InterlinearReader";
 import TopicalBible from "@/components/TopicalBible";
 import PrayerJournal from "@/components/PrayerJournal";
 import TestimonialWall from "@/components/TestimonialWall";
@@ -40,7 +41,7 @@ import {
   Home, Feather, BookOpen, Library, Layers, BookText, BookMarked,
   ScrollText, Landmark, Globe, Star, ClipboardList, FileText,
   HeartHandshake, ExternalLink, BookHeart, HandCoins, MapPin, Compass,
-  Copy, Check, Image, Columns3, Heart, Menu, X, Brain, BarChart2, Users, Sparkles, Trophy, Headphones,
+  Copy, Check, Image, Columns3, Heart, Menu, X, Brain, BarChart2, Users, Sparkles, Trophy, Headphones, Languages,
 } from "lucide-react";
 
 const PlaceMap = dynamic(() => import("@/components/PlaceMap"), {
@@ -81,7 +82,8 @@ type LeftPanelTab =
   | "verse_image"
   | "quiz"
   | "audio"
-  | "christian_news";
+  | "christian_news"
+  | "interlinear";
 
 // ── Bible book lists ──────────────────────────────────────────────────────
 const OT_SECTIONS = [
@@ -217,6 +219,7 @@ const T_EN = {
   navBowl: "Bible Bowl", navWordle: "Bible Wordle", navKids: "Faith Tails Kids",
   navPrayerWall: "Prayer Wall", navDictLex: "Dictionary / Lexicon",
   navAncientMap: "Ancient World Map", navNews: "Today in Christian News", navDevotional: "Devotional",
+  navInterlinear: "Greek / Hebrew Interlinear",
   // Sidebar footer
   tagline: "Bible Study Platform", youTubeLink: "Faith Tails on YouTube",
   fbLink: "Scripture Lives on Facebook", support: "Support Scripture Lives",
@@ -269,6 +272,7 @@ const T_ES: typeof T_EN = {
   navBowl: "Bible Bowl", navWordle: "Bible Wordle", navKids: "Faith Tails Niños",
   navPrayerWall: "Muro de Oración", navDictLex: "Diccionario / Léxico",
   navAncientMap: "Mapa del Mundo Antiguo", navNews: "Noticias Cristianas de Hoy", navDevotional: "Devocional",
+  navInterlinear: "Interlineal Griego / Hebreo",
   tagline: "Plataforma de Estudio Bíblico", youTubeLink: "Faith Tails en YouTube",
   fbLink: "Scripture Lives en Facebook", support: "Apoya Scripture Lives",
   about: "Acerca de", terms: "Términos y Condiciones", privacy: "Política de Privacidad",
@@ -962,6 +966,7 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
               {sideNavBtn("timeline",      <Layers size={16} />,       T.navTimeline)}
               {sideNavBtn("commentary",    <BookText size={16} />,     T.navCommentary)}
               {sideNavBtn("dictionary",    <BookMarked size={16} />,   T.navDict)}
+              {sideNavBtn("interlinear",   <Languages size={16} />,    T.navInterlinear)}
               {sideNavBtn("study_prompts", <ScrollText size={16} />,   T.navStudy)}
               {sideNavBtn("outline",       <FileText size={16} />,     T.navOutline)}
               {sideNavBtn("flashcards",    <Brain size={16} />,        T.navFlash)}
@@ -1672,6 +1677,12 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
               <CommentaryPanel
                 book={activeFullBibleRef.book}
                 chapter={activeFullBibleRef.chapter}
+              />
+            )}
+
+            {leftPanelTab === "interlinear" && (
+              <InterlinearReader
+                onOpenLexicon={(strongs, book) => setLexiconWord({ word: strongs, book })}
               />
             )}
 
@@ -2995,6 +3006,7 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
             {drawerBtn("verse_image",   <Sparkles size={16} />,     T.navImage)}
             {drawerBtn("commentary",    <BookText size={16} />,     T.navCommentary)}
             {drawerBtn("dictionary",    <BookMarked size={16} />,   T.navDictLex)}
+            {drawerBtn("interlinear",   <Languages size={16} />,    T.navInterlinear)}
             {drawerBtn("timeline",      <Layers size={16} />,       T.navTimeline)}
           </div>
 
