@@ -3182,6 +3182,7 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
             <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 px-4 mb-1">{T.sectionRead}</p>
             {drawerBtn("reader",       <BookOpen size={16} />,      T.navReader)}
             {drawerBtn("bible",        <Library size={16} />,       T.navBible)}
+            {drawerBtn("audio",        <Headphones size={16} />,    T.navAudio)}
             {drawerBtn("parallel",     <Columns3 size={16} />,      T.navParallel)}
             {drawerBtn("devotional",   <Feather size={16} />,       T.navDevotional)}
           </div>
@@ -3207,7 +3208,6 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
             {drawerBtn("atlas",         <Globe size={16} />,        T.navAtlas)}
             {drawerBtn("characters",    <Users size={16} />,        T.navChars)}
             {drawerBtn("quiz",          <Trophy size={16} />,       T.navQuiz)}
-            {drawerBtn("audio",         <Headphones size={16} />,   T.navAudio)}
             {drawerBtn("resources",       <ExternalLink size={16} />, T.navResources)}
             {drawerBtn("books",           <BookHeart size={16} />,    T.navBooks)}
             {drawerBtn("christian_news",  <ScrollText size={16} />,   T.navNews)}
