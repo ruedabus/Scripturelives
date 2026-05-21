@@ -2809,12 +2809,21 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
 
             {/* Lexicon Panel — Word Study */}
             {lexiconWord && (
-              <LexiconPanel
-                mode="word"
-                clickedWord={lexiconWord.word}
-                book={lexiconWord.book}
-                onClear={() => setLexiconWord(null)}
-              />
+              /^[GH]\d+$/i.test(lexiconWord.word) ? (
+                <LexiconPanel
+                  mode="number"
+                  strongsNumber={lexiconWord.word.toUpperCase()}
+                  clickedWord={lexiconWord.word}
+                  onClear={() => setLexiconWord(null)}
+                />
+              ) : (
+                <LexiconPanel
+                  mode="word"
+                  clickedWord={lexiconWord.word}
+                  book={lexiconWord.book}
+                  onClear={() => setLexiconWord(null)}
+                />
+              )
             )}
 
             {/* Visual Reference Panel */}
@@ -2954,12 +2963,21 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
             </div>
             {/* Scrollable body */}
             <div className="flex-1 overflow-y-auto p-4">
-              <LexiconPanel
-                mode="word"
-                clickedWord={lexiconWord.word}
-                book={lexiconWord.book}
-                onClear={() => setLexiconWord(null)}
-              />
+              {/^[GH]\d+$/i.test(lexiconWord.word) ? (
+                <LexiconPanel
+                  mode="number"
+                  strongsNumber={lexiconWord.word.toUpperCase()}
+                  clickedWord={lexiconWord.word}
+                  onClear={() => setLexiconWord(null)}
+                />
+              ) : (
+                <LexiconPanel
+                  mode="word"
+                  clickedWord={lexiconWord.word}
+                  book={lexiconWord.book}
+                  onClear={() => setLexiconWord(null)}
+                />
+              )}
             </div>
           </div>
         </div>
