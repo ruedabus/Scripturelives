@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import type { InterlinearWord, InterlinearVerse } from "@/app/api/interlinear/route";
 
 const GOLD = "#C9952A";
@@ -57,19 +57,50 @@ function WordChip({
   onOpenLexicon: (strongs: string, original: string) => void;
 }) {
   const [expanded, setExpanded] = useState(false);
+  const [popupPos, setPopupPos] = useState<{ top: number; left: number }>({ top: 0, left: 0 });
+  const btnRef = useRef<HTMLButtonElement>(null);
   const hasData = !!word.strongs;
-  const langColor = isOT ? "#92400e" : "#1e40af"; // amber-800 or blue-800
-  const langBg    = isOT ? "#fef3c7" : "#dbeafe"; // amber-100 or blue-100
+  const langColor = isOT ? "#92400e" : "#1e40af";
+  const langBg    = isOT ? "#fef3c7" : "#dbeafe";
+
+  const POPUP_W = 232;
+
+  function handleToggle() {
+    if (!hasData) return;
+    if (!expanded && btnRef.current) {
+      const rect = btnRef.current.getBoundingClientRect();
+      const vw = window.innerWidth;
+      const margin = 8;
+      // Prefer opening to the right of the button; clamp so it never bleeds off either edge
+      let left = rect.left;
+      if (left + POPUP_W > vw - margin) left = vw - POPUP_W - margin;
+      if (left < margin) left = margin;
+      setPopupPos({ top: rect.bottom + 6, left });
+    }
+    setExpanded((e) => !e);
+  }
+
+  // Close on outside click
+  useEffect(() => {
+    if (!expanded) return;
+    const handler = (e: MouseEvent) => {
+      if (btnRef.current && !btnRef.current.closest("[data-popup-anchor]")?.contains(e.target as Node)) {
+        setExpanded(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [expanded]);
 
   return (
-    <div className="inline-flex flex-col items-center select-none">
+    <div className="inline-flex flex-col items-center select-none" data-popup-anchor>
       {/* Stacked interlinear card */}
       <button
+        ref={btnRef}
         type="button"
-        onClick={() => hasData && setExpanded((e) => !e)}
+        onClick={handleToggle}
         className={`flex flex-col items-center rounded-lg px-2 py-1.5 transition
           ${hasData ? "cursor-pointer hover:shadow-md active:scale-95" : "cursor-default"}
-          ${expanded ? "ring-2" : ""}
         `}
         style={{
           background: expanded ? langBg : "white",
@@ -119,15 +150,18 @@ function WordChip({
         </span>
       </button>
 
-      {/* Inline definition expand */}
+      {/* Inline definition — fixed so it never clips at screen edges */}
       {expanded && hasData && (
         <div
-          className="absolute z-20 mt-1 rounded-xl shadow-xl p-3 text-left"
+          className="rounded-xl shadow-xl p-3 text-left"
           style={{
+            position: "fixed",
+            top:      popupPos.top,
+            left:     popupPos.left,
+            width:    POPUP_W,
             background: "white",
             border: `1px solid ${langColor}`,
-            width: "220px",
-            top: "calc(100% + 4px)",
+            zIndex: 9999,
           }}
         >
           <div className="flex items-start justify-between gap-2 mb-2">
