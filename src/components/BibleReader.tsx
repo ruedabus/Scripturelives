@@ -3297,10 +3297,10 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
       <nav className="xl:hidden fixed bottom-0 inset-x-0 z-50 bg-white border-t border-gray-200 flex items-stretch h-16 print:hidden">
         {(
           [
-            { tab: "home"   as LeftPanelTab, icon: <Home size={20} />,     label: "Home"    },
-            { tab: "reader" as LeftPanelTab, icon: <BookOpen size={20} />, label: "Reader"  },
-            { tab: "bible"  as LeftPanelTab, icon: <Library size={20} />,  label: "Bible"   },
-            { tab: "prayer_journal" as LeftPanelTab, icon: <Heart size={20} />, label: "Prayer" },
+            { tab: "home"   as LeftPanelTab, icon: <Home size={20} />,       label: "Home"   },
+            { tab: "reader" as LeftPanelTab, icon: <BookOpen size={20} />,  label: "Reader" },
+            { tab: "bible"  as LeftPanelTab, icon: <Library size={20} />,   label: "Bible"  },
+            { tab: "audio"  as LeftPanelTab, icon: <Headphones size={20} />, label: "Audio" },
           ] as { tab: LeftPanelTab; icon: React.ReactNode; label: string }[]
         ).map(({ tab, icon, label }) => (
           <button
