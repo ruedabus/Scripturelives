@@ -12,6 +12,28 @@ export const metadata = {
 
 const PRODUCTS = [
   {
+    id: 10,
+    name: "Member of the Ekklēsia — Christian Heavyweight Tee",
+    description: "Not a religion. A family. Ekklēsia — the Greek word for the Church — means the called-out ones. Vintage collegiate typography. Distressed, worn-in feel. A conversation every time you wear it.",
+    price: "From $25.00",
+    image: "/ekklesia-tee.png",
+    badge: "NEW",
+    colors: ["#b94040", "#c4613a", "#8b7355", "#556b2f", "#4a6741", "#7b8fa1", "#d0cdc8", "#f5f5f5"],
+    href: STORE_URL,
+    imageBg: "#f0ebe3",
+  },
+  {
+    id: 11,
+    name: "Accused, But for the Grace of God — Christian Heavyweight Tee",
+    description: "We've all stood guilty. This tee wears that truth boldly — and declares the only answer that matters. Bold distressed typography. Unapologetic message. Made to be seen.",
+    price: "From $35.00",
+    image: "/accused-tee.png",
+    badge: "NEW",
+    colors: ["#808080", "#6b6b52", "#556b2f", "#4a6741", "#3b5c8c", "#8fafc4", "#d0cdc8", "#f5f5f5"],
+    href: STORE_URL,
+    imageBg: "#f0ebe3",
+  },
+  {
     id: 1,
     name: "Go Ahead, Scan Me — Evangelism Tee",
     description: "The QR code links straight to the Gospel. One scan could change someone's eternity.",
