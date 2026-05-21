@@ -11,7 +11,7 @@ const VALID_TABS = [
   "home", "devotional", "reader", "bible", "parallel", "topical",
   "prayer_journal", "timeline", "commentary", "dictionary", "ancient_world",
   "atlas", "study_prompts", "bookmarks", "study_sheet", "sessions",
-  "testimonials", "resources", "books", "outline", "audio",
+  "testimonials", "resources", "books", "outline", "audio", "reading_progress",
 ] as const;
 type ValidTab = typeof VALID_TABS[number];
 
