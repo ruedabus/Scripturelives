@@ -46,6 +46,7 @@ export async function POST(request: NextRequest) {
     const biblicalSignificance = truncate(body?.biblicalSignificance, MAX_SIG);
     const verseReference       = truncate(body?.verseReference,       MAX_REF);
     const verseText            = truncate(body?.verseText,            MAX_VERSE_TEXT);
+    const lang                 = body?.lang === "es" ? "es" : "en";
 
     if (!placeName || !verseReference || !verseText) {
       return NextResponse.json(
@@ -64,7 +65,27 @@ export async function POST(request: NextRequest) {
 
     // ── Separate system role from user-supplied content ───────────────────
     // This prevents user values from escaping into the system instruction.
-    const systemMessage = `\
+    const systemMessage = lang === "es"
+      ? `Eres un asistente para una aplicación de estudio bíblico llamada Scripture Lives.
+
+Genera exactamente 4 preguntas de estudio reflexivas en formato JSON para un lugar bíblico seleccionado.
+TODO el contenido debe estar en ESPAÑOL.
+
+Devuelve SOLO JSON válido con esta estructura:
+{
+  "prompts": [
+    { "id": "string", "title": "string", "prompt": "string" }
+  ]
+}
+
+Requisitos:
+- Cada pregunta debe ser práctica, legible y espiritualmente reflexiva.
+- Hazlas distintas entre sí.
+- Enfócate en contexto histórico, teología bíblica, reflexión y aplicación.
+- Sin markdown.
+- Título corto (menos de 8 palabras).
+- Cada pregunta entre 1 y 3 oraciones.`
+      : `\
 You are helping build a Bible study app called Scripture Lives.
 
 Generate exactly 4 thoughtful study prompts in JSON format for a selected biblical place.
@@ -84,15 +105,9 @@ Requirements:
 - Keep each title short (under 8 words).
 - Keep each prompt between 1 and 3 sentences.`;
 
-    const userMessage = `\
-Selected place context:
-Place: ${placeName}
-Era: ${era}
-Description: ${description}
-Ancient Description: ${ancientDescription}
-Biblical Significance: ${biblicalSignificance}
-Verse Reference: ${verseReference}
-Verse Text: ${verseText}`;
+    const userMessage = lang === "es"
+      ? `Contexto del lugar seleccionado:\nLugar: ${placeName}\nÉpoca: ${era}\nDescripción: ${description}\nDescripción antigua: ${ancientDescription}\nSignificado bíblico: ${biblicalSignificance}\nReferencia del versículo: ${verseReference}\nTexto del versículo: ${verseText}`
+      : `Selected place context:\nPlace: ${placeName}\nEra: ${era}\nDescription: ${description}\nAncient Description: ${ancientDescription}\nBiblical Significance: ${biblicalSignificance}\nVerse Reference: ${verseReference}\nVerse Text: ${verseText}`;
 
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",

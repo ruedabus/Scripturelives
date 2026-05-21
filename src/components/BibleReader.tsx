@@ -210,7 +210,7 @@ const T_EN = {
   navHome: "Home", navDailyDev: "Daily Devotional", navAudio: "Audio Bible",
   navReader: "Passage Reader", navBible: "Full Bible", navParallel: "Parallel Bible",
   navTopical: "Topical Bible", navPrayer: "Prayer Journal", navTimeline: "Timeline",
-  navCommentary: "Commentary", navDict: "Dictionary", navStudy: "Study Prompts",
+  navCommentary: "Commentary", navDict: "Dictionary", navStudy: "Bible Study",
   navOutline: "Sermon Outlines", navFlash: "Memorization", navImage: "Verse Image Cards",
   navAncient: "Ancient Places", navAtlas: "Bible Atlas", navChars: "Character Profiles",
   navQuiz: "Bible Quiz", navBookmarks: "Bookmarks", navSessions: "Sessions",
@@ -263,7 +263,7 @@ const T_ES: typeof T_EN = {
   navHome: "Inicio", navDailyDev: "Devocional Diario", navAudio: "Biblia en Audio",
   navReader: "Lector de Pasajes", navBible: "Biblia Completa", navParallel: "Biblia Paralela",
   navTopical: "Biblia Temática", navPrayer: "Diario de Oración", navTimeline: "Línea de Tiempo",
-  navCommentary: "Comentario", navDict: "Diccionario", navStudy: "Preguntas de Estudio",
+  navCommentary: "Comentario", navDict: "Diccionario", navStudy: "Estudio Bíblico",
   navOutline: "Esquemas de Sermón", navFlash: "Memorización", navImage: "Tarjetas de Versículos",
   navAncient: "Lugares Antiguos", navAtlas: "Atlas Bíblico", navChars: "Perfiles de Personajes",
   navQuiz: "Quiz Bíblico", navBookmarks: "Marcadores", navSessions: "Sesiones",
@@ -364,6 +364,18 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
   const [promptOverride, setPromptOverride] = useState<{ ref: string; text: string } | null>(null);
   const [postPreview, setPostPreview] = useState<string | null>(null);
   const [postCopied, setPostCopied] = useState(false);
+
+  // Bible Study panel — language + full guide
+  const [studyLang, setStudyLang] = useState<"en" | "es">("en");
+  type StudyGuideSection =
+    | { id: "historical_context"; title: string; content: string }
+    | { id: "discussion_questions"; title: string; items: { text: string; tag: string }[] }
+    | { id: "application"; title: string; items: string[] }
+    | { id: "prayer_starters"; title: string; items: string[] };
+  const [studyGuide, setStudyGuide] = useState<StudyGuideSection[] | null>(null);
+  const [isLoadingGuide, setIsLoadingGuide] = useState(false);
+  const [guideError, setGuideError] = useState("");
+  const [guideCopied, setGuideCopied] = useState(false);
 
   const verseRefs = useRef<Record<string, HTMLElement | null>>({});
 
@@ -654,6 +666,7 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
             biblicalSignificance: selectedPlace?.biblicalSignificance ?? null,
             verseReference: activeRef,
             verseText: activeText,
+            lang: studyLang,
           }),
         });
 
@@ -685,13 +698,36 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
     return () => {
       isCancelled = true;
     };
-  }, [selectedPlace?.name, presenterRef?.reference, selectedVerse?.id, promptOverride]);
+  }, [selectedPlace?.name, presenterRef?.reference, selectedVerse?.id, promptOverride, studyLang]);
 
   // Reset to first prompt and clear variant indexes when context changes
   useEffect(() => {
     setActivePromptIndex(0);
     setPromptVariantIndexes({});
   }, [selectedPlace?.name, presenterRef?.reference, selectedVerse?.id, promptOverride]);
+
+  const handleGenerateFullGuide = useCallback(async () => {
+    const activeRef  = promptOverride?.ref ?? presenterRef?.reference ?? selectedVerse?.reference;
+    const activeText = promptOverride?.text ?? presenterRef?.text ?? selectedVerse?.translations?.KJV ?? "";
+    if (!activeRef) return;
+    setIsLoadingGuide(true);
+    setGuideError("");
+    setStudyGuide(null);
+    try {
+      const res  = await fetch("/api/study-guide", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ verseReference: activeRef, verseText: activeText, lang: studyLang }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error ?? "Failed to generate guide.");
+      setStudyGuide(data.sections ?? []);
+    } catch (e) {
+      setGuideError(e instanceof Error ? e.message : "Could not generate guide.");
+    } finally {
+      setIsLoadingGuide(false);
+    }
+  }, [promptOverride, presenterRef, selectedVerse, studyLang]);
 
   const handleCopyPost = useCallback((text: string) => {
     navigator.clipboard.writeText(text).then(() => {
@@ -2278,23 +2314,48 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
             {leftPanelTab === "study_prompts" && (
               <div className="space-y-5">
                 {/* Header */}
-                <div className="border-b border-gray-200 pb-3">
-                  <h2 className="text-lg font-semibold text-amber-700">Study Prompts</h2>
-                  <p className="text-xs text-gray-400 mt-0.5">
-                    Reflection and discussion questions tied to your selected verse or place
-                  </p>
+                <div className="border-b border-gray-200 pb-3 flex items-start justify-between gap-3">
+                  <div>
+                    <h2 className="text-lg font-semibold text-amber-700">
+                      {studyLang === "es" ? "Estudio Bíblico" : "Bible Study"}
+                    </h2>
+                    <p className="text-xs text-gray-400 mt-0.5">
+                      {studyLang === "es"
+                        ? "Preguntas de reflexión y discusión para tu versículo o lugar"
+                        : "Reflection and discussion questions tied to your selected verse or place"}
+                    </p>
+                  </div>
+                  {/* Language toggle */}
+                  <div className="flex items-center gap-1 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => { setStudyLang("en"); setStudyGuide(null); }}
+                      className={`px-2.5 py-1 rounded-lg text-xs font-bold transition ${studyLang === "en" ? "bg-amber-500 text-white" : "bg-gray-100 text-gray-500 hover:bg-gray-200"}`}
+                    >
+                      🇺🇸 EN
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => { setStudyLang("es"); setStudyGuide(null); }}
+                      className={`px-2.5 py-1 rounded-lg text-xs font-bold transition ${studyLang === "es" ? "bg-amber-500 text-white" : "bg-gray-100 text-gray-500 hover:bg-gray-200"}`}
+                    >
+                      🇪🇸 ES
+                    </button>
+                  </div>
                 </div>
 
                 {/* Custom verse input */}
                 <div className="rounded-xl border border-gray-200 bg-white px-4 py-3">
-                  <p className="text-xs font-semibold text-gray-600 mb-2">Generate prompts for any verse:</p>
+                  <p className="text-xs font-semibold text-gray-600 mb-2">
+                    {studyLang === "es" ? "Genera preguntas para cualquier versículo:" : "Generate prompts for any verse:"}
+                  </p>
                   <div className="flex gap-2">
                     <input
                       type="text"
                       value={promptCustomRef}
                       onChange={(e) => setPromptCustomRef(e.target.value)}
                       onKeyDown={(e) => { if (e.key === "Enter") handleGenerateCustomPrompts(); }}
-                      placeholder="e.g. John 3:16 or Romans 8:28"
+                      placeholder={studyLang === "es" ? "ej. Juan 3:16 o Romanos 8:28" : "e.g. John 3:16 or Romans 8:28"}
                       className="flex-1 rounded-lg border border-gray-300 px-3 py-1.5 text-sm text-gray-800 placeholder:text-gray-400 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-200"
                     />
                     <button
@@ -2422,16 +2483,127 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
 
                 {promptError && (
                   <p className="text-xs text-gray-400 italic">
-                    Using built-in prompts. {promptError}
+                    {studyLang === "es" ? "Usando preguntas integradas. " : "Using built-in prompts. "}{promptError}
                   </p>
+                )}
+
+                {/* ── Generate Full Guide ── */}
+                {(studyRef || promptOverride?.ref) && (
+                  <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-4">
+                    <div className="flex items-center justify-between gap-3 mb-1">
+                      <div>
+                        <p className="text-sm font-semibold text-amber-800">
+                          {studyLang === "es" ? "Guía completa de grupo pequeño" : "Full Small Group Guide"}
+                        </p>
+                        <p className="text-xs text-amber-600 mt-0.5">
+                          {studyLang === "es"
+                            ? "Contexto histórico · preguntas · aplicación · oración"
+                            : "Context · questions · application · prayer starters"}
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleGenerateFullGuide}
+                        disabled={isLoadingGuide}
+                        className="shrink-0 rounded-lg bg-amber-600 px-3 py-2 text-xs font-semibold text-white hover:bg-amber-700 disabled:opacity-50 transition"
+                      >
+                        {isLoadingGuide
+                          ? (studyLang === "es" ? "Generando…" : "Generating…")
+                          : (studyLang === "es" ? "✦ Generar guía" : "✦ Generate guide")}
+                      </button>
+                    </div>
+
+                    {guideError && (
+                      <p className="text-xs text-red-600 mt-2">{guideError}</p>
+                    )}
+
+                    {studyGuide && studyGuide.length > 0 && (
+                      <div className="mt-4 space-y-4">
+                        {studyGuide.map((section) => (
+                          <div key={section.id} className="rounded-lg bg-white border border-amber-100 px-4 py-3">
+                            <p className="text-xs font-black uppercase tracking-widest text-amber-700 mb-2">{section.title}</p>
+                            {"content" in section && (
+                              <p className="text-sm text-gray-700 leading-relaxed">{section.content}</p>
+                            )}
+                            {"items" in section && (
+                              <ul className="space-y-2">
+                                {(section.items as Array<{ text: string; tag: string } | string>).map((item, i) => (
+                                  <li key={i} className="flex gap-2 text-sm text-gray-700">
+                                    <span className="text-amber-400 shrink-0 mt-0.5">▸</span>
+                                    <span>
+                                      {typeof item === "string" ? item : (
+                                        <>
+                                          {item.text}
+                                          <span className="ml-2 text-[10px] font-bold uppercase tracking-wide text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded">{item.tag}</span>
+                                        </>
+                                      )}
+                                    </span>
+                                  </li>
+                                ))}
+                              </ul>
+                            )}
+                          </div>
+                        ))}
+
+                        {/* Copy-all & Share */}
+                        <div className="flex flex-wrap gap-2 pt-1">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const activeRef = promptOverride?.ref ?? presenterRef?.reference ?? selectedVerse?.reference ?? "";
+                              const lines: string[] = [`📖 ${activeRef} — ${studyLang === "es" ? "Estudio Bíblico" : "Bible Study"}\n`];
+                              studyGuide.forEach((s) => {
+                                lines.push(`\n${s.title.toUpperCase()}`);
+                                if ("content" in s) lines.push(s.content);
+                                if ("items" in s) {
+                                  (s.items as Array<{ text: string; tag: string } | string>).forEach((item) => {
+                                    lines.push(`• ${typeof item === "string" ? item : item.text}`);
+                                  });
+                                }
+                              });
+                              navigator.clipboard.writeText(lines.join("\n")).then(() => {
+                                setGuideCopied(true);
+                                setTimeout(() => setGuideCopied(false), 2000);
+                              });
+                            }}
+                            className="flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-3 py-2 text-xs text-gray-600 hover:border-amber-400 hover:text-amber-700 transition"
+                          >
+                            <Copy size={13} />
+                            {guideCopied
+                              ? (studyLang === "es" ? "¡Copiado!" : "Copied!")
+                              : (studyLang === "es" ? "Copiar todo" : "Copy all")}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              const activeRef = promptOverride?.ref ?? presenterRef?.reference ?? selectedVerse?.reference ?? "";
+                              const slug = activeRef.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
+                              const url = `${window.location.origin}/bible?study=${encodeURIComponent(slug)}`;
+                              navigator.clipboard.writeText(url).then(() => {
+                                setGuideCopied(true);
+                                setTimeout(() => setGuideCopied(false), 2000);
+                              });
+                            }}
+                            className="flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-3 py-2 text-xs text-gray-600 hover:border-amber-400 hover:text-amber-700 transition"
+                          >
+                            🔗 {studyLang === "es" ? "Copiar enlace" : "Copy link"}
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 )}
 
                 {/* Branded Share button */}
                 {effectivePrompts.length > 0 && studyRef && (
                   <div className="rounded-xl border border-[#1877F2]/30 bg-[#1877F2]/5 px-5 py-4 flex items-center justify-between gap-4">
                     <div>
-                      <p className="text-sm font-semibold text-gray-800">Share this study</p>
-                      <p className="text-xs text-gray-500 mt-0.5">Post a branded &ldquo;Grow Your Faith&rdquo; study to Facebook</p>
+                      <p className="text-sm font-semibold text-gray-800">
+                        {studyLang === "es" ? "Compartir este estudio" : "Share this study"}
+                      </p>
+                      <p className="text-xs text-gray-500 mt-0.5">
+                        {studyLang === "es" ? "Publicar en Facebook" : "Post a branded “Grow Your Faith” study to Facebook"}
+                      </p>
                     </div>
                     <button
                       type="button"
@@ -2443,7 +2615,7 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
                       className="shrink-0 flex items-center gap-2 rounded-xl bg-[#1877F2] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#1464d3] transition"
                     >
                       <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.887v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
-                      Share to Facebook
+                      {studyLang === "es" ? "Compartir en Facebook" : "Share to Facebook"}
                     </button>
                   </div>
                 )}
