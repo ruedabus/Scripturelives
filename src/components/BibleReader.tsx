@@ -15,6 +15,7 @@ import getPlaceStudyPrompts, {
 import FullBibleReader from "@/components/FullBibleReader";
 import ParallelBibleReader from "@/components/ParallelBibleReader";
 import InterlinearReader from "@/components/InterlinearReader";
+import ClassicTeachersPanel from "@/components/ClassicTeachersPanel";
 import TopicalBible from "@/components/TopicalBible";
 import PrayerJournal from "@/components/PrayerJournal";
 import TestimonialWall from "@/components/TestimonialWall";
@@ -83,7 +84,8 @@ type LeftPanelTab =
   | "quiz"
   | "audio"
   | "christian_news"
-  | "interlinear";
+  | "interlinear"
+  | "classic_teachers";
 
 // ── Bible book lists ──────────────────────────────────────────────────────
 const OT_SECTIONS = [
@@ -210,7 +212,7 @@ const T_EN = {
   navHome: "Home", navDailyDev: "Daily Devotional", navAudio: "Audio Bible",
   navReader: "Passage Reader", navBible: "Full Bible", navParallel: "Parallel Bible",
   navTopical: "Topical Bible", navPrayer: "Prayer Journal", navTimeline: "Timeline",
-  navCommentary: "Commentary", navDict: "Dictionary", navStudy: "Bible Study",
+  navCommentary: "Commentary", navDict: "Dictionary", navStudy: "Bible Study", navClassic: "Classic Teachers",
   navOutline: "Sermon Outlines", navFlash: "Memorization", navImage: "Verse Image Cards",
   navAncient: "Ancient Places", navAtlas: "Bible Atlas", navChars: "Character Profiles",
   navQuiz: "Bible Quiz", navBookmarks: "Bookmarks", navSessions: "Sessions",
@@ -263,7 +265,7 @@ const T_ES: typeof T_EN = {
   navHome: "Inicio", navDailyDev: "Devocional Diario", navAudio: "Biblia en Audio",
   navReader: "Lector de Pasajes", navBible: "Biblia Completa", navParallel: "Biblia Paralela",
   navTopical: "Biblia Temática", navPrayer: "Diario de Oración", navTimeline: "Línea de Tiempo",
-  navCommentary: "Comentario", navDict: "Diccionario", navStudy: "Estudio Bíblico",
+  navCommentary: "Comentario", navDict: "Diccionario", navStudy: "Estudio Bíblico", navClassic: "Maestros Clásicos",
   navOutline: "Esquemas de Sermón", navFlash: "Memorización", navImage: "Tarjetas de Versículos",
   navAncient: "Lugares Antiguos", navAtlas: "Atlas Bíblico", navChars: "Perfiles de Personajes",
   navQuiz: "Quiz Bíblico", navBookmarks: "Marcadores", navSessions: "Sesiones",
@@ -1000,7 +1002,8 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
             <div>
               <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-widest" style={{ color: "#C9952A" }}>{T.sectionStudy}</p>
               {sideNavBtn("timeline",      <Layers size={16} />,       T.navTimeline)}
-              {sideNavBtn("commentary",    <BookText size={16} />,     T.navCommentary)}
+              {sideNavBtn("commentary",       <BookText size={16} />,     T.navCommentary)}
+              {sideNavBtn("classic_teachers", <ScrollText size={16} />,  T.navClassic)}
               {sideNavBtn("dictionary",    <BookMarked size={16} />,   T.navDict)}
               {sideNavBtn("interlinear",   <Languages size={16} />,    T.navInterlinear)}
               {sideNavBtn("study_prompts", <ScrollText size={16} />,   T.navStudy)}
@@ -1719,6 +1722,13 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
             {leftPanelTab === "interlinear" && (
               <InterlinearReader
                 onOpenLexicon={(strongs, book) => setLexiconWord({ word: strongs, book })}
+              />
+            )}
+
+            {leftPanelTab === "classic_teachers" && (
+              <ClassicTeachersPanel
+                passage={promptOverride?.ref ?? presenterRef?.reference ?? selectedVerse?.reference}
+                lang={lang}
               />
             )}
 
@@ -3195,7 +3205,8 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
             {drawerBtn("outline",       <FileText size={16} />,     T.navOutline)}
             {drawerBtn("flashcards",    <Brain size={16} />,        T.navFlash)}
             {drawerBtn("verse_image",   <Sparkles size={16} />,     T.navImage)}
-            {drawerBtn("commentary",    <BookText size={16} />,     T.navCommentary)}
+            {drawerBtn("commentary",       <BookText size={16} />,    T.navCommentary)}
+            {drawerBtn("classic_teachers", <ScrollText size={16} />, T.navClassic)}
             {drawerBtn("dictionary",    <BookMarked size={16} />,   T.navDictLex)}
             {drawerBtn("interlinear",   <Languages size={16} />,    T.navInterlinear)}
             {drawerBtn("timeline",      <Layers size={16} />,       T.navTimeline)}
