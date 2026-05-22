@@ -141,38 +141,73 @@ export default function BibleTeacherChat() {
 
   return (
     <>
-      {/* ── Floating button ── */}
-      <button
-        onClick={() => setOpen((o) => !o)}
-        aria-label="Ask the Scripture Lives Assistant"
-        className="fixed z-50 flex items-center justify-center shadow-xl transition hover:scale-105 active:scale-95"
-        style={{
-          bottom:       "76px",   // above mobile bottom nav
-          right:        "16px",
-          width:        "60px",
-          height:       "60px",
-          borderRadius: "50%",
-          background:   NAVY,
-          border:       `2px solid ${GOLD}`,
-        }}
+      {/* ── Floating button + label ── */}
+      <div
+        className="fixed z-50 flex items-center gap-2"
+        style={{ bottom: "76px", right: "16px" }}
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/Bible-teacher.png"
-          alt="Scripture Lives Assistant"
-          className="w-full h-full rounded-full object-cover"
-          onError={(e) => {
-            (e.currentTarget as HTMLImageElement).style.display = "none";
-            (e.currentTarget.nextSibling as HTMLElement).style.display = "flex";
+        {/* Speech-bubble label — hidden when chat is open */}
+        {!open && (
+          <div
+            className="relative flex items-center shadow-lg select-none pointer-events-none"
+            style={{
+              background:   NAVY,
+              border:       `1.5px solid ${GOLD}`,
+              borderRadius: "20px",
+              padding:      "6px 14px",
+              whiteSpace:   "nowrap",
+            }}
+          >
+            <span className="text-xs font-semibold" style={{ color: GOLD }}>
+              Have a Bible question?
+            </span>
+            {/* Tail pointing right toward the avatar */}
+            <span
+              className="absolute"
+              style={{
+                right:       "-8px",
+                top:         "50%",
+                transform:   "translateY(-50%)",
+                width:       0,
+                height:      0,
+                borderTop:   "6px solid transparent",
+                borderBottom:"6px solid transparent",
+                borderLeft:  `8px solid ${GOLD}`,
+              }}
+            />
+          </div>
+        )}
+
+        <button
+          onClick={() => setOpen((o) => !o)}
+          aria-label="Ask the Scripture Lives Assistant"
+          className="flex items-center justify-center shadow-xl transition hover:scale-105 active:scale-95 shrink-0"
+          style={{
+            width:        "60px",
+            height:       "60px",
+            borderRadius: "50%",
+            background:   NAVY,
+            border:       `2px solid ${GOLD}`,
           }}
-        />
-        <span
-          className="text-2xl absolute inset-0 items-center justify-center rounded-full"
-          style={{ display: "none", background: NAVY }}
         >
-          📖
-        </span>
-      </button>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/Bible-teacher.png"
+            alt="Scripture Lives Assistant"
+            className="w-full h-full rounded-full object-cover"
+            onError={(e) => {
+              (e.currentTarget as HTMLImageElement).style.display = "none";
+              (e.currentTarget.nextSibling as HTMLElement).style.display = "flex";
+            }}
+          />
+          <span
+            className="text-2xl absolute inset-0 items-center justify-center rounded-full"
+            style={{ display: "none", background: NAVY }}
+          >
+            📖
+          </span>
+        </button>
+      </div>
 
       {/* ── Chat panel ── */}
       {open && (
