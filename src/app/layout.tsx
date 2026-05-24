@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import WelcomeModal from "@/components/WelcomeModal";
 import MothersDayBanner from "@/components/MothersDayBanner";
+import MemorialDayBanner from "@/components/MemorialDayBanner";
 import MobileBottomNav from "@/components/MobileBottomNav";
 import MobileTopBar from "@/components/MobileTopBar";
 import BibleTeacherChat from "@/components/BibleTeacherChat";
@@ -47,6 +48,7 @@ export default function RootLayout({
       </head>
       <body className="min-h-full flex flex-col pb-[56px] md:pb-0">
         <MobileTopBar />
+        <MemorialDayBanner />
         <MothersDayBanner />
         <WelcomeModal />
         {children}
