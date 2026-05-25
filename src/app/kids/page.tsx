@@ -31,7 +31,7 @@ const BOOKS = [
     coverBg:     "linear-gradient(135deg, #0f1f3d 0%, #1a3a6b 50%, #2d5a9e 100%)",
     accentColor: "#60a5fa",
     downloadUrl: "/books/mav-moony-moon-adventure.pdf",
-    badge:       "NEW",
+    badge:       null,
   },
   {
     slug:        "lions-den",
@@ -63,7 +63,7 @@ const BOOKS = [
     coverBg:     "linear-gradient(135deg, #0a1628 0%, #1a3a5c 50%, #0e4d6b 100%)",
     accentColor: "#60c8f5",
     downloadUrl: "/books/mav-moony-riders-of-the-ark.pdf",
-    badge:       "NEW",
+    badge:       null,
   },
   {
     slug:        "camping-adventure",
