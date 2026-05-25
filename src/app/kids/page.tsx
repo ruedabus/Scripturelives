@@ -65,6 +65,22 @@ const BOOKS = [
     downloadUrl: "/books/mav-moony-riders-of-the-ark.pdf",
     badge:       "NEW",
   },
+  {
+    slug:        "camping-adventure",
+    title:       "Mav, Moony & Goliath: The Great Camping Adventure",
+    subtitle:    "Lost in the Woods — Jeremiah 33:3",
+    description: "Mav, Moony, and their giant new friend Goliath sneak off into the woods on a summer camping trip and get completely lost. When all hope fades, Mav remembers what his grandma always said — and leads his friends in prayer. A story about adventure, friendship, humor, and trusting God even in the darkest places.",
+    scripture:   "Jeremiah 33:3",
+    ages:        "Ages 4–12",
+    pages:       "22 pages",
+    theme:       "Faith & Friendship",
+    coverEmoji:  "⛺",
+    coverImage:  "/ebook4-thumbnail.png",
+    coverBg:     "linear-gradient(135deg, #0a1a0a 0%, #1a3a1a 50%, #0e3d2a 100%)",
+    accentColor: "#4ade80",
+    downloadUrl: "/books/mav-moony-goliath-camping-adventure-ebook.pdf",
+    badge:       "NEW",
+  },
 ];
 
 // ── YouTube featured video ─────────────────────────────────────────────────────
