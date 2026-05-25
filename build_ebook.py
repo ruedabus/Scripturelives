@@ -54,18 +54,8 @@ def compressed_image_reader(path, quality=88):
 # ── Watermark stamp (applied to every story page) ────────────────────────────
 
 def stamp_watermark(c, page_w, page_h):
-    """Draw subtle diagonal watermark + footer bar on the current page."""
+    """Draw footer copyright bar on the current page (no diagonal watermark)."""
     c.saveState()
-
-    # Diagonal centre watermark
-    c.setFillColor(HexColor("#888888"))
-    c.setFont("Helvetica-Bold", 28)
-    c.setFillAlpha(0.10)
-    c.translate(page_w / 2, page_h / 2)
-    c.rotate(35)
-    c.drawCentredString(0, 0, "© Faith Tails 2026")
-    c.rotate(-35)
-    c.translate(-page_w / 2, -page_h / 2)
 
     # Footer strip
     c.setFillAlpha(1.0)

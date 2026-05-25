@@ -25,7 +25,7 @@ CONFIG = {
     # Add illustrated page images to /sessions/hopeful-confident-allen/mnt/book/
     # then run: python build_ebook.py ebook4
     "pages": (
-        ["Episode4-cover.png", "Episode4-titlecard.png"] +
+        ["Episode4-cover.png"] +
         [f"Episode4-p{i}.png" for i in range(1, 20)]
     ),
 
