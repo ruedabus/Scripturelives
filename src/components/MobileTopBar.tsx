@@ -62,6 +62,7 @@ const MENU = [
   { href: "/bible?tab=parallel", icon: "📑", label: "Parallel Bible" },
   { href: "/bible?tab=audio",            icon: "🎧", label: "Audio Bible"      },
   { href: "/bible?tab=reading_progress", icon: "📊", label: "Reading Progress"  },
+  { href: "/bible?tab=interlinear",      icon: "📜", label: "Interlinear Bible"  },
   { section: "More" },
   { href: "/music",         icon: "🎵", label: "Worship Music"  },
   { href: "/gospel",        icon: "✝️",  label: "The Gospel"     },

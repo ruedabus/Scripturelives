@@ -3242,6 +3242,7 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
             {drawerBtn("bible",        <Library size={16} />,       T.navBible)}
             {drawerBtn("audio",        <Headphones size={16} />,    T.navAudio)}
             {drawerBtn("parallel",     <Columns3 size={16} />,      T.navParallel)}
+            {drawerBtn("interlinear",  <Languages size={16} />,     T.navInterlinear)}
             {drawerBtn("devotional",   <Feather size={16} />,       T.navDevotional)}
           </div>
 
