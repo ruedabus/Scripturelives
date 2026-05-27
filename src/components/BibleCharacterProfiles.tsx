@@ -55,55 +55,48 @@ function PortraitPattern({ color }: { color: string }) {
 // ── Character portrait hero ───────────────────────────────────────────────────
 function CharacterPortrait({ char }: { char: BibleCharacter }) {
   const pg = PORTRAIT_GRADIENT[char.category];
-  const [imgSrc, setImgSrc]     = useState<string | null>(null);
   const [imgLoaded, setImgLoaded] = useState(false);
-  const [imgCredit, setImgCredit] = useState<string>("");
+  const [imgError, setImgError]   = useState(false);
 
+  // Reset state when character changes
   useEffect(() => {
-    setImgSrc(null);
     setImgLoaded(false);
-    setImgCredit("");
-    if (!char.wikipediaTitle) return;
+    setImgError(false);
+  }, [char.id]);
 
-    // Use server-side proxy to avoid CSP/CORS issues with the Wikipedia API
-    fetch(`/api/wiki-portrait?title=${encodeURIComponent(char.wikipediaTitle)}`)
-      .then((r) => r.json())
-      .then((data: { src: string | null; credit: string }) => {
-        if (data.src) setImgSrc(data.src);
-        if (data.credit) setImgCredit(data.credit);
-      })
-      .catch(() => {});
-  }, [char.wikipediaTitle]);
+  const showImage = !!char.portraitUrl && !imgError;
 
   return (
     <div
       className="relative w-full rounded-2xl overflow-hidden"
-      style={{ background: pg.grad, minHeight: imgSrc ? 280 : 200 }}
+      style={{ background: pg.grad, minHeight: 260 }}
     >
-      {/* Real painting — shown when loaded */}
-      {imgSrc && (
+      {/* Historical painting — loads directly from Wikimedia Commons */}
+      {showImage && (
         // eslint-disable-next-line @next/next/no-img-element
         <img
-          src={imgSrc}
+          src={char.portraitUrl}
           alt={`Historical portrait of ${char.name}`}
           onLoad={() => setImgLoaded(true)}
-          onError={() => setImgSrc(null)}
+          onError={() => setImgError(true)}
           className="absolute inset-0 w-full h-full object-cover transition-opacity duration-700"
           style={{ opacity: imgLoaded ? 1 : 0 }}
+          crossOrigin="anonymous"
+          referrerPolicy="no-referrer"
         />
       )}
 
-      {/* Gradient overlay — always present for text legibility */}
-      <div
-        className="absolute inset-0"
-        style={{
-          background: imgLoaded
-            ? `linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.45) 50%, rgba(0,0,0,0.15) 100%)`
-            : "transparent",
-        }}
-      />
+      {/* Dark gradient overlay for text legibility — always on when image is showing */}
+      {imgLoaded && (
+        <div
+          className="absolute inset-0"
+          style={{
+            background: "linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.45) 55%, rgba(0,0,0,0.12) 100%)",
+          }}
+        />
+      )}
 
-      {/* Fallback pattern when no image */}
+      {/* Fallback decorative pattern when no image (or loading) */}
       {!imgLoaded && (
         <>
           <PortraitPattern color={pg.glow} />
@@ -112,20 +105,17 @@ function CharacterPortrait({ char }: { char: BibleCharacter }) {
         </>
       )}
 
-      {/* Portrait content overlay */}
-      <div className="relative z-10 flex flex-col items-end px-4 pb-4 pt-40">
-        {/* Name */}
+      {/* Content overlay */}
+      <div className="relative z-10 flex flex-col items-end px-4 pb-4 pt-44">
         <h2 className="text-xl font-black text-white w-full" style={{ textShadow: "0 2px 8px rgba(0,0,0,0.9)" }}>
           {char.name}
         </h2>
-        {/* Tagline */}
         <p className="text-xs mt-0.5 w-full italic" style={{ color: "rgba(255,255,255,0.75)", textShadow: "0 1px 4px rgba(0,0,0,0.8)" }}>
           {char.tagline}
         </p>
-        {/* Attribution */}
-        {imgLoaded && imgCredit && (
-          <p className="text-[9px] mt-1 w-full" style={{ color: "rgba(255,255,255,0.45)" }}>
-            via Wikipedia · {imgCredit}
+        {imgLoaded && (
+          <p className="text-[9px] mt-1 w-full" style={{ color: "rgba(255,255,255,0.4)" }}>
+            Wikimedia Commons · Public domain
           </p>
         )}
       </div>
@@ -138,9 +128,9 @@ function CharacterPortrait({ char }: { char: BibleCharacter }) {
         {char.era}
       </div>
 
-      {/* Loading shimmer when fetching */}
-      {imgSrc && !imgLoaded && (
-        <div className="absolute inset-0 animate-pulse" style={{ background: "rgba(0,0,0,0.3)" }} />
+      {/* Shimmer while image is fetching */}
+      {showImage && !imgLoaded && (
+        <div className="absolute inset-0 animate-pulse" style={{ background: "rgba(0,0,0,0.2)" }} />
       )}
     </div>
   );
