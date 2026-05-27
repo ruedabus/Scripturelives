@@ -299,7 +299,7 @@ function stemVariants(w: string): string[] {
   if (w.endsWith("s") && w.length > 3)  { variants.add(w.slice(0, -1)); }
   // Common KJV irregular verbs
   const irregs: Record<string, string[]> = {
-    "gave":["give"],"gave":["give"],"went":["go"],"came":["come"],
+    "gave":["give"],"went":["go"],"came":["come"],
     "saw":["see"],"knew":["know"],"said":["say"],"made":["make"],
     "took":["take"],"brought":["bring"],"put":["put"],"kept":["keep"],
     "sent":["send"],"spake":["speak"],"sat":["sit"],"stood":["stand"],
