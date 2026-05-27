@@ -53,7 +53,7 @@ export default function GamesPage() {
         }}
       >
         <Link
-          href="/"
+          href="/bible"
           className="flex items-center gap-2 text-sm font-semibold transition hover:opacity-70"
           style={{ color: NAVY }}
         >
