@@ -24,6 +24,88 @@ const CATEGORY_STYLE: Record<CharacterCategory, { bg: string; text: string; bord
   Messiah:    { bg: "bg-stone-900",   text: "text-amber-300",   border: "border-stone-700" },
 };
 
+// ── Portrait hero gradient per category ──────────────────────────────────────
+const PORTRAIT_GRADIENT: Record<CharacterCategory, { grad: string; ring: string; glow: string }> = {
+  Patriarch: { grad: "linear-gradient(160deg,#78350f 0%,#b45309 50%,#92400e 100%)", ring: "rgba(251,191,36,0.5)", glow: "#fbbf24" },
+  Matriarch: { grad: "linear-gradient(160deg,#881337 0%,#be123c 50%,#9f1239 100%)", ring: "rgba(251,113,133,0.5)", glow: "#fb7185" },
+  Prophet:   { grad: "linear-gradient(160deg,#1e1b4b 0%,#3730a3 50%,#312e81 100%)", ring: "rgba(129,140,248,0.5)", glow: "#818cf8" },
+  King:      { grad: "linear-gradient(160deg,#713f12 0%,#a16207 50%,#854d0e 100%)", ring: "rgba(250,204,21,0.5)",  glow: "#facc15" },
+  Apostle:   { grad: "linear-gradient(160deg,#0c4a6e 0%,#0369a1 50%,#075985 100%)", ring: "rgba(56,189,248,0.5)",  glow: "#38bdf8" },
+  Judge:     { grad: "linear-gradient(160deg,#7c2d12 0%,#c2410c 50%,#9a3412 100%)", ring: "rgba(251,146,60,0.5)",  glow: "#fb923c" },
+  Priest:    { grad: "linear-gradient(160deg,#3b0764 0%,#7e22ce 50%,#581c87 100%)", ring: "rgba(192,132,252,0.5)", glow: "#c084fc" },
+  Warrior:   { grad: "linear-gradient(160deg,#450a0a 0%,#991b1b 50%,#7f1d1d 100%)", ring: "rgba(248,113,113,0.5)", glow: "#f87171" },
+  Disciple:  { grad: "linear-gradient(160deg,#042f2e 0%,#0f766e 50%,#134e4a 100%)", ring: "rgba(45,212,191,0.5)",  glow: "#2dd4bf" },
+  Messiah:   { grad: "linear-gradient(160deg,#0c0a09 0%,#292524 50%,#1c1917 100%)", ring: "rgba(253,224,71,0.6)",  glow: "#fde047" },
+};
+
+// ── Decorative SVG pattern for portrait card ──────────────────────────────────
+function PortraitPattern({ color }: { color: string }) {
+  return (
+    <svg className="absolute inset-0 w-full h-full opacity-10 pointer-events-none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <pattern id="crosses" x="0" y="0" width="32" height="32" patternUnits="userSpaceOnUse">
+          <path d="M13 2h6v9h9v6h-9v9h-6v-9H2v-6h11z" fill={color} />
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#crosses)" />
+    </svg>
+  );
+}
+
+// ── Character portrait hero ───────────────────────────────────────────────────
+function CharacterPortrait({ char }: { char: BibleCharacter }) {
+  const pg = PORTRAIT_GRADIENT[char.category];
+  return (
+    <div
+      className="relative w-full rounded-2xl overflow-hidden flex flex-col items-center justify-center"
+      style={{ background: pg.grad, minHeight: 200 }}
+    >
+      <PortraitPattern color={pg.glow} />
+
+      {/* Top & bottom gold accent bars */}
+      <div className="absolute top-0 left-0 right-0 h-1 opacity-70" style={{ background: `linear-gradient(90deg, transparent, ${pg.glow}, transparent)` }} />
+      <div className="absolute bottom-0 left-0 right-0 h-1 opacity-70" style={{ background: `linear-gradient(90deg, transparent, ${pg.glow}, transparent)` }} />
+
+      {/* Portrait content */}
+      <div className="relative z-10 flex flex-col items-center py-8 px-4 text-center">
+        {/* Glowing emoji circle */}
+        <div
+          className="flex items-center justify-center rounded-full mb-4 text-5xl"
+          style={{
+            width: 96, height: 96,
+            background: "rgba(0,0,0,0.35)",
+            border: `3px solid ${pg.ring}`,
+            boxShadow: `0 0 28px ${pg.ring}, 0 0 60px rgba(0,0,0,0.4)`,
+          }}
+        >
+          {char.emoji}
+        </div>
+
+        {/* Name */}
+        <h2
+          className="text-2xl font-black tracking-wide"
+          style={{ color: "white", textShadow: `0 0 20px ${pg.glow}` }}
+        >
+          {char.name}
+        </h2>
+
+        {/* Tagline */}
+        <p className="text-xs mt-1.5 max-w-xs" style={{ color: "rgba(255,255,255,0.65)" }}>
+          {char.tagline}
+        </p>
+
+        {/* Era pill */}
+        <div
+          className="mt-3 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest"
+          style={{ background: "rgba(0,0,0,0.4)", color: pg.glow, border: `1px solid ${pg.ring}` }}
+        >
+          {char.era}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ── Category chip ─────────────────────────────────────────────────────────────
 function CategoryChip({ category }: { category: CharacterCategory }) {
   const s = CATEGORY_STYLE[category];
@@ -84,22 +166,13 @@ export default function BibleCharacterProfiles({
           ← All Characters
         </button>
 
-        {/* Hero card */}
-        <div className={`rounded-2xl p-5 ${selected.category === "Messiah" ? "bg-stone-900" : "bg-gradient-to-br from-stone-50 to-amber-50 border border-amber-100"}`}>
-          <div className="flex items-start gap-4">
-            <div className={`text-4xl shrink-0 w-16 h-16 rounded-2xl flex items-center justify-center ${selected.category === "Messiah" ? "bg-stone-800" : "bg-white border border-gray-200"} shadow-sm`}>
-              {selected.emoji}
-            </div>
-            <div className="min-w-0 flex-1">
-              <h2 className={`text-xl font-bold ${selected.category === "Messiah" ? "text-amber-300" : "text-stone-900"}`}>{selected.name}</h2>
-              <p className={`text-sm mt-0.5 italic ${selected.category === "Messiah" ? "text-stone-400" : "text-gray-500"}`}>{selected.tagline}</p>
-              <div className="flex flex-wrap items-center gap-2 mt-2">
-                <CategoryChip category={selected.category} />
-                <TestamentPill testament={selected.testament} />
-                <span className={`text-xs ${selected.category === "Messiah" ? "text-stone-400" : "text-gray-400"}`}>{selected.era}</span>
-              </div>
-            </div>
-          </div>
+        {/* Portrait hero */}
+        <CharacterPortrait char={selected} />
+
+        {/* Category / testament row */}
+        <div className="flex flex-wrap items-center gap-2 -mt-1 px-1">
+          <CategoryChip category={selected.category} />
+          <TestamentPill testament={selected.testament} />
         </div>
 
         {/* Tabs */}
@@ -327,8 +400,14 @@ export default function BibleCharacterProfiles({
                 className="w-full text-left rounded-xl border border-gray-200 bg-white px-4 py-3 hover:border-amber-300 hover:bg-amber-50 transition group"
               >
                 <div className="flex items-center gap-3">
-                  <div className={`text-2xl w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${char.category === "Messiah" ? "bg-stone-900" : "bg-gray-50 border border-gray-200"}`}>
-                    {char.emoji}
+                  <div
+                    className="text-2xl w-11 h-11 rounded-xl flex items-center justify-center shrink-0 relative overflow-hidden"
+                    style={{
+                      background: PORTRAIT_GRADIENT[char.category].grad,
+                      boxShadow: `0 0 10px ${PORTRAIT_GRADIENT[char.category].ring}`,
+                    }}
+                  >
+                    <span className="relative z-10">{char.emoji}</span>
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 flex-wrap">
