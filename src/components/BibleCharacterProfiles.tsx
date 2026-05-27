@@ -65,22 +65,12 @@ function CharacterPortrait({ char }: { char: BibleCharacter }) {
     setImgCredit("");
     if (!char.wikipediaTitle) return;
 
-    fetch(
-      `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(char.wikipediaTitle)}`,
-      { headers: { Accept: "application/json" } }
-    )
+    // Use server-side proxy to avoid CSP/CORS issues with the Wikipedia API
+    fetch(`/api/wiki-portrait?title=${encodeURIComponent(char.wikipediaTitle)}`)
       .then((r) => r.json())
-      .then((data) => {
-        if (data.originalimage?.source) {
-          // Prefer original; cap width at 480px via the thumbnail URL pattern
-          const src = data.thumbnail?.source
-            ? data.thumbnail.source.replace(/\/\d+px-/, "/480px-")
-            : data.originalimage.source;
-          setImgSrc(src);
-        } else if (data.thumbnail?.source) {
-          setImgSrc(data.thumbnail.source.replace(/\/\d+px-/, "/480px-"));
-        }
-        if (data.description) setImgCredit(data.description);
+      .then((data: { src: string | null; credit: string }) => {
+        if (data.src) setImgSrc(data.src);
+        if (data.credit) setImgCredit(data.credit);
       })
       .catch(() => {});
   }, [char.wikipediaTitle]);
