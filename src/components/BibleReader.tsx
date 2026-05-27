@@ -267,7 +267,7 @@ const T_ES: typeof T_EN = {
   navHome: "Inicio", navDailyDev: "Devocional Diario", navAudio: "Biblia en Audio",
   navReader: "Lector de Pasajes", navBible: "Biblia Completa", navParallel: "Biblia Paralela",
   navTopical: "Biblia Temática", navPrayer: "Diario de Oración", navTimeline: "Línea de Tiempo",
-  navCommentary: "Comentario", navDict: "Diccionario", navStudy: "Estudio Bíblico", navClassic: "Maestros Clásicos",
+  navCommentary: "Comentario", navDict: "Diccionario", navEncyclopedia: "Enciclopedia", navStudy: "Estudio Bíblico", navClassic: "Maestros Clásicos",
   navOutline: "Esquemas de Sermón", navFlash: "Memorización", navImage: "Tarjetas de Versículos",
   navAncient: "Lugares Antiguos", navAtlas: "Atlas Bíblico", navChars: "Perfiles de Personajes",
   navQuiz: "Quiz Bíblico", navBookmarks: "Marcadores", navSessions: "Sesiones",
