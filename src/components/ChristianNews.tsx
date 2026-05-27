@@ -55,10 +55,10 @@ export default function ChristianNews() {
   useEffect(() => { load(); }, []);
 
   return (
-    <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid #ede8de", background: "white" }}>
+    <div className="rounded-2xl overflow-hidden flex flex-col h-full" style={{ border: "1px solid #ede8de", background: "white" }}>
 
-      {/* Header */}
-      <div className="px-4 py-3 flex items-center justify-between" style={{ borderBottom: "1px solid #ede8de", background: "#faf8f3" }}>
+      {/* Header — pinned */}
+      <div className="shrink-0 px-4 py-3 flex items-center justify-between" style={{ borderBottom: "1px solid #ede8de", background: "#faf8f3" }}>
         <div>
           <p className="text-[10px] font-black uppercase tracking-widest" style={{ color: GOLD }}>Today in</p>
           <p className="text-sm font-black leading-tight" style={{ color: NAVY }}>Christian News</p>
@@ -81,8 +81,8 @@ export default function ChristianNews() {
         </button>
       </div>
 
-      {/* Body */}
-      <div className="divide-y" style={{ borderColor: "#f0ece3" }}>
+      {/* Body — scrolls independently */}
+      <div className="divide-y flex-1 overflow-y-auto" style={{ borderColor: "#f0ece3" }}>
         {loading && (
           <div className="px-4 py-6 flex flex-col items-center gap-3">
             <div className="w-6 h-6 rounded-full border-2 border-t-transparent animate-spin" style={{ borderColor: `${GOLD} transparent ${GOLD} ${GOLD}` }} />
@@ -149,7 +149,7 @@ export default function ChristianNews() {
 
       {/* Footer */}
       {!loading && !error && articles.length > 0 && (
-        <div className="px-4 py-2.5 flex items-center justify-between" style={{ borderTop: "1px solid #f0ece3", background: "#faf8f3" }}>
+        <div className="shrink-0 px-4 py-2.5 flex items-center justify-between" style={{ borderTop: "1px solid #f0ece3", background: "#faf8f3" }}>
           <div className="flex items-center gap-2 flex-wrap">
             {["Christianity Today","The Gospel Coalition","Christian Post","CBN News"].map((src) => (
               <span key={src} className="flex items-center gap-1">

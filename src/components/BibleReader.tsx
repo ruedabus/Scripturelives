@@ -23,6 +23,7 @@ import OutlineBuilder from "@/components/OutlineBuilder";
 import MemorizationFlashcards from "@/components/MemorizationFlashcards";
 import ReadingProgress from "@/components/ReadingProgress";
 import BibleCharacterProfiles from "@/components/BibleCharacterProfiles";
+import BibleEncyclopedia from "@/components/BibleEncyclopedia";
 import VerseOfDayGenerator from "@/components/VerseOfDayGenerator";
 import BibleQuiz from "@/components/BibleQuiz";
 import AudioBiblePlayer from "@/components/AudioBiblePlayer";
@@ -85,7 +86,8 @@ type LeftPanelTab =
   | "audio"
   | "christian_news"
   | "interlinear"
-  | "classic_teachers";
+  | "classic_teachers"
+  | "encyclopedia";
 
 // ── Bible book lists ──────────────────────────────────────────────────────
 const OT_SECTIONS = [
@@ -212,7 +214,7 @@ const T_EN = {
   navHome: "Home", navDailyDev: "Daily Devotional", navAudio: "Audio Bible",
   navReader: "Passage Reader", navBible: "Full Bible", navParallel: "Parallel Bible",
   navTopical: "Topical Bible", navPrayer: "Prayer Journal", navTimeline: "Timeline",
-  navCommentary: "Commentary", navDict: "Dictionary", navStudy: "Bible Study", navClassic: "Classic Teachers",
+  navCommentary: "Commentary", navDict: "Dictionary", navEncyclopedia: "Encyclopedia", navStudy: "Bible Study", navClassic: "Classic Teachers",
   navOutline: "Sermon Outlines", navFlash: "Memorization", navImage: "Verse Image Cards",
   navAncient: "Ancient Places", navAtlas: "Bible Atlas", navChars: "Character Profiles",
   navQuiz: "Bible Quiz", navBookmarks: "Bookmarks", navSessions: "Sessions",
@@ -1005,6 +1007,7 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
               {sideNavBtn("commentary",       <BookText size={16} />,     T.navCommentary)}
               {sideNavBtn("classic_teachers", <ScrollText size={16} />,  T.navClassic)}
               {sideNavBtn("dictionary",    <BookMarked size={16} />,   T.navDict)}
+              {sideNavBtn("encyclopedia",  <Landmark size={16} />,     T.navEncyclopedia)}
               {sideNavBtn("interlinear",   <Languages size={16} />,    T.navInterlinear)}
               {sideNavBtn("study_prompts", <ScrollText size={16} />,   T.navStudy)}
               {sideNavBtn("outline",       <FileText size={16} />,     T.navOutline)}
@@ -2175,6 +2178,13 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
               </div>
             )}
 
+            {/* ── ENCYCLOPEDIA TAB ────────────────────────────────────────── */}
+            {leftPanelTab === "encyclopedia" && (
+              <div className="h-full flex flex-col -mx-6 -mt-4">
+                <BibleEncyclopedia />
+              </div>
+            )}
+
             {/* ── ATLAS TAB ───────────────────────────────────────────────── */}
             {leftPanelTab === "atlas" && (() => {
               const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
@@ -2962,7 +2972,7 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
           </section>
 
           {/* RIGHT PANEL — hidden on mobile, visible on xl+ */}
-          <aside className="hidden xl:block p-5 space-y-6 print:hidden" style={{ background: "#faf8f3", borderLeft: "1px solid #ede8de" }}>
+          <aside className="hidden xl:flex xl:flex-col sticky top-0 h-screen overflow-y-auto gap-6 p-5 print:hidden" style={{ background: "#faf8f3", borderLeft: "1px solid #ede8de" }}>
 
             {/* Share current verse */}
             {(presenterRef || selectedVerse) && (() => {
@@ -2970,7 +2980,7 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
               const text = presenterRef?.text       ?? selectedVerse?.translations?.KJV ?? "";
               if (!ref || !text) return null;
               return (
-                <div className="rounded-xl bg-white px-4 py-3 flex items-start justify-between gap-3" style={{ border: "1px solid #ede8de" }}>
+                <div className="shrink-0 rounded-xl bg-white px-4 py-3 flex items-start justify-between gap-3" style={{ border: "1px solid #ede8de" }}>
                   <div className="min-w-0">
                     <p className="text-[10px] font-bold uppercase tracking-widest mb-1" style={{ color: "#C9952A" }}>{T.currentVerse}</p>
                     <p className="text-xs font-semibold truncate" style={{ color: "#1a2640" }}>{ref}</p>
@@ -2991,33 +3001,39 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
 
             {/* Lexicon Panel — Word Study */}
             {lexiconWord && (
-              /^[GH]\d+$/i.test(lexiconWord.word) ? (
-                <LexiconPanel
-                  mode="number"
-                  strongsNumber={lexiconWord.word.toUpperCase()}
-                  clickedWord={lexiconWord.word}
-                  onClear={() => setLexiconWord(null)}
-                />
-              ) : (
-                <LexiconPanel
-                  mode="word"
-                  clickedWord={lexiconWord.word}
-                  book={lexiconWord.book}
-                  onClear={() => setLexiconWord(null)}
-                />
-              )
+              <div className="shrink-0">
+                {/^[GH]\d+$/i.test(lexiconWord.word) ? (
+                  <LexiconPanel
+                    mode="number"
+                    strongsNumber={lexiconWord.word.toUpperCase()}
+                    clickedWord={lexiconWord.word}
+                    onClear={() => setLexiconWord(null)}
+                  />
+                ) : (
+                  <LexiconPanel
+                    mode="word"
+                    clickedWord={lexiconWord.word}
+                    book={lexiconWord.book}
+                    onClear={() => setLexiconWord(null)}
+                  />
+                )}
+              </div>
             )}
 
             {/* Visual Reference Panel */}
             {visualQuery && (
-              <VisualReferencePanel
-                query={visualQuery}
-                onClear={() => setVisualQuery(null)}
-              />
+              <div className="shrink-0">
+                <VisualReferencePanel
+                  query={visualQuery}
+                  onClear={() => setVisualQuery(null)}
+                />
+              </div>
             )}
 
-            {/* ── Today in Christian News ── */}
-            <ChristianNews />
+            {/* ── Today in Christian News — fills remaining panel height ── */}
+            <div className="flex-1 min-h-0">
+              <ChristianNews />
+            </div>
 
           </aside>
         </div>{/* end center+right grid */}
@@ -3257,6 +3273,7 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
             {drawerBtn("commentary",       <BookText size={16} />,    T.navCommentary)}
             {drawerBtn("classic_teachers", <ScrollText size={16} />, T.navClassic)}
             {drawerBtn("dictionary",    <BookMarked size={16} />,   T.navDictLex)}
+            {drawerBtn("encyclopedia",  <Landmark size={16} />,     T.navEncyclopedia)}
             {drawerBtn("interlinear",   <Languages size={16} />,    T.navInterlinear)}
             {drawerBtn("timeline",      <Layers size={16} />,       T.navTimeline)}
           </div>
