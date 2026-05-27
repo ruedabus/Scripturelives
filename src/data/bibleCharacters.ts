@@ -37,6 +37,8 @@ export interface BibleCharacter {
   lessons: string[];
   relatedCharacters: string[]; // character ids
   books: string[]; // Books where they appear prominently
+  /** Wikipedia article title used to fetch the portrait image */
+  wikipediaTitle?: string;
 }
 
 export const BIBLE_CHARACTERS: BibleCharacter[] = [
@@ -69,6 +71,7 @@ export const BIBLE_CHARACTERS: BibleCharacter[] = [
     ],
     relatedCharacters: ["eve", "abel", "cain"],
     books: ["Genesis", "Romans", "1 Corinthians"],
+    wikipediaTitle: "Adam",
   },
   {
     id: "eve",
@@ -96,6 +99,7 @@ export const BIBLE_CHARACTERS: BibleCharacter[] = [
     ],
     relatedCharacters: ["adam", "cain", "abel"],
     books: ["Genesis", "2 Corinthians", "1 Timothy"],
+    wikipediaTitle: "Eve",
   },
   {
     id: "noah",
@@ -124,6 +128,7 @@ export const BIBLE_CHARACTERS: BibleCharacter[] = [
     ],
     relatedCharacters: ["adam", "abraham"],
     books: ["Genesis", "Hebrews", "1 Peter", "2 Peter"],
+    wikipediaTitle: "Noah",
   },
   {
     id: "abraham",
@@ -153,6 +158,7 @@ export const BIBLE_CHARACTERS: BibleCharacter[] = [
     ],
     relatedCharacters: ["sarah", "isaac", "lot", "ishmael"],
     books: ["Genesis", "Romans", "Galatians", "Hebrews", "James"],
+    wikipediaTitle: "Abraham",
   },
   {
     id: "sarah",
@@ -179,6 +185,7 @@ export const BIBLE_CHARACTERS: BibleCharacter[] = [
     ],
     relatedCharacters: ["abraham", "isaac", "hagar"],
     books: ["Genesis", "Romans", "Galatians", "Hebrews", "1 Peter"],
+    wikipediaTitle: "Sarah (wife of Abraham)",
   },
   {
     id: "moses",
@@ -209,6 +216,7 @@ export const BIBLE_CHARACTERS: BibleCharacter[] = [
     ],
     relatedCharacters: ["aaron", "pharaoh", "joshua", "miriam"],
     books: ["Exodus", "Leviticus", "Numbers", "Deuteronomy", "Hebrews"],
+    wikipediaTitle: "Moses",
   },
   {
     id: "david",
@@ -239,6 +247,7 @@ export const BIBLE_CHARACTERS: BibleCharacter[] = [
     ],
     relatedCharacters: ["saul", "solomon", "jonathan", "bathsheba", "goliath"],
     books: ["1 Samuel", "2 Samuel", "Psalms", "Acts", "Romans"],
+    wikipediaTitle: "David",
   },
   {
     id: "solomon",
@@ -267,6 +276,7 @@ export const BIBLE_CHARACTERS: BibleCharacter[] = [
     ],
     relatedCharacters: ["david", "bathsheba"],
     books: ["1 Kings", "2 Chronicles", "Proverbs", "Ecclesiastes", "Song of Solomon"],
+    wikipediaTitle: "Solomon",
   },
   {
     id: "elijah",
@@ -297,6 +307,7 @@ export const BIBLE_CHARACTERS: BibleCharacter[] = [
     ],
     relatedCharacters: ["elisha", "ahab", "jezebel"],
     books: ["1 Kings", "2 Kings", "Malachi", "Luke", "James", "Revelation"],
+    wikipediaTitle: "Elijah",
   },
   {
     id: "daniel",
@@ -326,6 +337,7 @@ export const BIBLE_CHARACTERS: BibleCharacter[] = [
     ],
     relatedCharacters: ["nebuchadnezzar", "ezekiel", "ezra"],
     books: ["Daniel", "Matthew", "Hebrews", "Revelation"],
+    wikipediaTitle: "Daniel (biblical figure)",
   },
   {
     id: "esther",
@@ -354,6 +366,7 @@ export const BIBLE_CHARACTERS: BibleCharacter[] = [
     ],
     relatedCharacters: ["mordecai"],
     books: ["Esther"],
+    wikipediaTitle: "Esther",
   },
 
   // ── NEW TESTAMENT ─────────────────────────────────────────────────────────
@@ -385,6 +398,7 @@ export const BIBLE_CHARACTERS: BibleCharacter[] = [
     ],
     relatedCharacters: ["joseph", "jesus", "elizabeth", "gabriel"],
     books: ["Matthew", "Luke", "John", "Acts"],
+    wikipediaTitle: "Mary, mother of Jesus",
   },
   {
     id: "peter",
@@ -415,6 +429,7 @@ export const BIBLE_CHARACTERS: BibleCharacter[] = [
     ],
     relatedCharacters: ["jesus", "james", "john", "paul", "andrew"],
     books: ["Matthew", "Mark", "Luke", "John", "Acts", "1 Peter", "2 Peter"],
+    wikipediaTitle: "Saint Peter",
   },
   {
     id: "paul",
@@ -444,6 +459,7 @@ export const BIBLE_CHARACTERS: BibleCharacter[] = [
     ],
     relatedCharacters: ["barnabas", "timothy", "silas", "peter", "stephen"],
     books: ["Acts", "Romans", "1 Corinthians", "2 Corinthians", "Galatians", "Ephesians", "Philippians", "Colossians"],
+    wikipediaTitle: "Paul the Apostle",
   },
   {
     id: "john",
@@ -473,6 +489,7 @@ export const BIBLE_CHARACTERS: BibleCharacter[] = [
     ],
     relatedCharacters: ["jesus", "peter", "james", "mary"],
     books: ["John", "1 John", "2 John", "3 John", "Revelation"],
+    wikipediaTitle: "John the Apostle",
   },
   {
     id: "jesus",
@@ -505,6 +522,7 @@ export const BIBLE_CHARACTERS: BibleCharacter[] = [
     ],
     relatedCharacters: ["mary", "peter", "john", "paul", "judas", "joseph"],
     books: ["Matthew", "Mark", "Luke", "John", "Acts", "Hebrews", "Revelation"],
+    wikipediaTitle: "Jesus",
   },
 ];
 

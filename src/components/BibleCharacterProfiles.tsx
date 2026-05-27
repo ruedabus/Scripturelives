@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { Search, ChevronRight, BookOpen, Users, Star, X } from "lucide-react";
 import {
   BIBLE_CHARACTERS,
@@ -55,53 +55,103 @@ function PortraitPattern({ color }: { color: string }) {
 // ── Character portrait hero ───────────────────────────────────────────────────
 function CharacterPortrait({ char }: { char: BibleCharacter }) {
   const pg = PORTRAIT_GRADIENT[char.category];
+  const [imgSrc, setImgSrc]     = useState<string | null>(null);
+  const [imgLoaded, setImgLoaded] = useState(false);
+  const [imgCredit, setImgCredit] = useState<string>("");
+
+  useEffect(() => {
+    setImgSrc(null);
+    setImgLoaded(false);
+    setImgCredit("");
+    if (!char.wikipediaTitle) return;
+
+    fetch(
+      `https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(char.wikipediaTitle)}`,
+      { headers: { Accept: "application/json" } }
+    )
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.originalimage?.source) {
+          // Prefer original; cap width at 480px via the thumbnail URL pattern
+          const src = data.thumbnail?.source
+            ? data.thumbnail.source.replace(/\/\d+px-/, "/480px-")
+            : data.originalimage.source;
+          setImgSrc(src);
+        } else if (data.thumbnail?.source) {
+          setImgSrc(data.thumbnail.source.replace(/\/\d+px-/, "/480px-"));
+        }
+        if (data.description) setImgCredit(data.description);
+      })
+      .catch(() => {});
+  }, [char.wikipediaTitle]);
+
   return (
     <div
-      className="relative w-full rounded-2xl overflow-hidden flex flex-col items-center justify-center"
-      style={{ background: pg.grad, minHeight: 200 }}
+      className="relative w-full rounded-2xl overflow-hidden"
+      style={{ background: pg.grad, minHeight: imgSrc ? 280 : 200 }}
     >
-      <PortraitPattern color={pg.glow} />
+      {/* Real painting — shown when loaded */}
+      {imgSrc && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={imgSrc}
+          alt={`Historical portrait of ${char.name}`}
+          onLoad={() => setImgLoaded(true)}
+          onError={() => setImgSrc(null)}
+          className="absolute inset-0 w-full h-full object-cover transition-opacity duration-700"
+          style={{ opacity: imgLoaded ? 1 : 0 }}
+        />
+      )}
 
-      {/* Top & bottom gold accent bars */}
-      <div className="absolute top-0 left-0 right-0 h-1 opacity-70" style={{ background: `linear-gradient(90deg, transparent, ${pg.glow}, transparent)` }} />
-      <div className="absolute bottom-0 left-0 right-0 h-1 opacity-70" style={{ background: `linear-gradient(90deg, transparent, ${pg.glow}, transparent)` }} />
+      {/* Gradient overlay — always present for text legibility */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background: imgLoaded
+            ? `linear-gradient(to top, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.45) 50%, rgba(0,0,0,0.15) 100%)`
+            : "transparent",
+        }}
+      />
 
-      {/* Portrait content */}
-      <div className="relative z-10 flex flex-col items-center py-8 px-4 text-center">
-        {/* Glowing emoji circle */}
-        <div
-          className="flex items-center justify-center rounded-full mb-4 text-5xl"
-          style={{
-            width: 96, height: 96,
-            background: "rgba(0,0,0,0.35)",
-            border: `3px solid ${pg.ring}`,
-            boxShadow: `0 0 28px ${pg.ring}, 0 0 60px rgba(0,0,0,0.4)`,
-          }}
-        >
-          {char.emoji}
-        </div>
+      {/* Fallback pattern when no image */}
+      {!imgLoaded && (
+        <>
+          <PortraitPattern color={pg.glow} />
+          <div className="absolute top-0 left-0 right-0 h-1 opacity-70" style={{ background: `linear-gradient(90deg, transparent, ${pg.glow}, transparent)` }} />
+          <div className="absolute bottom-0 left-0 right-0 h-1 opacity-70" style={{ background: `linear-gradient(90deg, transparent, ${pg.glow}, transparent)` }} />
+        </>
+      )}
 
+      {/* Portrait content overlay */}
+      <div className="relative z-10 flex flex-col items-end px-4 pb-4 pt-40">
         {/* Name */}
-        <h2
-          className="text-2xl font-black tracking-wide"
-          style={{ color: "white", textShadow: `0 0 20px ${pg.glow}` }}
-        >
+        <h2 className="text-xl font-black text-white w-full" style={{ textShadow: "0 2px 8px rgba(0,0,0,0.9)" }}>
           {char.name}
         </h2>
-
         {/* Tagline */}
-        <p className="text-xs mt-1.5 max-w-xs" style={{ color: "rgba(255,255,255,0.65)" }}>
+        <p className="text-xs mt-0.5 w-full italic" style={{ color: "rgba(255,255,255,0.75)", textShadow: "0 1px 4px rgba(0,0,0,0.8)" }}>
           {char.tagline}
         </p>
-
-        {/* Era pill */}
-        <div
-          className="mt-3 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest"
-          style={{ background: "rgba(0,0,0,0.4)", color: pg.glow, border: `1px solid ${pg.ring}` }}
-        >
-          {char.era}
-        </div>
+        {/* Attribution */}
+        {imgLoaded && imgCredit && (
+          <p className="text-[9px] mt-1 w-full" style={{ color: "rgba(255,255,255,0.45)" }}>
+            via Wikipedia · {imgCredit}
+          </p>
+        )}
       </div>
+
+      {/* Era pill — top right */}
+      <div
+        className="absolute top-3 right-3 z-10 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest"
+        style={{ background: "rgba(0,0,0,0.55)", color: pg.glow, border: `1px solid ${pg.ring}`, backdropFilter: "blur(4px)" }}
+      >
+        {char.era}
+      </div>
+
+      {/* Loading shimmer when fetching */}
+      {imgSrc && !imgLoaded && (
+        <div className="absolute inset-0 animate-pulse" style={{ background: "rgba(0,0,0,0.3)" }} />
+      )}
     </div>
   );
 }
