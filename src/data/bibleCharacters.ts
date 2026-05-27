@@ -37,8 +37,8 @@ export interface BibleCharacter {
   lessons: string[];
   relatedCharacters: string[]; // character ids
   books: string[]; // Books where they appear prominently
-  /** Direct Wikimedia Commons Special:FilePath URL for the historical portrait */
-  portraitUrl?: string;
+  /** Search query to pass to /api/visual-reference for the portrait image */
+  visualQuery?: string;
 }
 
 export const BIBLE_CHARACTERS: BibleCharacter[] = [
@@ -71,7 +71,7 @@ export const BIBLE_CHARACTERS: BibleCharacter[] = [
     ],
     relatedCharacters: ["eve", "abel", "cain"],
     books: ["Genesis", "Romans", "1 Corinthians"],
-    portraitUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Michelangelo_-_Creation_of_Adam_(cropped).jpg?width=480",
+    visualQuery: "adam",
   },
   {
     id: "eve",
@@ -99,7 +99,7 @@ export const BIBLE_CHARACTERS: BibleCharacter[] = [
     ],
     relatedCharacters: ["adam", "cain", "abel"],
     books: ["Genesis", "2 Corinthians", "1 Timothy"],
-    portraitUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Lucas_Cranach_the_Elder_-_Adam_and_Eve_-_1526.jpg?width=480",
+    visualQuery: "eve",
   },
   {
     id: "noah",
@@ -128,7 +128,7 @@ export const BIBLE_CHARACTERS: BibleCharacter[] = [
     ],
     relatedCharacters: ["adam", "abraham"],
     books: ["Genesis", "Hebrews", "1 Peter", "2 Peter"],
-    portraitUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Gustave_Dore_Noahs_Ark.jpg?width=480",
+    visualQuery: "noah",
   },
   {
     id: "abraham",
@@ -158,7 +158,7 @@ export const BIBLE_CHARACTERS: BibleCharacter[] = [
     ],
     relatedCharacters: ["sarah", "isaac", "lot", "ishmael"],
     books: ["Genesis", "Romans", "Galatians", "Hebrews", "James"],
-    portraitUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Rembrandt_Abraham_Serving_the_Three_Angels.jpg?width=480",
+    visualQuery: "abraham",
   },
   {
     id: "sarah",
@@ -185,7 +185,7 @@ export const BIBLE_CHARACTERS: BibleCharacter[] = [
     ],
     relatedCharacters: ["abraham", "isaac", "hagar"],
     books: ["Genesis", "Romans", "Galatians", "Hebrews", "1 Peter"],
-    portraitUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Guercino_-_Hagar_and_the_Angel.jpg?width=480",
+    visualQuery: "Sarah wife of Abraham",
   },
   {
     id: "moses",
@@ -216,7 +216,7 @@ export const BIBLE_CHARACTERS: BibleCharacter[] = [
     ],
     relatedCharacters: ["aaron", "pharaoh", "joshua", "miriam"],
     books: ["Exodus", "Leviticus", "Numbers", "Deuteronomy", "Hebrews"],
-    portraitUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Rembrandt_Harmensz._van_Rijn_-_Moses_Breaking_the_Tablets_of_the_Law_-_Google_Art_Project.jpg?width=480",
+    visualQuery: "moses",
   },
   {
     id: "david",
@@ -247,7 +247,7 @@ export const BIBLE_CHARACTERS: BibleCharacter[] = [
     ],
     relatedCharacters: ["saul", "solomon", "jonathan", "bathsheba", "goliath"],
     books: ["1 Samuel", "2 Samuel", "Psalms", "Acts", "Romans"],
-    portraitUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Guido_Reni_-_David_with_the_Head_of_Goliath_-_WGA19321.jpg?width=480",
+    visualQuery: "david",
   },
   {
     id: "solomon",
@@ -276,7 +276,7 @@ export const BIBLE_CHARACTERS: BibleCharacter[] = [
     ],
     relatedCharacters: ["david", "bathsheba"],
     books: ["1 Kings", "2 Chronicles", "Proverbs", "Ecclesiastes", "Song of Solomon"],
-    portraitUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Tissot_Solomon.jpg?width=480",
+    visualQuery: "solomon",
   },
   {
     id: "elijah",
@@ -307,7 +307,7 @@ export const BIBLE_CHARACTERS: BibleCharacter[] = [
     ],
     relatedCharacters: ["elisha", "ahab", "jezebel"],
     books: ["1 Kings", "2 Kings", "Malachi", "Luke", "James", "Revelation"],
-    portraitUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Washington_Allston_-_Elijah_in_the_Desert.jpg?width=480",
+    visualQuery: "elijah",
   },
   {
     id: "daniel",
@@ -337,7 +337,7 @@ export const BIBLE_CHARACTERS: BibleCharacter[] = [
     ],
     relatedCharacters: ["nebuchadnezzar", "ezekiel", "ezra"],
     books: ["Daniel", "Matthew", "Hebrews", "Revelation"],
-    portraitUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Briton_Riviere_-_Daniel_in_the_Lions_Den.jpg?width=480",
+    visualQuery: "daniel",
   },
   {
     id: "esther",
@@ -366,7 +366,7 @@ export const BIBLE_CHARACTERS: BibleCharacter[] = [
     ],
     relatedCharacters: ["mordecai"],
     books: ["Esther"],
-    portraitUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Edwin_Long_-_Queen_Esther.jpg?width=480",
+    visualQuery: "esther",
   },
 
   // ── NEW TESTAMENT ─────────────────────────────────────────────────────────
@@ -398,7 +398,7 @@ export const BIBLE_CHARACTERS: BibleCharacter[] = [
     ],
     relatedCharacters: ["joseph", "jesus", "elizabeth", "gabriel"],
     books: ["Matthew", "Luke", "John", "Acts"],
-    portraitUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Raphael_-_Sistine_Madonna.jpg?width=480",
+    visualQuery: "mary",
   },
   {
     id: "peter",
@@ -429,7 +429,7 @@ export const BIBLE_CHARACTERS: BibleCharacter[] = [
     ],
     relatedCharacters: ["jesus", "james", "john", "paul", "andrew"],
     books: ["Matthew", "Mark", "Luke", "John", "Acts", "1 Peter", "2 Peter"],
-    portraitUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/El_Greco_-_Saint_Peter_-_WGA10522.jpg?width=480",
+    visualQuery: "peter",
   },
   {
     id: "paul",
@@ -459,7 +459,7 @@ export const BIBLE_CHARACTERS: BibleCharacter[] = [
     ],
     relatedCharacters: ["barnabas", "timothy", "silas", "peter", "stephen"],
     books: ["Acts", "Romans", "1 Corinthians", "2 Corinthians", "Galatians", "Ephesians", "Philippians", "Colossians"],
-    portraitUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Rembrandt_-_The_Apostle_Paul_-_Kunsthistorisches_Museum.jpg?width=480",
+    visualQuery: "paul",
   },
   {
     id: "john",
@@ -489,7 +489,7 @@ export const BIBLE_CHARACTERS: BibleCharacter[] = [
     ],
     relatedCharacters: ["jesus", "peter", "james", "mary"],
     books: ["John", "1 John", "2 John", "3 John", "Revelation"],
-    portraitUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/El_Greco_-_Saint_John_the_Evangelist.jpg?width=480",
+    visualQuery: "john the apostle",
   },
   {
     id: "jesus",
@@ -522,7 +522,7 @@ export const BIBLE_CHARACTERS: BibleCharacter[] = [
     ],
     relatedCharacters: ["mary", "peter", "john", "paul", "judas", "joseph"],
     books: ["Matthew", "Mark", "Luke", "John", "Acts", "Hebrews", "Revelation"],
-    portraitUrl: "https://commons.wikimedia.org/wiki/Special:FilePath/Bloch-SermonOnTheMount.jpg?width=480",
+    visualQuery: "jesus",
   },
 ];
 
