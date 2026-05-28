@@ -231,7 +231,7 @@ const T_EN = {
   fbLink: "Scripture Lives on Facebook", support: "Support Scripture Lives",
   about: "About Us", terms: "Terms & Conditions", privacy: "Privacy Policy",
   // Home panel
-  heroSubtitle: "Explore, study, and present the living Word of God",
+  heroSubtitle: "Explore, study, and grow in your Faith by His living Word.",
   searchPlaceholder: "Search a verse, passage, or keyword…",
   searchBtn: "Search",
   continueReading: "Continue Reading", chapterLabel: "Chapter", verseLabel: "verse",
@@ -282,7 +282,7 @@ const T_ES: typeof T_EN = {
   tagline: "Plataforma de Estudio Bíblico", youTubeLink: "Faith Tails en YouTube",
   fbLink: "Scripture Lives en Facebook", support: "Apoya Scripture Lives",
   about: "Acerca de", terms: "Términos y Condiciones", privacy: "Política de Privacidad",
-  heroSubtitle: "Explora, estudia y presenta la Palabra viva de Dios",
+  heroSubtitle: "Explora, estudia y crece en tu Fe por Su Palabra viva.",
   searchPlaceholder: "Busca un versículo, pasaje o palabra clave…",
   searchBtn: "Buscar",
   continueReading: "Continuar Leyendo", chapterLabel: "Capítulo", verseLabel: "versículo",
