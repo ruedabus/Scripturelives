@@ -24,6 +24,7 @@ import MemorizationFlashcards from "@/components/MemorizationFlashcards";
 import ReadingProgress from "@/components/ReadingProgress";
 import BibleCharacterProfiles from "@/components/BibleCharacterProfiles";
 import BibleEncyclopedia from "@/components/BibleEncyclopedia";
+import SystematicTheology from "@/components/SystematicTheology";
 import VerseOfDayGenerator from "@/components/VerseOfDayGenerator";
 import BibleQuiz from "@/components/BibleQuiz";
 import AudioBiblePlayer from "@/components/AudioBiblePlayer";
@@ -43,7 +44,7 @@ import {
   Home, Feather, BookOpen, Library, Layers, BookText, BookMarked,
   ScrollText, Landmark, Globe, Star, ClipboardList, FileText,
   HeartHandshake, ExternalLink, BookHeart, HandCoins, MapPin, Compass,
-  Copy, Check, Image, Columns3, Heart, Menu, X, Brain, BarChart2, Users, Sparkles, Trophy, Headphones, Languages,
+  Copy, Check, Image, Columns3, Heart, Menu, X, Brain, BarChart2, Users, Sparkles, Trophy, Headphones, Languages, ChevronLeft,
 } from "lucide-react";
 
 const PlaceMap = dynamic(() => import("@/components/PlaceMap"), {
@@ -87,7 +88,8 @@ type LeftPanelTab =
   | "christian_news"
   | "interlinear"
   | "classic_teachers"
-  | "encyclopedia";
+  | "encyclopedia"
+  | "systematic_theology";
 
 // ── Bible book lists ──────────────────────────────────────────────────────
 const OT_SECTIONS = [
@@ -214,7 +216,7 @@ const T_EN = {
   navHome: "Home", navDailyDev: "Daily Devotional", navAudio: "Audio Bible",
   navReader: "Passage Reader", navBible: "Full Bible", navParallel: "Parallel Bible",
   navTopical: "Topical Bible", navPrayer: "Prayer Journal", navTimeline: "Timeline",
-  navCommentary: "Commentary", navDict: "Dictionary", navEncyclopedia: "Encyclopedia", navStudy: "Bible Study", navClassic: "Classic Teachers",
+  navCommentary: "Commentary", navDict: "Dictionary", navEncyclopedia: "Encyclopedia", navSystematic: "Systematic Theology", navStudy: "Bible Study", navClassic: "Classic Teachers",
   navOutline: "Sermon Outlines", navFlash: "Memorization", navImage: "Verse Image Cards",
   navAncient: "Ancient Places", navAtlas: "Bible Atlas", navChars: "Character Profiles",
   navQuiz: "Bible Quiz", navBookmarks: "Bookmarks", navSessions: "Sessions",
@@ -267,7 +269,7 @@ const T_ES: typeof T_EN = {
   navHome: "Inicio", navDailyDev: "Devocional Diario", navAudio: "Biblia en Audio",
   navReader: "Lector de Pasajes", navBible: "Biblia Completa", navParallel: "Biblia Paralela",
   navTopical: "Biblia Temática", navPrayer: "Diario de Oración", navTimeline: "Línea de Tiempo",
-  navCommentary: "Comentario", navDict: "Diccionario", navEncyclopedia: "Enciclopedia", navStudy: "Estudio Bíblico", navClassic: "Maestros Clásicos",
+  navCommentary: "Comentario", navDict: "Diccionario", navEncyclopedia: "Enciclopedia", navSystematic: "Teología Sistemática", navStudy: "Estudio Bíblico", navClassic: "Maestros Clásicos",
   navOutline: "Esquemas de Sermón", navFlash: "Memorización", navImage: "Tarjetas de Versículos",
   navAncient: "Lugares Antiguos", navAtlas: "Atlas Bíblico", navChars: "Perfiles de Personajes",
   navQuiz: "Quiz Bíblico", navBookmarks: "Marcadores", navSessions: "Sesiones",
@@ -1007,8 +1009,9 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
               {sideNavBtn("commentary",       <BookText size={16} />,     T.navCommentary)}
               {sideNavBtn("classic_teachers", <ScrollText size={16} />,  T.navClassic)}
               {sideNavBtn("dictionary",    <BookMarked size={16} />,   T.navDict)}
-              {sideNavBtn("encyclopedia",  <Landmark size={16} />,     T.navEncyclopedia)}
-              {sideNavBtn("interlinear",   <Languages size={16} />,    T.navInterlinear)}
+              {sideNavBtn("encyclopedia",        <Landmark size={16} />,     T.navEncyclopedia)}
+              {sideNavBtn("systematic_theology", <BookHeart size={16} />,    T.navSystematic)}
+              {sideNavBtn("interlinear",         <Languages size={16} />,    T.navInterlinear)}
               {sideNavBtn("study_prompts", <ScrollText size={16} />,   T.navStudy)}
               {sideNavBtn("outline",       <FileText size={16} />,     T.navOutline)}
               {sideNavBtn("flashcards",    <Brain size={16} />,        T.navFlash)}
@@ -1148,6 +1151,57 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
           <section className="p-4 xl:p-6 min-h-screen pb-24 xl:pb-6 print:border-none print:bg-white print:p-0 print:shadow-none" style={{ background: "#faf8f3" }}>
 
             {/* Mobile: no inline nav strip — replaced by fixed bottom bar below */}
+
+            {/* ── BACK BAR (all non-home tabs) ─────────────────────────────── */}
+            {leftPanelTab !== "home" && (() => {
+              const TAB_LABELS: Partial<Record<LeftPanelTab, string>> = {
+                devotional: "Daily Devotional",
+                reader: "Passage Reader",
+                bible: "Full Bible",
+                parallel: "Parallel Bible",
+                topical: "Topical Bible",
+                prayer_journal: "Prayer Journal",
+                timeline: "Biblical Timeline",
+                commentary: "Commentary",
+                dictionary: "Dictionary / Lexicon",
+                ancient_world: "Ancient World",
+                atlas: "Bible Atlas",
+                study_prompts: "Bible Study",
+                bookmarks: "Bookmarks",
+                study_sheet: "Study Notes",
+                sessions: "Study Sessions",
+                testimonials: "Testimonials",
+                resources: "More Resources",
+                books: "Christian Books",
+                outline: "Sermon Outlines",
+                flashcards: "Memorization",
+                reading_progress: "Reading Progress",
+                characters: "Character Profiles",
+                verse_image: "Verse Image Cards",
+                quiz: "Bible Quiz",
+                audio: "Audio Bible",
+                christian_news: "Christian News",
+                interlinear: "Greek / Hebrew Interlinear",
+                classic_teachers: "Classic Teachers",
+                encyclopedia: "ISBE Encyclopedia",
+                systematic_theology: "Systematic Theology",
+              };
+              const label = TAB_LABELS[leftPanelTab] ?? leftPanelTab;
+              return (
+                <div className="flex items-center gap-3 mb-5 print:hidden">
+                  <button
+                    onClick={() => setLeftPanelTab("home")}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition hover:opacity-80"
+                    style={{ background: "#1a2640", color: "#C9952A" }}
+                  >
+                    <ChevronLeft size={14} />
+                    Home
+                  </button>
+                  <span className="text-xs font-semibold" style={{ color: "#9ca3af" }}>/</span>
+                  <span className="text-xs font-semibold" style={{ color: "#1a2640" }}>{label}</span>
+                </div>
+              );
+            })()}
 
             {/* ── HOME TAB ─────────────────────────────────────────────────── */}
             {leftPanelTab === "home" && (
@@ -2183,6 +2237,26 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
               <div className="h-full flex flex-col -mx-6 -mt-4">
                 <BibleEncyclopedia />
               </div>
+            )}
+
+            {/* ── SYSTEMATIC THEOLOGY TAB ─────────────────────────────────── */}
+            {leftPanelTab === "systematic_theology" && (
+              <SystematicTheology
+                onLookupEncyclopedia={(term) => {
+                  setLeftPanelTab("encyclopedia");
+                  // Small delay so the encyclopedia tab mounts before receiving a query
+                  setTimeout(() => {
+                    window.dispatchEvent(new CustomEvent("encyclopedia:lookup", { detail: term }));
+                  }, 100);
+                }}
+                onOpenVerse={(ref) => {
+                  const m = ref.match(/^(.+?)\s+(\d+):(\d+)/);
+                  if (m) {
+                    setReaderJumpRef({ book: m[1], chapter: parseInt(m[2], 10), verse: parseInt(m[3], 10) });
+                    setLeftPanelTab("reader");
+                  }
+                }}
+              />
             )}
 
             {/* ── ATLAS TAB ───────────────────────────────────────────────── */}
@@ -3273,8 +3347,9 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
             {drawerBtn("commentary",       <BookText size={16} />,    T.navCommentary)}
             {drawerBtn("classic_teachers", <ScrollText size={16} />, T.navClassic)}
             {drawerBtn("dictionary",    <BookMarked size={16} />,   T.navDictLex)}
-            {drawerBtn("encyclopedia",  <Landmark size={16} />,     T.navEncyclopedia)}
-            {drawerBtn("interlinear",   <Languages size={16} />,    T.navInterlinear)}
+            {drawerBtn("encyclopedia",        <Landmark size={16} />,     T.navEncyclopedia)}
+            {drawerBtn("systematic_theology", <BookHeart size={16} />,    T.navSystematic)}
+            {drawerBtn("interlinear",         <Languages size={16} />,    T.navInterlinear)}
             {drawerBtn("timeline",      <Layers size={16} />,       T.navTimeline)}
           </div>
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { Search, BookOpen, ExternalLink, ChevronRight, Loader2, ArrowLeft } from "lucide-react";
 
 const GOLD = "#C9952A";
@@ -149,6 +149,16 @@ export default function BibleEncyclopedia() {
       setLoading(false);
     }
   }, []);
+
+  // Listen for cross-component lookup events (e.g. from Systematic Theology panel)
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const term = (e as CustomEvent<string>).detail;
+      if (term) lookup(term);
+    };
+    window.addEventListener("encyclopedia:lookup", handler);
+    return () => window.removeEventListener("encyclopedia:lookup", handler);
+  }, [lookup]);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
