@@ -89,7 +89,7 @@ function CharacterPortrait({ char }: { char: BibleCharacter }) {
           alt={`Historical portrait of ${char.name}`}
           onLoad={() => setImgLoaded(true)}
           onError={() => setThumbnail(null)}
-          className="absolute inset-0 w-full h-full object-cover transition-opacity duration-700"
+          className="absolute inset-0 w-full h-full object-contain object-top transition-opacity duration-700"
           style={{ opacity: imgLoaded ? 1 : 0 }}
         />
       )}
