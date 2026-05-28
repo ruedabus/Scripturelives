@@ -94,7 +94,6 @@ const WIKI_ALIAS: Record<string, string> = {
   "fruit of the spirit":         "Fruit of the Holy Spirit",
   "sealing & assurance":         "Assurance (theology)",
   "holy spirit":                 "Holy Spirit in Christianity",
-  "sanctification":              "Sanctification",
   "conviction":                  "Conviction (Christianity)",
 
   // ── Anthropology ─────────────────────────────────────────────────────────────
