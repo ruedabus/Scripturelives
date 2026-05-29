@@ -141,50 +141,52 @@ export default function BibleTeacherChat() {
 
   return (
     <>
-      {/* ── Floating button + label ── */}
+      {/* ── Floating button (minimized by default) ── */}
       <div
-        className="fixed z-50 flex items-center gap-2"
+        className="fixed z-50 group"
         style={{ bottom: "76px", right: "16px" }}
       >
-        {/* Speech-bubble label — hidden when chat is open */}
+        {/* Hover tooltip — only when chat is closed */}
         {!open && (
           <div
-            className="relative flex items-center shadow-lg select-none pointer-events-none"
-            style={{
-              background:   NAVY,
-              border:       `1.5px solid ${GOLD}`,
-              borderRadius: "20px",
-              padding:      "6px 14px",
-              whiteSpace:   "nowrap",
-            }}
+            className="absolute right-full mr-3 top-1/2 -translate-y-1/2 pointer-events-none
+                       opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+            style={{ whiteSpace: "nowrap" }}
           >
-            <span className="text-xs font-semibold" style={{ color: GOLD }}>
-              Have a Bible question?
-            </span>
-            {/* Tail pointing right toward the avatar */}
-            <span
-              className="absolute"
+            <div
+              className="relative flex items-center shadow-lg"
               style={{
-                right:       "-8px",
-                top:         "50%",
-                transform:   "translateY(-50%)",
-                width:       0,
-                height:      0,
-                borderTop:   "6px solid transparent",
-                borderBottom:"6px solid transparent",
-                borderLeft:  `8px solid ${GOLD}`,
+                background:   NAVY,
+                border:       `1.5px solid ${GOLD}`,
+                borderRadius: "20px",
+                padding:      "6px 14px",
               }}
-            />
+            >
+              <span className="text-xs font-semibold" style={{ color: GOLD }}>
+                Have a Bible question?
+              </span>
+              {/* Tail pointing right */}
+              <span
+                className="absolute"
+                style={{
+                  right: "-8px", top: "50%", transform: "translateY(-50%)",
+                  width: 0, height: 0,
+                  borderTop: "6px solid transparent",
+                  borderBottom: "6px solid transparent",
+                  borderLeft: `8px solid ${GOLD}`,
+                }}
+              />
+            </div>
           </div>
         )}
 
         <button
           onClick={() => setOpen((o) => !o)}
           aria-label="Ask the Scripture Lives Assistant"
-          className="flex items-center justify-center shadow-xl transition hover:scale-105 active:scale-95 shrink-0"
+          className="relative flex items-center justify-center shadow-xl transition hover:scale-105 active:scale-95"
           style={{
-            width:        "60px",
-            height:       "60px",
+            width:        "52px",
+            height:       "52px",
             borderRadius: "50%",
             background:   NAVY,
             border:       `2px solid ${GOLD}`,
@@ -201,11 +203,18 @@ export default function BibleTeacherChat() {
             }}
           />
           <span
-            className="text-2xl absolute inset-0 items-center justify-center rounded-full"
+            className="text-xl absolute inset-0 items-center justify-center rounded-full"
             style={{ display: "none", background: NAVY }}
           >
             📖
           </span>
+          {/* Subtle pulse ring when closed */}
+          {!open && (
+            <span
+              className="absolute inset-0 rounded-full animate-ping pointer-events-none"
+              style={{ background: `${GOLD}22`, animationDuration: "2.5s" }}
+            />
+          )}
         </button>
       </div>
 
