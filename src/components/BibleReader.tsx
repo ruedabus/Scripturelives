@@ -25,6 +25,7 @@ import ReadingProgress from "@/components/ReadingProgress";
 import BibleCharacterProfiles from "@/components/BibleCharacterProfiles";
 import BibleEncyclopedia from "@/components/BibleEncyclopedia";
 import SystematicTheology from "@/components/SystematicTheology";
+import DailyReminderModal from "@/components/DailyReminderModal";
 import VerseOfDayGenerator from "@/components/VerseOfDayGenerator";
 import BibleQuiz from "@/components/BibleQuiz";
 import AudioBiblePlayer from "@/components/AudioBiblePlayer";
@@ -44,7 +45,7 @@ import {
   Home, Feather, BookOpen, Library, Layers, BookText, BookMarked,
   ScrollText, Landmark, Globe, Star, ClipboardList, FileText,
   HeartHandshake, ExternalLink, BookHeart, HandCoins, MapPin, Compass,
-  Copy, Check, Image, Columns3, Heart, Menu, X, Brain, BarChart2, Users, Sparkles, Trophy, Headphones, Languages, ChevronLeft,
+  Copy, Check, Image, Columns3, Heart, Menu, X, Brain, BarChart2, Users, Sparkles, Trophy, Headphones, Languages, ChevronLeft, Bell,
 } from "lucide-react";
 
 const PlaceMap = dynamic(() => import("@/components/PlaceMap"), {
@@ -327,6 +328,7 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
   const [activeJourneyStop, setActiveJourneyStop] = useState<number | null>(null);
   const [leftPanelTab, setLeftPanelTab] = useState<LeftPanelTab>(initialTab ?? "home");
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+  const [reminderOpen,     setReminderOpen]     = useState(false);
   const [homeQuery, setHomeQuery] = useState("");
   const [readerJumpRef, setReaderJumpRef] = useState<{ book: string; chapter: number; verse: number } | null>(null);
 
@@ -395,6 +397,11 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
 
   const { notes, getNote, saveNote, removeNote, replaceNotes } = usePlaceNotes();
   const { sessions, saveSession, deleteSession } = useStudySessions();
+
+  // Restore daily reminder timer on mount
+  useEffect(() => {
+    import("@/lib/reminderService").then(({ restoreReminder }) => restoreReminder());
+  }, []);
 
   useEffect(() => {
     if (selectedPlace) {
@@ -1129,6 +1136,15 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
               <span>{T.fbLink}</span>
             </a>
 
+            {/* Daily Reminder button */}
+            <button
+              onClick={() => setReminderOpen(true)}
+              className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-xs font-semibold hover:bg-amber-50 transition w-full text-left"
+              style={{ color: "#C9952A" }}
+            >
+              <Bell size={14} /> Daily Reminder
+            </button>
+
             <a href="/donate" className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-xs font-semibold hover:bg-amber-50 transition" style={{ color: "#C9952A" }}>
               <HandCoins size={14} /> {T.support}
             </a>
@@ -1488,6 +1504,21 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
                     <p className="mt-0.5 text-xs text-gray-400 leading-snug">Submit &amp; pray for community requests</p>
                     <span className="absolute top-3 right-3 text-[10px] font-semibold" style={{ color: "#C9952A" }}>New ✦</span>
                   </a>
+
+                  {/* Daily Reminder card */}
+                  <button
+                    type="button"
+                    onClick={() => setReminderOpen(true)}
+                    className="group relative rounded-xl p-4 text-left ring-1 ring-gray-200 transition-all duration-200 hover:shadow-md hover:-translate-y-0.5"
+                    style={{ background: "linear-gradient(135deg, #1a2640 0%, #243050 100%)" }}
+                  >
+                    <div className="inline-flex items-center justify-center rounded-xl p-2.5 mb-3" style={{ background: "rgba(201,149,42,0.15)" }}>
+                      <Bell size={20} style={{ color: "#C9952A" }} />
+                    </div>
+                    <p className="text-sm font-semibold text-white leading-snug">Daily Reminder</p>
+                    <p className="mt-0.5 text-xs leading-snug" style={{ color: "rgba(255,255,255,0.5)" }}>Never miss your time with Jesus</p>
+                    <span className="absolute top-3 right-3 text-[10px] font-semibold" style={{ color: "#C9952A" }}>New ✦</span>
+                  </button>
                 </div>
 
                 {/* OT / NT Book Grid */}
@@ -3485,6 +3516,12 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
           {mobileDrawerOpen ? "Close" : "More"}
         </button>
       </nav>
+
+      {/* ── Daily Reminder Modal ─────────────────────────────────────────── */}
+      <DailyReminderModal
+        open={reminderOpen}
+        onClose={() => setReminderOpen(false)}
+      />
 
     </main>
   );
