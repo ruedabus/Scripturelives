@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useCallback } from "react";
-import { X, Volume2, VolumeX, Loader2, BookOpen, ChevronDown } from "lucide-react";
+import { X, Volume2, VolumeX, Loader2, BookOpen } from "lucide-react";
 
 const GOLD = "#C9952A";
 const NAVY = "#1a2640";
@@ -26,9 +26,8 @@ export default function VerseExplainDrawer({ verse, onClose }: Props) {
   const [mounted,     setMounted]     = useState(false);
 
   // Voice picker
-  const [voices,       setVoices]       = useState<SpeechSynthesisVoice[]>([]);
+  const [voices,        setVoices]       = useState<SpeechSynthesisVoice[]>([]);
   const [selectedVoice, setSelectedVoice] = useState<string>(""); // voice.name
-  const [showVoices,   setShowVoices]   = useState(false);
 
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
 
@@ -112,8 +111,7 @@ export default function VerseExplainDrawer({ verse, onClose }: Props) {
   const handleVoiceSelect = useCallback((name: string) => {
     setSelectedVoice(name);
     localStorage.setItem(VOICE_PREF_KEY, name);
-    setShowVoices(false);
-    // If currently playing, restart with new voice
+    // If currently playing, stop so user can replay with new voice
     if (playing) {
       window.speechSynthesis?.cancel();
       setPlaying(false);
@@ -149,14 +147,13 @@ export default function VerseExplainDrawer({ verse, onClose }: Props) {
 
   // Close on Escape or backdrop click
   useEffect(() => {
-    const handler = (e: KeyboardEvent) => { if (e.key === "Escape") { setShowVoices(false); onClose(); } };
+    const handler = (e: KeyboardEvent) => { if (e.key === "Escape") { onClose(); } };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, [onClose]);
 
   if (!verse) return null;
 
-  const currentVoiceLabel = voices.find((v) => v.name === selectedVoice)?.name ?? "Default voice";
 
   return (
     <>
@@ -164,7 +161,7 @@ export default function VerseExplainDrawer({ verse, onClose }: Props) {
       <div
         className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm transition-opacity duration-300"
         style={{ opacity: mounted ? 1 : 0 }}
-        onClick={() => { setShowVoices(false); onClose(); }}
+        onClick={() => { onClose(); }}
       />
 
       {/* Drawer */}
@@ -229,10 +226,39 @@ export default function VerseExplainDrawer({ verse, onClose }: Props) {
                 {explanation}
               </p>
 
-              {/* Play controls row */}
-              <div className="mt-5 flex items-center gap-3 flex-wrap">
+              {/* Voice picker — shown above play button so dropdown opens into view */}
+              {voices.length > 0 && (
+                <div className="mt-5">
+                  <p className="text-[10px] font-semibold mb-1.5" style={{ color: "rgba(255,255,255,0.4)" }}>VOICE</p>
+                  <div className="flex flex-wrap gap-2">
+                    {voices.map((v) => {
+                      // Strip locale suffixes like " - English (United States)" → keep first segment
+                      const shortName = v.name
+                        .replace(/\s*-\s*English.*$/i, "")
+                        .replace(/\s*\(.*?\)/g, "")
+                        .trim();
+                      const isSelected = v.name === selectedVoice;
+                      return (
+                        <button
+                          key={v.name}
+                          onClick={() => handleVoiceSelect(v.name)}
+                          className="px-3 py-1.5 rounded-full text-xs font-semibold transition active:scale-95"
+                          style={{
+                            background: isSelected ? GOLD : "rgba(255,255,255,0.08)",
+                            color: isSelected ? NAVY : "rgba(255,255,255,0.7)",
+                            border: isSelected ? "none" : "1px solid rgba(255,255,255,0.15)",
+                          }}
+                        >
+                          {shortName}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
 
-                {/* Play / Stop button */}
+              {/* Play / Stop button */}
+              <div className="mt-4 flex items-center gap-3">
                 <button
                   onClick={handlePlayPause}
                   className="flex items-center gap-2.5 px-4 py-2.5 rounded-full text-sm font-semibold transition active:scale-95 shrink-0"
@@ -247,46 +273,6 @@ export default function VerseExplainDrawer({ verse, onClose }: Props) {
                     <><Volume2 size={16} /> Play Explanation</>
                   )}
                 </button>
-
-                {/* Voice picker */}
-                {voices.length > 0 && (
-                  <div className="relative">
-                    <button
-                      onClick={() => setShowVoices((s) => !s)}
-                      className="flex items-center gap-1.5 px-3 py-2 rounded-full text-xs font-semibold transition hover:bg-white/10"
-                      style={{ color: "rgba(255,255,255,0.7)", border: "1px solid rgba(255,255,255,0.15)" }}
-                    >
-                      <Volume2 size={12} />
-                      <span className="max-w-[130px] truncate">{currentVoiceLabel}</span>
-                      <ChevronDown size={11} />
-                    </button>
-
-                    {/* Voice dropdown */}
-                    {showVoices && (
-                      <div
-                        className="absolute bottom-full mb-2 left-0 rounded-xl shadow-2xl overflow-hidden z-10"
-                        style={{ background: "#0f1a2e", border: "1px solid rgba(255,255,255,0.12)", minWidth: 220, maxHeight: 260, overflowY: "auto" }}
-                      >
-                        <p className="px-3 pt-3 pb-1.5 text-[10px] font-black uppercase tracking-widest" style={{ color: GOLD }}>
-                          Choose Voice
-                        </p>
-                        {voices.map((v) => (
-                          <button
-                            key={v.name}
-                            onClick={() => handleVoiceSelect(v.name)}
-                            className="w-full text-left px-3 py-2 text-xs transition hover:bg-white/10 flex items-center gap-2"
-                            style={{ color: v.name === selectedVoice ? GOLD : "rgba(255,255,255,0.8)" }}
-                          >
-                            {v.name === selectedVoice && <span style={{ color: GOLD }}>✓</span>}
-                            <span className={v.name === selectedVoice ? "font-bold" : ""}>
-                              {v.name}
-                            </span>
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                )}
               </div>
 
               <p className="mt-4 text-[10px]" style={{ color: "rgba(255,255,255,0.3)" }}>
