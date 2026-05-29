@@ -8,6 +8,18 @@ const NAVY = "#1a2640";
 
 const VOICE_PREF_KEY = "scripture-lives-explain-voice";
 
+// OpenAI TTS voices with friendly descriptions
+const TTS_VOICES = [
+  { id: "nova",    label: "Nova",    desc: "Warm · Female" },
+  { id: "shimmer", label: "Shimmer", desc: "Soft · Female" },
+  { id: "alloy",   label: "Alloy",   desc: "Neutral · Balanced" },
+  { id: "echo",    label: "Echo",    desc: "Clear · Male" },
+  { id: "fable",   label: "Fable",   desc: "British · Male" },
+  { id: "onyx",    label: "Onyx",    desc: "Deep · Male" },
+] as const;
+
+type TTSVoiceId = typeof TTS_VOICES[number]["id"];
+
 export type ExplainVerse = {
   reference: string;
   text: string;
@@ -19,74 +31,54 @@ type Props = {
 };
 
 export default function VerseExplainDrawer({ verse, onClose }: Props) {
-  const [explanation, setExplanation] = useState<string | null>(null);
-  const [loading,     setLoading]     = useState(false);
-  const [error,       setError]       = useState("");
-  const [playing,     setPlaying]     = useState(false);
-  const [mounted,     setMounted]     = useState(false);
+  const [explanation,   setExplanation]   = useState<string | null>(null);
+  const [loading,       setLoading]       = useState(false);
+  const [error,         setError]         = useState("");
+  const [playing,       setPlaying]       = useState(false);
+  const [audioLoading,  setAudioLoading]  = useState(false);
+  const [mounted,       setMounted]       = useState(false);
+  const [selectedVoice, setSelectedVoice] = useState<TTSVoiceId>("nova");
 
-  // Voice picker
-  const [voices,        setVoices]       = useState<SpeechSynthesisVoice[]>([]);
-  const [selectedVoice, setSelectedVoice] = useState<string>(""); // voice.name
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const audioBlobRef = useRef<string | null>(null); // object URL cache per session
 
-  const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
-
-  // Load voices (they may arrive asynchronously)
+  // Restore saved voice preference
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    const synth = window.speechSynthesis;
-
-    const loadVoices = () => {
-      const all = synth.getVoices();
-      // Show only English voices, sorted alphabetically
-      const en = all.filter((v) => v.lang.startsWith("en")).sort((a, b) => a.name.localeCompare(b.name));
-      if (en.length === 0) return;
-      setVoices(en);
-
-      // Restore saved preference
-      const saved = localStorage.getItem(VOICE_PREF_KEY);
-      if (saved && en.find((v) => v.name === saved)) {
-        setSelectedVoice(saved);
-      } else {
-        // Pick a nice default
-        const preferred = en.find(
-          (v) =>
-            v.name.toLowerCase().includes("samantha") ||
-            v.name.toLowerCase().includes("natural") ||
-            v.name.toLowerCase().includes("neural") ||
-            v.name.toLowerCase().includes("google") ||
-            v.name.toLowerCase().includes("alex")
-        );
-        setSelectedVoice(preferred?.name ?? en[0]?.name ?? "");
-      }
-    };
-
-    loadVoices();
-    synth.addEventListener("voiceschanged", loadVoices);
-    return () => synth.removeEventListener("voiceschanged", loadVoices);
+    const saved = localStorage.getItem(VOICE_PREF_KEY) as TTSVoiceId | null;
+    if (saved && TTS_VOICES.find((v) => v.id === saved)) setSelectedVoice(saved);
   }, []);
 
   // Animate in/out
-  useEffect(() => {
-    setMounted(!!verse);
-  }, [verse]);
+  useEffect(() => { setMounted(!!verse); }, [verse]);
 
-  // Stop speech when drawer closes
+  // Stop audio + clean up when drawer closes
   useEffect(() => {
-    if (!verse && typeof window !== "undefined") {
-      window.speechSynthesis?.cancel();
+    if (!verse) {
+      audioRef.current?.pause();
       setPlaying(false);
+      setAudioLoading(false);
     }
   }, [verse]);
 
-  // Fetch explanation whenever a new verse opens
+  // Revoke stale blob URL when verse changes
+  useEffect(() => {
+    return () => {
+      if (audioBlobRef.current) {
+        URL.revokeObjectURL(audioBlobRef.current);
+        audioBlobRef.current = null;
+      }
+    };
+  }, [verse]);
+
+  // Fetch AI explanation whenever a new verse is tapped
   useEffect(() => {
     if (!verse) return;
     setExplanation(null);
     setError("");
     setPlaying(false);
     setLoading(true);
-    if (typeof window !== "undefined") window.speechSynthesis?.cancel();
+    audioRef.current?.pause();
+    if (audioBlobRef.current) { URL.revokeObjectURL(audioBlobRef.current); audioBlobRef.current = null; }
 
     const controller = new AbortController();
     fetch("/api/verse-explain", {
@@ -108,52 +100,70 @@ export default function VerseExplainDrawer({ verse, onClose }: Props) {
     return () => controller.abort();
   }, [verse]);
 
-  const handleVoiceSelect = useCallback((name: string) => {
-    setSelectedVoice(name);
-    localStorage.setItem(VOICE_PREF_KEY, name);
-    // If currently playing, stop so user can replay with new voice
-    if (playing) {
-      window.speechSynthesis?.cancel();
-      setPlaying(false);
-    }
-  }, [playing]);
+  const handleVoiceSelect = useCallback((id: TTSVoiceId) => {
+    setSelectedVoice(id);
+    localStorage.setItem(VOICE_PREF_KEY, id);
+    // Clear cached audio so next play uses the new voice
+    audioRef.current?.pause();
+    setPlaying(false);
+    if (audioBlobRef.current) { URL.revokeObjectURL(audioBlobRef.current); audioBlobRef.current = null; }
+  }, []);
 
-  const handlePlayPause = useCallback(() => {
-    if (!explanation || typeof window === "undefined") return;
-    const synth = window.speechSynthesis;
+  const handlePlayPause = useCallback(async () => {
+    if (!explanation) return;
 
+    // If already playing, pause
     if (playing) {
-      synth.cancel();
+      audioRef.current?.pause();
       setPlaying(false);
       return;
     }
 
-    const fullText = `${verse?.reference}. ${explanation}`;
-    const utterance = new SpeechSynthesisUtterance(fullText);
-    utterance.rate  = 0.92;
-    utterance.pitch = 1.0;
-
-    if (selectedVoice) {
-      const voice = synth.getVoices().find((v) => v.name === selectedVoice);
-      if (voice) utterance.voice = voice;
+    // If we have a cached blob, just play it
+    if (audioBlobRef.current && audioRef.current) {
+      audioRef.current.src = audioBlobRef.current;
+      audioRef.current.play().catch(() => setPlaying(false));
+      setPlaying(true);
+      return;
     }
 
-    utterance.onend   = () => setPlaying(false);
-    utterance.onerror = () => setPlaying(false);
-    utteranceRef.current = utterance;
-    synth.speak(utterance);
-    setPlaying(true);
+    // Fetch fresh TTS audio from OpenAI
+    setAudioLoading(true);
+    try {
+      const fullText = `${verse?.reference}. ${explanation}`;
+      const res = await fetch("/api/verse-tts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: fullText, voice: selectedVoice }),
+      });
+
+      if (!res.ok) throw new Error("TTS failed");
+
+      const blob = await res.blob();
+      const url  = URL.createObjectURL(blob);
+      audioBlobRef.current = url;
+
+      const audio = new Audio(url);
+      audioRef.current = audio;
+      audio.onended  = () => setPlaying(false);
+      audio.onerror  = () => { setPlaying(false); setError("Audio playback failed."); };
+      audio.play().catch(() => setPlaying(false));
+      setPlaying(true);
+    } catch {
+      setError("Couldn't generate audio. Please try again.");
+    } finally {
+      setAudioLoading(false);
+    }
   }, [explanation, playing, verse, selectedVoice]);
 
-  // Close on Escape or backdrop click
+  // Close on Escape
   useEffect(() => {
-    const handler = (e: KeyboardEvent) => { if (e.key === "Escape") { onClose(); } };
+    const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, [onClose]);
 
   if (!verse) return null;
-
 
   return (
     <>
@@ -161,7 +171,7 @@ export default function VerseExplainDrawer({ verse, onClose }: Props) {
       <div
         className="fixed inset-0 z-40 bg-black/30 backdrop-blur-sm transition-opacity duration-300"
         style={{ opacity: mounted ? 1 : 0 }}
-        onClick={() => { onClose(); }}
+        onClick={onClose}
       />
 
       {/* Drawer */}
@@ -226,48 +236,49 @@ export default function VerseExplainDrawer({ verse, onClose }: Props) {
                 {explanation}
               </p>
 
-              {/* Voice picker — shown above play button so dropdown opens into view */}
-              {voices.length > 0 && (
-                <div className="mt-5">
-                  <p className="text-[10px] font-semibold mb-1.5" style={{ color: "rgba(255,255,255,0.4)" }}>VOICE</p>
-                  <div className="flex flex-wrap gap-2">
-                    {voices.map((v) => {
-                      // Strip locale suffixes like " - English (United States)" → keep first segment
-                      const shortName = v.name
-                        .replace(/\s*-\s*English.*$/i, "")
-                        .replace(/\s*\(.*?\)/g, "")
-                        .trim();
-                      const isSelected = v.name === selectedVoice;
-                      return (
-                        <button
-                          key={v.name}
-                          onClick={() => handleVoiceSelect(v.name)}
-                          className="px-3 py-1.5 rounded-full text-xs font-semibold transition active:scale-95"
-                          style={{
-                            background: isSelected ? GOLD : "rgba(255,255,255,0.08)",
-                            color: isSelected ? NAVY : "rgba(255,255,255,0.7)",
-                            border: isSelected ? "none" : "1px solid rgba(255,255,255,0.15)",
-                          }}
-                        >
-                          {shortName}
-                        </button>
-                      );
-                    })}
-                  </div>
+              {/* Voice picker */}
+              <div className="mt-5">
+                <p className="text-[10px] font-semibold mb-2" style={{ color: "rgba(255,255,255,0.4)" }}>
+                  VOICE — powered by OpenAI
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {TTS_VOICES.map((v) => {
+                    const isSelected = v.id === selectedVoice;
+                    return (
+                      <button
+                        key={v.id}
+                        onClick={() => handleVoiceSelect(v.id)}
+                        title={v.desc}
+                        className="flex flex-col items-start px-3 py-2 rounded-xl text-xs font-semibold transition active:scale-95"
+                        style={{
+                          background: isSelected ? GOLD : "rgba(255,255,255,0.07)",
+                          color: isSelected ? NAVY : "rgba(255,255,255,0.75)",
+                          border: isSelected ? "none" : "1px solid rgba(255,255,255,0.12)",
+                          minWidth: 68,
+                        }}
+                      >
+                        <span className="font-black">{v.label}</span>
+                        <span className={`text-[10px] mt-0.5 ${isSelected ? "opacity-70" : "opacity-50"}`}>{v.desc}</span>
+                      </button>
+                    );
+                  })}
                 </div>
-              )}
+              </div>
 
-              {/* Play / Stop button */}
-              <div className="mt-4 flex items-center gap-3">
+              {/* Play / Pause button */}
+              <div className="mt-4">
                 <button
                   onClick={handlePlayPause}
-                  className="flex items-center gap-2.5 px-4 py-2.5 rounded-full text-sm font-semibold transition active:scale-95 shrink-0"
+                  disabled={audioLoading}
+                  className="flex items-center gap-2.5 px-4 py-2.5 rounded-full text-sm font-semibold transition active:scale-95 disabled:opacity-60"
                   style={{
                     background: playing ? "rgba(255,255,255,0.12)" : GOLD,
                     color: playing ? "white" : NAVY,
                   }}
                 >
-                  {playing ? (
+                  {audioLoading ? (
+                    <><Loader2 size={16} className="animate-spin" /> Generating audio…</>
+                  ) : playing ? (
                     <><VolumeX size={16} /> Stop Audio</>
                   ) : (
                     <><Volume2 size={16} /> Play Explanation</>
