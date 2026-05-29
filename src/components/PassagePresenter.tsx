@@ -3,6 +3,8 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import useReadingPlan, { ReadingPlanEntry } from "@/components/useReadingPlan";
 import { BookOpen } from "lucide-react";
+import VerseExplainDrawer from "@/components/VerseExplainDrawer";
+import type { ExplainVerse } from "@/components/VerseExplainDrawer";
 
 // ---------------------------------------------------------------------------
 // Design tokens
@@ -257,6 +259,7 @@ export default function PassagePresenter({
   const [loadingChapter, setLoadingChapter] = useState(false);
   const [wordStudy, setWordStudy] = useState(false);
   const [presentMode, setPresentMode] = useState(false);
+  const [activeExplainVerse, setActiveExplainVerse] = useState<ExplainVerse | null>(null);
 
   // ── View ─────────────────────────────────────────────────────────────────
   const [activeTab, setActiveTab] = useState<"search" | "plan">("search");
@@ -631,7 +634,11 @@ export default function PassagePresenter({
                         ) : (
                           <p key={v.verse} className="leading-relaxed">
                             <sup className="mr-1 text-xs font-bold" style={{ color: GOLD }}>{v.verse}</sup>
-                            {v.text}
+                            <span
+                              className="cursor-pointer hover:bg-amber-100/60 rounded-sm transition-colors duration-150"
+                              title={`Tap for verse insight`}
+                              onClick={() => setActiveExplainVerse({ reference: `${presentBook} ${presentChapter}:${v.verse}`, text: v.text })}
+                            >{v.text}</span>
                           </p>
                         )
                       )
@@ -643,7 +650,11 @@ export default function PassagePresenter({
                           ) : (
                             <span key={v.verse}>
                               <sup className="mr-0.5 text-xs font-bold" style={{ color: GOLD }}>{v.verse}</sup>
-                              {v.text}{" "}
+                              <span
+                                className="cursor-pointer hover:bg-amber-100/60 rounded-sm transition-colors duration-150"
+                                title={`Tap for verse insight`}
+                                onClick={() => setActiveExplainVerse({ reference: `${presentBook} ${presentChapter}:${v.verse}`, text: v.text })}
+                              >{v.text}</span>{" "}
                             </span>
                           )
                         )}
@@ -792,6 +803,12 @@ export default function PassagePresenter({
           )}
         </div>
       )}
+
+      {/* ── Verse explain drawer ──────────────────────────────────────────── */}
+      <VerseExplainDrawer
+        verse={activeExplainVerse}
+        onClose={() => setActiveExplainVerse(null)}
+      />
     </div>
   );
 }

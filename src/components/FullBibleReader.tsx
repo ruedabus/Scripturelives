@@ -5,6 +5,8 @@ import type { BibleSearchResult } from "@/app/api/bible/search/route";
 import VerseShareModal from "@/components/VerseShareModal";
 import type { ShareVerse } from "@/components/VerseShareModal";
 import StreakBadge from "@/components/StreakBadge";
+import VerseExplainDrawer from "@/components/VerseExplainDrawer";
+import type { ExplainVerse } from "@/components/VerseExplainDrawer";
 
 type BibleVersion = "KJV" | "ASV" | "WEB" | "NIV" | "NLT" | "AMP" | "RVR1960";
 
@@ -401,6 +403,9 @@ export default function FullBibleReader({
   }, [version]);
 
   const closeShareModal = useCallback(() => setActiveShareVerse(null), []);
+
+  // ── Verse explain (AI + TTS) ───────────────────────────────────────────────
+  const [activeExplainVerse, setActiveExplainVerse] = useState<ExplainVerse | null>(null);
 
   // Highlight matched terms in verse text
   const highlightSearch = useMemo(() => {
@@ -844,7 +849,13 @@ export default function FullBibleReader({
                                 share
                               </span>
                             </sup>
-                            {readingMode === "visual" && onVisualSearch ? highlightTerms(v.text, onVisualSearch) : v.text}{" "}
+                            <span
+                              className="cursor-pointer hover:bg-amber-100/60 rounded-sm transition-colors duration-150"
+                              title={`Tap for verse insight — ${v.reference}`}
+                              onClick={() => setActiveExplainVerse({ reference: v.reference, text: v.text })}
+                            >
+                              {readingMode === "visual" && onVisualSearch ? highlightTerms(v.text, onVisualSearch) : v.text}
+                            </span>{" "}
                           </span>
                         ))}
                       </p>
@@ -861,6 +872,12 @@ export default function FullBibleReader({
       {activeShareVerse && (
         <VerseShareModal verse={activeShareVerse} onClose={closeShareModal} />
       )}
+
+      {/* ── Verse explain drawer ──────────────────────────────────────────────── */}
+      <VerseExplainDrawer
+        verse={activeExplainVerse}
+        onClose={() => setActiveExplainVerse(null)}
+      />
 
       {/* Bottom chapter nav */}
       {!loading && verses.length > 0 && (
