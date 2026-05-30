@@ -424,15 +424,15 @@ function parseStepHtml(html: string, book: string, chapter: number, isOT: boolea
     // Extract word spans with Strong's numbers
     const wordRegex = /data-strong="([^"]+)"[^>]*data-morph="([^"]*)"[^>]*>.*?<span[^>]*>([^<]+)<\/span>/g;
     for (const [, strong, morph, original] of [...block.matchAll(wordRegex)]) {
-      // Also try to find the gloss from the interlinear gloss span
       const lexEntry = lex[strong];
-      if (!lexEntry) continue;
+      // Always include the word — even if not in lexicon (e.g. proper nouns).
+      // Fall back to the original script text as the gloss when no entry exists.
       words.push({
-        english:  lexEntry.kjv_def.split(/[;,(]/)[0]?.trim().slice(0,30) ?? "",
+        english:  lexEntry ? (lexEntry.kjv_def.split(/[;,(]/)[0]?.trim().slice(0,30) ?? "") : "",
         original: original.trim(),
-        xlit:     lexEntry.xlit,
+        xlit:     lexEntry?.xlit ?? "",
         strongs:  strong,
-        gloss:    lexEntry.kjv_def.split(/[;,(]/)[0]?.trim().slice(0,40) ?? "",
+        gloss:    lexEntry ? (lexEntry.kjv_def.split(/[;,(]/)[0]?.trim().slice(0,40) ?? "") : "",
         morph:    morph || undefined,
         isOT,
       });
