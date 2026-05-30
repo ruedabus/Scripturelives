@@ -9,8 +9,8 @@ type Message = { role: "user" | "assistant"; content: string; id?: string };
 
 type View = "chat" | "pastor";
 
-const GREETING_EN = "Hi! I'm your Scripture Lives Assistant 📖 Ask me anything about Scripture — verses on a topic, biblical history, facts, timelines, and more. For personal guidance, use the 'Ask a Pastor' button below.";
-const GREETING_ES = "¡Hola! Soy tu Asistente de Scripture Lives 📖 Pregúntame cualquier cosa sobre las Escrituras — versículos por tema, historia bíblica, datos, cronologías y más. Para orientación personal, usa el botón 'Preguntar al Pastor'.";
+const GREETING_EN = "Hi! I'm your Scripture Lives Assistant 📖 Ask me anything about Scripture — verses on a topic, biblical history, facts, timelines, and more.\n\nI'm not able to answer spiritual, theological, or opinion-based questions. For those, please submit them to your local church Pastor — or use the 'Ask a Pastor' button below.";
+const GREETING_ES = "¡Hola! Soy tu Asistente de Scripture Lives 📖 Pregúntame cualquier cosa sobre las Escrituras — versículos por tema, historia bíblica, datos, cronologías y más.\n\nNo puedo responder preguntas espirituales, teológicas ni de opinión. Para esas, por favor comunícate con el Pastor de tu iglesia local — o usa el botón 'Preguntar al Pastor'.";
 
 export default function BibleTeacherChat() {
   const [open, setOpen]         = useState(false);
@@ -328,7 +328,9 @@ export default function BibleTeacherChat() {
                             : { background: "white", color: "#3a3025", border: "1px solid #ede8de", borderBottomLeftRadius: "4px" }
                         }
                       >
-                        {m.content}
+                        {m.content.split("\n\n").map((para, pi) => (
+                          <p key={pi} className={pi > 0 ? "mt-2" : ""}>{para}</p>
+                        ))}
                       </div>
                       {/* Flag button for assistant messages */}
                       {m.role === "assistant" && m.id && (
