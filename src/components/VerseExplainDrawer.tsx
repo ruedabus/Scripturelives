@@ -289,10 +289,7 @@ export default function VerseExplainDrawer({ verse, onClose }: Props) {
               </div>
 
               <p className="mt-4 text-[10px]" style={{ color: "rgba(255,255,255,0.3)" }}>
-                {source === "NET Bible Translator Notes"
-                  ? <>Insight grounded in <span style={{ color: "rgba(201,149,42,0.7)" }}>NET Bible Translator Notes</span> · Summarized by AI · For personal devotional use</>
-                  : <>Powered by Scripture Lives AI · For personal devotional use</>
-                }
+                {source} · For personal devotional use
               </p>
             </div>
           )}
