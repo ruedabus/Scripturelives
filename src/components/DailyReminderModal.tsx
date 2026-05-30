@@ -6,6 +6,7 @@ import {
   scheduleReminder,
   disableReminder,
   getReminderSettings,
+  sendTestNotification,
 } from "@/lib/reminderService";
 
 const GOLD = "#C9952A";
@@ -88,6 +89,7 @@ export default function DailyReminderModal({ open, onClose }: Props) {
   const [time,        setTime]        = useState("07:00");
   const [saving,      setSaving]      = useState(false);
   const [saved,       setSaved]       = useState(false);
+  const [testing,     setTesting]     = useState(false);
   const [permission,  setPermission]  = useState<NotificationPermission | "unknown">("unknown");
   const [supported,   setSupported]   = useState(true);
 
@@ -130,6 +132,12 @@ export default function DailyReminderModal({ open, onClose }: Props) {
     disableReminder();
     setEnabled(false);
     setSaved(false);
+  }
+
+  async function handleTest() {
+    setTesting(true);
+    await sendTestNotification();
+    setTesting(false);
   }
 
   if (!open) return null;
@@ -331,6 +339,18 @@ export default function DailyReminderModal({ open, onClose }: Props) {
                     </button>
                   )}
                 </div>
+
+                {/* Test notification */}
+                {enabled && (
+                  <button
+                    onClick={handleTest}
+                    disabled={testing}
+                    className="w-full mt-2 py-2 rounded-xl text-xs font-semibold transition hover:bg-white/10 disabled:opacity-50"
+                    style={{ color: "rgba(255,255,255,0.45)", border: "1px solid rgba(255,255,255,0.08)" }}
+                  >
+                    {testing ? "Sending…" : "Send a test notification now"}
+                  </button>
+                )}
 
                 {/* PWA tip */}
                 <div

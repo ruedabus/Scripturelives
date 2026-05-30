@@ -16,15 +16,15 @@ const STORAGE_FIRED = "scripture-lives-reminder-fired";
 
 let timerHandle: ReturnType<typeof setTimeout> | null = null;
 
-// Rotating daily messages
+// Rotating daily messages — written like a personal text from a friend
 const MESSAGES = [
-  "Time to spend time with Jesus today 🙏",
-  "Open the Word — He is waiting for you ✝️",
-  "A few minutes with God can change your whole day 📖",
-  "Your daily reminder to seek Him first 🌅",
-  "Come to Me, all who are weary... — Jesus ❤️",
-  "Good morning! Start your day in Scripture 📖",
-  "The LORD's mercies are new every morning 🌄",
+  "Hey! Just checking in — have you spent time with Jesus today? 🙏",
+  "Don't forget Him today. Even 5 minutes in the Word can change everything ✝️",
+  "Good morning! He's been waiting to hear from you 🌅",
+  "Quick reminder: open the Bible today, even just one chapter. You'll be glad you did 📖",
+  "\"Come to Me, all who are weary...\" — Jesus is calling. Take a moment with Him ❤️",
+  "His mercies are brand new this morning. Don't miss it 🌄",
+  "Hey — life is busy, but don't let today go by without a moment with God 🙏",
 ];
 
 function todayMessage(): string {
@@ -55,17 +55,39 @@ async function ensureSW(): Promise<ServiceWorkerRegistration | null> {
 /** Fire the notification right now via the service worker */
 async function fireNotification() {
   const reg = await navigator.serviceWorker.ready.catch(() => null);
-  if (!reg) return;
+  if (!reg) {
+    console.warn("[reminder] No service worker registration available");
+    return;
+  }
 
-  reg.active?.postMessage({
+  // Use whichever SW state is available — active is ideal, but installing/waiting
+  // can also receive messages right after a fresh registration
+  const sw = reg.active ?? reg.installing ?? reg.waiting;
+  if (!sw) {
+    console.warn("[reminder] No service worker instance found");
+    return;
+  }
+
+  sw.postMessage({
     type:  "SHOW_REMINDER",
     title: "Scripture Lives 📖",
     body:  todayMessage(),
     icon:  "/Hand-painted cross_logo.png",
   });
 
-  // Record that we fired today
+  // Only record fired AFTER successfully posting the message
   localStorage.setItem(STORAGE_FIRED, new Date().toISOString());
+}
+
+/** Fire a test notification immediately (for debugging/UX verification) */
+export async function sendTestNotification(): Promise<boolean> {
+  if (typeof window === "undefined" || !("Notification" in window)) return false;
+  if (Notification.permission !== "granted") return false;
+  await ensureSW();
+  // Small delay to ensure SW is active after registration
+  await new Promise(r => setTimeout(r, 500));
+  await fireNotification();
+  return true;
 }
 
 /** Calculate ms until the next occurrence of HH:MM */

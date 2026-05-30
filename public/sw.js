@@ -32,15 +32,17 @@ self.addEventListener("notificationclick", (e) => {
 self.addEventListener("message", (e) => {
   if (e.data?.type === "SHOW_REMINDER") {
     const { title, body, icon } = e.data;
-    self.registration.showNotification(title ?? "Scripture Lives", {
-      body:    body  ?? "Time to spend time with Jesus today 🙏",
-      icon:    icon  ?? "/Hand-painted cross_logo.png",
-      badge:   "/Hand-painted cross_logo.png",
-      tag:     "daily-reminder",        // replaces previous notification instead of stacking
-      renotify: true,
+    self.registration.showNotification(title ?? "Scripture Lives 📖", {
+      body:             body ?? "Hey! Don't forget your time with Jesus today 🙏",
+      icon:             icon ?? "/Hand-painted cross_logo.png",
+      badge:            "/Hand-painted cross_logo.png",
+      tag:              "daily-reminder",   // replaces previous instead of stacking
+      renotify:         true,
+      requireInteraction: true,             // stays until user taps — like a text message
+      vibrate:          [200, 100, 200],    // gentle double-buzz on mobile
       actions: [
-        { action: "open", title: "Open Bible" },
-        { action: "dismiss", title: "Dismiss" },
+        { action: "open",    title: "📖 Open Bible" },
+        { action: "dismiss", title: "Later"          },
       ],
     });
   }
