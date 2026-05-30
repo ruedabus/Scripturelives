@@ -215,7 +215,7 @@ function VerseRow({
         style={{
           background: "#f9f7f2",
           border: "1px solid #ede8de",
-          direction: verse.isOT ? "rtl" : "ltr",
+          direction: "ltr",
         }}
       >
         {verse.words.map((w, i) => (
