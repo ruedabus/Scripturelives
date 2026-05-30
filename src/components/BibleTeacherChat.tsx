@@ -9,8 +9,8 @@ type Message = { role: "user" | "assistant"; content: string; id?: string };
 
 type View = "chat" | "pastor";
 
-const GREETING_EN = "Hi! I'm your Scripture Lives Assistant 📖 Ask me anything about Scripture — verses on a topic, biblical history, facts, timelines, and more.\n\nI'm not able to answer spiritual, theological, or opinion-based questions. For those, please submit them to your local church Pastor — or use the 'Ask a Pastor' button below.";
-const GREETING_ES = "¡Hola! Soy tu Asistente de Scripture Lives 📖 Pregúntame cualquier cosa sobre las Escrituras — versículos por tema, historia bíblica, datos, cronologías y más.\n\nNo puedo responder preguntas espirituales, teológicas ni de opinión. Para esas, por favor comunícate con el Pastor de tu iglesia local — o usa el botón 'Preguntar al Pastor'.";
+const GREETING_EN = "Hi! I'm your Scripture Lives Assistant 📖 Ask me anything about Scripture — verses on a topic, biblical history, facts, timelines, and more.\n\nPlease always verify with Scripture (be a Berean, Acts 17:11).\n\nI'm not able to answer spiritual, theological, or opinion-based questions. For those, please submit them to your local church Pastor — or use the 'Ask a Pastor' button below.";
+const GREETING_ES = "¡Hola! Soy tu Asistente de Scripture Lives 📖 Pregúntame cualquier cosa sobre las Escrituras — versículos por tema, historia bíblica, datos, cronologías y más.\n\nPor favor, verifica siempre con las Escrituras (sé un bereo, Hechos 17:11).\n\nNo puedo responder preguntas espirituales, teológicas ni de opinión. Para esas, por favor comunícate con el Pastor de tu iglesia local — o usa el botón 'Preguntar al Pastor'.";
 
 export default function BibleTeacherChat() {
   const [open, setOpen]         = useState(false);
