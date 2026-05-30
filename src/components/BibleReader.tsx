@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { verses, Verse, VersePlace } from "@/data/verses";
 import { journeys, Journey, ALL_JOURNEY_ERAS, JOURNEY_ERA_DOT, JOURNEY_ERA_BADGE, type JourneyEra } from "@/data/journeys";
 import dynamic from "next/dynamic";
@@ -327,6 +328,14 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
   const [ancientLocationSearch, setAncientLocationSearch] = useState("");
   const [activeJourneyStop, setActiveJourneyStop] = useState<number | null>(null);
   const [leftPanelTab, setLeftPanelTab] = useState<LeftPanelTab>(initialTab ?? "home");
+
+  // Sync leftPanelTab when the URL ?tab= param changes (e.g. mobile menu navigation
+  // while already on /bible — Next.js client-side transitions don't remount the component)
+  const searchParams = useSearchParams();
+  useEffect(() => {
+    const tab = searchParams.get("tab") as LeftPanelTab | null;
+    if (tab) setLeftPanelTab(tab);
+  }, [searchParams]);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const [reminderOpen,     setReminderOpen]     = useState(false);
   const [homeQuery, setHomeQuery] = useState("");

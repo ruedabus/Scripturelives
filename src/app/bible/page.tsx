@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import BibleReader from "@/components/BibleReader";
 
 export const metadata: Metadata = {
@@ -23,5 +24,9 @@ export default async function BiblePage({
 }) {
   const { tab } = await searchParams;
   const initialTab = VALID_TABS.includes(tab as ValidTab) ? (tab as ValidTab) : undefined;
-  return <BibleReader initialTab={initialTab} />;
+  return (
+    <Suspense fallback={null}>
+      <BibleReader initialTab={initialTab} />
+    </Suspense>
+  );
 }
