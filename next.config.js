@@ -36,7 +36,7 @@ const securityHeaders = [
       // Frames: YouTube embeds only
       "frame-src https://www.youtube.com https://www.youtube-nocookie.com https://echotvstudios.com https://www.echotvstudios.com",
       // Fetch / XHR / API calls
-      "connect-src 'self' https://rest.api.bible https://api.openai.com https://en.wikipedia.org https://en.m.wikipedia.org https://www.googleapis.com https://*.supabase.co",
+      "connect-src 'self' https://rest.api.bible https://api.openai.com https://en.wikipedia.org https://en.m.wikipedia.org https://www.googleapis.com https://*.supabase.co https://labs.bible.org https://api.stepbible.org",
       // Media — blob: required for OpenAI TTS audio playback
       "media-src 'self' blob:",
       // Object/plugin embeds — none

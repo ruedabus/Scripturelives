@@ -32,6 +32,7 @@ type Props = {
 
 export default function VerseExplainDrawer({ verse, onClose }: Props) {
   const [explanation,   setExplanation]   = useState<string | null>(null);
+  const [source,        setSource]        = useState<string>("Scripture Lives AI");
   const [loading,       setLoading]       = useState(false);
   const [error,         setError]         = useState("");
   const [playing,       setPlaying]       = useState(false);
@@ -91,6 +92,7 @@ export default function VerseExplainDrawer({ verse, onClose }: Props) {
         const data = await res.json();
         if (!res.ok) throw new Error(data.error ?? "Failed");
         setExplanation(data.explanation);
+        setSource(data.source ?? "Scripture Lives AI");
       })
       .catch((err) => {
         if (err.name !== "AbortError") setError("Couldn't load explanation. Please try again.");
@@ -287,7 +289,10 @@ export default function VerseExplainDrawer({ verse, onClose }: Props) {
               </div>
 
               <p className="mt-4 text-[10px]" style={{ color: "rgba(255,255,255,0.3)" }}>
-                Powered by Scripture Lives AI · For personal devotional use
+                {source === "NET Bible Translator Notes"
+                  ? <>Insight grounded in <span style={{ color: "rgba(201,149,42,0.7)" }}>NET Bible Translator Notes</span> · Summarized by AI · For personal devotional use</>
+                  : <>Powered by Scripture Lives AI · For personal devotional use</>
+                }
               </p>
             </div>
           )}
