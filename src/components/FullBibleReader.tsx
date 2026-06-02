@@ -7,9 +7,9 @@ import type { ShareVerse } from "@/components/VerseShareModal";
 import StreakBadge from "@/components/StreakBadge";
 import VerseExplainDrawer from "@/components/VerseExplainDrawer";
 import type { ExplainVerse } from "@/components/VerseExplainDrawer";
-import VerseAnnotationToolbar, { highlightBg } from "@/components/VerseAnnotationToolbar";
 import { useAnnotations } from "@/components/useAnnotations";
 import type { HighlightColor } from "@/components/useAnnotations";
+import VerseHoverBar from "@/components/VerseHoverBar";
 
 type BibleVersion = "KJV" | "ASV" | "WEB" | "NIV" | "NLT" | "AMP" | "RVR1960";
 
@@ -412,18 +412,6 @@ export default function FullBibleReader({
 
   // ── Annotations (highlights + notes) ──────────────────────────────────────
   const annotations = useAnnotations();
-  const [activeAnnotationRef, setActiveAnnotationRef] = useState<string | null>(null);
-
-  // Long-press support for mobile
-  const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  function handleVersePointerDown(reference: string) {
-    longPressTimer.current = setTimeout(() => {
-      setActiveAnnotationRef(reference);
-    }, 500);
-  }
-  function handleVersePointerUp() {
-    if (longPressTimer.current) { clearTimeout(longPressTimer.current); longPressTimer.current = null; }
-  }
 
   // Highlight matched terms in verse text
   const highlightSearch = useMemo(() => {
@@ -854,67 +842,24 @@ export default function FullBibleReader({
                     const isPoetry = POETRY_BOOKS.has(selectedBook);
                     return (
                       <p key={pi} className={isPoetry ? "border-l-2 border-amber-300 pl-4 italic text-stone-600" : "indent-6"}>
-                        {para.map((v) => {
-                          const hl = annotations.getHighlight(v.reference);
-                          const hasNote = !!annotations.getNote(v.reference);
-                          const isAnnotating = activeAnnotationRef === v.reference;
-                          return (
-                          <span key={v.id} className="group/verse relative">
-                            <sup
-                              className="mr-[2px] ml-[1px] text-[10px] font-bold text-amber-600 not-italic select-none align-top leading-none cursor-pointer hover:text-amber-400 transition relative"
-                              title={`Share ${v.reference}`}
-                              onClick={() => openShareModal(v)}
-                            >
-                              {v.verse}
-                              <span className="hidden group-hover/verse:inline-block absolute -top-5 left-1/2 -translate-x-1/2 whitespace-nowrap rounded bg-stone-800 text-white text-[9px] px-1.5 py-0.5 pointer-events-none z-10 shadow-lg">
-                                share
-                              </span>
-                            </sup>
-                            {/* Annotation toolbar trigger — pencil icon on hover */}
-                            <span
-                              className="hidden group-hover/verse:inline-flex items-center justify-center w-4 h-4 rounded cursor-pointer transition mr-0.5 relative top-[-1px]"
-                              style={{ background: "rgba(180,140,60,0.18)" }}
-                              title={`Highlight or add note — ${v.reference}`}
-                              onClick={(e) => { e.stopPropagation(); setActiveAnnotationRef(isAnnotating ? null : v.reference); }}
-                            >
-                              <span style={{ fontSize: 9, color: "#d97706" }}>✏</span>
-                            </span>
-                            {/* Note indicator dot */}
-                            {hasNote && (
-                              <span
-                                className="inline-block w-1.5 h-1.5 rounded-full mr-0.5 relative top-[-3px] cursor-pointer"
-                                style={{ background: "#d97706" }}
-                                title="Has note"
-                                onClick={(e) => { e.stopPropagation(); setActiveAnnotationRef(v.reference); }}
-                              />
-                            )}
-                            <span
-                              className="cursor-pointer rounded-sm transition-colors duration-150"
-                              style={{ background: hl ? highlightBg(hl) : undefined, padding: hl ? "1px 2px" : undefined }}
-                              title={`Tap for verse insight — ${v.reference}`}
-                              onClick={() => setActiveExplainVerse({ reference: v.reference, text: v.text })}
-                              onPointerDown={() => handleVersePointerDown(v.reference)}
-                              onPointerUp={handleVersePointerUp}
-                              onPointerLeave={handleVersePointerUp}
-                            >
-                              {readingMode === "visual" && onVisualSearch ? highlightTerms(v.text, onVisualSearch) : v.text}
-                            </span>{" "}
-                            {/* Annotation toolbar */}
-                            {isAnnotating && (
-                              <VerseAnnotationToolbar
-                                reference={v.reference}
-                                currentHighlight={annotations.getHighlight(v.reference)}
-                                currentNote={annotations.getNote(v.reference)}
-                                onSetHighlight={(color: HighlightColor) => annotations.setHighlight(v.reference, color)}
-                                onClearHighlight={() => annotations.clearHighlight(v.reference)}
-                                onSaveNote={(text: string) => annotations.saveNote(v.reference, text)}
-                                onDeleteNote={() => annotations.deleteNote(v.reference)}
-                                onClose={() => setActiveAnnotationRef(null)}
-                              />
-                            )}
-                          </span>
-                          );
-                        })}
+                        {para.map((v) => (
+                          <VerseHoverBar
+                            key={v.id}
+                            reference={v.reference}
+                            text={v.text}
+                            verseNum={v.verse}
+                            highlight={annotations.getHighlight(v.reference)}
+                            note={annotations.getNote(v.reference)}
+                            onShare={() => openShareModal(v)}
+                            onInsight={() => setActiveExplainVerse({ reference: v.reference, text: v.text })}
+                            onSetHighlight={(color: HighlightColor) => annotations.setHighlight(v.reference, color)}
+                            onClearHighlight={() => annotations.clearHighlight(v.reference)}
+                            onSaveNote={(text: string) => annotations.saveNote(v.reference, text)}
+                            onDeleteNote={() => annotations.deleteNote(v.reference)}
+                          >
+                            {readingMode === "visual" && onVisualSearch ? highlightTerms(v.text, onVisualSearch) : v.text}
+                          </VerseHoverBar>
+                        ))}{" "}
                       </p>
                     );
                   })}
