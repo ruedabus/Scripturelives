@@ -420,6 +420,41 @@ export default function FullBibleReader({
   // ── Annotations (highlights + notes) ──────────────────────────────────────
   const annotations = useAnnotations();
 
+  // ── Red letter (Jesus's words, KJV only) ──────────────────────────────────
+  type RedEntry = "full" | string[];
+  const [redLetter, setRedLetter] = useState<Record<string, RedEntry>>({});
+
+  useEffect(() => {
+    setRedLetter({});
+    if (version !== "KJV" || !selectedBook) return;
+    fetch(`/api/red-letter?book=${encodeURIComponent(selectedBook)}&chapter=${selectedChapter}`)
+      .then((r) => r.json())
+      .then((d) => setRedLetter(d.redLetter ?? {}))
+      .catch(() => {});
+  }, [version, selectedBook, selectedChapter]);
+
+  /** Wrap Jesus's words in red spans. Handles full-verse and partial-verse. */
+  function applyRedLetter(text: string, verseNum: number): React.ReactNode {
+    const entry = redLetter[String(verseNum)];
+    if (!entry) return text;
+    if (entry === "full") {
+      return <span style={{ color: "#b91c1c" }}>{text}</span>;
+    }
+    // Partial — highlight each red segment
+    let remaining = text;
+    const nodes: React.ReactNode[] = [];
+    let key = 0;
+    for (const segment of entry as string[]) {
+      const idx = remaining.indexOf(segment);
+      if (idx === -1) { nodes.push(remaining); remaining = ""; break; }
+      if (idx > 0) nodes.push(<span key={key++}>{remaining.slice(0, idx)}</span>);
+      nodes.push(<span key={key++} style={{ color: "#b91c1c" }}>{segment}</span>);
+      remaining = remaining.slice(idx + segment.length);
+    }
+    if (remaining) nodes.push(<span key={key++}>{remaining}</span>);
+    return <>{nodes}</>;
+  }
+
   // Highlight matched terms in verse text
   const highlightSearch = useMemo(() => {
     const terms = searchQuery.trim().toLowerCase().split(/\s+/).filter((w) => w.length >= 2);
@@ -868,7 +903,9 @@ export default function FullBibleReader({
                             onSaveNote={(text: string) => annotations.saveNote(v.reference, text)}
                             onDeleteNote={() => annotations.deleteNote(v.reference)}
                           >
-                            {readingMode === "visual" && onVisualSearch ? highlightTerms(v.text, onVisualSearch) : v.text}
+                            {readingMode === "visual" && onVisualSearch
+                              ? highlightTerms(v.text, onVisualSearch)
+                              : applyRedLetter(v.text, v.verse)}
                           </VerseHoverBar>
                         ))}{" "}
                       </p>
