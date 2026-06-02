@@ -134,7 +134,8 @@ function highlightTerms(text: string, onTerm: (term: string) => void): React.Rea
         <button
           key={i}
           type="button"
-          onClick={() => onTerm(lower)}
+          onClick={(e) => { e.stopPropagation(); onTerm(lower); }}
+          onContextMenu={(e) => e.stopPropagation()}
           className="text-amber-600 underline decoration-dotted underline-offset-2 hover:text-amber-600 transition"
           title={`View visual reference for "${part}"`}
         >

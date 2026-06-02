@@ -256,7 +256,6 @@ export default function VerseHoverBar({
           padding:    highlight ? "1px 2px" : undefined,
           cursor:     "context-menu",
         }}
-        onClick={() => { if (!lpFired.current) onInsight(); }}
       >
         {children}
       </span>
