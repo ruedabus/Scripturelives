@@ -2,49 +2,94 @@
 
 /**
  * ChapterSuperscription
- * Displays the biblical superscription (header) for a chapter when one exists.
- * Fetches from /api/superscription. Currently covers 114 Psalms in KJV.
+ * Shows:
+ *  1. Biblical superscription (KJV Psalm headings — 114 chapters)
+ *  2. AI-generated chapter summary (all 1,189 canonical chapters, pre-generated)
  */
 
 import { useEffect, useState } from "react";
+import { BookOpen } from "lucide-react";
 
 type Props = {
   book:    string;
   chapter: number;
-  version: string; // only shown for KJV (local version with the data)
+  version: string;
 };
 
 export default function ChapterSuperscription({ book, chapter, version }: Props) {
-  const [text, setText] = useState<string | null>(null);
+  const [superscription, setSuperscription] = useState<string | null>(null);
+  const [summary,        setSummary]        = useState<string | null>(null);
 
+  // Biblical superscription — KJV only
   useEffect(() => {
-    // Only KJV has superscription data
-    if (version !== "KJV") { setText(null); return; }
-
-    setText(null);
+    setSuperscription(null);
+    if (version !== "KJV") return;
     let cancelled = false;
-
     fetch(`/api/superscription?book=${encodeURIComponent(book)}&chapter=${chapter}`)
       .then((r) => r.json())
-      .then((d) => { if (!cancelled) setText(d.superscription ?? null); })
-      .catch(() => { /* silently skip */ });
-
+      .then((d) => { if (!cancelled) setSuperscription(d.superscription ?? null); })
+      .catch(() => {});
     return () => { cancelled = true; };
   }, [book, chapter, version]);
 
-  if (!text) return null;
+  // AI chapter summary — all versions
+  useEffect(() => {
+    setSummary(null);
+    let cancelled = false;
+    fetch(`/api/chapter-summary?book=${encodeURIComponent(book)}&chapter=${chapter}`)
+      .then((r) => r.json())
+      .then((d) => { if (!cancelled) setSummary(d.summary ?? null); })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, [book, chapter]);
+
+  if (!superscription && !summary) return null;
 
   return (
-    <div
-      className="mb-5 px-4 py-3 rounded-xl italic text-center font-serif leading-relaxed"
-      style={{
-        background:  "rgba(180,140,60,0.08)",
-        borderLeft:  "3px solid #d97706",
-        color:       "#78350f",
-        fontSize:    "0.85em",
-      }}
-    >
-      {text}
+    <div className="mb-5 space-y-2">
+
+      {/* Biblical superscription (Psalm headings) */}
+      {superscription && (
+        <div
+          className="px-4 py-2.5 rounded-xl italic text-center font-serif leading-relaxed"
+          style={{
+            background: "rgba(180,140,60,0.08)",
+            borderLeft: "3px solid #d97706",
+            color:      "#78350f",
+            fontSize:   "0.85em",
+          }}
+        >
+          {superscription}
+        </div>
+      )}
+
+      {/* AI chapter summary */}
+      {summary && (
+        <div
+          className="rounded-xl px-4 py-3"
+          style={{
+            background:   "rgba(26,38,64,0.05)",
+            border:       "1px solid rgba(26,38,64,0.12)",
+          }}
+        >
+          <div className="flex items-center gap-1.5 mb-1.5">
+            <BookOpen size={11} style={{ color: "#6b7280" }} />
+            <span
+              className="text-[10px] font-black uppercase tracking-widest"
+              style={{ color: "#9ca3af" }}
+            >
+              Chapter Overview
+            </span>
+          </div>
+          <p
+            className="text-sm leading-relaxed font-serif"
+            style={{ color: "#44403c" }}
+          >
+            {summary}
+          </p>
+        </div>
+      )}
+
     </div>
   );
 }
