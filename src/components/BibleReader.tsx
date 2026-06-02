@@ -42,11 +42,12 @@ import ChristianNews from "@/components/ChristianNews";
 import StudyNotes from "@/components/StudyNotes";
 import GospelCard from "@/components/GospelCard";
 import EchoTVCard from "@/components/EchoTVCard";
+import AnnotationsPanel from "@/components/AnnotationsPanel";
 import {
   Home, Feather, BookOpen, Library, Layers, BookText, BookMarked,
   ScrollText, Landmark, Globe, Star, ClipboardList, FileText,
   HeartHandshake, ExternalLink, BookHeart, HandCoins, MapPin, Compass,
-  Copy, Check, Image, Columns3, Heart, Menu, X, Brain, BarChart2, Users, Sparkles, Trophy, Headphones, Languages, ChevronLeft, Bell,
+  Copy, Check, Image, Columns3, Heart, Menu, X, Brain, BarChart2, Users, Sparkles, Trophy, Headphones, Languages, ChevronLeft, Bell, Pencil,
 } from "lucide-react";
 
 const PlaceMap = dynamic(() => import("@/components/PlaceMap"), {
@@ -91,7 +92,8 @@ type LeftPanelTab =
   | "interlinear"
   | "classic_teachers"
   | "encyclopedia"
-  | "systematic_theology";
+  | "systematic_theology"
+  | "annotations";
 
 // ── Bible book lists ──────────────────────────────────────────────────────
 const OT_SECTIONS = [
@@ -222,6 +224,7 @@ const T_EN = {
   navOutline: "Sermon Outlines", navFlash: "Memorization", navImage: "Verse Image Cards",
   navAncient: "Ancient Places", navAtlas: "Bible Atlas", navChars: "Character Profiles",
   navQuiz: "Bible Quiz", navBookmarks: "Bookmarks", navSessions: "Sessions",
+  navAnnotations: "My Annotations",
   navNotes: "Study Notes", navProgress: "Reading Progress", navTestimonials: "Testimonials",
   navResources: "More Resources", navBooks: "Christian Books", navDevArticles: "Devotional Articles",
   navBowl: "Bible Bowl", navWordle: "Bible Wordle", navKids: "Faith Tails Kids",
@@ -275,6 +278,7 @@ const T_ES: typeof T_EN = {
   navOutline: "Esquemas de Sermón", navFlash: "Memorización", navImage: "Tarjetas de Versículos",
   navAncient: "Lugares Antiguos", navAtlas: "Atlas Bíblico", navChars: "Perfiles de Personajes",
   navQuiz: "Quiz Bíblico", navBookmarks: "Marcadores", navSessions: "Sesiones",
+  navAnnotations: "Mis Anotaciones",
   navNotes: "Notas de Estudio", navProgress: "Progreso de Lectura", navTestimonials: "Testimonios",
   navResources: "Más Recursos", navBooks: "Libros Cristianos", navDevArticles: "Artículos Devocionales",
   navBowl: "Bible Bowl", navWordle: "Bible Wordle", navKids: "Faith Tails Niños",
@@ -1042,6 +1046,7 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
             </div>
             <div>
               <p className="mb-2 px-2 text-[10px] font-bold uppercase tracking-widest" style={{ color: "#C9952A" }}>{T.sectionLibrary}</p>
+              {sideNavBtn("annotations",     <Pencil size={16} />,       T.navAnnotations)}
               {sideNavBtn("bookmarks",       <Star size={16} />,         T.navBookmarks)}
               {sideNavBtn("sessions",        <ClipboardList size={16} />, T.navSessions)}
               {sideNavBtn("study_sheet",     <FileText size={16} />,     T.navNotes)}
@@ -1210,6 +1215,7 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
                 classic_teachers: "Classic Teachers",
                 encyclopedia: "ISBE Encyclopedia",
                 systematic_theology: "Systematic Theology",
+                annotations: "My Annotations",
               };
               const label = TAB_LABELS[leftPanelTab] ?? leftPanelTab;
               return (
@@ -2756,6 +2762,20 @@ export default function BibleReader({ initialTab }: { initialTab?: LeftPanelTab 
                     </button>
                   </div>
                 )}
+              </div>
+            )}
+
+            {leftPanelTab === "annotations" && (
+              <div className="print:hidden -mx-5 -mt-2">
+                <AnnotationsPanel
+                  onJumpTo={(reference) => {
+                    // Parse "John 3:16" and jump to that book/chapter
+                    const m = reference.match(/^(.+?)\s+(\d+):\d+$/);
+                    if (m) {
+                      setLeftPanelTab("bible");
+                    }
+                  }}
+                />
               </div>
             )}
 
