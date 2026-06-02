@@ -433,25 +433,33 @@ export default function FullBibleReader({
       .catch(() => {});
   }, [version, selectedBook, selectedChapter]);
 
-  /** Wrap Jesus's words in red spans. Handles full-verse and partial-verse. */
-  function applyRedLetter(text: string, verseNum: number): React.ReactNode {
+  /**
+   * Wrap Jesus's words in red spans.
+   * Works on plain text; visual-term highlighting is applied afterwards
+   * inside each non-red text segment via the `renderSegment` callback.
+   */
+  function applyRedLetter(
+    text: string,
+    verseNum: number,
+    renderSegment: (t: string) => React.ReactNode = (t) => t,
+  ): React.ReactNode {
     const entry = redLetter[String(verseNum)];
-    if (!entry) return text;
+    if (!entry) return renderSegment(text);
     if (entry === "full") {
-      return <span style={{ color: "#b91c1c" }}>{text}</span>;
+      return <span style={{ color: "#b91c1c" }}>{renderSegment(text)}</span>;
     }
-    // Partial — highlight each red segment
+    // Partial — colour each Jesus segment, pass non-red portions to renderSegment
     let remaining = text;
     const nodes: React.ReactNode[] = [];
     let key = 0;
     for (const segment of entry as string[]) {
       const idx = remaining.indexOf(segment);
-      if (idx === -1) { nodes.push(remaining); remaining = ""; break; }
-      if (idx > 0) nodes.push(<span key={key++}>{remaining.slice(0, idx)}</span>);
-      nodes.push(<span key={key++} style={{ color: "#b91c1c" }}>{segment}</span>);
+      if (idx === -1) { nodes.push(renderSegment(remaining)); remaining = ""; break; }
+      if (idx > 0) nodes.push(<span key={key++}>{renderSegment(remaining.slice(0, idx))}</span>);
+      nodes.push(<span key={key++} style={{ color: "#b91c1c" }}>{renderSegment(segment)}</span>);
       remaining = remaining.slice(idx + segment.length);
     }
-    if (remaining) nodes.push(<span key={key++}>{remaining}</span>);
+    if (remaining) nodes.push(<span key={key++}>{renderSegment(remaining)}</span>);
     return <>{nodes}</>;
   }
 
@@ -903,9 +911,13 @@ export default function FullBibleReader({
                             onSaveNote={(text: string) => annotations.saveNote(v.reference, text)}
                             onDeleteNote={() => annotations.deleteNote(v.reference)}
                           >
-                            {readingMode === "visual" && onVisualSearch
-                              ? highlightTerms(v.text, onVisualSearch)
-                              : applyRedLetter(v.text, v.verse)}
+                            {applyRedLetter(
+                              v.text,
+                              v.verse,
+                              readingMode === "visual" && onVisualSearch
+                                ? (seg) => highlightTerms(seg, onVisualSearch)
+                                : undefined,
+                            )}
                           </VerseHoverBar>
                         ))}{" "}
                       </p>
