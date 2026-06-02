@@ -7,7 +7,7 @@
  */
 
 import { useState, useRef, useEffect } from "react";
-import { Share2, Lightbulb, StickyNote, Highlighter, X, Check } from "lucide-react";
+import { Share2, Lightbulb, StickyNote, Highlighter, X, Check, GitBranch } from "lucide-react";
 import { HIGHLIGHT_COLORS, highlightBg } from "./VerseAnnotationToolbar";
 import type { HighlightColor, VerseNote } from "./useAnnotations";
 
@@ -19,6 +19,7 @@ type Props = {
   note:             VerseNote | null;
   onShare:          () => void;
   onInsight:        () => void;
+  onRelated:        () => void;
   onSetHighlight:   (c: HighlightColor) => void;
   onClearHighlight: () => void;
   onSaveNote:       (t: string) => void;
@@ -29,7 +30,7 @@ type Props = {
 export default function VerseHoverBar({
   reference, text, verseNum,
   highlight, note,
-  onShare, onInsight,
+  onShare, onInsight, onRelated,
   onSetHighlight, onClearHighlight,
   onSaveNote, onDeleteNote,
   children,
@@ -154,6 +155,7 @@ export default function VerseHoverBar({
               <ActionBtn icon={<Highlighter size={12} />} label="Highlight" active={!!highlight} activeColor="#fef08a" onClick={() => setMode("colors")} />
               <ActionBtn icon={<Share2      size={12} />} label="Share"     onClick={() => { onShare();   setOpen(false); }} />
               <ActionBtn icon={<Lightbulb  size={12} />} label="Insight"   onClick={() => { onInsight(); setOpen(false); }} />
+              <ActionBtn icon={<GitBranch  size={12} />} label="Related"   onClick={() => { onRelated(); setOpen(false); }} />
               <ActionBtn icon={<StickyNote size={12} />} label={note ? "Edit Note" : "Add Note"} active={!!note} activeColor="#d97706" onClick={() => setMode("note")} />
               {/* Close */}
               <button

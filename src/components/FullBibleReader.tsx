@@ -10,6 +10,7 @@ import type { ExplainVerse } from "@/components/VerseExplainDrawer";
 import { useAnnotations } from "@/components/useAnnotations";
 import type { HighlightColor } from "@/components/useAnnotations";
 import VerseHoverBar from "@/components/VerseHoverBar";
+import RelatedVersesDrawer from "@/components/RelatedVersesDrawer";
 
 type BibleVersion = "KJV" | "ASV" | "WEB" | "NIV" | "NLT" | "AMP" | "RVR1960";
 
@@ -410,6 +411,10 @@ export default function FullBibleReader({
 
   // ── Verse explain (AI + TTS) ───────────────────────────────────────────────
   const [activeExplainVerse, setActiveExplainVerse] = useState<ExplainVerse | null>(null);
+
+  // ── Related verses (cross-references) ─────────────────────────────────────
+  const [relatedRef,  setRelatedRef]  = useState<string | null>(null);
+  const [relatedText, setRelatedText] = useState<string>("");
 
   // ── Annotations (highlights + notes) ──────────────────────────────────────
   const annotations = useAnnotations();
@@ -853,6 +858,7 @@ export default function FullBibleReader({
                             note={annotations.getNote(v.reference)}
                             onShare={() => openShareModal(v)}
                             onInsight={() => setActiveExplainVerse({ reference: v.reference, text: v.text })}
+                            onRelated={() => { setRelatedRef(v.reference); setRelatedText(v.text); }}
                             onSetHighlight={(color: HighlightColor) => annotations.setHighlight(v.reference, color)}
                             onClearHighlight={() => annotations.clearHighlight(v.reference)}
                             onSaveNote={(text: string) => annotations.saveNote(v.reference, text)}
@@ -880,6 +886,18 @@ export default function FullBibleReader({
       <VerseExplainDrawer
         verse={activeExplainVerse}
         onClose={() => setActiveExplainVerse(null)}
+      />
+
+      {/* ── Related verses drawer ─────────────────────────────────────────────── */}
+      <RelatedVersesDrawer
+        reference={relatedRef}
+        sourceText={relatedText}
+        onClose={() => setRelatedRef(null)}
+        onJumpTo={(book, chapter) => {
+          setSelectedBook(book);
+          setSelectedChapter(chapter);
+          setShowPicker(false);
+        }}
       />
 
       {/* Bottom chapter nav */}
