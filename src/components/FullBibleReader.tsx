@@ -11,6 +11,7 @@ import { useAnnotations } from "@/components/useAnnotations";
 import type { HighlightColor } from "@/components/useAnnotations";
 import VerseHoverBar from "@/components/VerseHoverBar";
 import RelatedVersesDrawer from "@/components/RelatedVersesDrawer";
+import ChapterSuperscription from "@/components/ChapterSuperscription";
 
 type BibleVersion = "KJV" | "ASV" | "WEB" | "NIV" | "NLT" | "AMP" | "RVR1960";
 
@@ -817,6 +818,9 @@ export default function FullBibleReader({
 
         {!loading && !error && verses.length > 0 && (
           <>
+            {/* Biblical superscription (Psalm headings etc.) */}
+            <ChapterSuperscription book={selectedBook} chapter={selectedChapter} version={version} />
+
             {/* Mode hint */}
             {readingMode === "visual" && onVisualSearch && (
               <p className="mb-4 text-xs text-stone-400 italic">Tap highlighted terms to see visual references</p>
