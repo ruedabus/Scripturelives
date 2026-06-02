@@ -37,16 +37,25 @@ export default function VerseHoverBar({
   const [hovered,     setHovered]     = useState(false);
   const [mode,        setMode]        = useState<"bar" | "colors" | "note">("bar");
   const [noteText,    setNoteText]    = useState(note?.text ?? "");
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const rootRef     = useRef<HTMLSpanElement>(null);
-
+  const textareaRef  = useRef<HTMLTextAreaElement>(null);
+  const rootRef      = useRef<HTMLSpanElement>(null);
+  // Delayed-hide timer — lets the mouse travel from verse text up into the
+  // floating bar without the bar disappearing in between.
+  const hideTimer    = useRef<ReturnType<typeof setTimeout> | null>(null);
   // Long-press timer for mobile
-  const lpTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lpTimer      = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Reset mode when hovering away
+  function scheduleHide() {
+    hideTimer.current = setTimeout(() => setHovered(false), 120);
+  }
+  function cancelHide() {
+    if (hideTimer.current) { clearTimeout(hideTimer.current); hideTimer.current = null; }
+  }
+
+  // Reset mode shortly after bar hides
   useEffect(() => {
     if (!hovered) {
-      const t = setTimeout(() => setMode("bar"), 200);
+      const t = setTimeout(() => setMode("bar"), 250);
       return () => clearTimeout(t);
     }
   }, [hovered]);
@@ -84,8 +93,8 @@ export default function VerseHoverBar({
     <span
       ref={rootRef}
       className="relative inline"
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => { if (mode === "bar") setHovered(false); }}
+      onMouseEnter={() => { cancelHide(); setHovered(true); }}
+      onMouseLeave={scheduleHide}
       // Long press for mobile
       onPointerDown={() => { lpTimer.current = setTimeout(() => setHovered(true), 450); }}
       onPointerUp={() => { if (lpTimer.current) { clearTimeout(lpTimer.current); lpTimer.current = null; } }}
@@ -101,8 +110,8 @@ export default function VerseHoverBar({
           pointerEvents: barVisible ? "auto" : "none",
           whiteSpace: "nowrap",
         }}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => { if (mode === "bar") setHovered(false); }}
+        onMouseEnter={() => { cancelHide(); setHovered(true); }}
+        onMouseLeave={scheduleHide}
       >
         <span
           className="inline-flex items-center rounded-xl shadow-2xl overflow-hidden"
