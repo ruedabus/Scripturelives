@@ -32,9 +32,9 @@ GOLD  = HexColor("#C9952A")
 NAVY  = HexColor("#1a2640")
 WHITE = HexColor("#FFFFFF")
 
-# ── Page size: 7" x 9.9" portrait ─────────────────────────────────────────────
-PAGE_W = 7.0 * 72   # 504 pts
-PAGE_H = 9.9 * 72   # 712.8 pts
+# ── Page size: 16:9 landscape (matches OpenArt 16:9 image output) ─────────────
+PAGE_W = 11.0 * 72   # 792 pts  (landscape width)
+PAGE_H =  6.19 * 72  # 445.7 pts (11 × 9/16 = 6.1875")
 
 BASE_DIR   = os.path.dirname(os.path.abspath(__file__))
 OUTPUT_DIR = BASE_DIR   # final PDF lands here (and is then copied to public/)
