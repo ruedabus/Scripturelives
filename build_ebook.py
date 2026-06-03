@@ -34,11 +34,13 @@ WHITE = HexColor("#FFFFFF")
 
 # ── Page sizes ────────────────────────────────────────────────────────────────
 # Cover + copyright: portrait 7" x 9.9"
-COVER_W  = 7.0  * 72   # 504 pts
-COVER_H  = 9.9  * 72   # 712.8 pts
+COVER_W  = 7.0  * 72     # 504 pts
+COVER_H  = 9.9  * 72     # 712.8 pts
 # Story pages: 16:9 landscape (matches OpenArt 16:9 image output)
-PAGE_W   = 11.0  * 72  # 792 pts
+PAGE_W   = 11.0  * 72    # 792 pts
 PAGE_H   =  6.1875 * 72  # 445.5 pts
+# Footer height — image is shifted up by this amount so the bar never overlaps content
+FOOTER_H = 22             # pts
 
 BASE_DIR   = os.path.dirname(os.path.abspath(__file__))
 OUTPUT_DIR = BASE_DIR   # final PDF lands here (and is then copied to public/)
@@ -64,7 +66,7 @@ def stamp_watermark(c, page_w, page_h):
     # Footer strip
     c.setFillAlpha(1.0)
     c.setFillColor(HexColor("#00000066"))
-    footer_h = 16
+    footer_h = FOOTER_H
     c.rect(0, 0, page_w, footer_h, fill=1, stroke=0)
 
     c.setFillColor(WHITE)
@@ -225,18 +227,23 @@ def build(config_name: str):
         img_reader  = compressed_image_reader(path)
         iw, ih      = img_reader.getSize()
         img_aspect  = iw / ih
-        page_aspect = pw / ph
+
+        # Story pages: draw image in the zone above the footer bar so the bar
+        # never overlaps content. Cover uses the full page height.
+        footer_offset = 0 if is_cover else FOOTER_H
+        draw_area_h   = ph - footer_offset   # usable height above the bar
+        page_aspect   = pw / draw_area_h
 
         if img_aspect > page_aspect:
-            draw_h = ph
+            draw_h = draw_area_h
             draw_w = draw_h * img_aspect
             x = (pw - draw_w) / 2
-            y = 0
+            y = footer_offset
         else:
             draw_w = pw
             draw_h = draw_w / img_aspect
             x = 0
-            y = (ph - draw_h) / 2
+            y = footer_offset + (draw_area_h - draw_h) / 2
 
         c.drawImage(img_reader, x, y, draw_w, draw_h)
         stamp_watermark(c, pw, ph)
