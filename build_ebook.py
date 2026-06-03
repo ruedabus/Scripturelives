@@ -32,9 +32,13 @@ GOLD  = HexColor("#C9952A")
 NAVY  = HexColor("#1a2640")
 WHITE = HexColor("#FFFFFF")
 
-# ── Page size: 16:9 landscape (matches OpenArt 16:9 image output) ─────────────
-PAGE_W = 11.0 * 72   # 792 pts  (landscape width)
-PAGE_H =  6.19 * 72  # 445.7 pts (11 × 9/16 = 6.1875")
+# ── Page sizes ────────────────────────────────────────────────────────────────
+# Cover + copyright: portrait 7" x 9.9"
+COVER_W  = 7.0  * 72   # 504 pts
+COVER_H  = 9.9  * 72   # 712.8 pts
+# Story pages: 16:9 landscape (matches OpenArt 16:9 image output)
+PAGE_W   = 11.0  * 72  # 792 pts
+PAGE_H   =  6.1875 * 72  # 445.5 pts
 
 BASE_DIR   = os.path.dirname(os.path.abspath(__file__))
 OUTPUT_DIR = BASE_DIR   # final PDF lands here (and is then copied to public/)
@@ -198,7 +202,7 @@ def build(config_name: str):
     print(f"    Pages  : {len(pages)} story + 1 copyright = {len(pages)+1} total")
     print(f"    Output : {output_path}\n")
 
-    c = canvas.Canvas(output_path, pagesize=(PAGE_W, PAGE_H))
+    c = canvas.Canvas(output_path, pagesize=(COVER_W, COVER_H))
     c.setTitle(cfg["title"])
     c.setAuthor(cfg["author"])
     c.setSubject(cfg["subject"])
@@ -206,7 +210,12 @@ def build(config_name: str):
     c.setCreator("Faith Tails | youtube.com/@FaithTails")
 
     missing = 0
-    for fname in pages:
+    for i, fname in enumerate(pages):
+        is_cover = (i == 0)
+        pw = COVER_W if is_cover else PAGE_W
+        ph = COVER_H if is_cover else PAGE_H
+        c.setPageSize((pw, ph))
+
         path = os.path.join(book_dir, fname)
         if not os.path.exists(path):
             print(f"  ⚠  Missing: {fname} — skipping")
@@ -216,28 +225,29 @@ def build(config_name: str):
         img_reader  = compressed_image_reader(path)
         iw, ih      = img_reader.getSize()
         img_aspect  = iw / ih
-        page_aspect = PAGE_W / PAGE_H
+        page_aspect = pw / ph
 
         if img_aspect > page_aspect:
-            draw_h = PAGE_H
+            draw_h = ph
             draw_w = draw_h * img_aspect
-            x = (PAGE_W - draw_w) / 2
+            x = (pw - draw_w) / 2
             y = 0
         else:
-            draw_w = PAGE_W
+            draw_w = pw
             draw_h = draw_w / img_aspect
             x = 0
-            y = (PAGE_H - draw_h) / 2
+            y = (ph - draw_h) / 2
 
         c.drawImage(img_reader, x, y, draw_w, draw_h)
-        stamp_watermark(c, PAGE_W, PAGE_H)
+        stamp_watermark(c, pw, ph)
 
-        label = "Cover" if fname == pages[0] else fname.replace(".png", "")
+        label = "Cover" if is_cover else fname.replace(".png", "")
         print(f"  ✓  {label}  [watermarked]")
         c.showPage()
 
-    # Copyright page (always last)
-    draw_copyright_page(c, cfg, PAGE_W, PAGE_H)
+    # Copyright page (portrait, always last)
+    c.setPageSize((COVER_W, COVER_H))
+    draw_copyright_page(c, cfg, COVER_W, COVER_H)
     print(f"  ✓  Copyright page")
     c.showPage()
     c.save()
