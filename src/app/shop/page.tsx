@@ -12,6 +12,17 @@ export const metadata = {
 
 const PRODUCTS = [
   {
+    id: 15,
+    name: "I'm Not Diving Until Moses Moves — Christian Humor Heavyweight Tee",
+    description: "Faith, patience, and a healthy respect for parted seas. For every believer who knows that when God moves — then you move. A hilarious poolside scene where nobody's hitting the water until Moses gives the signal. A conversation starter at the gym, the pool, or anywhere life takes you.",
+    price: "$27.00",
+    image: "/Moses-tee.png",
+    badge: "NEW",
+    colors: ["#1c1c1c", "#8b2020", "#1f3a5c", "#2c3e1f", "#4a4a3a", "#6b7a8a", "#8a8a8a", "#c4b49a", "#d0cdc8", "#f5f5f5"],
+    href: STORE_URL,
+    imageBg: "#1a1a1a",
+  },
+  {
     id: 14,
     name: "Armor of God — Never Leave Home Without It | Christian Faith Tee",
     description: "Put on the full armor of God. This bold tee features every piece from Ephesians 6 — helmet of salvation, breastplate of righteousness, shield of faith, belt of truth, sword of the Spirit, and boots of the gospel. A powerful daily reminder to suit up before you step out.",
