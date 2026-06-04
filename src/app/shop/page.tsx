@@ -12,6 +12,17 @@ export const metadata = {
 
 const PRODUCTS = [
   {
+    id: 14,
+    name: "Armor of God — Never Leave Home Without It | Christian Faith Tee",
+    description: "Put on the full armor of God. This bold tee features every piece from Ephesians 6 — helmet of salvation, breastplate of righteousness, shield of faith, belt of truth, sword of the Spirit, and boots of the gospel. A powerful daily reminder to suit up before you step out.",
+    price: "$19.50",
+    image: "/armor-tee.png",
+    badge: "NEW",
+    colors: ["#1c1c1c", "#1f3a5c", "#8b2020", "#6b6b52", "#808080", "#c4613a", "#3b3b3b", "#d0cdc8", "#f5f5f5"],
+    href: STORE_URL,
+    imageBg: "#1a1a1a",
+  },
+  {
     id: 13,
     name: "Need an Ark? I Noah Guy — Christian Humor Raglan Tee",
     description: "Because sometimes the best way to share your faith is with a smile. Classic Bible humor meets bold vintage illustration — Noah himself, thumbs up, ready to help. Perfect for breaking the ice at church or anywhere life takes you.",
