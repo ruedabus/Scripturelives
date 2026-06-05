@@ -27,6 +27,10 @@ CONFIG = {
         [f"FT-TGART-P{i}.png" for i in range(1, 31)]
     ),
 
+    # ── Page size override: portrait 4:5 to match the generated images ───────
+    "page_w":  7.0  * 72,   # 504 pts
+    "page_h":  8.75 * 72,   # 630 pts
+
     # ── Paths ─────────────────────────────────────────────────────────────────
     "book_dir":    "/sessions/hopeful-confident-allen/mnt/book",
     "output_name": "mav-moony-great-american-road-trip-ebook.pdf",

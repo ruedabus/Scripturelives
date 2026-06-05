@@ -199,6 +199,10 @@ def build(config_name: str):
     pages       = cfg["pages"]
     book_dir    = cfg["book_dir"]
 
+    # Allow per-ebook page size override (defaults to global PAGE_W / PAGE_H)
+    page_w = cfg.get("page_w", PAGE_W)
+    page_h = cfg.get("page_h", PAGE_H)
+
     print(f"\n📚  Building: {cfg['title']}")
     print(f"    Config : ebooks/{config_name}.py")
     print(f"    Pages  : {len(pages)} story + 1 copyright = {len(pages)+1} total")
@@ -214,8 +218,8 @@ def build(config_name: str):
     missing = 0
     for i, fname in enumerate(pages):
         is_cover = (i == 0)
-        pw = COVER_W if is_cover else PAGE_W
-        ph = COVER_H if is_cover else PAGE_H
+        pw = COVER_W if is_cover else page_w
+        ph = COVER_H if is_cover else page_h
         c.setPageSize((pw, ph))
 
         path = os.path.join(book_dir, fname)
