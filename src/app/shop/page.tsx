@@ -12,6 +12,17 @@ export const metadata = {
 
 const PRODUCTS = [
   {
+    id: 16,
+    name: "It's Only for the Weekend — Empty Tomb Christian Humor Hoodie",
+    description: "The funniest conversation ever held outside a tomb. Two men, one brand new burial cave, and a plan nobody saw coming — except God. This bold, witty hoodie captures the moment before the greatest event in human history with a punchline that only makes sense three days later. Spoiler: the tomb didn't stay full.",
+    price: "$58.00",
+    image: "/printful/tomb-tee-printful.png",
+    badge: "NEW",
+    colors: ["#f5f0e8", "#f5f5f5"],
+    href: STORE_URL,
+    imageBg: "#f0ede6",
+  },
+  {
     id: 15,
     name: "I'm Not Diving Until Moses Moves — Christian Humor Heavyweight Tee",
     description: "Faith, patience, and a healthy respect for parted seas. For every believer who knows that when God moves — then you move. A hilarious poolside scene where nobody's hitting the water until Moses gives the signal. A conversation starter at the gym, the pool, or anywhere life takes you.",
