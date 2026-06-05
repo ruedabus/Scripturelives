@@ -107,7 +107,7 @@ const BOOKS = [
     pages:       "30 pages",
     theme:       "God's Love for Everyone",
     coverEmoji:  "🚐",
-    coverImage:  "/FT-TGART-cover.png",
+    coverImage:  "/FT-TGART-titlecard.png",
     coverBg:     "linear-gradient(135deg, #1a1a2e 0%, #2d1b4e 40%, #c9952a 100%)",
     accentColor: "#f59e0b",
     downloadUrl: "/books/mav-moony-great-american-road-trip-ebook.pdf",
