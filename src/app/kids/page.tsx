@@ -243,9 +243,9 @@ function BookCard({ book }: { book: (typeof BOOKS)[number] }) {
             </a>
           ) : (
             <div className="flex gap-2">
-              {/* Read Online — opens PDF in browser tab */}
+              {/* Read Online — opens PDF in browser tab, tracked */}
               <a
-                href={book.downloadUrl}
+                href={`/api/download?book=${book.slug}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex flex-1 items-center justify-center gap-1.5 py-3 rounded-xl text-sm font-bold text-white transition hover:opacity-90 active:scale-95"
@@ -253,9 +253,9 @@ function BookCard({ book }: { book: (typeof BOOKS)[number] }) {
               >
                 <span>📖</span> Read
               </a>
-              {/* Download — saves the file */}
+              {/* Download — saves the file, tracked */}
               <a
-                href={book.downloadUrl}
+                href={`/api/download?book=${book.slug}`}
                 download
                 className="flex items-center justify-center gap-1.5 px-4 py-3 rounded-xl text-sm font-bold transition hover:opacity-90 active:scale-95"
                 style={{
