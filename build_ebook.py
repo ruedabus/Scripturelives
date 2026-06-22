@@ -199,16 +199,18 @@ def build(config_name: str):
     pages       = cfg["pages"]
     book_dir    = cfg["book_dir"]
 
-    # Allow per-ebook page size override (defaults to global PAGE_W / PAGE_H)
-    page_w = cfg.get("page_w", PAGE_W)
-    page_h = cfg.get("page_h", PAGE_H)
+    # Allow per-ebook page size override (defaults to global constants)
+    page_w  = cfg.get("page_w",  PAGE_W)
+    page_h  = cfg.get("page_h",  PAGE_H)
+    cover_w = cfg.get("cover_w", COVER_W)
+    cover_h = cfg.get("cover_h", COVER_H)
 
     print(f"\n📚  Building: {cfg['title']}")
     print(f"    Config : ebooks/{config_name}.py")
     print(f"    Pages  : {len(pages)} story + 1 copyright = {len(pages)+1} total")
     print(f"    Output : {output_path}\n")
 
-    c = canvas.Canvas(output_path, pagesize=(COVER_W, COVER_H))
+    c = canvas.Canvas(output_path, pagesize=(cover_w, cover_h))
     c.setTitle(cfg["title"])
     c.setAuthor(cfg["author"])
     c.setSubject(cfg["subject"])
@@ -218,8 +220,8 @@ def build(config_name: str):
     missing = 0
     for i, fname in enumerate(pages):
         is_cover = (i == 0)
-        pw = COVER_W if is_cover else page_w
-        ph = COVER_H if is_cover else page_h
+        pw = cover_w if is_cover else page_w
+        ph = cover_h if is_cover else page_h
         c.setPageSize((pw, ph))
 
         path = os.path.join(book_dir, fname)
@@ -234,11 +236,21 @@ def build(config_name: str):
 
         # Story pages: draw image in the zone above the footer bar so the bar
         # never overlaps content. Cover uses the full page height.
-        footer_offset = 0 if is_cover else FOOTER_H
+        # If footer is disabled (e.g. KDP print), use full page height everywhere.
+        footer_offset = 0 if (is_cover or not cfg.get("show_footer", True)) else FOOTER_H
         draw_area_h   = ph - footer_offset   # usable height above the bar
         page_aspect   = pw / draw_area_h
 
-        if img_aspect > page_aspect:
+        fit_mode = cfg.get("fit_mode", "cover")  # "cover" = fill page, "contain" = fit within page
+
+        if fit_mode == "contain":
+            # Scale to fit entirely within the page — no cropping, small bars if needed
+            scale  = min(pw / iw, draw_area_h / ih)
+            draw_w = iw * scale
+            draw_h = ih * scale
+            x = (pw - draw_w) / 2
+            y = footer_offset + (draw_area_h - draw_h) / 2
+        elif img_aspect > page_aspect:
             draw_h = draw_area_h
             draw_w = draw_h * img_aspect
             x = (pw - draw_w) / 2
@@ -250,15 +262,16 @@ def build(config_name: str):
             y = footer_offset + (draw_area_h - draw_h) / 2
 
         c.drawImage(img_reader, x, y, draw_w, draw_h)
-        stamp_watermark(c, pw, ph)
+        if cfg.get("show_footer", True):
+            stamp_watermark(c, pw, ph)
 
         label = "Cover" if is_cover else fname.replace(".png", "")
         print(f"  ✓  {label}  [watermarked]")
         c.showPage()
 
     # Copyright page (portrait, always last)
-    c.setPageSize((COVER_W, COVER_H))
-    draw_copyright_page(c, cfg, COVER_W, COVER_H)
+    c.setPageSize((cover_w, cover_h))
+    draw_copyright_page(c, cfg, cover_w, cover_h)
     print(f"  ✓  Copyright page")
     c.showPage()
     c.save()

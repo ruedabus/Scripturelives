@@ -23,16 +23,23 @@ CONFIG = {
 
     # ── Pages ─────────────────────────────────────────────────────────────────
     "pages": (
-        ["FT-TGART-cover.png"] +
+        ["FT-TGART-cover-KDP.png"] +
         [f"FT-TGART-P{i}.png" for i in range(1, 31)]
     ),
 
-    # ── Page size override: portrait 4:5 to match the generated images ───────
-    "page_w":  7.0  * 72,   # 504 pts
-    "page_h":  8.75 * 72,   # 630 pts
+    # ── KDP print: no footer bar (text near edge fails KDP margin check) ─────
+    "show_footer": False,
+    # Contain mode: fit images fully within page (no cropping) — prevents text cut-off
+    "fit_mode":    "contain",
+
+    # ── Page size: KDP standard 8.5" × 11" (all pages uniform for print) ─────
+    "cover_w": 8.5  * 72,   # 612 pts
+    "cover_h": 11.0 * 72,   # 792 pts
+    "page_w":  8.5  * 72,   # 612 pts
+    "page_h":  11.0 * 72,   # 792 pts
 
     # ── Paths ─────────────────────────────────────────────────────────────────
     "book_dir":    "/sessions/hopeful-confident-allen/mnt/book",
-    "output_name": "mav-moony-great-american-road-trip-ebook.pdf",
-    "public_path": "scripture-alive/public/books/mav-moony-great-american-road-trip-ebook.pdf",
+    "output_name": "mav-moony-great-american-road-trip-KDP.pdf",
+    "public_path": None,   # KDP version — not deployed to website
 }
