@@ -57,6 +57,28 @@ def compressed_image_reader(path, quality=88):
     return ImageReader(buf)
 
 
+def sample_edge_color(path, sample_px=4):
+    """Return the average color of the image edges as a ReportLab HexColor.
+    Samples a band of `sample_px` pixels from all four edges."""
+    img = Image.open(path).convert("RGB")
+    w, h = img.size
+    pixels = []
+    # Top and bottom bands
+    for band_y in range(sample_px):
+        for x in range(w):
+            pixels.append(img.getpixel((x, band_y)))
+            pixels.append(img.getpixel((x, h - 1 - band_y)))
+    # Left and right bands
+    for band_x in range(sample_px):
+        for y in range(h):
+            pixels.append(img.getpixel((band_x, y)))
+            pixels.append(img.getpixel((w - 1 - band_x, y)))
+    r = int(sum(p[0] for p in pixels) / len(pixels))
+    g = int(sum(p[1] for p in pixels) / len(pixels))
+    b = int(sum(p[2] for p in pixels) / len(pixels))
+    return HexColor(f"#{r:02x}{g:02x}{b:02x}")
+
+
 # ── Watermark stamp (applied to every story page) ────────────────────────────
 
 def stamp_watermark(c, page_w, page_h):
@@ -244,12 +266,16 @@ def build(config_name: str):
         fit_mode = cfg.get("fit_mode", "cover")  # "cover" = fill page, "contain" = fit within page
 
         if fit_mode == "contain":
-            # Scale to fit entirely within the page — no cropping, small bars if needed
+            # Scale to fit entirely within the page — no cropping, bars filled with edge color
             scale  = min(pw / iw, draw_area_h / ih)
             draw_w = iw * scale
             draw_h = ih * scale
             x = (pw - draw_w) / 2
             y = footer_offset + (draw_area_h - draw_h) / 2
+            # Fill page background with sampled edge color so bars blend in
+            bg = sample_edge_color(path)
+            c.setFillColor(bg)
+            c.rect(0, footer_offset, pw, draw_area_h, fill=1, stroke=0)
         elif img_aspect > page_aspect:
             draw_h = draw_area_h
             draw_w = draw_h * img_aspect
