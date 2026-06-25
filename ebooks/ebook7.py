@@ -27,8 +27,8 @@ CONFIG = {
         [f"Episode7-P{i}.png" for i in range(1, 21)]
     ),
 
-    # ── KDP print: no footer bar (text near edge fails KDP margin check) ─────
-    "show_footer": False,
+    # ── Show copyright footer on every page ──────────────────────────────────
+    "show_footer": True,
     # Contain mode: fit images fully within page (no cropping)
     "fit_mode":    "contain",
 
