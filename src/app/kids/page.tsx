@@ -123,7 +123,7 @@ const BOOKS = [
     pages:       "22 pages",
     theme:       "Faith & the Power of God",
     coverEmoji:  "✝️",
-    coverImage:  "/Episode7-cover.png",
+    coverImage:  "/Episode7-titlecard.png",
     coverBg:     "linear-gradient(135deg, #0d1b2a 0%, #1a2e1a 40%, #c9952a 100%)",
     accentColor: "#C9952A",
     downloadUrl: "/books/mav-moony-miracle-at-the-tomb-ebook.pdf",
