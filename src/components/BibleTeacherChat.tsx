@@ -141,6 +141,23 @@ export default function BibleTeacherChat() {
 
   return (
     <>
+      {/* ── Wave animation for avatar ── */}
+      <style>{`
+        @keyframes avatar-wave {
+          0%   { transform: rotate(0deg); }
+          8%   { transform: rotate(-14deg); }
+          16%  { transform: rotate(13deg); }
+          24%  { transform: rotate(-11deg); }
+          32%  { transform: rotate(9deg); }
+          40%  { transform: rotate(0deg); }
+          100% { transform: rotate(0deg); }
+        }
+        .avatar-waving {
+          animation: avatar-wave 3s ease-in-out infinite;
+          transform-origin: 50% 85%;
+        }
+      `}</style>
+
       {/* ── Floating button (minimized by default) ── */}
       <div
         className="fixed z-50 group"
@@ -196,7 +213,7 @@ export default function BibleTeacherChat() {
           <img
             src="/Bible-teacher.png"
             alt="Scripture Lives Assistant"
-            className="w-full h-full rounded-full object-cover"
+            className={`w-full h-full rounded-full object-cover${!open ? " avatar-waving" : ""}`}
             onError={(e) => {
               (e.currentTarget as HTMLImageElement).style.display = "none";
               (e.currentTarget.nextSibling as HTMLElement).style.display = "flex";
