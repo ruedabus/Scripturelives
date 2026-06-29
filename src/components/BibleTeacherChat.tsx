@@ -141,20 +141,22 @@ export default function BibleTeacherChat() {
 
   return (
     <>
-      {/* ── Wave animation for avatar ── */}
+      {/* ── Waving hand animation ── */}
       <style>{`
-        @keyframes avatar-wave {
+        @keyframes hand-wave {
           0%   { transform: rotate(0deg); }
-          8%   { transform: rotate(-14deg); }
-          16%  { transform: rotate(13deg); }
-          24%  { transform: rotate(-11deg); }
-          32%  { transform: rotate(9deg); }
-          40%  { transform: rotate(0deg); }
+          10%  { transform: rotate(-28deg); }
+          20%  { transform: rotate(18deg); }
+          30%  { transform: rotate(-22deg); }
+          40%  { transform: rotate(14deg); }
+          50%  { transform: rotate(-10deg); }
+          60%  { transform: rotate(0deg); }
           100% { transform: rotate(0deg); }
         }
-        .avatar-waving {
-          animation: avatar-wave 3s ease-in-out infinite;
-          transform-origin: 50% 85%;
+        .wave-hand {
+          animation: hand-wave 2.2s ease-in-out infinite;
+          transform-origin: 60% 80%;
+          display: inline-block;
         }
       `}</style>
 
@@ -213,7 +215,7 @@ export default function BibleTeacherChat() {
           <img
             src="/Bible-teacher.png"
             alt="Scripture Lives Assistant"
-            className={`w-full h-full rounded-full object-cover${!open ? " avatar-waving" : ""}`}
+            className="w-full h-full rounded-full object-cover"
             onError={(e) => {
               (e.currentTarget as HTMLImageElement).style.display = "none";
               (e.currentTarget.nextSibling as HTMLElement).style.display = "flex";
@@ -225,6 +227,22 @@ export default function BibleTeacherChat() {
           >
             📖
           </span>
+          {/* Waving hand — only when chat is closed */}
+          {!open && (
+            <span
+              className="wave-hand"
+              style={{
+                position:   "absolute",
+                bottom:     "-4px",
+                right:      "-10px",
+                fontSize:   "20px",
+                lineHeight: 1,
+                pointerEvents: "none",
+              }}
+            >
+              👋
+            </span>
+          )}
           {/* Subtle pulse ring when closed */}
           {!open && (
             <span
