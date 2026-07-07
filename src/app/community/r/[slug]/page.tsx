@@ -115,7 +115,10 @@ export default function RoomPage({ params }: { params: Promise<{ slug: string }>
       {showAuth && (
         <AuthModal
           onClose={() => setShowAuth(false)}
-          onSuccess={() => window.location.reload()}
+          onSuccess={() => {
+            const next = encodeURIComponent(window.location.pathname);
+            window.location.href = `/profile/setup?next=${next}`;
+          }}
         />
       )}
 

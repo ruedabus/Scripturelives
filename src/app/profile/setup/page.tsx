@@ -1,14 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Loader2, User, Church, Globe } from "lucide-react";
 import { useAuth } from "@/lib/authClient";
 
 const AVATAR_EMOJIS = ["✝️","📖","🙏","👑","⚡","🌟","🕊️","🔥","🛡️","⚔️","🌈","🎺","🏺","🌿","💎","🦁"];
 
-export default function ProfileSetup() {
-  const router = useRouter();
+function ProfileSetupInner() {
+  const router      = useRouter();
+  const params      = useSearchParams();
+  const nextUrl     = params.get("next") ?? "/tournament";
   const { user, loading } = useAuth();
 
   const [username,    setUsername]    = useState("");
@@ -20,8 +22,23 @@ export default function ProfileSetup() {
   const [saving,      setSaving]      = useState(false);
   const [error,       setError]       = useState("");
 
+  // Check if profile already exists — if so, skip setup and go directly to next
   useEffect(() => {
-    if (!loading && !user) router.push("/tournament");
+    if (loading || !user) return;
+    fetch("/api/profile", { headers: { Authorization: `Bearer ${user.access_token}` } })
+      .then(r => r.json())
+      .then(data => {
+        if (data?.username) {
+          // Profile exists (returning user) — skip setup
+          router.push(nextUrl);
+        }
+        // else: no profile yet — stay on this page
+      })
+      .catch(() => { /* allow setup to continue */ });
+  }, [user, loading, router, nextUrl]);
+
+  useEffect(() => {
+    if (!loading && !user) router.push("/");
   }, [user, loading, router]);
 
   const save = async () => {
@@ -49,7 +66,7 @@ export default function ProfileSetup() {
       });
       const data = await res.json();
       if (!res.ok) { setError(data.error ?? "Failed to save profile"); setSaving(false); return; }
-      router.push("/tournament");
+      router.push(nextUrl);
     } catch (e) {
       setError(String(e));
       setSaving(false);
@@ -179,5 +196,17 @@ export default function ProfileSetup() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ProfileSetup() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-indigo-950 flex items-center justify-center">
+        <Loader2 size={32} className="animate-spin text-amber-400" />
+      </div>
+    }>
+      <ProfileSetupInner />
+    </Suspense>
   );
 }

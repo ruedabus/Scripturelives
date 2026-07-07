@@ -45,7 +45,10 @@ export default function CommunityPage() {
       {showAuth && (
         <AuthModal
           onClose={() => setShowAuth(false)}
-          onSuccess={() => window.location.reload()}
+          onSuccess={() => {
+            const next = encodeURIComponent(window.location.pathname);
+            window.location.href = `/profile/setup?next=${next}`;
+          }}
         />
       )}
 
