@@ -8,8 +8,9 @@ const NAVY = "#1a2640";
 
 const NAV_ITEMS = [
   { href: "/bible",       icon: "📖", label: "Bible"       },
-  { href: "/devotionals", icon: "🌅", label: "Devotionals" },
+  { href: "/devotionals", icon: "🌅", label: "Daily"       },
   { href: "/prayer",      icon: "🙏", label: "Prayer"      },
+  { href: "/community",   icon: "🕊️", label: "Community"  },
   { href: "/kids",        icon: "📚", label: "Kids"        },
   { href: "/games",       icon: "🎮", label: "Games"       },
 ];

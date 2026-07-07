@@ -54,6 +54,13 @@ const FEATURES = [
     cta: "Play Now",
     photo: "/Bible-games.png",
   },
+  {
+    title: "Bible Study Community",
+    desc: "Join study rooms, ask questions, and discuss Scripture with believers from around the world.",
+    href: "/community",
+    cta: "Join the Community",
+    photo: "/prayer-wall.png",
+  },
 ];
 
 // ── Quick links ───────────────────────────────────────────────────────────────
