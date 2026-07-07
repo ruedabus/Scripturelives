@@ -10,7 +10,9 @@ const AVATAR_EMOJIS = ["✝️","📖","🙏","👑","⚡","🌟","🕊️","�
 function ProfileSetupInner() {
   const router      = useRouter();
   const params      = useSearchParams();
-  const nextUrl     = params.get("next") ?? "/tournament";
+  // `next` is only present when coming from the community auth modal
+  const nextParam   = params.get("next");
+  const nextUrl     = nextParam ?? "/tournament";
   const { user, loading } = useAuth();
 
   const [username,    setUsername]    = useState("");
@@ -21,21 +23,36 @@ function ProfileSetupInner() {
   const [avatar,      setAvatar]      = useState("✝️");
   const [saving,      setSaving]      = useState(false);
   const [error,       setError]       = useState("");
+  const [profileLoaded, setProfileLoaded] = useState(false);
+  // isEditing = user visited /profile/setup directly (Edit Profile button), not via auth modal
+  const [isEditing,   setIsEditing]   = useState(false);
 
-  // Check if profile already exists — if so, skip setup and go directly to next
   useEffect(() => {
     if (loading || !user) return;
     fetch("/api/profile", { headers: { Authorization: `Bearer ${user.access_token}` } })
       .then(r => r.json())
       .then(data => {
         if (data?.username) {
-          // Profile exists (returning user) — skip setup
-          router.push(nextUrl);
+          if (nextParam !== null) {
+            // Came from auth modal and already have a profile = login, not signup → skip setup
+            router.push(nextUrl);
+          } else {
+            // Visited directly (Edit Profile) → pre-populate and show form
+            setIsEditing(true);
+            setUsername(data.username ?? "");
+            setDisplayName(data.display_name ?? "");
+            setChurch(data.church_name ?? "");
+            setCity(data.church_city ?? "");
+            setCountry(data.country ?? "US");
+            setAvatar(data.avatar_url ?? "✝️");
+            setProfileLoaded(true);
+          }
+        } else {
+          setProfileLoaded(true);
         }
-        // else: no profile yet — stay on this page
       })
-      .catch(() => { /* allow setup to continue */ });
-  }, [user, loading, router, nextUrl]);
+      .catch(() => setProfileLoaded(true));
+  }, [user, loading, router, nextUrl, nextParam]);
 
   useEffect(() => {
     if (!loading && !user) router.push("/");
@@ -66,14 +83,19 @@ function ProfileSetupInner() {
       });
       const data = await res.json();
       if (!res.ok) { setError(data.error ?? "Failed to save profile"); setSaving(false); return; }
-      router.push(nextUrl);
+      // After editing, go back to their profile page; after new signup, go to next
+      if (isEditing) {
+        router.push(`/profile/${username.trim().toLowerCase()}`);
+      } else {
+        router.push(nextUrl);
+      }
     } catch (e) {
       setError(String(e));
       setSaving(false);
     }
   };
 
-  if (loading) return (
+  if (loading || (user && !profileLoaded && nextParam === null)) return (
     <div className="min-h-screen bg-indigo-950 flex items-center justify-center">
       <Loader2 size={32} className="animate-spin text-amber-400" />
     </div>
@@ -83,9 +105,15 @@ function ProfileSetupInner() {
     <div className="min-h-screen bg-gradient-to-b from-indigo-950 to-purple-950 flex flex-col items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="text-5xl mb-3">✝️</div>
-          <h1 className="text-3xl font-extrabold text-white">Set Up Your Profile</h1>
-          <p className="text-indigo-300 text-sm mt-1">You&apos;ll represent yourself (and your church!) on the global leaderboard</p>
+          <div className="text-5xl mb-3">{avatar}</div>
+          <h1 className="text-3xl font-extrabold text-white">
+            {isEditing ? "Edit Your Profile" : "Set Up Your Profile"}
+          </h1>
+          <p className="text-indigo-300 text-sm mt-1">
+            {isEditing
+              ? "Update your display name, avatar, or church info"
+              : "You'll represent yourself (and your church!) on the global leaderboard"}
+          </p>
         </div>
 
         <div className="bg-white/10 backdrop-blur rounded-2xl p-6 border border-white/20 space-y-5">
@@ -191,8 +219,20 @@ function ProfileSetupInner() {
             disabled={saving}
             className="w-full rounded-xl bg-amber-500 hover:bg-amber-400 disabled:opacity-50 text-black font-extrabold py-4 flex items-center justify-center gap-2 transition text-lg"
           >
-            {saving ? <Loader2 size={20} className="animate-spin" /> : "Enter the Arena 🏆"}
+            {saving
+              ? <Loader2 size={20} className="animate-spin" />
+              : isEditing ? "Save Changes ✓" : "Enter the Arena 🏆"}
           </button>
+
+          {isEditing && (
+            <button
+              type="button"
+              onClick={() => router.back()}
+              className="w-full rounded-xl bg-white/10 hover:bg-white/20 text-white/70 font-semibold py-3 transition text-sm"
+            >
+              Cancel
+            </button>
+          )}
         </div>
       </div>
     </div>

@@ -344,8 +344,9 @@ function CommentCard({ comment, user, postId, depth = 0, onReplyAdded, onRequire
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.5rem" }}>
           <div style={{ width: 28, height: 28, borderRadius: "50%", background: NAVY,
             display: "flex", alignItems: "center", justifyContent: "center",
-            color: GOLD, fontSize: "0.7rem", fontWeight: 700, flexShrink: 0 }}>
-            {(comment.author_name ?? "?")[0].toUpperCase()}
+            color: GOLD, fontSize: comment.author_avatar ? "1rem" : "0.7rem",
+            fontWeight: 700, flexShrink: 0 }}>
+            {comment.author_avatar ?? (comment.author_name ?? "?")[0].toUpperCase()}
           </div>
           <span style={{ fontWeight: 600, color: NAVY, fontSize: "0.83rem" }}>{comment.author_name}</span>
           <span style={{ color: "#aaa", fontSize: "0.75rem" }}>{timeAgo(comment.created_at)}</span>
