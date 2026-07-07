@@ -3,6 +3,7 @@
 import { useState, useEffect, use } from "react";
 import Link from "next/link";
 import { useAuth } from "@/lib/authClient";
+import AuthModal from "@/components/AuthModal";
 import type { CommunityRoom, CommunityPost } from "@/lib/community";
 
 const GOLD = "#C9952A";
@@ -25,6 +26,7 @@ export default function RoomPage({ params }: { params: Promise<{ slug: string }>
   const [loading, setLoading]   = useState(true);
   const [isMember, setIsMember] = useState(false);
   const [showNewPost, setShowNewPost] = useState(false);
+  const [showAuth, setShowAuth] = useState(false);
 
   // New post form state
   const [title, setTitle]     = useState("");
@@ -110,6 +112,13 @@ export default function RoomPage({ params }: { params: Promise<{ slug: string }>
   return (
     <main style={{ background: CREAM, minHeight: "100vh", fontFamily: "system-ui, sans-serif" }}>
 
+      {showAuth && (
+        <AuthModal
+          onClose={() => setShowAuth(false)}
+          onSuccess={() => window.location.reload()}
+        />
+      )}
+
       {/* Room header */}
       <div style={{ background: NAVY }}>
         <div style={{ maxWidth: 900, margin: "0 auto", padding: "1.5rem 1rem" }}>
@@ -135,14 +144,13 @@ export default function RoomPage({ params }: { params: Promise<{ slug: string }>
                 <div style={{ color: GOLD, fontWeight: 800, fontSize: "1.1rem" }}>{room.post_count}</div>
                 <div style={{ color: "#aaa", fontSize: "0.72rem" }}>posts</div>
               </div>
-              {user && (
-                <button onClick={handleJoin}
-                  style={{ background: isMember ? "transparent" : GOLD, color: isMember ? GOLD : NAVY,
-                    border: `2px solid ${GOLD}`, padding: "0.4rem 1rem", borderRadius: 20,
-                    fontWeight: 700, cursor: "pointer", fontSize: "0.875rem" }}>
-                  {isMember ? "✓ Joined" : "Join"}
-                </button>
-              )}
+              {/* Join button — always visible, guests get auth prompt */}
+              <button onClick={user ? handleJoin : () => setShowAuth(true)}
+                style={{ background: isMember ? "transparent" : GOLD, color: isMember ? GOLD : NAVY,
+                  border: `2px solid ${GOLD}`, padding: "0.4rem 1rem", borderRadius: 20,
+                  fontWeight: 700, cursor: "pointer", fontSize: "0.875rem" }}>
+                {isMember ? "✓ Joined" : "Join"}
+              </button>
             </div>
           </div>
         </div>
@@ -150,16 +158,16 @@ export default function RoomPage({ params }: { params: Promise<{ slug: string }>
 
       <div style={{ maxWidth: 900, margin: "0 auto", padding: "1.5rem 1rem" }}>
 
-        {/* New post button / form */}
-        {user && !room.is_locked && (
+        {/* New post button / form — always visible, guests get auth prompt */}
+        {!room.is_locked && (
           <div style={{ marginBottom: "1.25rem" }}>
             {!showNewPost ? (
-              <button onClick={() => setShowNewPost(true)}
+              <button onClick={() => user ? setShowNewPost(true) : setShowAuth(true)}
                 style={{ display: "flex", alignItems: "center", gap: "0.75rem", width: "100%",
                   background: "#fff", border: "1px solid #ddd", borderRadius: 10, padding: "0.75rem 1rem",
                   cursor: "pointer", color: "#888", fontSize: "0.9rem", boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
                 <span style={{ fontSize: "1.2rem" }}>✍️</span>
-                Start a discussion in {room.name}...
+                {user ? `Start a discussion in ${room.name}...` : "Sign in to post a discussion..."}
               </button>
             ) : (
               <form onSubmit={handleSubmitPost}
@@ -243,7 +251,7 @@ export default function RoomPage({ params }: { params: Promise<{ slug: string }>
           </div>
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-            {posts.map(post => <RoomPostCard key={post.id} post={post} user={user} />)}
+            {posts.map(post => <RoomPostCard key={post.id} post={post} user={user} onRequireAuth={() => setShowAuth(true)} />)}
           </div>
         )}
       </div>
@@ -251,7 +259,11 @@ export default function RoomPage({ params }: { params: Promise<{ slug: string }>
   );
 }
 
-function RoomPostCard({ post, user }: { post: CommunityPost; user: { access_token: string } | null }) {
+function RoomPostCard({ post, user, onRequireAuth }: {
+  post: CommunityPost;
+  user: { access_token: string } | null;
+  onRequireAuth: () => void;
+}) {
   const [votes, setVotes]   = useState(post.upvote_count);
   const [voted, setVoted]   = useState(post.user_voted ?? false);
   const [voting, setVoting] = useState(false);
@@ -259,7 +271,8 @@ function RoomPostCard({ post, user }: { post: CommunityPost; user: { access_toke
 
   async function handleVote(e: React.MouseEvent) {
     e.preventDefault();
-    if (!user || voting) return;
+    if (!user) { onRequireAuth(); return; }
+    if (voting) return;
     setVoting(true);
     const res = await fetch("/api/community/vote", {
       method: "POST",
@@ -283,7 +296,7 @@ function RoomPostCard({ post, user }: { post: CommunityPost; user: { access_toke
 
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "2px", minWidth: 36 }}>
           <button onClick={handleVote}
-            style={{ background: "none", border: "none", cursor: user ? "pointer" : "default",
+            style={{ background: "none", border: "none", cursor: "pointer",
               fontSize: "1.2rem", padding: "2px", color: voted ? GOLD : "#bbb" }}>▲</button>
           <span style={{ fontWeight: 700, fontSize: "0.9rem", color: voted ? GOLD : NAVY }}>{votes}</span>
         </div>

@@ -3,6 +3,7 @@
 import { useState, useEffect, use } from "react";
 import Link from "next/link";
 import { useAuth } from "@/lib/authClient";
+import AuthModal from "@/components/AuthModal";
 import type { CommunityPost, CommunityComment } from "@/lib/community";
 
 const GOLD = "#C9952A";
@@ -23,6 +24,7 @@ export default function PostPage({ params }: { params: Promise<{ id: string }> }
   const [voted, setVoted]           = useState(false);
   const [showReport, setShowReport] = useState(false);
   const [reportReason, setReportReason] = useState("");
+  const [showAuth, setShowAuth]     = useState(false);
 
   useEffect(() => {
     Promise.all([
@@ -38,7 +40,7 @@ export default function PostPage({ params }: { params: Promise<{ id: string }> }
   }, [id]);
 
   async function handleVotePost() {
-    if (!user) return;
+    if (!user) { setShowAuth(true); return; }
     const res = await fetch("/api/community/vote", {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${user.access_token}` },
@@ -111,6 +113,14 @@ export default function PostPage({ params }: { params: Promise<{ id: string }> }
 
   return (
     <main style={{ background: CREAM, minHeight: "100vh", fontFamily: "system-ui, sans-serif" }}>
+
+      {showAuth && (
+        <AuthModal
+          onClose={() => setShowAuth(false)}
+          onSuccess={() => window.location.reload()}
+        />
+      )}
+
       <div style={{ maxWidth: 820, margin: "0 auto", padding: "1.5rem 1rem" }}>
 
         {/* Breadcrumb */}
@@ -229,16 +239,26 @@ export default function PostPage({ params }: { params: Promise<{ id: string }> }
               </form>
             )
           ) : (
-            <div style={{ background: "#fff", borderRadius: 10, padding: "1rem 1.25rem",
+            <div style={{ background: "#fff", borderRadius: 10, padding: "1.25rem",
               marginBottom: "1.5rem", textAlign: "center", boxShadow: "0 1px 4px rgba(0,0,0,0.07)" }}>
-              <p style={{ color: "#555", margin: "0 0 0.5rem", fontSize: "0.9rem" }}>
-                Sign in to join the conversation
+              <p style={{ color: NAVY, fontWeight: 700, margin: "0 0 0.25rem", fontSize: "0.95rem" }}>
+                Join the conversation 💬
               </p>
-              <Link href="/auth/login"
-                style={{ background: GOLD, color: NAVY, padding: "0.4rem 1.25rem", borderRadius: 20,
-                  textDecoration: "none", fontWeight: 700, fontSize: "0.875rem" }}>
-                Sign In
-              </Link>
+              <p style={{ color: "#888", margin: "0 0 0.875rem", fontSize: "0.85rem" }}>
+                Create a free account to comment, ask questions, and connect with believers worldwide.
+              </p>
+              <div style={{ display: "flex", gap: "0.5rem", justifyContent: "center", flexWrap: "wrap" }}>
+                <button onClick={() => setShowAuth(true)}
+                  style={{ background: GOLD, color: NAVY, padding: "0.45rem 1.5rem", borderRadius: 20,
+                    border: "none", fontWeight: 800, fontSize: "0.9rem", cursor: "pointer" }}>
+                  Sign Up — It&apos;s Free
+                </button>
+                <button onClick={() => setShowAuth(true)}
+                  style={{ background: "transparent", color: NAVY, padding: "0.45rem 1.25rem", borderRadius: 20,
+                    border: `2px solid ${NAVY}`, fontWeight: 700, fontSize: "0.875rem", cursor: "pointer" }}>
+                  Sign In
+                </button>
+              </div>
             </div>
           )}
 
@@ -251,6 +271,7 @@ export default function PostPage({ params }: { params: Promise<{ id: string }> }
             <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
               {comments.map(c => (
                 <CommentCard key={c.id} comment={c} user={user} postId={id}
+                  onRequireAuth={() => setShowAuth(true)}
                   onReplyAdded={(parentId, newComment) => {
                     setComments(prev => addReply(prev, parentId, { ...newComment, replies: [] }));
                     setPost(prev => prev ? { ...prev, comment_count: prev.comment_count + 1 } : prev);
@@ -264,12 +285,13 @@ export default function PostPage({ params }: { params: Promise<{ id: string }> }
   );
 }
 
-function CommentCard({ comment, user, postId, depth = 0, onReplyAdded }: {
+function CommentCard({ comment, user, postId, depth = 0, onReplyAdded, onRequireAuth }: {
   comment: CommunityComment;
   user: { access_token: string } | null;
   postId: string;
   depth?: number;
   onReplyAdded: (parentId: string, newComment: CommunityComment) => void;
+  onRequireAuth: () => void;
 }) {
   const [votes, setVotes]     = useState(comment.upvote_count);
   const [voted, setVoted]     = useState(comment.user_voted ?? false);
@@ -278,7 +300,7 @@ function CommentCard({ comment, user, postId, depth = 0, onReplyAdded }: {
   const [submitting, setSubmitting] = useState(false);
 
   async function handleVote() {
-    if (!user) return;
+    if (!user) { onRequireAuth(); return; }
     const res = await fetch("/api/community/vote", {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${user.access_token}` },
@@ -331,17 +353,17 @@ function CommentCard({ comment, user, postId, depth = 0, onReplyAdded }: {
           {comment.body}
         </p>
 
-        {/* Actions */}
+        {/* Actions — always visible, guests get prompted */}
         <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
           <button onClick={handleVote}
-            style={{ background: "none", border: "none", cursor: user ? "pointer" : "default",
+            style={{ background: "none", border: "none", cursor: "pointer",
               display: "flex", alignItems: "center", gap: "4px", padding: 0,
               color: voted ? GOLD : "#aaa", fontSize: "0.8rem" }}>
             <span style={{ fontSize: "1rem" }}>▲</span>
             <span style={{ fontWeight: voted ? 700 : 400 }}>{votes}</span>
           </button>
-          {user && depth < 2 && (
-            <button onClick={() => setShowReply(!showReply)}
+          {depth < 2 && (
+            <button onClick={() => user ? setShowReply(!showReply) : onRequireAuth()}
               style={{ background: "none", border: "none", cursor: "pointer",
                 color: "#888", fontSize: "0.78rem", padding: 0 }}>
               💬 Reply
@@ -379,7 +401,7 @@ function CommentCard({ comment, user, postId, depth = 0, onReplyAdded }: {
         <div style={{ marginTop: "0.5rem", display: "flex", flexDirection: "column", gap: "0.5rem" }}>
           {comment.replies.map(reply => (
             <CommentCard key={reply.id} comment={reply} user={user} postId={postId}
-              depth={depth + 1} onReplyAdded={onReplyAdded} />
+              depth={depth + 1} onReplyAdded={onReplyAdded} onRequireAuth={onRequireAuth} />
           ))}
         </div>
       )}
