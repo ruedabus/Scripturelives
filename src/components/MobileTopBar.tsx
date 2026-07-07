@@ -26,6 +26,7 @@ const TITLES: Record<string, string> = {
   "/music":            "Worship Music",
   "/tournament":       "Bible Bowl",
   "/leaderboard":      "Leaderboard",
+  "/community":        "Community",
   "/es/gospel":        "El Evangelio",
   "/es/devotionals":   "Devocionales",
   "/es/prayer":        "Muro de Oración",
@@ -37,6 +38,10 @@ function getTitle(pathname: string) {
   if (TITLES[pathname]) return TITLES[pathname];
   if (pathname.startsWith("/devotionals/")) return "Devotional";
   if (pathname.startsWith("/es/devotionals/")) return "Devocional";
+  if (pathname.startsWith("/community/r/")) return "Study Room";
+  if (pathname.startsWith("/community/post/")) return "Discussion";
+  if (pathname.startsWith("/community/create-room")) return "Create Room";
+  if (pathname.startsWith("/community")) return "Community";
   return "Scripture Lives";
 }
 
@@ -46,6 +51,9 @@ function getBack(pathname: string): string | null {
   if (pathname.startsWith("/devotionals/")) return "/devotionals";
   if (pathname.startsWith("/es/devotionals/")) return "/es/devotionals";
   if (pathname.startsWith("/es/")) return "/";
+  if (pathname.startsWith("/community/r/")) return "/community";
+  if (pathname.startsWith("/community/post/")) return "/community";
+  if (pathname.startsWith("/community/create-room")) return "/community";
   return "/";
 }
 
@@ -57,6 +65,7 @@ const MENU = [
   { href: "/prayer",        icon: "🙏", label: "Prayer Wall"    },
   { href: "/kids",          icon: "📚", label: "Kids Stories"   },
   { href: "/games",         icon: "🎮", label: "Bible Games"    },
+  { href: "/community",     icon: "🕊️", label: "Community"      },
   { section: "Bible" },
   { href: "/bible?tab=bible",    icon: "📖", label: "Full Bible"     },
   { href: "/bible?tab=parallel", icon: "📑", label: "Parallel Bible" },
