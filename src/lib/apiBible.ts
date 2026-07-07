@@ -8,7 +8,7 @@
  *   NIV  → 06125adad2d5898a-01  (New International Version)
  *   NKJV → de4e12af7f28f599-02  (New King James Version)
  *   ESV  → f421fe261da7624f-01  (English Standard Version)
- *   NLT  → 65eec8e0b60e656b-01  (New Living Translation)
+ *   NLT  → d6e14a625393b4da-01  (New Living Translation)
  *
  * Note: Some translations (NIV, ESV, NLT) require approval from the
  * publisher after you sign up — check your api.bible dashboard.
@@ -29,7 +29,7 @@ const API_BIBLE_BASE = "https://rest.api.bible/v1";
  */
 export const API_BIBLE_IDS: Record<string, string> = {
   NIV:     "06125adad2d5898a-01",   // New International Version (English)
-  NLT:     "65eec8e0b60e656b-01",   // New Living Translation (English)
+  NLT:     "d6e14a625393b4da-01",   // New Living Translation (English)
   AMP:     "a81b73293d3080c9-01",   // Amplified Bible (English)
   RVR1960: process.env.API_BIBLE_RVR1960_ID ?? "592420522e16049f-01",  // Reina-Valera 1960 (Español)
 };
