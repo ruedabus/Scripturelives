@@ -31,6 +31,10 @@ const BOOKS: Record<string, { title: string; url: string }> = {
     title: "Mav, Moony & the Miracle at the Tomb",
     url:   "/books/mav-moony-miracle-at-the-tomb-ebook.pdf",
   },
+  "giant-storm": {
+    title: "Mav and Moony and the Giant Storm",
+    url:   "/books/mav-moony-giant-storm-ebook.pdf",
+  },
 };
 
 export async function GET(request: NextRequest) {
