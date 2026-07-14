@@ -285,6 +285,16 @@ export default function WelcomePage() {
         <p className="mt-2" style={{ color: "#c0b89a" }}>
           © 2026 Scripture Lives / Faith Tails &nbsp;·&nbsp; info@scripturelives.com
         </p>
+        <p className="mt-3">
+          <a
+            href="https://www.facebook.com/ScriptureLives/"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: GOLD, textDecoration: "none", fontWeight: 600 }}
+          >
+            📘 Follow us on Facebook
+          </a>
+        </p>
       </footer>
 
     </div>
