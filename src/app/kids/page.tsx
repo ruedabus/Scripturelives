@@ -414,7 +414,19 @@ export default function KidsPage() {
             Print or save your masterpiece when you&apos;re done.
           </p>
         </div>
-        <ColoringBookSection books={BOOKS} />
+        <ColoringBookSection
+          books={[
+            {
+              slug:       "standalone-p1",
+              title:      "Faith Tails Coloring Page",
+              coverImage: "/FT-coloringP1.png",
+              coverBg:    `linear-gradient(135deg, ${NAVY} 0%, #2d4a7a 100%)`,
+              pages:      "1 page",
+              imageBase:  "/coloring/standalone/page-{n}.jpg",
+            },
+            ...BOOKS,
+          ]}
+        />
       </section>
 
       {/* ── Faith Message Banner ──────────────────────────────────────────────── */}

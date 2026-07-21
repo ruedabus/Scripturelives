@@ -20,6 +20,8 @@ interface ColoringToolProps {
   bookSlug:   string;
   bookTitle:  string;
   totalPages: number;
+  /** Optional override — e.g. "/coloring/standalone/page-{n}.jpg" */
+  imageBase?: string;
   onClose:    () => void;
 }
 
@@ -88,10 +90,22 @@ function floodFill(
 }
 
 // ── Component ──────────────────────────────────────────────────
+const SLUG_TO_EPISODE: Record<string, number> = {
+  "moon-adventure":           1,
+  "lions-den":                2,
+  "riders-of-the-ark":        3,
+  "camping-adventure":        4,
+  "big-fish-adventure":       5,
+  "great-american-road-trip": 6,
+  "miracle-at-the-tomb":      7,
+  "giant-storm":              8,
+};
+
 export default function ColoringTool({
   bookSlug,
   bookTitle,
   totalPages,
+  imageBase,
   onClose,
 }: ColoringToolProps) {
   const [page,       setPage]       = useState(1);
@@ -105,19 +119,9 @@ export default function ColoringTool({
   const historyRef  = useRef<ImageData[]>([]);
   const isDrawing   = useRef(false);
 
-  const imgSrc = `/coloring/episode${
-    // map slug → episode number
-    ({
-      "moon-adventure":           1,
-      "lions-den":                2,
-      "riders-of-the-ark":        3,
-      "camping-adventure":        4,
-      "big-fish-adventure":       5,
-      "great-american-road-trip": 6,
-      "miracle-at-the-tomb":      7,
-      "giant-storm":              8,
-    } as Record<string, number>)[bookSlug] ?? 1
-  }/page-${page}.jpg`;
+  const resolvedBase = imageBase
+    ?? `/coloring/episode${SLUG_TO_EPISODE[bookSlug] ?? 1}/page-{n}.jpg`;
+  const imgSrc = resolvedBase.replace("{n}", String(page));
 
   // ── Load image onto canvas ─────────────────────────────────
   const loadImageToCanvas = useCallback((src: string) => {

@@ -12,6 +12,7 @@ interface Book {
   coverImage: string;
   coverBg:    string;
   pages:      string; // e.g. "20 pages"
+  imageBase?: string; // optional override for coloring page path
 }
 
 interface ColoringBookSectionProps {
@@ -79,6 +80,7 @@ export default function ColoringBookSection({ books }: ColoringBookSectionProps)
           bookSlug={activeBook.slug}
           bookTitle={activeBook.title}
           totalPages={pageCount(activeBook.pages)}
+          imageBase={activeBook.imageBase}
           onClose={() => setActiveBook(null)}
         />
       )}
