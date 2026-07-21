@@ -3,6 +3,7 @@ import Link from "next/link";
 import ThemeSongPlayer from "@/components/ThemeSongPlayer";
 import BiblePuzzle from "@/components/BiblePuzzle";
 import BookLibrary from "@/components/BookLibrary";
+import ColoringBookSection from "@/components/ColoringBookSection";
 
 export const metadata: Metadata = {
   title: "Faith Tails Kids | Scripture Lives",
@@ -401,6 +402,19 @@ export default function KidsPage() {
         <div className="rounded-3xl overflow-hidden" style={{ background: "white", boxShadow: "0 4px 24px rgba(0,0,0,0.10)", border: "1px solid rgba(201,149,42,0.15)" }}>
           <BiblePuzzle />
         </div>
+      </section>
+
+      {/* ── Coloring Book ─────────────────────────────────────────────────────── */}
+      <section id="coloring" className="max-w-4xl mx-auto w-full px-4 pb-16">
+        <div className="flex flex-col items-center gap-2 text-center mb-8">
+          <span style={{ fontSize: 32 }}>🎨</span>
+          <h2 className="text-2xl font-black" style={{ color: NAVY }}>Coloring Book</h2>
+          <p className="text-sm max-w-md" style={{ color: "#6b7280" }}>
+            Color your favorite Faith Tails scenes! Pick a book, choose your colors, and bring Mav &amp; Moony to life.
+            Print or save your masterpiece when you&apos;re done.
+          </p>
+        </div>
+        <ColoringBookSection books={BOOKS} />
       </section>
 
       {/* ── Faith Message Banner ──────────────────────────────────────────────── */}
