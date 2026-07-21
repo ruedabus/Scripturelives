@@ -4,19 +4,19 @@ import { EBOOK_NARRATION } from "@/lib/ebookNarration";
 /**
  * GET /api/narrate?book=giant-storm&page=1
  *
- * Calls ElevenLabs TTS and streams the audio back as audio/mpeg.
+ * Calls OpenAI TTS and streams the audio back as audio/mpeg.
  *
  * Required env vars:
- *   ELEVENLABS_API_KEY  — your ElevenLabs API key
+ *   OPENAI_API_KEY — your OpenAI API key
  *
  * Optional env vars:
- *   ELEVENLABS_VOICE_ID — defaults to "Rachel" (21m00Tcm4TlvDq8ikWAM)
- *                         Find voice IDs at elevenlabs.io/voice-library
+ *   OPENAI_TTS_VOICE — defaults to "nova" (warm, clear, great for kids)
+ *                      Options: alloy, echo, fable, onyx, nova, shimmer
  */
 
-const ELEVENLABS_BASE   = "https://api.elevenlabs.io/v1";
-const DEFAULT_VOICE_ID  = "21m00Tcm4TlvDq8ikWAM"; // Rachel — warm, clear, great for kids
-const DEFAULT_MODEL     = "eleven_monolingual_v1";
+const OPENAI_TTS_URL  = "https://api.openai.com/v1/audio/speech";
+const DEFAULT_VOICE   = "fable";  // expressive, storytelling feel
+const DEFAULT_MODEL   = "tts-1";  // use "tts-1-hd" for higher quality
 
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
@@ -37,60 +37,49 @@ export async function GET(request: NextRequest) {
   }
 
   // ── Check API key ──────────────────────────────────────────────
-  const apiKey = process.env.ELEVENLABS_API_KEY;
+  const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
     return NextResponse.json(
-      { error: "ELEVENLABS_API_KEY is not configured" },
+      { error: "OPENAI_API_KEY is not configured" },
       { status: 503 }
     );
   }
 
-  const voiceId = process.env.ELEVENLABS_VOICE_ID ?? DEFAULT_VOICE_ID;
+  const voice = process.env.OPENAI_TTS_VOICE ?? DEFAULT_VOICE;
 
   // ── Build narration text ───────────────────────────────────────
-  // Read the page title first, then the body text
   const narrationText = `${page.title}. ${page.text}`;
 
-  // ── Call ElevenLabs ────────────────────────────────────────────
+  // ── Call OpenAI TTS ────────────────────────────────────────────
   try {
-    const elevenRes = await fetch(
-      `${ELEVENLABS_BASE}/text-to-speech/${voiceId}`,
-      {
-        method:  "POST",
-        headers: {
-          "xi-api-key":   apiKey,
-          "Content-Type": "application/json",
-          "Accept":       "audio/mpeg",
-        },
-        body: JSON.stringify({
-          text:      narrationText,
-          model_id:  DEFAULT_MODEL,
-          voice_settings: {
-            stability:        0.55,   // slightly higher = more consistent (good for kids)
-            similarity_boost: 0.75,
-            style:            0.30,   // a little expressiveness
-            use_speaker_boost: true,
-          },
-        }),
-      }
-    );
+    const openaiRes = await fetch(OPENAI_TTS_URL, {
+      method:  "POST",
+      headers: {
+        "Authorization": `Bearer ${apiKey}`,
+        "Content-Type":  "application/json",
+      },
+      body: JSON.stringify({
+        model: DEFAULT_MODEL,
+        input: narrationText,
+        voice,
+      }),
+    });
 
-    if (!elevenRes.ok) {
-      const errorBody = await elevenRes.text();
-      console.error("ElevenLabs error:", elevenRes.status, errorBody);
+    if (!openaiRes.ok) {
+      const errorBody = await openaiRes.text();
+      console.error("OpenAI TTS error:", openaiRes.status, errorBody);
       return NextResponse.json(
-        { error: `ElevenLabs error: ${elevenRes.status}` },
+        { error: `OpenAI TTS error: ${openaiRes.status}`, detail: errorBody },
         { status: 502 }
       );
     }
 
-    // Stream audio back with cache headers (same page → same audio)
-    const audioBuffer = await elevenRes.arrayBuffer();
+    const audioBuffer = await openaiRes.arrayBuffer();
     return new NextResponse(audioBuffer, {
       status:  200,
       headers: {
         "Content-Type":  "audio/mpeg",
-        "Cache-Control": "public, max-age=86400, immutable", // cache 24h at CDN
+        "Cache-Control": "public, max-age=86400, immutable",
       },
     });
   } catch (err) {

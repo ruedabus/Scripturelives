@@ -80,11 +80,13 @@ export default function EbookReader({ bookSlug, onClose }: EbookReaderProps) {
       audioRef.current = audio;
       setIsPlaying(true);
       setIsLoading(false);
-      audio.play().catch(() => setAudioError(true));
+      audio.play().catch(() => { setIsPlaying(false); setAudioError(true); });
       audio.onended = () => {
-        setIsPlaying(false);
         if (autoAdvance && pageNum < totalPages) {
           setPage(pageNum + 1);
+          // keep isPlaying=true so the page-change effect auto-plays the next page
+        } else {
+          setIsPlaying(false);
         }
       };
       return;
@@ -117,9 +119,11 @@ export default function EbookReader({ bookSlug, onClose }: EbookReaderProps) {
         setAudioError(true);
       });
       audio.onended = () => {
-        setIsPlaying(false);
         if (autoAdvance && pageNum < totalPages) {
           setPage((p) => p + 1);
+          // keep isPlaying=true so the page-change effect auto-plays the next page
+        } else {
+          setIsPlaying(false);
         }
       };
     } catch (err: unknown) {
@@ -336,10 +340,14 @@ export default function EbookReader({ bookSlug, onClose }: EbookReaderProps) {
           </button>
         </div>
 
-        {/* Error state */}
-        {audioError && (
+        {/* Hint / Error state */}
+        {audioError ? (
           <p className="text-xs mt-1" style={{ color: "#f87171" }}>
-            ⚠️ Couldn't load audio — check your ElevenLabs API key or try again.
+            ⚠️ Couldn't load audio — try again.
+          </p>
+        ) : !isPlaying && !isLoading && (
+          <p className="text-xs mt-1" style={{ color: "rgba(255,255,255,0.35)" }}>
+            Press ▶ to read the whole book aloud
           </p>
         )}
       </div>
