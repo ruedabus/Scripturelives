@@ -415,16 +415,11 @@ export default function KidsPage() {
           </p>
         </div>
         <ColoringBookSection
-          books={[
+          pages={[
             {
-              slug:       "standalone-p1",
-              title:      "Faith Tails Coloring Page",
-              coverImage: "/FT-coloringP1.png",
-              coverBg:    `linear-gradient(135deg, ${NAVY} 0%, #2d4a7a 100%)`,
-              pages:      "1 page",
-              imageBase:  "/coloring/standalone/page-{n}.jpg",
+              title:    "Faith Tails Coloring Page 1",
+              imageSrc: "/coloring/standalone/page-1.jpg",
             },
-            ...BOOKS,
           ]}
         />
       </section>
