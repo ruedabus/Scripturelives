@@ -189,6 +189,67 @@ async function searchRemote(version: string, query: string, limit: number): Prom
     });
 }
 
+// ── AI semantic fallback ──────────────────────────────────────────────────────
+
+async function semanticSearch(
+  query: string,
+  version: string,
+  limit: number
+): Promise<BibleSearchResult[]> {
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) return [];
+
+  const res = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: { "Authorization": `Bearer ${apiKey}`, "Content-Type": "application/json" },
+    body: JSON.stringify({
+      model: "gpt-4o-mini",
+      max_tokens: 80,
+      temperature: 0,
+      messages: [
+        {
+          role: "system",
+          content:
+            "You are a Bible reference assistant. Given a phrase or concept, return up to 3 Bible verse references that best match it. " +
+            "Return ONLY a comma-separated list of references in the format 'Book Chapter:Verse' (e.g. 'John 3:16, Psalm 23:1'). " +
+            "No explanation, no extra text.",
+        },
+        { role: "user", content: query },
+      ],
+    }),
+    cache: "no-store",
+  });
+
+  if (!res.ok) return [];
+  const data = await res.json();
+  const raw  = (data.choices?.[0]?.message?.content ?? "").trim();
+
+  // Parse each reference and look it up
+  const refs = raw.split(",").map((r: string) => r.trim()).filter(Boolean);
+  const results: BibleSearchResult[] = [];
+
+  for (const refStr of refs.slice(0, limit)) {
+    const ref = parseReference(refStr);
+    if (!ref) continue;
+    try {
+      if ((["KJV", "ASV", "WEB"] as string[]).includes(version)) {
+        const { loadBible } = await import("@/lib/loadBibleVersion");
+        const { CANONICAL_BOOKS: CB } = await import("@/app/api/bible/route");
+        const bible = loadBible(version as "KJV" | "ASV" | "WEB");
+        const match = bible.find(
+          (v) => CB.includes(v.book) && v.book === ref.book && v.chapter === ref.chapter && v.verse === ref.verse
+        );
+        if (match) results.push({ book: match.book, chapter: match.chapter, verse: match.verse, reference: match.reference, text: match.text });
+      } else {
+        const remote = await searchRemote(version, refStr, 1);
+        if (remote.length) results.push(remote[0]);
+      }
+    } catch { /* skip */ }
+  }
+
+  return results;
+}
+
 // ── Handler ───────────────────────────────────────────────────────────────────
 
 export async function GET(req: NextRequest) {
@@ -209,9 +270,14 @@ export async function GET(req: NextRequest) {
   const query = rawQuery.replace(/[^\w\s'":.-]/g, " ").replace(/\s{2,}/g, " ").trim();
 
   try {
-    const results = (LOCAL_VERSIONS as readonly string[]).includes(version)
+    let results = (LOCAL_VERSIONS as readonly string[]).includes(version)
       ? searchLocal(version as "KJV" | "ASV" | "WEB", query, limit)
       : await searchRemote(version, query, limit);
+
+    // If no keyword matches, fall back to AI semantic search
+    if (results.length === 0) {
+      results = await semanticSearch(query, version, limit);
+    }
 
     return NextResponse.json(
       { results, total: results.length, query },

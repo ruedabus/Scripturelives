@@ -286,7 +286,7 @@ export default function PassagePresenter({
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
       setIsSearching(true);
-      fetch(`/api/bible/search?q=${encodeURIComponent(query.trim())}`)
+      fetch(`/api/bible/search?q=${encodeURIComponent(query.trim())}&version=${version}`)
         .then((r) => r.json())
         .then((d) => setSearchResults(d.results ?? []))
         .catch(() => setSearchResults([]))
