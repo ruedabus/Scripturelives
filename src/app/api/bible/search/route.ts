@@ -80,13 +80,19 @@ const BOOK_ALIASES: Record<string, string> = {
   jud:"Jude",jude:"Jude",rev:"Revelation",revelation:"Revelation",
 };
 
-function parseReference(query: string): { book: string; chapter: number; verse?: number } | null {
-  const m = query.trim().match(/^(\d\s*)?([a-zA-Z]+(?:\s+[a-zA-Z]+)?)\s+(\d+)(?::(\d+))?$/);
+function parseReference(query: string): { book: string; chapter: number; verse?: number; endVerse?: number } | null {
+  // Supports: "John 3:16", "1 Tim 3:1-7", "Ps 23", "Genesis 1"
+  const m = query.trim().match(/^(\d\s*)?([a-zA-Z]+(?:\s+[a-zA-Z]+)?)\s+(\d+)(?::(\d+)(?:-(\d+))?)?$/);
   if (!m) return null;
   const rawBook = ((m[1] ?? "") + m[2]).trim().replace(/\s+/g, "").toLowerCase();
   const book    = BOOK_ALIASES[rawBook] ?? BOOK_ALIASES[((m[1] ?? "") + " " + m[2]).trim().toLowerCase()];
   if (!book) return null;
-  return { book, chapter: parseInt(m[3], 10), verse: m[4] ? parseInt(m[4], 10) : undefined };
+  return {
+    book,
+    chapter:  parseInt(m[3], 10),
+    verse:    m[4] ? parseInt(m[4], 10) : undefined,
+    endVerse: m[5] ? parseInt(m[5], 10) : undefined,
+  };
 }
 
 // ── Local search ──────────────────────────────────────────────────────────────
@@ -107,9 +113,12 @@ function searchLocal(
         CANONICAL_BOOKS.includes(v.book) &&
         v.book === ref.book &&
         v.chapter === ref.chapter &&
-        (ref.verse === undefined || v.verse === ref.verse)
+        (ref.verse === undefined || (
+          v.verse >= ref.verse &&
+          v.verse <= (ref.endVerse ?? ref.verse)
+        ))
       )
-      .slice(0, ref.verse ? 1 : limit)
+      .slice(0, ref.verse ? limit : limit)
       .map((v) => ({ book: v.book, chapter: v.chapter, verse: v.verse, reference: v.reference, text: v.text }));
   }
 
