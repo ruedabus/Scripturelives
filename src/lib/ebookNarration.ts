@@ -770,6 +770,149 @@ And Moony closed his eyes, smiled the tiniest smile, and drifted off to sleep.`,
       },
     ],
   },
+
+  // ── Episode 9: Mav, Moony, and the Dream Keeper (joseph-in-egypt) ─────────
+  "joseph-in-egypt": {
+    title:      "Mav, Moony, and the Dream Keeper",
+    imageBase:  "/episode9/page-{n}.jpg",
+    coverImage: "/Episode9-titlecard.png",
+    pages: [
+      {
+        title: "The Glowing Portal",
+        text:  `It started with a strange light.
+Mav and Moony were walking home from school when a shimmering golden glow appeared in the alley behind the library. It rippled like water but stood straight up like a door — and right in the middle of it were strange symbols that looked like stars and sand.
+Moony grabbed Mav's arm. "That was NOT there yesterday."`,
+      },
+      {
+        title: "Through the Door",
+        text:  `Mav stepped closer. The warm air coming through smelled like dry earth and something sweet — like figs. He reached out and touched the light, and in an instant the alley was gone.
+They tumbled out onto a hillside under a blazing blue sky, with rolling green fields stretching as far as they could see. In the distance, a young man in a bright, colorful coat was walking toward a flock of sheep.
+"Where are we?" Moony whispered.
+A voice echoed in their hearts, gentle but clear: "Watch. Listen. And remember."`,
+      },
+      {
+        title: "The Boy in the Beautiful Coat",
+        text:  `The young man's name was Joseph. He was seventeen years old — not much older than Mav — and his coat blazed with every color of a sunset. His father, Jacob, had given it to him as a gift to show how much he loved him.
+"He looks happy," Moony said.
+"He does," Mav agreed. "But look at the others."
+Behind Joseph, a group of older brothers trudged through the field. Their faces were tight with something Mav recognized — jealousy. The kind that burns slow and turns into something dangerous.`,
+      },
+      {
+        title: "The Dream That Started It All",
+        text:  `Joseph had a gift — he dreamed dreams that came true. He dreamed that one day his brothers would bow down to him, and like any excited kid, he told them about it.
+That was a mistake.
+His brothers already resented the coat, already felt pushed aside. Now this? They began whispering among themselves, and the whispers were not kind.
+Mav shook his head. "He didn't mean any harm. He was just excited."
+"Yeah," Moony said quietly. "But sometimes the truth still hurts people."`,
+      },
+      {
+        title: "The Pit",
+        text:  `One day Jacob sent Joseph out to check on his brothers in the fields. They saw him coming from far off — that bright coat impossible to miss — and made a terrible decision.
+They grabbed Joseph, tore off his coat, and threw him into an empty pit.
+Mav gasped. Moony covered his eyes. Joseph cried out for help, but his brothers sat down and ate lunch like nothing had happened.
+It was one of the hardest things Mav had ever watched. "Why isn't anyone helping him?" he said, his voice cracking.
+There was no easy answer.`,
+      },
+      {
+        title: "Sold",
+        text:  `A caravan of merchants came riding by on camels, heading toward Egypt. Joseph's brothers pulled him out of the pit — not to free him, but to sell him. For twenty pieces of silver, Joseph was handed over to strangers and led away in chains.
+His brothers dipped his colorful coat in goat's blood and took it home to their father, pretending a wild animal had killed him.
+Moony was crying. "That's so wrong. That's so, so wrong."
+"I know," Mav said. His fists were clenched. "But keep watching."`,
+      },
+      {
+        title: "A Slave in Egypt",
+        text:  `Joseph arrived in Egypt — a land of towering pyramids, bustling markets, and a people who spoke a language he didn't know. He was sold again, this time to a powerful man named Potiphar, an officer in Pharaoh's army.
+Joseph had lost everything: his home, his father, his freedom.
+But the story says something remarkable — God was with Joseph. Even in this dark place, Joseph worked hard and faithfully, and everything he touched went well. Potiphar noticed and put Joseph in charge of his entire household.
+"He didn't give up," Moony said, wiping his eyes. "Even after all that."`,
+      },
+      {
+        title: "Falsely Accused",
+        text:  `Just when things seemed to be getting better, they got worse.
+Potiphar's wife told a lie about Joseph — a terrible, unfair lie. And Potiphar believed her. Joseph, who had done nothing wrong, was thrown into prison.
+Mav kicked a pebble hard. "He keeps doing the right thing and keeps getting punished for it. How is that fair?"
+The warm voice returned, soft and steady: "Keep watching."
+Mav took a breath. He kept watching.`,
+      },
+      {
+        title: "The Prison",
+        text:  `The prison was dark and cold. But even here, God was with Joseph.
+The warden saw something in Joseph — an honesty, a steadiness — and put him in charge of the other prisoners. Joseph didn't sulk in the corner. He showed up. He cared for people around him. He paid attention.
+"He keeps doing that," Moony said, almost to himself.
+"Doing what?" Mav asked.
+"Being faithful. Even when nobody's watching. Even when it doesn't seem to help him at all."`,
+      },
+      {
+        title: "Two Strange Dreams",
+        text:  `One night, two of Pharaoh's servants — his royal cupbearer and his royal baker — were thrown into prison and had the strangest dreams. In the morning, they looked troubled and confused.
+Joseph noticed. "Why do you look so sad today?" he asked.
+They told him their dreams, and Joseph listened carefully. Then he said something surprising: "God can explain dreams. Tell me."
+He wasn't showing off. He wasn't trying to impress anyone. He was simply offering the gift God had given him.`,
+      },
+      {
+        title: "The Interpretation",
+        text:  `Joseph listened to the cupbearer's dream — three vines, grapes, a cup, Pharaoh — and said: "In three days you will be restored to your position. You will serve Pharaoh again."
+Then he listened to the baker's dream, and with sadness told him the truth — his dream meant something far worse.
+Three days later, exactly as Joseph said, the cupbearer was freed and returned to the palace. The baker did not.
+Before the cupbearer left, Joseph asked him one thing: "When you are restored, please mention me to Pharaoh. I don't deserve to be here."`,
+      },
+      {
+        title: "Forgotten",
+        text:  `The cupbearer walked out of the prison into the sunlight — and forgot all about Joseph.
+Two full years passed.
+Two years of the same cold walls. Two years of waiting. Two years of trusting a God who had not yet explained why any of this was happening.
+Mav sat down on the dusty ground. "Two years," he said quietly. "That's so long."
+Moony sat beside him. "You think Joseph gave up?"
+Mav looked through the prison window at the small square of sky visible above the walls. "No," he said. "I don't think he did."`,
+      },
+      {
+        title: "Pharaoh's Dream",
+        text:  `Then Pharaoh, the most powerful man in all of Egypt, had a dream so strange and troubling that he couldn't sleep. He dreamed of seven fat cows devoured by seven thin cows. He dreamed of seven full heads of grain swallowed by seven withered ones.
+None of his magicians or wise men could explain it.
+That's when the cupbearer finally remembered. He rushed to Pharaoh. "There is a young Hebrew man in your prison. He interpreted my dream two years ago — and everything he said came true."
+Pharaoh sent for Joseph immediately.`,
+      },
+      {
+        title: "Before Pharaoh",
+        text:  `Joseph was brought out of the dungeon, cleaned up, and led before the throne of Egypt.
+Mav and Moony watched from the edge of the vast hall, mouths open. The room was enormous — gleaming stone floors, golden columns, servants everywhere. Pharaoh looked at Joseph and said, "I have heard you can interpret dreams."
+Joseph's answer was the most important thing he could have said — and he got it exactly right.
+"I cannot," Joseph said. "But God can, and He will give Pharaoh the answer he needs."`,
+      },
+      {
+        title: "Seven Years of Plenty, Seven Years of Famine",
+        text:  `Joseph listened to the dream and explained it clearly: seven fat cows and seven full heads of grain meant seven years of incredible harvest. Seven thin cows and seven withered heads of grain meant seven years of terrible famine that would follow.
+"Egypt must store grain during the good years," Joseph told Pharaoh, "so that the people don't starve during the bad ones."
+Pharaoh stared at this young man — a prisoner, a slave — and saw something he couldn't explain. "Who else could do this?" he said to his servants. "This man clearly has the Spirit of God in him."`,
+      },
+      {
+        title: "Second in Command",
+        text:  `Pharaoh took off his own signet ring and placed it on Joseph's finger. He gave him fine robes and a golden chain and set him over all of Egypt — second only to Pharaoh himself.
+The boy who had been thrown in a pit. The slave who had been locked in a dungeon. Now second in command of the most powerful nation on earth.
+Mav and Moony looked at each other. Neither of them could speak for a moment.
+"All those years," Moony finally said. "He had no idea this was coming."
+"Neither did anyone else," Mav said. "Except God."`,
+      },
+      {
+        title: "The Famine and the Rescue",
+        text:  `Just as God had shown Joseph, seven years of plenty came — and Joseph stored grain in every city until there was too much to count. Then the famine arrived, and it was severe across the whole world.
+But Egypt had food. People came from every surrounding land to buy grain, and Joseph made sure they had what they needed.
+Far away, Joseph's own brothers — the ones who had sold him — came to Egypt desperate for food. They bowed down before the governor they didn't recognize. They bowed before Joseph.
+His dream, all those years ago, had come true.`,
+      },
+      {
+        title: "What You Meant for Harm",
+        text:  `The golden portal shimmered back into view.
+Mav and Moony stepped through and landed softly in the alley, the library behind them, the smell of figs fading away.
+They walked home quietly for a while. Then Moony said, "Joseph could have been bitter. He had every reason."
+"He wasn't, though," Mav said. "He told his brothers, 'You meant it for harm, but God meant it for good.' He believed that the whole time — even when he couldn't see it."
+Moony kicked a stone. "That's really hard to do."
+"Yeah," Mav said. "But that's what faith is, I guess. Trusting the ending before you know what it is."
+They walked the rest of the way home in the golden afternoon light, a little quieter, and a whole lot braver.`,
+      },
+    ],
+  },
 };
 
 /** Returns the page image URL for a given book + 1-based page number */
