@@ -1,8 +1,8 @@
 export default function ScriptureTimelineBanner() {
   return (
     <div
-      className="w-full overflow-hidden shrink-0"
-      style={{ borderBottom: "1px solid rgba(201,149,42,0.25)" }}
+      className="w-full overflow-hidden shrink-0 sticky top-[52px] md:top-[56px] z-40"
+      style={{ borderBottom: "1px solid rgba(201,149,42,0.25)", background: "#0a1120" }}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
