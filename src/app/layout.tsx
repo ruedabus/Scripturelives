@@ -7,6 +7,7 @@ import MemorialDayBanner from "@/components/MemorialDayBanner";
 import MobileBottomNav from "@/components/MobileBottomNav";
 import MobileTopBar from "@/components/MobileTopBar";
 import DesktopNav from "@/components/DesktopNav";
+import ScriptureTimelineBanner from "@/components/ScriptureTimelineBanner";
 import BibleTeacherChat from "@/components/BibleTeacherChat";
 import { Analytics } from "@vercel/analytics/next";
 
@@ -50,6 +51,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col pb-[56px] md:pb-0">
         <MobileTopBar />
         <DesktopNav />
+        <ScriptureTimelineBanner />
         <MemorialDayBanner />
         <MothersDayBanner />
         <WelcomeModal />
