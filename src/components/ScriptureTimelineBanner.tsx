@@ -6,8 +6,8 @@ export default function ScriptureTimelineBanner() {
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src="/banner_enhancement.png"
-        alt="The story of Scripture, from Creation to the Eternal Kingdom: Creation, The Fall, Noah and His Ark, Moses and the Law, Prophets, Bethlehem and the Manger, Jesus' Ministry and Miracles, The Cross and Resurrection, The Church Age, The Eternal Kingdom"
+        src="/banner_enhancement2.png"
+        alt="Scripture Lives — the story of Scripture from Creation to the New Jerusalem: Creation, Noah's Ark, the Red Sea, King David, Bethlehem, Jesus' Ministry, the Cross, the Empty Tomb, and the New Jerusalem"
         className="w-full block"
         style={{ objectFit: "cover", objectPosition: "center" }}
       />
